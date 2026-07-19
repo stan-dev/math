@@ -31,9 +31,9 @@ jobs:
         config: [
           { label: misc, tests: 'test/unit/*_test.cpp test/unit/math/*_test.cpp test/unit/math/memory' },
           { label: prim, tests: 'test/unit/math/prim' },
-         { label: rev, tests: 'test/unit/math/rev' },
-         { label: fwd, tests: 'test/unit/math/fwd' },
-         { label: 'non-fun mix', tests: 'test/unit/math/mix/core test/unit/math/mix/meta test/unit/math/mix/*_test.cpp' }
+          { label: rev, tests: 'test/unit/math/rev' },
+          { label: fwd, tests: 'test/unit/math/fwd' },
+          { label: 'non-fun mix', tests: 'test/unit/math/mix/core test/unit/math/mix/meta test/unit/math/mix/*_test.cpp' }
         ]
 
     steps:
