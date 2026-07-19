@@ -25,14 +25,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
+      max-parallel: 5
       matrix:
         os: [windows-11-arm, windows-latest, ubuntu-24.04-arm]
         config: [
           { label: misc, tests: 'test/unit/*_test.cpp test/unit/math/*_test.cpp test/unit/math/memory' },
           { label: prim, tests: 'test/unit/math/prim' },
-          { label: rev, tests: 'test/unit/math/rev' },
-          { label: fwd, tests: 'test/unit/math/fwd' },
-          { label: 'non-fun mix', tests: 'test/unit/math/mix/core test/unit/math/mix/meta test/unit/math/mix/*_test.cpp' }
+         { label: rev, tests: 'test/unit/math/rev' },
+         { label: fwd, tests: 'test/unit/math/fwd' },
+         { label: 'non-fun mix', tests: 'test/unit/math/mix/core test/unit/math/mix/meta test/unit/math/mix/*_test.cpp' }
         ]
 
     steps:
@@ -43,24 +44,14 @@ jobs:
 
     - name: Download and Install Rtools45
       if: runner.os == 'Windows'
-      run: |
-        $ARCH = if ('${{ matrix.os }}' -eq 'windows-11-arm') { 'aarch64' } else { 'x86_64' }
-        $RTOOLS = if ('${{ matrix.os }}' -eq 'windows-11-arm') { "rtools45-$ARCH" } else { 'rtools45' }
-
-        # Installation will hang if the toolchain is already installed
-        if (-Not $(Test-Path -Path "C:/$RTOOLS")) {
-          Invoke-WebRequest `
-              -Uri https://github.com/r-hub/rtools45/releases/download/latest/$RTOOLS.exe `
-              -OutFile "$RTOOLS.exe"
-          Start-Process -FilePath "$RTOOLS.exe" -ArgumentList "/INSTALL /VERYSILENT /SUPPRESSMSGBOXES" -Wait
-        }
-
-        echo "C:/$RTOOLS/usr/bin;C:/$RTOOLS/$ARCH-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-        echo "$(pwd)/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+      uses: r-lib/actions/setup-r@v2
+      with:
+        r-version: 'release'
 
     - name: Build Math libs
       shell: pwsh
       run: |
+        echo "$(pwd)/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
         Add-Content make\local "CPPFLAGS=-w -Wno-psabi -Wno-misleading-indentation`n"
         Add-Content make\local "STAN_THREADS=true`n"
         make -f make/standalone math-libs -j2
@@ -82,6 +73,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
+      max-parallel: 5
       matrix:
         os: [windows-11-arm, windows-latest, ubuntu-24.04-arm]
         group: [1, 2, 3, 4, 5]
@@ -94,24 +86,15 @@ jobs:
 
     - name: Download and Install Rtools45
       if: runner.os == 'Windows'
-      run: |
-        $ARCH = if ('${{ matrix.os }}' -eq 'windows-11-arm') { 'aarch64' } else { 'x86_64' }
-        $RTOOLS = if ('${{ matrix.os }}' -eq 'windows-11-arm') { "rtools45-$ARCH" } else { 'rtools45' }
+      uses: r-lib/actions/setup-r@v2
+      with:
+        r-version: 'release'
 
-        # Installation will hang if the toolchain is already installed
-        if (-Not $(Test-Path -Path "C:/$RTOOLS")) {
-          Invoke-WebRequest `
-              -Uri https://github.com/r-hub/rtools45/releases/download/latest/$RTOOLS.exe `
-              -OutFile "$RTOOLS.exe"
-          Start-Process -FilePath "$RTOOLS.exe" -ArgumentList "/INSTALL /VERYSILENT /SUPPRESSMSGBOXES" -Wait
-        }
-
-        echo "C:/$RTOOLS/usr/bin;C:/$RTOOLS/$ARCH-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-        echo "$(pwd)/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Build Math libs
       shell: pwsh
       run: |
+        echo "$(pwd)/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
         Add-Content make\local "CPPFLAGS=-w -Wno-psabi -Wno-misleading-indentation`n"
         Add-Content make\local "STAN_THREADS=true`n"
         make -f make/standalone math-libs -j2
