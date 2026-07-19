@@ -12,6 +12,7 @@
 #include <cstddef>
 #include <string>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -60,7 +61,8 @@ inline void assign_matrix_row(
     Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic>& result,
     Eigen::Index i, T&& x) {
   if (i == 0) {
-    result.resize(result.rows(), x.cols());
+    result = Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic>(
+        result.rows(), x.cols());
   } else {
     check_size_match(function, "columns of result", result.cols(),
                      "columns of returned row", x.cols());
@@ -74,7 +76,8 @@ inline void assign_matrix_col(
     Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic>& result,
     Eigen::Index j, T&& x) {
   if (j == 0) {
-    result.resize(x.rows(), result.cols());
+    result = Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic>(
+        x.rows(), result.cols());
   } else {
     check_size_match(function, "rows of result", result.rows(),
                      "rows of returned column", x.rows());
@@ -286,8 +289,8 @@ inline auto row_mapN(F&& f, Types&&... args) {
   std::tuple<ref_type_t<Types&&>...> m_refs{
       to_ref(std::forward<Types>(args))...};
   const Eigen::Index n_rows = std::get<0>(m_refs).rows();
-  using T_return = scalar_type_t<plain_type_t<decltype(
-      f((std::declval<ref_type_t<Types&&>>().row(0))...))>>;
+  using T_return = scalar_type_t<plain_type_t<decltype(f(
+      (std::declval<ref_type_t<Types&&>>().row(0))...))>>;
   using matrix_t = Eigen::Matrix<T_return, Eigen::Dynamic, Eigen::Dynamic>;
 
   if (n_rows == 0) {
@@ -341,8 +344,8 @@ inline auto col_mapN(F&& f, Types&&... args) {
   std::tuple<ref_type_t<Types&&>...> m_refs{
       to_ref(std::forward<Types>(args))...};
   const Eigen::Index n_cols = std::get<0>(m_refs).cols();
-  using T_return = scalar_type_t<plain_type_t<decltype(
-      f((std::declval<ref_type_t<Types&&>>().col(0))...))>>;
+  using T_return = scalar_type_t<plain_type_t<decltype(f(
+      (std::declval<ref_type_t<Types&&>>().col(0))...))>>;
   using matrix_t = Eigen::Matrix<T_return, Eigen::Dynamic, Eigen::Dynamic>;
 
   if (n_cols == 0) {
