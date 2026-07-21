@@ -82,21 +82,26 @@ struct val_Op{
   double& operator()(double& v) const { return v; }
 };
 
+using CwiseValOp = std::conditional_t<
+  is_fvar<Scalar>::value,
+  CwiseUnaryView<val_Op, Derived>,
+  CwiseUnaryOp<val_Op, const Derived>>;
+
 /**
  * Coefficient-wise function applying val_Op struct to a matrix of const var
  * or vari* and returning a view to the const matrix of doubles containing
  * the values
  */
-inline const CwiseUnaryOp<val_Op, const Derived>
-val() const { return CwiseUnaryOp<val_Op, const Derived>(derived());
+inline const CwiseValOp
+val() const { return CwiseValOp(derived());
 }
 
 /**
  * Coefficient-wise function applying val_Op struct to a matrix of var
  * or vari* and returning a view to the values
  */
-inline CwiseUnaryOp<val_Op, Derived>
-val() { return CwiseUnaryOp<val_Op, Derived>(derived());
+inline CwiseValOp
+val() { return CwiseValOp(derived());
 }
 
 /**
