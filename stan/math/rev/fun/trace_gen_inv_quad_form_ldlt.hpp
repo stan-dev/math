@@ -50,16 +50,16 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, LDLT_factor<Ta>& A,
 
     var res = (arena_D.val() * BTAsolveB).trace();
 
-    reverse_pass_callback(
-        [arena_A, BTAsolveB, AsolveB, arena_B, arena_D, res]() mutable {
-          double C_adj = res.adj();
+    reverse_pass_callback([arena_A, BTAsolveB, AsolveB, arena_B, arena_D,
+                           res]() mutable {
+      double C_adj = res.adj();
 
-          arena_A.adj() -= C_adj * AsolveB * arena_D.val().transpose()
-                           * AsolveB.transpose();
-          arena_B.adj() += C_adj * AsolveB
-                           * (arena_D.val() + arena_D.val().transpose());
-          arena_D.adj() += C_adj * BTAsolveB;
-        });
+      arena_A.adj()
+          -= C_adj * AsolveB * arena_D.val().transpose() * AsolveB.transpose();
+      arena_B.adj()
+          += C_adj * AsolveB * (arena_D.val() + arena_D.val().transpose());
+      arena_D.adj() += C_adj * BTAsolveB;
+    });
 
     return res;
   } else if constexpr (is_all_autodiff_v<Ta, Tb> && is_constant_v<Td>) {
@@ -88,14 +88,14 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, LDLT_factor<Ta>& A,
 
     var res = (arena_D.val() * BTAsolveB).trace();
 
-    reverse_pass_callback(
-        [arena_A, BTAsolveB, AsolveB, arena_D, res]() mutable {
-          double C_adj = res.adj();
+    reverse_pass_callback([arena_A, BTAsolveB, AsolveB, arena_D,
+                           res]() mutable {
+      double C_adj = res.adj();
 
-          arena_A.adj() -= C_adj * AsolveB * arena_D.val().transpose()
-                           * AsolveB.transpose();
-          arena_D.adj() += C_adj * BTAsolveB;
-        });
+      arena_A.adj()
+          -= C_adj * AsolveB * arena_D.val().transpose() * AsolveB.transpose();
+      arena_D.adj() += C_adj * BTAsolveB;
+    });
 
     return res;
   } else if constexpr (is_autodiff_v<Ta> && is_constant_all_v<Tb, Td>) {
@@ -109,8 +109,8 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, LDLT_factor<Ta>& A,
     reverse_pass_callback([arena_A, AsolveB, arena_D, res]() mutable {
       double C_adj = res.adj();
 
-      arena_A.adj() -= C_adj * AsolveB * arena_D.val().transpose()
-                       * AsolveB.transpose();
+      arena_A.adj()
+          -= C_adj * AsolveB * arena_D.val().transpose() * AsolveB.transpose();
     });
 
     return res;
@@ -126,8 +126,8 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, LDLT_factor<Ta>& A,
         [BTAsolveB, AsolveB, arena_B, arena_D, res]() mutable {
           double C_adj = res.adj();
 
-          arena_B.adj() += C_adj * AsolveB
-                           * (arena_D.val() + arena_D.val().transpose());
+          arena_B.adj()
+              += C_adj * AsolveB * (arena_D.val() + arena_D.val().transpose());
           arena_D.adj() += C_adj * BTAsolveB;
         });
 
@@ -199,15 +199,15 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, const LDLT_factor<Ta>& A,
 
     var res = (arena_D.val().asDiagonal() * BTAsolveB).trace();
 
-    reverse_pass_callback(
-        [arena_A, BTAsolveB, AsolveB, arena_B, arena_D, res]() mutable {
-          double C_adj = res.adj();
+    reverse_pass_callback([arena_A, BTAsolveB, AsolveB, arena_B, arena_D,
+                           res]() mutable {
+      double C_adj = res.adj();
 
-          arena_A.adj() -= C_adj * AsolveB * arena_D.val().asDiagonal()
-                           * AsolveB.transpose();
-          arena_B.adj() += C_adj * AsolveB * 2 * arena_D.val().asDiagonal();
-          arena_D.adj() += C_adj * BTAsolveB.diagonal();
-        });
+      arena_A.adj()
+          -= C_adj * AsolveB * arena_D.val().asDiagonal() * AsolveB.transpose();
+      arena_B.adj() += C_adj * AsolveB * 2 * arena_D.val().asDiagonal();
+      arena_D.adj() += C_adj * BTAsolveB.diagonal();
+    });
 
     return res;
   } else if constexpr (is_all_autodiff_v<Ta, Tb> && is_constant_v<Td>) {
@@ -216,8 +216,8 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, const LDLT_factor<Ta>& A,
     arena_t<promote_scalar_t<double, Td>> arena_D = value_of(D);
     auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
 
-    var res = (arena_D.asDiagonal() * arena_B.val().transpose() * AsolveB)
-                  .trace();
+    var res
+        = (arena_D.asDiagonal() * arena_B.val().transpose() * AsolveB).trace();
 
     reverse_pass_callback([arena_A, AsolveB, arena_B, arena_D, res]() mutable {
       double C_adj = res.adj();
@@ -237,14 +237,14 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, const LDLT_factor<Ta>& A,
 
     var res = (arena_D.val().asDiagonal() * BTAsolveB).trace();
 
-    reverse_pass_callback(
-        [arena_A, BTAsolveB, AsolveB, arena_D, res]() mutable {
-          double C_adj = res.adj();
+    reverse_pass_callback([arena_A, BTAsolveB, AsolveB, arena_D,
+                           res]() mutable {
+      double C_adj = res.adj();
 
-          arena_A.adj() -= C_adj * AsolveB * arena_D.val().asDiagonal()
-                           * AsolveB.transpose();
-          arena_D.adj() += C_adj * BTAsolveB.diagonal();
-        });
+      arena_A.adj()
+          -= C_adj * AsolveB * arena_D.val().asDiagonal() * AsolveB.transpose();
+      arena_D.adj() += C_adj * BTAsolveB.diagonal();
+    });
 
     return res;
   } else if constexpr (is_autodiff_v<Ta> && is_constant_all_v<Tb, Td>) {
@@ -259,8 +259,8 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, const LDLT_factor<Ta>& A,
     reverse_pass_callback([arena_A, AsolveB, arena_D, res]() mutable {
       double C_adj = res.adj();
 
-      arena_A.adj() -= C_adj * AsolveB * arena_D.val().asDiagonal()
-                       * AsolveB.transpose();
+      arena_A.adj()
+          -= C_adj * AsolveB * arena_D.val().asDiagonal() * AsolveB.transpose();
     });
 
     return res;
@@ -286,8 +286,8 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, const LDLT_factor<Ta>& A,
     arena_t<promote_scalar_t<double, Td>> arena_D = value_of(D);
     auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
 
-    var res = (arena_D.asDiagonal() * arena_B.val().transpose() * AsolveB)
-                  .trace();
+    var res
+        = (arena_D.asDiagonal() * arena_B.val().transpose() * AsolveB).trace();
 
     reverse_pass_callback([AsolveB, arena_B, arena_D, res]() mutable {
       arena_B.adj() += res.adj() * AsolveB * 2 * arena_D.asDiagonal();

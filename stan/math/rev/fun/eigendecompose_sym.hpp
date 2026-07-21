@@ -45,11 +45,10 @@ inline auto eigendecompose_sym(const T& m) {
                      * eigenvecs.val().transpose();
     // eigenvector reverse calculation
     const auto p = arena_m.val().cols();
-    Eigen::MatrixXd f
-        = (1
-           / (eigenvals.val().rowwise().replicate(p).transpose()
-              - eigenvals.val().rowwise().replicate(p))
-                 .array());
+    Eigen::MatrixXd f = (1
+                         / (eigenvals.val().rowwise().replicate(p).transpose()
+                            - eigenvals.val().rowwise().replicate(p))
+                               .array());
     f.diagonal().setZero();
     auto vector_adj
         = eigenvecs.val()

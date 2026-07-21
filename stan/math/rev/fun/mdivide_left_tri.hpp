@@ -360,8 +360,7 @@ inline auto mdivide_left_tri(T1 &&A, T2 &&B) {
     auto arena_A_val = to_arena(arena_A.val());
 
     arena_t<ret_type> res
-        = arena_A_val.template triangularView<TriView>().solve(
-            arena_B.val());
+        = arena_A_val.template triangularView<TriView>().solve(arena_B.val());
 
     reverse_pass_callback([arena_A, arena_B, arena_A_val, res]() mutable {
       promote_scalar_t<double, T2> adjB

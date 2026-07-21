@@ -79,8 +79,7 @@ inline plain_type_t<T> stochastic_row_constrain(const T& y,
   arena_t<T> arena_y = y;
 
   double lp_val = 0;
-  arena_t<ret_type> arena_x
-      = stochastic_row_constrain(arena_y.val(), lp_val);
+  arena_t<ret_type> arena_x = stochastic_row_constrain(arena_y.val(), lp_val);
   lp += lp_val;
 
   if (unlikely(N == 0 || M == 0)) {
