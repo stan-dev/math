@@ -30,7 +30,7 @@ inline auto inverse(const T& m) {
   }
 
   arena_t<T> arena_m = m;
-  arena_t<promote_scalar_t<double, T>> res_val = arena_m.val_op().inverse();
+  arena_t<promote_scalar_t<double, T>> res_val = arena_m.val().inverse();
   arena_t<ret_type> res = res_val;
 
   reverse_pass_callback([res, res_val, arena_m]() mutable {

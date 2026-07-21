@@ -46,7 +46,7 @@ class vari_cl_base : public vari_base {
    * @return The value of this vari.
    */
   inline const auto& val() const { return val_; }
-  inline auto& val_op() { return val_; }
+  inline auto& val() { return val_; }
 
   /**
    * Return a reference to the derivative of the root expression with

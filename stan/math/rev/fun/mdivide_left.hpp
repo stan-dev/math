@@ -42,8 +42,8 @@ inline auto mdivide_left(T1&& A, T2&& B) {
   if constexpr (is_autodiff_v<T1> && is_autodiff_v<T2>) {
     arena_t<T1> arena_A(std::forward<T1>(A));
     arena_t<T2> arena_B(std::forward<T2>(B));
-    auto hqr_A_ptr = make_chainable_ptr(arena_A.val_op().householderQr());
-    arena_t<ret_type> res = hqr_A_ptr->solve(arena_B.val_op());
+    auto hqr_A_ptr = make_chainable_ptr(arena_A.val().householderQr());
+    arena_t<ret_type> res = hqr_A_ptr->solve(arena_B.val());
     reverse_pass_callback([arena_A, arena_B, hqr_A_ptr, res]() mutable {
       promote_scalar_t<double, T2> adjB
           = hqr_A_ptr->householderQ()
@@ -51,7 +51,7 @@ inline auto mdivide_left(T1&& A, T2&& B) {
                   .template triangularView<Eigen::Upper>()
                   .transpose()
                   .solve(res.adj());
-      arena_A.adj() -= adjB * res.val_op().transpose();
+      arena_A.adj() -= adjB * res.val().transpose();
       arena_B.adj() += adjB;
     });
 
@@ -59,7 +59,7 @@ inline auto mdivide_left(T1&& A, T2&& B) {
   } else if constexpr (is_autodiff_v<T2>) {
     arena_t<T2> arena_B(std::forward<T2>(B));
     auto hqr_A_ptr = make_chainable_ptr(value_of(A).householderQr());
-    arena_t<ret_type> res = hqr_A_ptr->solve(arena_B.val_op());
+    arena_t<ret_type> res = hqr_A_ptr->solve(arena_B.val());
     reverse_pass_callback([arena_B, hqr_A_ptr, res]() mutable {
       arena_B.adj() += hqr_A_ptr->householderQ()
                        * hqr_A_ptr->matrixQR()
@@ -70,7 +70,7 @@ inline auto mdivide_left(T1&& A, T2&& B) {
     return ret_type(res);
   } else {
     arena_t<T1> arena_A(std::forward<T1>(A));
-    auto hqr_A_ptr = make_chainable_ptr(arena_A.val_op().householderQr());
+    auto hqr_A_ptr = make_chainable_ptr(arena_A.val().householderQr());
     arena_t<ret_type> res = hqr_A_ptr->solve(value_of(B));
     reverse_pass_callback([arena_A, hqr_A_ptr, res]() mutable {
       arena_A.adj() -= hqr_A_ptr->householderQ()
@@ -78,7 +78,7 @@ inline auto mdivide_left(T1&& A, T2&& B) {
                              .template triangularView<Eigen::Upper>()
                              .transpose()
                              .solve(res.adj())
-                       * res.val_op().transpose();
+                       * res.val().transpose();
     });
     return ret_type(res);
   }
