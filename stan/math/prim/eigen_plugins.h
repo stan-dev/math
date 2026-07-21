@@ -6,6 +6,7 @@
  *
  * TODO(Andrew): Replace with std::void_t after move to C++17
  */
+#include <type_traits>
 template<class, class = void>
 struct is_fvar : std::false_type
 { };
@@ -82,26 +83,29 @@ struct val_Op{
   double& operator()(double& v) const { return v; }
 };
 
-using CwiseValOp = std::conditional_t<
-  is_fvar<Scalar>::value,
-  CwiseUnaryView<val_Op, Derived>,
-  CwiseUnaryOp<val_Op, const Derived>>;
 
 /**
  * Coefficient-wise function applying val_Op struct to a matrix of const var
  * or vari* and returning a view to the const matrix of doubles containing
  * the values
  */
-inline const CwiseValOp
-val() const { return CwiseValOp(derived());
+inline const CwiseUnaryOp<val_Op, const Derived>
+val() const { return CwiseUnaryOp<val_Op, const Derived>(derived());
 }
 
 /**
  * Coefficient-wise function applying val_Op struct to a matrix of var
  * or vari* and returning a view to the values
  */
-inline CwiseValOp
-val() { return CwiseValOp(derived());
+ 
+template <typename T = Scalar, std::enable_if_t<!is_fvar<std::decay_t<T>>::value>* = nullptr>
+inline CwiseUnaryOp<val_Op, Derived>
+val() { return CwiseUnaryOp<val_Op, Derived>(derived());
+}
+ 
+template <typename T = Scalar, std::enable_if_t<is_fvar<std::decay_t<T>>::value>* = nullptr>
+inline CwiseUnaryView<val_Op, Derived>
+val() { return CwiseUnaryView<val_Op, Derived>(derived());
 }
 
 /**
