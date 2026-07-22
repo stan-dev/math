@@ -251,12 +251,11 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
 
     var res = (arena_BDT.transpose() * arena_AB).trace();
 
-    reverse_pass_callback(
-        [arena_A, arena_B, arena_D, arena_AB, arena_BDT, res]() mutable {
-          arena_B.adj() += res.adj()
-                           * (arena_AB * arena_D
-                              + arena_A.transpose() * arena_BDT);
-        });
+    reverse_pass_callback([arena_A, arena_B, arena_D, arena_AB, arena_BDT,
+                           res]() mutable {
+      arena_B.adj()
+          += res.adj() * (arena_AB * arena_D + arena_A.transpose() * arena_BDT);
+    });
 
     return res;
   } else if constexpr (is_constant_all_v<Ta, Tb> && is_autodiff_v<Td>) {
