@@ -10,7 +10,6 @@
 #include <stan/math/prim/functor/apply.hpp>
 
 #include <cstddef>
-#include <string>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -18,27 +17,6 @@
 
 namespace stan {
 namespace math {
-
-namespace internal {
-
-template <typename T, typename... Types>
-inline void check_all_matching_dims(const char* function, const T& x,
-                                    const Types&... xs) {
-  std::size_t arg_idx = 2;
-  (
-      [&](const auto& y) {
-        if (x.rows() != y.rows() || x.cols() != y.cols()) {
-          [&]() STAN_COLD_PATH {
-            const std::string name = "x" + std::to_string(arg_idx);
-            check_matching_dims(function, "x1", x, name.c_str(), y);
-          }();
-        }
-        ++arg_idx;
-      }(xs),
-      ...);
-}
-
-}  // namespace internal
 
 /**
  * Apply a functor to each element of a std::vector and collect the results.
@@ -256,7 +234,7 @@ inline auto row_mapN(F&& f, Types&&... args) {
   static_assert(sizeof...(Types) >= 2,
                 "row_mapN requires at least two Eigen matrix inputs.");
   static constexpr const char* function = "row_mapN";
-  internal::check_all_matching_dims(function, args...);
+  check_matching_dims(function, args...);
 
   auto m_refs = std::tuple{to_ref(std::forward<Types>(args))...};
   const Eigen::Index n_rows = std::get<0>(m_refs).rows();
@@ -320,7 +298,7 @@ inline auto col_mapN(F&& f, Types&&... args) {
   static_assert(sizeof...(Types) >= 2,
                 "col_mapN requires at least two Eigen matrix inputs.");
   static constexpr const char* function = "col_mapN";
-  internal::check_all_matching_dims(function, args...);
+  check_matching_dims(function, args...);
 
   auto m_refs = std::tuple{to_ref(std::forward<Types>(args))...};
   const Eigen::Index n_cols = std::get<0>(m_refs).cols();
