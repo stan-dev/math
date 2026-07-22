@@ -110,7 +110,7 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, LDLT_factor<Ta>& A,
       double C_adj = res.adj();
 
       arena_A.adj()
-          -= C_adj * AsolveB * arena_D.val().transpose() * AsolveB.transpose();
+          -= C_adj * AsolveB * arena_D.transpose() * AsolveB.transpose();
     });
 
     return res;

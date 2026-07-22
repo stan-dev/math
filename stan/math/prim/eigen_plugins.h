@@ -120,6 +120,10 @@ inline CwiseUnaryView<val_Op, Derived>
 val() { return CwiseUnaryView<val_Op, Derived>(derived());
 }
 
+inline CwiseUnaryOp<val_Op, Derived>
+val_op() { return CwiseUnaryOp<val_Op, Derived>(derived());
+}
+
 /**
  * Structure to return tangent from an fvar.
  */
