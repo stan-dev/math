@@ -4,8 +4,8 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/err/check_matching_dims.hpp>
-#include <stan/math/prim/err/check_matching_sizes.hpp>
 #include <stan/math/prim/err/check_size_match.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 
@@ -22,23 +22,6 @@ namespace math {
 namespace internal {
 
 template <typename T, typename... Types>
-inline void check_all_matching_sizes(const char* function, const T& x,
-                                     const Types&... xs) {
-  std::size_t arg_idx = 2;
-  (
-      [&](const auto& y) {
-        if (x.size() != y.size()) {
-          [&]() STAN_COLD_PATH {
-            const std::string name = "x" + std::to_string(arg_idx);
-            check_matching_sizes(function, "x1", x, name.c_str(), y);
-          }();
-        }
-        ++arg_idx;
-      }(xs),
-      ...);
-}
-
-template <typename T, typename... Types>
 inline void check_all_matching_dims(const char* function, const T& x,
                                     const Types&... xs) {
   std::size_t arg_idx = 2;
@@ -53,36 +36,6 @@ inline void check_all_matching_dims(const char* function, const T& x,
         ++arg_idx;
       }(xs),
       ...);
-}
-
-template <typename T_scalar, typename T>
-inline void assign_matrix_row(
-    const char* function,
-    Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic>& result,
-    Eigen::Index i, T&& x) {
-  if (i == 0) {
-    result = Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic>(
-        result.rows(), x.cols());
-  } else {
-    check_size_match(function, "columns of result", result.cols(),
-                     "columns of returned row", x.cols());
-  }
-  result.row(i) = std::forward<T>(x);
-}
-
-template <typename T_scalar, typename T>
-inline void assign_matrix_col(
-    const char* function,
-    Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic>& result,
-    Eigen::Index j, T&& x) {
-  if (j == 0) {
-    result = Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic>(
-        x.rows(), result.cols());
-  } else {
-    check_size_match(function, "rows of result", result.rows(),
-                     "rows of returned column", x.rows());
-  }
-  result.col(j) = std::forward<T>(x);
 }
 
 }  // namespace internal
@@ -150,7 +103,7 @@ inline auto mapN(F&& f, Types&&... args) {
   static_assert(sizeof...(Types) >= 2,
                 "mapN requires at least two std::vector inputs.");
   static constexpr const char* function = "mapN";
-  internal::check_all_matching_sizes(function, args...);
+  check_consistent_sizes(function, args...);
 
   const std::size_t n = std::get<0>(std::forward_as_tuple(args...)).size();
   using T_return = std::decay_t<decltype(f((args[0])...))>;
@@ -170,7 +123,8 @@ inline auto mapN(F&& f, Types&&... args) {
  * For a matrix `m` with `n` rows, returns a matrix whose `i`-th row is
  * `f(m.row(i), args...)`. Additional arguments are shared across calls. If
  * `m` has zero rows, returns a 0x0 matrix (output column count is unknown
- * when the functor is never called).
+ * when the functor is never called). If the first returned row is empty,
+ * returns a 0x0 matrix without calling the functor on the remaining rows.
  *
  * Expensive Eigen expressions passed as `m` are evaluated once via `to_ref`
  * before the row loop, so compound expressions (e.g. `A * B`) are not
@@ -193,8 +147,8 @@ template <typename F, typename T, typename... Args,
 inline auto row_map(F&& f, T&& m, Args&&... args) {
   static constexpr const char* function = "row_map";
   decltype(auto) m_ref = to_ref(std::forward<T>(m));
-  using T_return
-      = scalar_type_t<plain_type_t<decltype(f(m_ref.row(0), args...))>>;
+  using result_row_t = plain_type_t<decltype(f(m_ref.row(0), args...))>;
+  using T_return = scalar_type_t<result_row_t>;
   using matrix_t = Eigen::Matrix<T_return, Eigen::Dynamic, Eigen::Dynamic>;
 
   const Eigen::Index n_rows = m_ref.rows();
@@ -202,9 +156,17 @@ inline auto row_map(F&& f, T&& m, Args&&... args) {
     return matrix_t(0, 0);
   }
 
-  matrix_t result(n_rows, 0);
-  for (Eigen::Index i = 0; i < n_rows; ++i) {
-    internal::assign_matrix_row(function, result, i, f(m_ref.row(i), args...));
+  result_row_t first_row = f(m_ref.row(0), args...);
+  if (first_row.size() == 0) {
+    return matrix_t(0, 0);
+  }
+  matrix_t result(n_rows, first_row.cols());
+  result.row(0) = first_row;
+  for (Eigen::Index i = 1; i < n_rows; ++i) {
+    result_row_t row = f(m_ref.row(i), args...);
+    check_size_match(function, "columns of result", result.cols(),
+                     "columns of returned row", row.cols());
+    result.row(i) = row;
   }
   return result;
 }
@@ -215,7 +177,8 @@ inline auto row_map(F&& f, T&& m, Args&&... args) {
  * For a matrix `m` with `k` columns, returns a matrix whose `j`-th column is
  * `f(m.col(j), args...)`. Additional arguments are shared across calls. If
  * `m` has zero columns, returns a 0x0 matrix (output row count is unknown
- * when the functor is never called).
+ * when the functor is never called). If the first returned column is empty,
+ * returns a 0x0 matrix without calling the functor on the remaining columns.
  *
  * Expensive Eigen expressions passed as `m` are evaluated once via `to_ref`
  * before the column loop, so compound expressions (e.g. `A * B`) are not
@@ -238,8 +201,8 @@ template <typename F, typename T, typename... Args,
 inline auto col_map(F&& f, T&& m, Args&&... args) {
   static constexpr const char* function = "col_map";
   decltype(auto) m_ref = to_ref(std::forward<T>(m));
-  using T_return
-      = scalar_type_t<plain_type_t<decltype(f(m_ref.col(0), args...))>>;
+  using result_col_t = plain_type_t<decltype(f(m_ref.col(0), args...))>;
+  using T_return = scalar_type_t<result_col_t>;
   using matrix_t = Eigen::Matrix<T_return, Eigen::Dynamic, Eigen::Dynamic>;
 
   const Eigen::Index n_cols = m_ref.cols();
@@ -247,9 +210,17 @@ inline auto col_map(F&& f, T&& m, Args&&... args) {
     return matrix_t(0, 0);
   }
 
-  matrix_t result(0, n_cols);
-  for (Eigen::Index j = 0; j < n_cols; ++j) {
-    internal::assign_matrix_col(function, result, j, f(m_ref.col(j), args...));
+  result_col_t first_col = f(m_ref.col(0), args...);
+  if (first_col.size() == 0) {
+    return matrix_t(0, 0);
+  }
+  matrix_t result(first_col.rows(), n_cols);
+  result.col(0) = first_col;
+  for (Eigen::Index j = 1; j < n_cols; ++j) {
+    result_col_t col = f(m_ref.col(j), args...);
+    check_size_match(function, "rows of result", result.rows(),
+                     "rows of returned column", col.rows());
+    result.col(j) = col;
   }
   return result;
 }
@@ -259,7 +230,8 @@ inline auto col_map(F&& f, T&& m, Args&&... args) {
  *
  * For matrices `args...` with `n` rows, returns a matrix whose `i`-th row is
  * `f(args[0].row(i), args[1].row(i), ...)`. If the inputs have zero rows,
- * returns a 0x0 matrix.
+ * returns a 0x0 matrix. If the first returned row is empty, returns a 0x0
+ * matrix without calling the functor on the remaining rows.
  *
  * Unlike `row_map`, this overload only zips matrices and does not accept
  * additional shared trailing arguments.
@@ -286,26 +258,34 @@ inline auto row_mapN(F&& f, Types&&... args) {
   static constexpr const char* function = "row_mapN";
   internal::check_all_matching_dims(function, args...);
 
-  std::tuple<ref_type_t<Types&&>...> m_refs{
-      to_ref(std::forward<Types>(args))...};
+  auto m_refs = std::tuple{to_ref(std::forward<Types>(args))...};
   const Eigen::Index n_rows = std::get<0>(m_refs).rows();
-  using T_return = scalar_type_t<plain_type_t<decltype(
-      f((std::declval<ref_type_t<Types&&>>().row(0))...))>>;
+  using result_row_t = plain_type_t<decltype(f(
+      (std::declval<ref_type_t<Types&&>>().row(0))...))>;
+  using T_return = scalar_type_t<result_row_t>;
   using matrix_t = Eigen::Matrix<T_return, Eigen::Dynamic, Eigen::Dynamic>;
 
   if (n_rows == 0) {
     return matrix_t(0, 0);
   }
 
-  matrix_t result(n_rows, 0);
-  apply(
+  return apply(
       [&](auto&&... ms) {
-        for (Eigen::Index i = 0; i < n_rows; ++i) {
-          internal::assign_matrix_row(function, result, i, f((ms.row(i))...));
+        result_row_t first_row = f((ms.row(0))...);
+        if (first_row.size() == 0) {
+          return matrix_t(0, 0);
         }
+        matrix_t result(n_rows, first_row.cols());
+        result.row(0) = first_row;
+        for (Eigen::Index i = 1; i < n_rows; ++i) {
+          result_row_t row = f((ms.row(i))...);
+          check_size_match(function, "columns of result", result.cols(),
+                           "columns of returned row", row.cols());
+          result.row(i) = row;
+        }
+        return result;
       },
       m_refs);
-  return result;
 }
 
 /**
@@ -313,7 +293,8 @@ inline auto row_mapN(F&& f, Types&&... args) {
  *
  * For matrices `args...` with `k` columns, returns a matrix whose `j`-th
  * column is `f(args[0].col(j), args[1].col(j), ...)`. If the inputs have
- * zero columns, returns a 0x0 matrix.
+ * zero columns, returns a 0x0 matrix. If the first returned column is empty,
+ * returns a 0x0 matrix without calling the functor on the remaining columns.
  *
  * Unlike `col_map`, this overload only zips matrices and does not accept
  * additional shared trailing arguments.
@@ -341,26 +322,32 @@ inline auto col_mapN(F&& f, Types&&... args) {
   static constexpr const char* function = "col_mapN";
   internal::check_all_matching_dims(function, args...);
 
-  std::tuple<ref_type_t<Types&&>...> m_refs{
-      to_ref(std::forward<Types>(args))...};
+  auto m_refs = std::tuple{to_ref(std::forward<Types>(args))...};
   const Eigen::Index n_cols = std::get<0>(m_refs).cols();
-  using T_return = scalar_type_t<plain_type_t<decltype(
-      f((std::declval<ref_type_t<Types&&>>().col(0))...))>>;
+  using result_col_t = plain_type_t<decltype(f(
+      (std::declval<ref_type_t<Types&&>>().col(0))...))>;
+  using T_return = scalar_type_t<result_col_t>;
   using matrix_t = Eigen::Matrix<T_return, Eigen::Dynamic, Eigen::Dynamic>;
-
   if (n_cols == 0) {
     return matrix_t(0, 0);
   }
-
-  matrix_t result(0, n_cols);
-  apply(
+  return apply(
       [&](auto&&... ms) {
-        for (Eigen::Index j = 0; j < n_cols; ++j) {
-          internal::assign_matrix_col(function, result, j, f((ms.col(j))...));
+        result_col_t first_col = f((ms.col(0))...);
+        if (first_col.size() == 0) {
+          return matrix_t(0, 0);
         }
+        matrix_t result(first_col.rows(), n_cols);
+        result.col(0) = first_col;
+        for (Eigen::Index j = 1; j < n_cols; ++j) {
+          result_col_t col = f((ms.col(j))...);
+          check_size_match(function, "rows of result", result.rows(),
+                           "rows of returned column", col.rows());
+          result.col(j) = col;
+        }
+        return result;
       },
       m_refs);
-  return result;
 }
 
 }  // namespace math

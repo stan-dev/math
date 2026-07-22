@@ -134,6 +134,20 @@ TEST(MathFunctor, row_map_empty) {
   EXPECT_EQ(y.cols(), 0);
 }
 
+TEST(MathFunctor, row_map_empty_result) {
+  Eigen::MatrixXd x = Eigen::MatrixXd::Ones(2, 2);
+  int calls = 0;
+  auto y = stan::math::row_map(
+      [&calls](const Eigen::RowVectorXd&) {
+        ++calls;
+        return Eigen::RowVectorXd(0);
+      },
+      x);
+  EXPECT_EQ(y.rows(), 0);
+  EXPECT_EQ(y.cols(), 0);
+  EXPECT_EQ(calls, 1);
+}
+
 TEST(MathFunctor, row_map_inconsistent_row_size) {
   Eigen::MatrixXd x(2, 2);
   x << 1.0, 2.0, 3.0, 4.0;
@@ -186,6 +200,20 @@ TEST(MathFunctor, col_map_empty) {
       = stan::math::col_map([](const Eigen::VectorXd& col) { return col; }, x);
   EXPECT_EQ(y.rows(), 0);
   EXPECT_EQ(y.cols(), 0);
+}
+
+TEST(MathFunctor, col_map_empty_result) {
+  Eigen::MatrixXd x = Eigen::MatrixXd::Ones(2, 2);
+  int calls = 0;
+  auto y = stan::math::col_map(
+      [&calls](const Eigen::VectorXd&) {
+        ++calls;
+        return Eigen::VectorXd(0);
+      },
+      x);
+  EXPECT_EQ(y.rows(), 0);
+  EXPECT_EQ(y.cols(), 0);
+  EXPECT_EQ(calls, 1);
 }
 
 TEST(MathFunctor, col_map_inconsistent_col_size) {
@@ -259,6 +287,21 @@ TEST(MathFunctor, row_mapN_empty) {
   EXPECT_EQ(y.cols(), 0);
 }
 
+TEST(MathFunctor, row_mapN_empty_result) {
+  Eigen::MatrixXd a = Eigen::MatrixXd::Ones(2, 2);
+  Eigen::MatrixXd b = Eigen::MatrixXd::Ones(2, 2);
+  int calls = 0;
+  auto y = stan::math::row_mapN(
+      [&calls](const Eigen::RowVectorXd&, const Eigen::RowVectorXd&) {
+        ++calls;
+        return Eigen::RowVectorXd(0);
+      },
+      a, b);
+  EXPECT_EQ(y.rows(), 0);
+  EXPECT_EQ(y.cols(), 0);
+  EXPECT_EQ(calls, 1);
+}
+
 TEST(MathFunctor, row_mapN_mixed_scalar_types) {
   Eigen::MatrixXi a(2, 2);
   a << 1, 2, 3, 4;
@@ -330,6 +373,21 @@ TEST(MathFunctor, col_mapN_empty) {
       a, b);
   EXPECT_EQ(y.rows(), 0);
   EXPECT_EQ(y.cols(), 0);
+}
+
+TEST(MathFunctor, col_mapN_empty_result) {
+  Eigen::MatrixXd a = Eigen::MatrixXd::Ones(2, 2);
+  Eigen::MatrixXd b = Eigen::MatrixXd::Ones(2, 2);
+  int calls = 0;
+  auto y = stan::math::col_mapN(
+      [&calls](const Eigen::VectorXd&, const Eigen::VectorXd&) {
+        ++calls;
+        return Eigen::VectorXd(0);
+      },
+      a, b);
+  EXPECT_EQ(y.rows(), 0);
+  EXPECT_EQ(y.cols(), 0);
+  EXPECT_EQ(calls, 1);
 }
 
 TEST(MathFunctor, col_mapN_mixed_scalar_types) {
