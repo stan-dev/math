@@ -18,6 +18,22 @@
 namespace stan {
 namespace math {
 
+namespace internal {
+
+template <typename F, typename Tuple, typename Callback>
+inline decltype(auto) with_tuple_prefix(F& f, Tuple& tup, Callback&& callback) {
+  return apply(
+      [&](auto&&... tuple_args) -> decltype(auto) {
+        auto prefixed_f = [&](auto&&... args) -> decltype(auto) {
+          return f(tuple_args..., std::forward<decltype(args)>(args)...);
+        };
+        return std::forward<Callback>(callback)(prefixed_f);
+      },
+      tup);
+}
+
+}  // namespace internal
+
 /**
  * Apply a functor to each element of a std::vector and collect the results.
  *
@@ -93,6 +109,28 @@ inline auto mapN(F&& f, Types&&... args) {
   }
 
   return result;
+}
+
+/**
+ * Apply a functor elementwise to N std::vectors with tuple arguments prepended
+ * to each call.
+ *
+ * @tparam F Type of functor to apply.
+ * @tparam Tuple Type of tuple containing leading shared arguments.
+ * @tparam Types Types of input std::vector containers.
+ * @param f functor to apply to each tuple of elements.
+ * @param tup leading shared arguments expanded before each tuple of elements.
+ * @param args std::vector inputs to which operation is applied.
+ * @return std::vector with result of applying functor to each tuple of
+ * elements.
+ */
+template <typename F, typename Tuple, typename... Types,
+          require_tuple_t<Tuple>* = nullptr,
+          require_all_std_vector_t<Types...>* = nullptr>
+inline auto mapN(F&& f, Tuple&& tup, Types&&... args) {
+  return internal::with_tuple_prefix(f, tup, [&](auto&& prefixed_f) {
+    return mapN(prefixed_f, std::forward<Types>(args)...);
+  });
 }
 
 /**
@@ -238,8 +276,8 @@ inline auto row_mapN(F&& f, Types&&... args) {
 
   auto m_refs = std::tuple{to_ref(std::forward<Types>(args))...};
   const Eigen::Index n_rows = std::get<0>(m_refs).rows();
-  using result_row_t = plain_type_t<decltype(
-      f((std::declval<ref_type_t<Types&&>>().row(0))...))>;
+  using result_row_t = plain_type_t<decltype(f(
+      (std::declval<ref_type_t<Types&&>>().row(0))...))>;
   using T_return = scalar_type_t<result_row_t>;
   using matrix_t = Eigen::Matrix<T_return, Eigen::Dynamic, Eigen::Dynamic>;
 
@@ -264,6 +302,27 @@ inline auto row_mapN(F&& f, Types&&... args) {
         return result;
       },
       m_refs);
+}
+
+/**
+ * Apply a functor rowwise to N Eigen matrices with tuple arguments prepended
+ * to each call.
+ *
+ * @tparam F Type of functor to apply.
+ * @tparam Tuple Type of tuple containing leading shared arguments.
+ * @tparam Types Eigen matrix types.
+ * @param f functor to apply to each tuple of rows.
+ * @param tup leading shared arguments expanded before each tuple of rows.
+ * @param args Eigen matrix inputs to which operation is applied.
+ * @return Eigen matrix with result of applying functor to each tuple of rows.
+ */
+template <typename F, typename Tuple, typename... Types,
+          require_tuple_t<Tuple>* = nullptr,
+          require_all_eigen_matrix_dynamic_t<Types...>* = nullptr>
+inline auto row_mapN(F&& f, Tuple&& tup, Types&&... args) {
+  return internal::with_tuple_prefix(f, tup, [&](auto&& prefixed_f) {
+    return row_mapN(prefixed_f, std::forward<Types>(args)...);
+  });
 }
 
 /**
@@ -302,8 +361,8 @@ inline auto col_mapN(F&& f, Types&&... args) {
 
   auto m_refs = std::tuple{to_ref(std::forward<Types>(args))...};
   const Eigen::Index n_cols = std::get<0>(m_refs).cols();
-  using result_col_t = plain_type_t<decltype(
-      f((std::declval<ref_type_t<Types&&>>().col(0))...))>;
+  using result_col_t = plain_type_t<decltype(f(
+      (std::declval<ref_type_t<Types&&>>().col(0))...))>;
   using T_return = scalar_type_t<result_col_t>;
   using matrix_t = Eigen::Matrix<T_return, Eigen::Dynamic, Eigen::Dynamic>;
   if (n_cols == 0) {
@@ -326,6 +385,28 @@ inline auto col_mapN(F&& f, Types&&... args) {
         return result;
       },
       m_refs);
+}
+
+/**
+ * Apply a functor columnwise to N Eigen matrices with tuple arguments
+ * prepended to each call.
+ *
+ * @tparam F Type of functor to apply.
+ * @tparam Tuple Type of tuple containing leading shared arguments.
+ * @tparam Types Eigen matrix types.
+ * @param f functor to apply to each tuple of columns.
+ * @param tup leading shared arguments expanded before each tuple of columns.
+ * @param args Eigen matrix inputs to which operation is applied.
+ * @return Eigen matrix with result of applying functor to each tuple of
+ * columns.
+ */
+template <typename F, typename Tuple, typename... Types,
+          require_tuple_t<Tuple>* = nullptr,
+          require_all_eigen_matrix_dynamic_t<Types...>* = nullptr>
+inline auto col_mapN(F&& f, Tuple&& tup, Types&&... args) {
+  return internal::with_tuple_prefix(f, tup, [&](auto&& prefixed_f) {
+    return col_mapN(prefixed_f, std::forward<Types>(args)...);
+  });
 }
 
 }  // namespace math

@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include <stdexcept>
+#include <tuple>
 #include <vector>
 
 TEST(MathFunctor, map_square) {
@@ -90,6 +91,16 @@ TEST(MathFunctor, mapN_three_vectors) {
   ASSERT_EQ(y.size(), 2u);
   EXPECT_FLOAT_EQ(y[0], 111.0);
   EXPECT_FLOAT_EQ(y[1], 222.0);
+}
+
+TEST(MathFunctor, mapN_tuple_args) {
+  std::vector<double> a{1.0, 2.0};
+  std::vector<double> b{10.0, 20.0};
+  auto args = std::make_tuple(100.0);
+  auto y = stan::math::mapN(
+      [](double offset, double u, double v) { return offset + u + v; }, args, a,
+      b);
+  EXPECT_STD_VECTOR_FLOAT_EQ(y, std::vector<double>({111.0, 122.0}));
 }
 
 TEST(MathFunctor, mapN_empty) {
@@ -263,6 +274,24 @@ TEST(MathFunctor, row_mapN_add) {
   EXPECT_MATRIX_FLOAT_EQ(y, expected);
 }
 
+TEST(MathFunctor, row_mapN_tuple_args) {
+  Eigen::MatrixXd a(2, 2);
+  a << 1.0, 2.0, 3.0, 4.0;
+  Eigen::MatrixXd b(2, 2);
+  b << 10.0, 20.0, 30.0, 40.0;
+  auto args = std::make_tuple(100.0);
+  auto y = stan::math::row_mapN(
+      [](double offset, const Eigen::RowVectorXd& u,
+         const Eigen::RowVectorXd& v) {
+        return offset + u.array() + v.array();
+      },
+      args, a, b);
+
+  Eigen::MatrixXd expected(2, 2);
+  expected << 111.0, 122.0, 133.0, 144.0;
+  EXPECT_MATRIX_FLOAT_EQ(y, expected);
+}
+
 TEST(MathFunctor, row_mapN_dim_mismatch) {
   Eigen::MatrixXd a(2, 2);
   a << 1.0, 2.0, 3.0, 4.0;
@@ -349,6 +378,23 @@ TEST(MathFunctor, col_mapN_add) {
 
   Eigen::MatrixXd expected(2, 2);
   expected << 11.0, 22.0, 33.0, 44.0;
+  EXPECT_MATRIX_FLOAT_EQ(y, expected);
+}
+
+TEST(MathFunctor, col_mapN_tuple_args) {
+  Eigen::MatrixXd a(2, 2);
+  a << 1.0, 2.0, 3.0, 4.0;
+  Eigen::MatrixXd b(2, 2);
+  b << 10.0, 20.0, 30.0, 40.0;
+  auto args = std::make_tuple(100.0);
+  auto y = stan::math::col_mapN(
+      [](double offset, const Eigen::VectorXd& u, const Eigen::VectorXd& v) {
+        return offset + u.array() + v.array();
+      },
+      args, a, b);
+
+  Eigen::MatrixXd expected(2, 2);
+  expected << 111.0, 122.0, 133.0, 144.0;
   EXPECT_MATRIX_FLOAT_EQ(y, expected);
 }
 
