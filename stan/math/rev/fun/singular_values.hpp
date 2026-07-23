@@ -29,7 +29,7 @@ inline auto singular_values(const EigMat& m) {
   auto arena_m = to_arena(m);
 
   Eigen::JacobiSVD<Eigen::MatrixXd> svd(
-      arena_m.val_op(), Eigen::ComputeThinU | Eigen::ComputeThinV);
+      arena_m.val(), Eigen::ComputeThinU | Eigen::ComputeThinV);
 
   arena_t<ret_type> singular_values = svd.singularValues();
 
