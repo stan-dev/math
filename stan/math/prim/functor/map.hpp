@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUNCTOR_MAP_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_consistent_sizes.hpp>
@@ -25,7 +26,8 @@ inline decltype(auto) with_tuple_prefix(F& f, Tuple& tup, Callback&& callback) {
   return apply(
       [&](auto&&... tuple_args) -> decltype(auto) {
         auto prefixed_f = [&](auto&&... args) -> decltype(auto) {
-          return f(tuple_args..., std::forward<decltype(args)>(args)...);
+          return eval(
+              f(tuple_args..., std::forward<decltype(args)>(args)...));
         };
         return std::forward<Callback>(callback)(prefixed_f);
       },
