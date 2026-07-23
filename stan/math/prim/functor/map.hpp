@@ -26,8 +26,7 @@ inline decltype(auto) with_tuple_prefix(F& f, Tuple& tup, Callback&& callback) {
   return apply(
       [&](auto&&... tuple_args) -> decltype(auto) {
         auto prefixed_f = [&](auto&&... args) -> decltype(auto) {
-          return eval(
-              f(tuple_args..., std::forward<decltype(args)>(args)...));
+          return eval(f(tuple_args..., std::forward<decltype(args)>(args)...));
         };
         return std::forward<Callback>(callback)(prefixed_f);
       },
