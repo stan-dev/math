@@ -62,8 +62,8 @@ inline auto sqrt(const T& a) {
   return make_callback_var(
       a.val().array().sqrt().matrix(), [a](auto& vi) mutable {
         a.adj().array()
-            += (vi.val_op().array() == 0.0)
-                   .select(0.0, vi.adj().array() / (2.0 * vi.val_op().array()));
+            += (vi.val().array() == 0.0)
+                   .select(0.0, vi.adj().array() / (2.0 * vi.val().array()));
       });
 }
 
