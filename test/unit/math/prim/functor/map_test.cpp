@@ -93,13 +93,15 @@ TEST(MathFunctor, mapN_three_vectors) {
   EXPECT_FLOAT_EQ(y[1], 222.0);
 }
 
-TEST(MathFunctor, mapN_tuple_args) {
+TEST(MathFunctor, mapN_shared_arg_reused) {
   std::vector<double> a{1.0, 2.0};
   std::vector<double> b{10.0, 20.0};
-  auto args = std::make_tuple(100.0);
+  auto offset = std::make_unique<double>(100.0);
   auto y = stan::math::mapN(
-      [](double offset, double u, double v) { return offset + u + v; }, args, a,
-      b);
+      [](double u, double v, const std::unique_ptr<double>& mu) {
+        return u + v + *mu;
+      },
+      std::forward_as_tuple(a, b), std::move(offset));
   EXPECT_STD_VECTOR_FLOAT_EQ(y, std::vector<double>({111.0, 122.0}));
 }
 
@@ -274,18 +276,18 @@ TEST(MathFunctor, row_mapN_add) {
   EXPECT_MATRIX_FLOAT_EQ(y, expected);
 }
 
-TEST(MathFunctor, row_mapN_tuple_args) {
+TEST(MathFunctor, row_mapN_shared_arg_reused) {
   Eigen::MatrixXd a(2, 2);
   a << 1.0, 2.0, 3.0, 4.0;
   Eigen::MatrixXd b(2, 2);
   b << 10.0, 20.0, 30.0, 40.0;
-  auto args = std::make_tuple(100.0);
+  auto offset = std::make_unique<double>(100.0);
   auto y = stan::math::row_mapN(
-      [](double offset, const Eigen::RowVectorXd& u,
-         const Eigen::RowVectorXd& v) {
-        return offset + u.array() + v.array();
+      [](const Eigen::RowVectorXd& u, const Eigen::RowVectorXd& v,
+         const std::unique_ptr<double>& mu) {
+        return *mu + u.array() + v.array();
       },
-      args, a, b);
+      std::forward_as_tuple(a, b), std::move(offset));
 
   Eigen::MatrixXd expected(2, 2);
   expected << 111.0, 122.0, 133.0, 144.0;
@@ -381,17 +383,18 @@ TEST(MathFunctor, col_mapN_add) {
   EXPECT_MATRIX_FLOAT_EQ(y, expected);
 }
 
-TEST(MathFunctor, col_mapN_tuple_args) {
+TEST(MathFunctor, col_mapN_shared_arg_reused) {
   Eigen::MatrixXd a(2, 2);
   a << 1.0, 2.0, 3.0, 4.0;
   Eigen::MatrixXd b(2, 2);
   b << 10.0, 20.0, 30.0, 40.0;
-  auto args = std::make_tuple(100.0);
+  auto offset = std::make_unique<double>(100.0);
   auto y = stan::math::col_mapN(
-      [](double offset, const Eigen::VectorXd& u, const Eigen::VectorXd& v) {
-        return offset + u.array() + v.array();
+      [](const Eigen::VectorXd& u, const Eigen::VectorXd& v,
+         const std::unique_ptr<double>& mu) {
+        return *mu + u.array() + v.array();
       },
-      args, a, b);
+      std::forward_as_tuple(a, b), std::move(offset));
 
   Eigen::MatrixXd expected(2, 2);
   expected << 111.0, 122.0, 133.0, 144.0;
@@ -489,5 +492,40 @@ TEST(MathFunctor, col_map_block_expression) {
 
   Eigen::MatrixXd expected(3, 2);
   expected << 2.0, 4.0, 8.0, 10.0, 14.0, 16.0;
+  EXPECT_MATRIX_FLOAT_EQ(y, expected);
+}
+
+TEST(MathFunctor, row_mapN_expression_inputs) {
+  Eigen::MatrixXd a(2, 2);
+  a << 1.0, 0.0, 0.0, 1.0;
+  Eigen::MatrixXd b(2, 2);
+  b << 1.0, 2.0, 3.0, 4.0;
+  Eigen::MatrixXd c(2, 2);
+  c << 10.0, 20.0, 30.0, 40.0;
+
+  auto y
+      = stan::math::row_mapN([](const Eigen::RowVectorXd& u,
+                                const Eigen::RowVectorXd& v) { return u + v; },
+                             a * b, c);
+
+  Eigen::MatrixXd expected(2, 2);
+  expected << 11.0, 22.0, 33.0, 44.0;
+  EXPECT_MATRIX_FLOAT_EQ(y, expected);
+}
+
+TEST(MathFunctor, col_mapN_expression_inputs) {
+  Eigen::MatrixXd a(2, 2);
+  a << 1.0, 0.0, 0.0, 1.0;
+  Eigen::MatrixXd b(2, 2);
+  b << 1.0, 2.0, 3.0, 4.0;
+  Eigen::MatrixXd c(2, 2);
+  c << 10.0, 20.0, 30.0, 40.0;
+
+  auto y = stan::math::col_mapN(
+      [](const Eigen::VectorXd& u, const Eigen::VectorXd& v) { return u + v; },
+      a * b, c);
+
+  Eigen::MatrixXd expected(2, 2);
+  expected << 11.0, 22.0, 33.0, 44.0;
   EXPECT_MATRIX_FLOAT_EQ(y, expected);
 }
