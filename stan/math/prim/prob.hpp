@@ -292,6 +292,7 @@
 #include <stan/math/prim/prob/student_t_lccdf.hpp>
 #include <stan/math/prim/prob/student_t_lcdf.hpp>
 #include <stan/math/prim/prob/student_t_lpdf.hpp>
+#include <stan/math/prim/prob/student_t_qf.hpp>
 #include <stan/math/prim/prob/student_t_rng.hpp>
 #include <stan/math/prim/prob/uniform_ccdf_log.hpp>
 #include <stan/math/prim/prob/uniform_cdf.hpp>

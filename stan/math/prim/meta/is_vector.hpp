@@ -184,7 +184,10 @@ using require_eigen_row_vector_t
  * member with a value of false.
  */
 template <typename T>
-struct is_row_vector : internal::is_row_vector_impl<T> {};
+struct is_row_vector : internal::is_row_vector_impl<std::decay_t<T>> {};
+
+template <typename T>
+inline constexpr bool is_row_vector_v = is_row_vector<T>::value;
 
 /*! \ingroup require_eigens_types */
 /*! \defgroup row_vector_types row_vector  */

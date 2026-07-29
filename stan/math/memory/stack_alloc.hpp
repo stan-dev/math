@@ -176,7 +176,7 @@ class stack_alloc {
     next_loc_ += len + pad;
     // Occasionally, we have to switch blocks.
     if (unlikely(next_loc_ >= cur_block_end_)) {
-      result = move_to_next_block(len);
+      result = move_to_next_block(len + pad);
     }
     return reinterpret_cast<void*>(result);
   }

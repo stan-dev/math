@@ -112,7 +112,7 @@ template <typename T_true, typename T_false,
                                               plain_type_t<T_false>>,
           require_stan_scalar_t<T_true>* = nullptr,
           require_container_t<T_false>* = nullptr>
-inline ReturnT select(const bool c, const T_true y_true, T_false&& y_false) {
+inline ReturnT select(const bool c, const T_true& y_true, T_false&& y_false) {
   if (c) {
     return apply_scalar_binary(
         [](auto&& y_true_inner, auto&& y_false_inner) { return y_true_inner; },
@@ -140,13 +140,16 @@ inline ReturnT select(const bool c, const T_true y_true, T_false&& y_false) {
 template <typename T_bool, typename T_true, typename T_false,
           require_eigen_array_vt<std::is_integral, T_bool>* = nullptr,
           require_all_stan_scalar_t<T_true, T_false>* = nullptr>
-inline auto select(const T_bool c, const T_true y_true, const T_false y_false) {
+inline auto select(T_bool&& c, const T_true& y_true, const T_false& y_false) {
   using ret_t = return_type_t<T_true, T_false>;
-  return c
-      .unaryExpr([y_true, y_false](bool cond) {
-        return cond ? ret_t(y_true) : ret_t(y_false);
-      })
-      .eval();
+  return make_holder(
+      [y_true, y_false](auto&& c_) {
+        return std::forward<decltype(c_)>(c_).unaryExpr(
+            [y_true, y_false](bool cond) {
+              return cond ? ret_t(y_true) : ret_t(y_false);
+            });
+      },
+      std::forward<T_bool>(c));
 }
 
 /**
@@ -164,13 +167,31 @@ inline auto select(const T_bool c, const T_true y_true, const T_false y_false) {
 template <typename T_bool, typename T_true, typename T_false,
           require_eigen_array_t<T_bool>* = nullptr,
           require_any_eigen_array_t<T_true, T_false>* = nullptr>
-inline auto select(const T_bool c, const T_true y_true, const T_false y_false) {
+inline auto select(T_bool&& c, T_true&& y_true, T_false&& y_false) {
   check_consistent_sizes("select", "boolean", c, "left hand side", y_true,
                          "right hand side", y_false);
   using ret_t = return_type_t<T_true, T_false>;
-  return c.select(y_true, y_false).template cast<ret_t>().eval();
+  if constexpr (!std::is_same_v<std::decay_t<T_true>, std::decay_t<T_false>>) {
+    return make_holder(
+        [](auto&& c_, auto&& y_true_, auto&& y_false_) {
+          return std::forward<decltype(c_)>(c_).select(
+              std::forward<decltype(y_true_)>(y_true_),
+              std::forward<decltype(y_false_)>(y_false_));
+        },
+        std::forward<T_bool>(c), std::forward<T_true>(y_true),
+        std::forward<T_false>(y_false));
+  } else {
+    return make_holder(
+        [](auto&& c_, auto&& y_true_, auto&& y_false_) {
+          return std::forward<decltype(c_)>(c_)
+              .select(std::forward<decltype(y_true_)>(y_true_),
+                      std::forward<decltype(y_false_)>(y_false_))
+              .template cast<ret_t>();
+        },
+        std::forward<T_bool>(c), std::forward<T_true>(y_true),
+        std::forward<T_false>(y_false));
+  }
 }
-
 }  // namespace math
 }  // namespace stan
 

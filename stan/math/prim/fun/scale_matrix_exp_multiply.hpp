@@ -26,15 +26,16 @@ namespace math {
  */
 template <typename EigMat1, typename EigMat2,
           require_all_eigen_vt<std::is_arithmetic, EigMat1, EigMat2>* = nullptr>
-inline Eigen::Matrix<double, Eigen::Dynamic, EigMat2::ColsAtCompileTime>
-scale_matrix_exp_multiply(const double& t, const EigMat1& A, const EigMat2& B) {
+inline Eigen::Matrix<double, Eigen::Dynamic,
+                     std::decay_t<EigMat2>::ColsAtCompileTime>
+scale_matrix_exp_multiply(const double t, EigMat1&& A, EigMat2&& B) {
   check_square("scale_matrix_exp_multiply", "input matrix", A);
   check_multiplicable("scale_matrix_exp_multiply", "A", A, "B", B);
   if (A.size() == 0) {
     return {0, B.cols()};
   }
-
-  return matrix_exp_action_handler().action(A, B, t);
+  return matrix_exp_action_handler().action(
+      to_ref(std::forward<EigMat1>(A)), to_ref(std::forward<EigMat2>(B)), t);
 }
 
 /**
@@ -56,15 +57,15 @@ template <typename Tt, typename EigMat1, typename EigMat2,
           require_any_autodiff_scalar_t<Tt, value_type_t<EigMat1>,
                                         value_type_t<EigMat2>>* = nullptr>
 inline Eigen::Matrix<return_type_t<Tt, EigMat1, EigMat2>, Eigen::Dynamic,
-                     EigMat2::ColsAtCompileTime>
-scale_matrix_exp_multiply(const Tt& t, const EigMat1& A, const EigMat2& B) {
+                     std::decay_t<EigMat2>::ColsAtCompileTime>
+scale_matrix_exp_multiply(const Tt t, EigMat1&& A, EigMat2&& B) {
   check_square("scale_matrix_exp_multiply", "input matrix", A);
   check_multiplicable("scale_matrix_exp_multiply", "A", A, "B", B);
   if (A.size() == 0) {
     return {0, B.cols()};
   }
-
-  return multiply(matrix_exp(multiply(A, t)), B);
+  return multiply(matrix_exp(multiply(to_ref(std::forward<EigMat1>(A)), t)),
+                  to_ref(std::forward<EigMat2>(B)));
 }
 
 }  // namespace math

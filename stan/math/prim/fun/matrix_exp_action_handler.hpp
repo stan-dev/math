@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/ceil.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <vector>
 #include <cmath>
@@ -23,10 +24,11 @@ namespace math {
  * and t is double.
  */
 class matrix_exp_action_handler {
-  const int _p_max = 8;
-  const int _m_max = 55;
-  const double _tol = 1.1e-16;  // from the paper, double precision: 2^-53
-  const std::vector<double> _theta_m{
+  static constexpr int _p_max = 8;
+  static constexpr int _m_max = 55;
+  static constexpr double _tol
+      = 1.1e-16;  // from the paper, double precision: 2^-53
+  static constexpr std::array<double, 100> _theta_m{
       2.22044605e-16, 2.58095680e-08, 1.38634787e-05, 3.39716884e-04,
       2.40087636e-03, 9.06565641e-03, 2.38445553e-02, 4.99122887e-02,
       8.95776020e-02, 1.44182976e-01, 2.14235807e-01, 2.99615891e-01,
@@ -64,18 +66,18 @@ class matrix_exp_action_handler {
   template <typename EigMat1, typename EigMat2,
             require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
             require_all_st_same<double, EigMat1, EigMat2>* = nullptr>
-  inline Eigen::MatrixXd action(const EigMat1& mat, const EigMat2& b,
-                                const double& t = 1.0) {
-    Eigen::MatrixXd A = mat;
+  inline Eigen::MatrixXd action(EigMat1&& mat, EigMat2&& b,
+                                const double t = 1.0) {
+    Eigen::MatrixXd A = std::forward<EigMat1>(mat);
     double mu = A.trace() / A.rows();
     A.diagonal().array() -= mu;
 
     int m, s;
-    set_approx_order(A, b, t, m, s);
+    decltype(auto) b_eval = to_ref(std::forward<EigMat2>(b));
+    set_approx_order(A, b_eval, t, m, s);
 
     double eta = exp(t * mu / s);
 
-    const auto& b_eval = b.eval();
     Eigen::MatrixXd f = b_eval;
     Eigen::MatrixXd bi = b_eval;
 
@@ -102,8 +104,11 @@ class matrix_exp_action_handler {
    *
    * @param x matrix
    */
-  double matrix_operator_inf_norm(Eigen::MatrixXd const& x) {
-    return x.cwiseAbs().rowwise().sum().maxCoeff();
+  template <typename EigenMat>
+  double matrix_operator_inf_norm(EigenMat&& x) {
+    return make_holder(
+        [](auto&& x_) { return x_.cwiseAbs().rowwise().sum().maxCoeff(); },
+        std::forward<EigenMat>(x));
   }
 
   /**
@@ -125,15 +130,16 @@ class matrix_exp_action_handler {
    */
   template <typename EigMat1, require_all_eigen_t<EigMat1>* = nullptr,
             require_all_st_same<double, EigMat1>* = nullptr>
-  double mat_power_1_norm(const EigMat1& mat, int m) {
-    if ((mat.array() > 0.0).all()) {
-      Eigen::VectorXd e = Eigen::VectorXd::Constant(mat.rows(), 1.0);
+  double mat_power_1_norm(EigMat1&& mat, const int m) {
+    auto&& mat_ref = to_ref(std::forward<EigMat1>(mat));
+    if ((mat_ref.array() > 0.0).all()) {
+      Eigen::VectorXd e = Eigen::VectorXd::Constant(mat_ref.rows(), 1.0);
       for (int j = 0; j < m; ++j) {
-        e = mat.transpose() * e;
+        e = mat_ref.transpose() * e;
       }
       return e.lpNorm<Eigen::Infinity>();
     } else {
-      return mat.pow(m).cwiseAbs().colwise().sum().maxCoeff();
+      return mat_ref.pow(m).cwiseAbs().colwise().sum().maxCoeff();
     }
   }
 
@@ -156,8 +162,8 @@ class matrix_exp_action_handler {
   template <typename EigMat1, typename EigMat2,
             require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
             require_all_st_same<double, EigMat1, EigMat2>* = nullptr>
-  inline void set_approx_order(const EigMat1& mat, const EigMat2& b,
-                               const double& t, int& m, int& s) {
+  inline void set_approx_order(EigMat1&& mat, EigMat2&& b, const double t,
+                               int& m, int& s) {
     if (t < _tol) {
       m = 0;
       s = 1;

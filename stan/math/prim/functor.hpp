@@ -7,6 +7,7 @@
 #include <stan/math/prim/functor/apply_scalar_ternary.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
+#include <stan/math/prim/functor/conditional_copy_and_promote.hpp>
 #include <stan/math/prim/functor/filter_map.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient_auto.hpp>
@@ -14,6 +15,8 @@
 #include <stan/math/prim/functor/hcubature.hpp>
 #include <stan/math/prim/functor/integrate_1d.hpp>
 #include <stan/math/prim/functor/integrate_1d_adapter.hpp>
+#include <stan/math/prim/functor/integrate_1d_double_exponential.hpp>
+#include <stan/math/prim/functor/integrate_1d_gauss_kronrod.hpp>
 #include <stan/math/prim/functor/integrate_ode_rk45.hpp>
 #include <stan/math/prim/functor/integrate_ode_std_vector_interface_adapter.hpp>
 #include <stan/math/prim/functor/iter_tuple_nested.hpp>

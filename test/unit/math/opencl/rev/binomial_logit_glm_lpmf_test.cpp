@@ -3,6 +3,7 @@
 #include <stan/math/opencl/rev.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
+#include <random>
 #include <vector>
 
 TEST(ProbDistributionsBinomialLogitGLM, error_checking) {
@@ -203,9 +204,12 @@ TEST(ProbDistributionsBinomialLogitGLM, opencl_matches_cpu_big) {
 
   std::vector<int> n(N);
   std::vector<int> trials(N);
+  std::mt19937 rng(12345);
+  std::uniform_int_distribution<int> n_dist(0, 50);
+  std::uniform_int_distribution<int> extra_dist(0, 50);
   for (int i = 0; i < N; i++) {
-    n[i] = Eigen::ArrayXi::Random(1, 1).abs()(0);
-    trials[i] = n[i] + Eigen::ArrayXi::Random(1, 1).abs()(0);
+    n[i] = n_dist(rng);
+    trials[i] = n[i] + extra_dist(rng);
   }
   Eigen::MatrixXd x = Eigen::MatrixXd::Random(N, M);
   Eigen::VectorXd beta = Eigen::VectorXd::Random(M);

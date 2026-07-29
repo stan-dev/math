@@ -4,7 +4,7 @@
 TEST(MathMixMatFun, logSoftmax) {
   auto f = [](const auto& x) { return stan::math::log_softmax(x); };
   // Column Vectors
-  Eigen::VectorXd x0(0);  // error case
+  Eigen::VectorXd x0(0);
   stan::test::expect_ad(f, x0);
   stan::test::expect_ad_matvar(f, x0);
 
@@ -34,7 +34,7 @@ TEST(MathMixMatFun, logSoftmax) {
   stan::test::expect_ad_matvar(f, x3c);
 
   // Row Vectors
-  Eigen::RowVectorXd rx0(0);  // error case
+  Eigen::RowVectorXd rx0(0);
   stan::test::expect_ad(f, rx0);
   stan::test::expect_ad_matvar(f, rx0);
 
@@ -64,7 +64,7 @@ TEST(MathMixMatFun, logSoftmax) {
   stan::test::expect_ad_matvar(f, rx3c);
 
   // std vectors
-  std::vector<double> stx0(0);  // error case
+  std::vector<double> stx0(0);
   stan::test::expect_ad(f, stx0);
 
   std::vector<double> stx1{0};
@@ -83,7 +83,7 @@ TEST(MathMixMatFun, logSoftmax) {
   stan::test::expect_ad(f, stx3c);
 
   // Nested containers
-  std::vector<Eigen::VectorXd> stvx0{x0, x0};  // error case
+  std::vector<Eigen::VectorXd> stvx0{x0, x0};
   stan::test::expect_ad(f, stvx0);
   stan::test::expect_ad_matvar(f, stvx0);
 
@@ -91,7 +91,7 @@ TEST(MathMixMatFun, logSoftmax) {
   stan::test::expect_ad(f, stvx1);
   stan::test::expect_ad_matvar(f, stvx1);
 
-  std::vector<Eigen::RowVectorXd> strx0{rx0, rx0};  // error case
+  std::vector<Eigen::RowVectorXd> strx0{rx0, rx0};
   stan::test::expect_ad(f, strx0);
   stan::test::expect_ad_matvar(f, strx0);
 
@@ -99,7 +99,7 @@ TEST(MathMixMatFun, logSoftmax) {
   stan::test::expect_ad(f, strx1);
   stan::test::expect_ad_matvar(f, strx1);
 
-  std::vector<std::vector<double>> ststx0{stx0, stx0};  // error case
+  std::vector<std::vector<double>> ststx0{stx0, stx0};
   stan::test::expect_ad(f, ststx0);
 
   std::vector<std::vector<double>> ststx1{stx1, stx1};

@@ -169,6 +169,13 @@ class Holder
   auto* data() { return m_arg.data(); }
   const auto* data() const { return m_arg.data(); }
 
+  const auto& coeffRef(Eigen::Index row, Eigen::Index col) const {
+    return m_arg.coeffRef(row, col);
+  }
+  const auto& coeffRef(Eigen::Index index) const {
+    return m_arg.coeffRef(index);
+  }
+
   /**
    * Assignment operator assigns expressions.
    * @param other expression to assign  to this
@@ -248,16 +255,28 @@ namespace internal {
 template <typename ArgType, typename... Ptrs>
 struct evaluator<stan::math::Holder<ArgType, Ptrs...>>
     : evaluator_base<stan::math::Holder<ArgType, Ptrs...>> {
-  typedef stan::math::Holder<ArgType, Ptrs...> XprType;
-  typedef typename remove_all<ArgType>::type ArgTypeNestedCleaned;
-  typedef typename XprType::CoeffReturnType CoeffReturnType;
-  typedef typename XprType::Scalar Scalar;
+  using PlainObjectType = stan::math::Holder<ArgType, Ptrs...>;
+  using XprType = stan::math::Holder<ArgType, Ptrs...>;
+  using ArgTypeNestedCleaned = typename remove_all<ArgType>::type;
+  using CoeffReturnType = typename XprType::CoeffReturnType;
+  using Scalar = typename XprType::Scalar;
   enum {
+    IsRowMajor = XprType::IsRowMajor,
+    IsColMajor = !IsRowMajor,
+    IsVectorAtCompileTime = XprType::IsVectorAtCompileTime,
+    RowsAtCompileTime = XprType::RowsAtCompileTime,
+    ColsAtCompileTime = XprType::ColsAtCompileTime,
+
     CoeffReadCost = evaluator<ArgTypeNestedCleaned>::CoeffReadCost,
-    // Possible flags are documented here:
-    // https://eigen.tuxfamily.org/dox/group__flags.html
     Flags = evaluator<ArgTypeNestedCleaned>::Flags,
     Alignment = evaluator<ArgTypeNestedCleaned>::Alignment,
+  };
+  enum {
+    // We do not need to know the outer stride for vectors
+    OuterStrideAtCompileTime
+    = IsVectorAtCompileTime
+          ? 0
+          : (IsRowMajor ? ColsAtCompileTime : RowsAtCompileTime)
   };
 
   evaluator<ArgTypeNestedCleaned> m_argImpl;
@@ -267,37 +286,69 @@ struct evaluator<stan::math::Holder<ArgType, Ptrs...>>
       : m_argImpl(std::forward<XprType>(xpr).m_arg) {}
 
   // all these functions just call the same on the argument
-  EIGEN_STRONG_INLINE CoeffReturnType coeff(Index row, Index col) const {
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE CoeffReturnType coeff(Index row,
+                                                              Index col) const {
     return m_argImpl.coeff(row, col);
   }
-  EIGEN_STRONG_INLINE CoeffReturnType coeff(Index index) const {
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE CoeffReturnType
+  coeff(Index index) const {
     return m_argImpl.coeff(index);
   }
 
-  EIGEN_STRONG_INLINE Scalar& coeffRef(Index row, Index col) {
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Scalar& coeffRef(Index row, Index col) {
     return m_argImpl.coeffRef(row, col);
   }
-  EIGEN_STRONG_INLINE Scalar& coeffRef(Index index) {
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Scalar& coeffRef(Index index) {
     return m_argImpl.coeffRef(index);
   }
 
   template <int LoadMode, typename PacketType>
-  EIGEN_STRONG_INLINE PacketType packet(Index row, Index col) const {
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE PacketType packet(Index row,
+                                                          Index col) const {
     return m_argImpl.template packet<LoadMode, PacketType>(row, col);
   }
   template <int LoadMode, typename PacketType>
-  EIGEN_STRONG_INLINE PacketType packet(Index index) const {
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE PacketType packet(Index index) const {
     return m_argImpl.template packet<LoadMode, PacketType>(index);
   }
 
   template <int StoreMode, typename PacketType>
-  EIGEN_STRONG_INLINE void writePacket(Index row, Index col,
-                                       const PacketType& x) {
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void writePacket(Index row, Index col,
+                                                         const PacketType& x) {
     return m_argImpl.template writePacket<StoreMode, PacketType>(row, col, x);
   }
   template <int StoreMode, typename PacketType>
-  EIGEN_STRONG_INLINE void writePacket(Index index, const PacketType& x) {
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void writePacket(Index index,
+                                                         const PacketType& x) {
     return m_argImpl.template writePacket<StoreMode, PacketType>(index, x);
+  }
+
+  template <int LoadMode, typename PacketType>
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE PacketType
+  packetSegment(Index row, Index col, Index begin, Index count) const {
+    return m_argImpl.template packetSegment<LoadMode, PacketType>(row, col,
+                                                                  begin, count);
+  }
+
+  template <int LoadMode, typename PacketType>
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE PacketType
+  packetSegment(Index index, Index begin, Index count) const {
+    return m_argImpl.template packetSegment<LoadMode, PacketType>(index, begin,
+                                                                  count);
+  }
+
+  template <int StoreMode, typename PacketType>
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void writePacketSegment(
+      Index row, Index col, const PacketType& x, Index begin, Index count) {
+    return m_argImpl.template writePacketSegment<StoreMode, PacketType>(
+        row, col, x, begin, count);
+  }
+
+  template <int StoreMode, typename PacketType>
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void writePacketSegment(
+      Index index, const PacketType& x, Index begin, Index count) {
+    return m_argImpl.template writePacketSegment<StoreMode, PacketType>(
+        index, x, begin, count);
   }
 };
 
@@ -435,9 +486,13 @@ inline auto make_holder_impl(F&& func, std::index_sequence<Is...>,
 template <typename F, typename... Args,
           require_not_plain_type_t<std::invoke_result_t<F, Args&&...>>*>
 inline auto make_holder(F&& func, Args&&... args) {
-  return internal::make_holder_impl(std::forward<F>(func),
-                                    std::make_index_sequence<sizeof...(Args)>(),
-                                    std::forward<Args>(args)...);
+  if constexpr (is_var_matrix_v<std::invoke_result_t<F, Args&&...>>) {
+    return std::forward<F>(func)(std::forward<Args>(args)...);
+  } else {
+    return internal::make_holder_impl(
+        std::forward<F>(func), std::make_index_sequence<sizeof...(Args)>(),
+        std::forward<Args>(args)...);
+  }
 }
 
 /**

@@ -52,3 +52,15 @@ TEST(MathMatrixPrimMat, rep_matrix_row_vec) {
 
   EXPECT_THROW(rep_matrix(rv, -1), std::domain_error);
 }
+
+TEST(MathMatrixPrimMat, rep_matrix_both_ways) {
+  using stan::math::rep_matrix;
+
+  Eigen::Matrix<double, 1, Eigen::Dynamic> rv(3);
+  rv << 1.0, 4.0, 9.0;
+
+  Eigen::Matrix<double, Eigen::Dynamic, 1> v(3);
+  v << 1.0, 4.0, 9.0;
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x(3, 3);
+  x = true ? rep_matrix(v, 3) : rep_matrix(rv, 3);
+}

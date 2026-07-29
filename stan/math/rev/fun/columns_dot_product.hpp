@@ -31,12 +31,16 @@ namespace math {
 template <typename Mat1, typename Mat2,
           require_all_eigen_t<Mat1, Mat2>* = nullptr,
           require_any_eigen_vt<is_var, Mat1, Mat2>* = nullptr>
-inline Eigen::Matrix<return_type_t<Mat1, Mat2>, 1, Mat1::ColsAtCompileTime>
-columns_dot_product(const Mat1& v1, const Mat2& v2) {
+inline Eigen::Matrix<return_type_t<Mat1, Mat2>, 1,
+                     std::decay_t<Mat1>::ColsAtCompileTime>
+columns_dot_product(Mat1&& v1, Mat2&& v2) {
   check_matching_dims("check_matching_dims", "v1", v1, "v2", v2);
-  Eigen::Matrix<var, 1, Mat1::ColsAtCompileTime> ret(1, v1.cols());
+  Eigen::Matrix<var, 1, std::decay_t<Mat1>::ColsAtCompileTime> ret(1,
+                                                                   v1.cols());
+  decltype(auto) v1_ref = to_ref(std::forward<Mat1>(v1));
+  decltype(auto) v2_ref = to_ref(std::forward<Mat2>(v2));
   for (size_type j = 0; j < v1.cols(); ++j) {
-    ret.coeffRef(j) = dot_product(v1.col(j), v2.col(j));
+    ret.coeffRef(j) = dot_product(v1_ref.col(j), v2_ref.col(j));
   }
   return ret;
 }
@@ -61,15 +65,15 @@ columns_dot_product(const Mat1& v1, const Mat2& v2) {
 template <typename Mat1, typename Mat2,
           require_all_matrix_t<Mat1, Mat2>* = nullptr,
           require_any_var_matrix_t<Mat1, Mat2>* = nullptr>
-inline auto columns_dot_product(const Mat1& v1, const Mat2& v2) {
+inline auto columns_dot_product(Mat1&& v1, Mat2&& v2) {
   check_matching_dims("columns_dot_product", "v1", v1, "v2", v2);
   using inner_return_t = decltype(
       (value_of(v1).array() * value_of(v2).array()).colwise().sum().matrix());
   using return_t = return_var_matrix_t<inner_return_t, Mat1, Mat2>;
 
   if constexpr (is_autodiff_v<Mat1> && is_autodiff_v<Mat2>) {
-    arena_t<promote_scalar_t<var, Mat1>> arena_v1 = v1;
-    arena_t<promote_scalar_t<var, Mat2>> arena_v2 = v2;
+    arena_t<Mat1> arena_v1(std::forward<Mat1>(v1));
+    arena_t<Mat2> arena_v2(std::forward<Mat2>(v2));
 
     return_t res
         = (arena_v1.val().array() * arena_v2.val().array()).colwise().sum();
@@ -89,8 +93,8 @@ inline auto columns_dot_product(const Mat1& v1, const Mat2& v2) {
 
     return res;
   } else if constexpr (is_autodiff_v<Mat2>) {
-    arena_t<promote_scalar_t<double, Mat1>> arena_v1 = value_of(v1);
-    arena_t<promote_scalar_t<var, Mat2>> arena_v2 = v2;
+    arena_t<Mat1> arena_v1(std::forward<Mat1>(v1));
+    arena_t<Mat2> arena_v2(std::forward<Mat2>(v2));
 
     return_t res = (arena_v1.array() * arena_v2.val().array()).colwise().sum();
 
@@ -104,8 +108,8 @@ inline auto columns_dot_product(const Mat1& v1, const Mat2& v2) {
 
     return res;
   } else {
-    arena_t<promote_scalar_t<var, Mat1>> arena_v1 = v1;
-    arena_t<promote_scalar_t<double, Mat2>> arena_v2 = value_of(v2);
+    arena_t<Mat1> arena_v1(std::forward<Mat1>(v1));
+    arena_t<Mat2> arena_v2(std::forward<Mat2>(v2));
 
     return_t res = (arena_v1.val().array() * arena_v2.array()).colwise().sum();
 

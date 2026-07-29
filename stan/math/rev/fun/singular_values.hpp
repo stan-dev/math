@@ -37,8 +37,8 @@ inline auto singular_values(const EigMat& m) {
   auto arena_V = to_arena(svd.matrixV());
 
   reverse_pass_callback([arena_m, arena_U, singular_values, arena_V]() mutable {
-    arena_m.adj()
-        += arena_U * singular_values.adj().asDiagonal() * arena_V.transpose();
+    arena_m.adj() += arena_U * singular_values.adj_op().asDiagonal()
+                     * arena_V.transpose();
   });
 
   return ret_type(singular_values);

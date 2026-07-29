@@ -438,7 +438,7 @@ inline void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
     auto A_mv_tuple = std::make_tuple(make_matvar_compatible<Types>(x)...);
     auto A_vm_tuple = std::make_tuple(make_varmat_compatible<Types>(x)...);
 
-    constexpr bool any_varmat = stan::math::apply(
+    const bool any_varmat = stan::math::apply(
         [](const auto&... args) {
           return stan::math::disjunction<
                      is_var_matrix<decltype(args)>...>::value
@@ -448,7 +448,7 @@ inline void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
         },
         A_vm_tuple);
 
-    if constexpr (!any_varmat) {
+    if (!any_varmat) {
       SUCCEED();  // If no varmats are created, skip this test
       return;
     } else {

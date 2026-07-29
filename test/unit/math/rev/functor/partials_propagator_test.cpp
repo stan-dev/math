@@ -10,7 +10,7 @@ TEST_F(AgradRev, PartialsVari_PartialsPropagatorScal) {
 
   double d1;
   auto o3 = stan::math::make_partials_propagator(d1);
-  EXPECT_EQ(2, sizeof(o3));
+  EXPECT_EQ(1, sizeof(o3));
 
   var v1 = var(0.0);
 
@@ -35,7 +35,7 @@ TEST_F(AgradRev, PartialsVari_PartialsPropagatorVec) {
 
   vector_d d_vec(4);
   auto o3 = stan::math::make_partials_propagator(d_vec);
-  EXPECT_EQ(2, sizeof(o3));
+  EXPECT_EQ(1, sizeof(o3));
 
   vector_v v_vec(4);
   var v1 = var(0.0);
@@ -72,7 +72,7 @@ TEST_F(AgradRev, PartialsVari_PartialsPropagatorStdVec) {
 
   std::vector<double> d_vec(4);
   auto o3 = stan::math::make_partials_propagator(d_vec);
-  EXPECT_EQ(2, sizeof(o3));
+  EXPECT_EQ(1, sizeof(o3));
 
   std::vector<var> v_vec;
   var v1 = var(0.0);
@@ -110,7 +110,7 @@ TEST_F(AgradRev, PartialsVari_PartialsPropagatorMat) {
   d_mat << 10.0, 20.0, 30.0, 40.0;
   auto o3 = stan::math::make_partials_propagator(d_mat);
 
-  EXPECT_EQ(2, sizeof(o3));
+  EXPECT_EQ(1, sizeof(o3));
 
   matrix_v v_mat(2, 2);
   var v1 = var(0.0);
@@ -153,7 +153,7 @@ TEST_F(AgradRev, PartialsVari_PartialsPropagatorMatMultivar) {
   d_mat_vec.push_back(d_mat);
   auto o3 = stan::math::make_partials_propagator(d_mat_vec);
 
-  EXPECT_EQ(2, sizeof(o3));
+  EXPECT_EQ(1, sizeof(o3));
 
   matrix_v v_mat1(2, 2);
   var v1 = var(0.0);
@@ -218,7 +218,7 @@ TEST_F(AgradRev, PartialsVari_PartialsPropagatorMultivar) {
   d_vec_vec.push_back(d_vec2);
   auto o3 = stan::math::make_partials_propagator(d_vec_vec);
 
-  EXPECT_EQ(2, sizeof(o3));
+  EXPECT_EQ(1, sizeof(o3));
 
   vector_v v_vec1(2);
   var v1 = var(0.0);
@@ -292,7 +292,7 @@ TEST_F(AgradRev, PartialsVari_PartialsPropagatorMultivarMixed) {
 
   // 2 partials stdvecs, 4 pointers to edges, 2 pointers to operands
   // vecs
-  EXPECT_EQ(112, sizeof(o4));
+  EXPECT_EQ(104, sizeof(o4));
 
   std::vector<double> grad;
   var v = o4.build(10.0);
@@ -307,21 +307,9 @@ TEST_F(AgradRev, PartialsVari_PartialsPropagatorMultivarMixed) {
   // still compile
   auto o5 = make_partials_propagator(v_vec, d_vec_vec, d_vec2);
   stan::math::edge<0>(o5).partials_vec_[0] += d_vec1;
-  if (false) {
-    // the test here is to make things compile as this pattern to
-    // if-out things when terms are const is used in our functions
-    stan::math::edge<2>(o5).partials_vec_[0] += vector_d();
-    stan::math::edge<2>(o5).partials_vec_[0] -= vector_d();
-    stan::math::edge<2>(o5).partials_vec_[0](0) = 0;
-  }
 
   // the same needs to work for the nested case
   auto o6 = make_partials_propagator(d_vec_vec, d_vec_vec, v_vec2);
-  if (false) {
-    // the test here is to make things compile as this pattern to
-    // if-out things when terms are const is used in our functions
-    stan::math::edge<0>(o6).partials_vec_[0] += d_vec1;
-  }
   stan::math::edge<2>(o6).partials_vec_[0] += d_vec2;
 }
 

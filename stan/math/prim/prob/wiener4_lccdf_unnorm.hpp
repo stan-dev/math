@@ -253,7 +253,7 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
     return ret_t(0.0);
   }
 
-  if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v>::value) {
+  if constexpr (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v>::value) {
     return ret_t(0.0);
   }
 
@@ -324,21 +324,22 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
     const auto new_est_err
         = log_ccdf_single_value + log_error_derivative - LOG_FOUR;
 
-    if (!is_constant_all<T_y>::value || !is_constant_all<T_t0>::value) {
+    if constexpr (!is_constant_all<T_y>::value
+                  || !is_constant_all<T_t0>::value) {
       const auto deriv_y = internal::estimate_with_err_check<5, 0>(
           [](auto&&... args) {
             return internal::wiener5_density<GradientCalc::ON>(args...);
           },
           new_est_err, y_value - t0_value, a_value, v_value, w_value, 0.0,
           log_error_absolute);
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         partials<0>(ops_partials)[i] = -deriv_y / ccdf;
       }
-      if (!is_constant_all<T_t0>::value) {
+      if constexpr (!is_constant_all<T_t0>::value) {
         partials<2>(ops_partials)[i] = deriv_y / ccdf;
       }
     }
-    if (!is_constant_all<T_a>::value) {
+    if constexpr (!is_constant_all<T_a>::value) {
       partials<1>(ops_partials)[i]
           = internal::estimate_with_err_check<5, 0>(
                 [](auto&&... args) {
@@ -348,7 +349,7 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
                 log_error_absolute)
             / ccdf;
     }
-    if (!is_constant_all<T_w>::value) {
+    if constexpr (!is_constant_all<T_w>::value) {
       partials<3>(ops_partials)[i]
           = internal::estimate_with_err_check<5, 0>(
                 [](auto&&... args) {
@@ -358,7 +359,7 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
                 log_error_absolute)
             / ccdf;
     }
-    if (!is_constant_all<T_v>::value) {
+    if constexpr (!is_constant_all<T_v>::value) {
       partials<4>(ops_partials)[i]
           = internal::wiener4_ccdf_grad_v(y_value - t0_value, a_value, v_value,
                                           w_value, cdf, log_error_absolute)
