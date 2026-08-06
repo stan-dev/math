@@ -1,629 +1,295 @@
-#!/usr/bin/env groovy
-@Library('StanUtils')
-import org.stan.Utils
+properties([
+  disableConcurrentBuilds(abortPrevious: true),
+  buildDiscarder(logRotator(numToKeepStr: '20', daysToKeepStr: '30')),
+  parameters([
+    string(defaultValue: 'develop', name: 'cmdstan_pr', description: 'PR to test CmdStan upstream against e.g. PR-630'),
+    string(defaultValue: 'develop', name: 'stan_pr', description: 'PR to test Stan upstream against e.g. PR-630'),
+    booleanParam(defaultValue: false, name: 'withRowVector', description: 'Run additional distribution tests on RowVectors (takes 5x as long)'),
+    booleanParam(defaultValue: false, name: 'disableJumbo', description: 'Disable Jumbo tests. This takes longer and should only be used for debugging if it is believed that the jumbo tests are causing failures.'),
+    booleanParam(defaultValue: false, name: 'optimizeUnitTests', description: 'Use O=3 for unit tests (takex ~3x as long)'),
+    booleanParam(defaultValue: false, name: 'runAllDistributions', description: 'Run all distribution tests, even ones which are unchanged compared to develop'),
+    booleanParam(defaultValue: false, name: 'run_all', description: 'Pretend all files changes'),
+  ])
+])
 
-def runTests(String testPath, boolean jumbo = false) {
-    try {
-        sh "cat make/local"
-        sh "make print-compiler-flags"
-        if (jumbo && !params.disableJumbo) {
-            sh "python3 runTests.py -j${PARALLEL} ${testPath} --jumbo --debug"
-        } else {
-            sh "python3 runTests.py -j${PARALLEL} ${testPath}"
-        }
-    }
-        finally { junit 'test/**/*.xml' }
+def image = 'stanorg/ci:v1'
+def runRemainingStages = false
+def CLANG_CXX = 'clang++-7'
+def GCC = 'g++'
+def MPICXX = 'mpicxx.openmpi'
+
+def mainBranch = env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'master'
+def noOptimize = !(params.optimizeUnitTests || mainBranch)
+def jumboFlags = params.disableJumbo ? '' : ' --jumbo --debug'
+
+def runTests(String local, String args) {
+  catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+    writeFile(file: "make/local", text: local)
+    sh "cat make/local"
+    sh "make print-compiler-flags"
+    sh "python3 runTests.py -j\$PARALLEL $args"
+  }
+  junit 'test/**/*.xml'
+  sh "find test -name *.xml -delete"
 }
 
-def skipRemainingStages = false
-def changedDistributionTests = []
-def utils = new org.stan.Utils()
+catchError {
+  withEnv([
+    'GCC=g++',
+    'GIT_AUTHOR_NAME=Stan Jenkins',
+    'GIT_AUTHOR_EMAIL=mc.stanislaw@gmail.com',
+    'GIT_COMMITTER_NAME=Stan Jenkins',
+    'GIT_COMMITTER_EMAIL=mc.stanislaw@gmail.com'
+  ]) {
+    runPod(image: image, cpus: 2) {
+      stage('Verify changes') {
+        runRemainingStages = params.run_all || filesChanged(
+            'stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format')
+      }
 
-def isBranch(String b) { env.BRANCH_NAME == b }
+      stage("Clang-format") {
+        def dirty = sh returnStatus: true, script: """
+          clang-format --version
+          git ls-files 'stan/*.hpp' 'test/*.hpp' 'stan/*.cpp' 'test/*.cpp' | xargs -n20 -P\$PARALLEL clang-format -i
+          git diff --exit-code
+        """
+        if (dirty) {
+          def branch = env.CHANGE_BRANCH ?: env.BRANCH_NAME
+          def repo = env.CHANGE_FORK ?: "stan-dev"
+          if (!("/" in repo))
+            repo += "/math.git"
+          echo "Exiting build because clang-format found changes."
+          emailext (
+              subject: "[StanJenkins] Autoformattted: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+              body: """
+Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' has been autoformatted and the
+changes committed to your branch, if permissions allowed.  Please pull these
+changes before continuing.
 
-String alsoNotify() {
-    if (isBranch('master') || isBranch('develop')) {
-        "stan-buildbot@googlegroups.com"
-    } else ""
-}
-Boolean isPR() { env.CHANGE_URL != null }
-String fork() { env.CHANGE_FORK ?: "stan-dev" }
-String branchName() { isPR() ? env.CHANGE_BRANCH :env.BRANCH_NAME }
-String cmdstan_pr() { params.cmdstan_pr ?: ( env.CHANGE_TARGET == "master" ? "downstream_hotfix" : "downstream_tests" ) }
-String stan_pr() { params.stan_pr ?: ( env.CHANGE_TARGET == "master" ? "downstream_hotfix" : "downstream_tests" ) }
+See https://github.com/stan-dev/stan/wiki/Coding-Style-and-Idioms for setting
+up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
+""",
+              recipientProviders: [[$class: 'RequesterRecipientProvider']],
+              to: env.CHANGE_AUTHOR_EMAIL)
+          sh '''
+            git add -u src
+            git commit -m "[Jenkins] auto-formatting by `clang-format --version`"
+          '''
+          gitPush(gitScm: scmGit(
+              userRemoteConfigs: [[credentialsId: "stan-github", name: 'dest', url: "https://github.com/$repo"]],
+              branches: [[name: "refs/heads/$branch"]]),
+              targetBranch: branch,
+              targetRepo: 'dest')
+          echo "Those changes are now found on stan-dev/math under $repo branch $branch"
+          echo "Please 'git pull' before continuing to develop."
+          error "clang-format changes"
+        }
+      }
 
-pipeline {
-    agent none
-    parameters {
-        string(defaultValue: '', name: 'cmdstan_pr', description: 'PR to test CmdStan upstream against e.g. PR-630')
-        string(defaultValue: '', name: 'stan_pr', description: 'PR to test Stan upstream against e.g. PR-630')
-        booleanParam(defaultValue: false, name: 'withRowVector', description: 'Run additional distribution tests on RowVectors (takes 5x as long)')
-        booleanParam(defaultValue: false, name: 'disableJumbo', description: 'Disable Jumbo tests. This takes longer and should only be used for debugging if it is believed that the jumbo tests are causing failures.')
-        booleanParam(defaultValue: false, name: 'optimizeUnitTests', description: 'Use O=3 for unit tests (takex ~3x as long)')
-        booleanParam(defaultValue: false, name: 'runAllDistributions', description: 'Run all distribution tests, even ones which are unchanged compared to develop')
+      stage('Linting & Doc checks') {
+        writeFile(file: "make/local", text: "CXX=$CLANG_CXX\nBOOST_PARALLEL_JOBS=\$PARALLEL")
+        parallel(
+          CppLint: { sh "make cpplint" },
+          Dependencies: { sh "make test-math-dependencies" },
+          Documentation: { sh "make doxygen" },
+        )
+        /* TODO: recordIsuses? */
+      }
     }
-    options {
-        skipDefaultCheckout()
-        preserveStashes(buildCount: 7)
-        parallelsAlwaysFailFast()
-        buildDiscarder(logRotator(numToKeepStr: '20', daysToKeepStr: '30'))
-        disableConcurrentBuilds(abortPrevious: true)
-    }
-    environment {
-        STAN_NUM_THREADS = 4
-        CLANG_CXX = 'clang++-7'
-        GCC = 'g++'
-        MPICXX = 'mpicxx.openmpi'
-        N_TESTS = 100
-        OPENCL_DEVICE_ID = 0
-        OPENCL_DEVICE_ID_CPU = 0
-        OPENCL_DEVICE_ID_GPU = 0
-        OPENCL_PLATFORM_ID = 1
-        OPENCL_PLATFORM_ID_CPU = 0
-        OPENCL_PLATFORM_ID_GPU = 0
-        GIT_AUTHOR_NAME = 'Stan Jenkins'
-        GIT_AUTHOR_EMAIL = 'mc.stanislaw@gmail.com'
-        GIT_COMMITTER_NAME = 'Stan Jenkins'
-        GIT_COMMITTER_EMAIL = 'mc.stanislaw@gmail.com'
-    }
-    stages {
 
-        stage("Clang-format") {
-            agent {
-                docker {
-                    image 'stanorg/ci:gpu-cpp17'
-                    label 'linux'
-                }
+    if (runRemainingStages) {
+      stage('Quick tests') {
+        parallel headers: {
+          runPod(image: image) {
+            stage('Headers check') {
+              writeFile(file: 'make/local', text: "CXX=$CLANG_CXX -Werror")
+              sh 'make -j$PARALLEL test-headers'
             }
-            steps {
-                retry(3) { checkout scm }
-                withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
-                    usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-                    sh """#!/bin/bash
-                        set -x
-                        git checkout -b ${branchName()}
-                        clang-format --version
-                        find stan test -name '*.hpp' -o -name '*.cpp' | xargs -n20 -P${PARALLEL} clang-format -i
-                        if [[ `git diff` != "" ]]; then
-                            git add stan test
-                            git commit -m "[Jenkins] auto-formatting by `clang-format --version`"
-                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git ${branchName()}
-                            echo "Exiting build because clang-format found changes."
-                            echo "Those changes are now found on stan-dev/math under branch ${branchName()}"
-                            echo "Please 'git pull' before continuing to develop."
-                            exit 1
-                        fi"""
-                }
+          }
+        }, unit: {
+          if (env.CHANGE_TARGET) {
+            runPod(image: image) {
+              stage('Run changed unit tests') {
+                writeFile(file: 'make/local', text: "O=3\nCXXFLAGS+=-march=native -mtune=native")
+                sh './runTests.py -j$PARALLEL --changed --debug'
+              }
             }
-            post {
-                always { deleteDir() }
-                failure {
-                    script {
-                        emailext (
-                            subject: "[StanJenkins] Autoformattted: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                            body: "Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' " +
-                                "has been autoformatted and the changes committed " +
-                                "to your branch, if permissions allowed." +
-                                "Please pull these changes before continuing." +
-                                "\n\n" +
-                                "See https://github.com/stan-dev/stan/wiki/Coding-Style-and-Idioms" +
-                                " for setting up the autoformatter locally.\n"+
-                            "(Check console output at ${env.BUILD_URL})",
-                            recipientProviders: [[$class: 'RequesterRecipientProvider']],
-                            to: "${env.CHANGE_AUTHOR_EMAIL}"
-                        )
-                    }
-                }
-            }
+          }
         }
+      }
 
-        stage('Linting & Doc checks') {
-            agent {
-                docker {
-                    image 'stanorg/ci:gpu-cpp17'
-                    label 'linux'
-                }
+      stage('Full Unit Tests') {
+        parallel failFast: true,
+          revfwd: {
+            runPod(image: image) {
+              stage('Rev/Fwd Unit Tests') {
+                def local = 'CXXFLAGS+= -fsanitize=address\n'
+                if (noOptimize)
+                  local += 'O=0\n'
+                runTests(local, "test/unit/math/rev")
+                runTests(local, "test/unit/math/fwd")
+              }
             }
-            steps {
-                script {
-                    retry(3) { checkout scm }
-                    sh "git clean -xffd"
-                    stash 'MathSetup'
-                    sh "echo CXX=${CLANG_CXX} > make/local"
-                    sh "echo BOOST_PARALLEL_JOBS=${PARALLEL} >> make/local"
-                    parallel(
-                        CppLint: { sh "make cpplint" },
-                        Dependencies: { sh """#!/bin/bash
-                            set -o pipefail
-                            make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
-                        Documentation: { sh "make doxygen" },
-                    )
-                }
+          },
+          mix: {
+            runPod(image: image, memory: '128Gi') {
+              stage('Mix Unit Tests') {
+                def local = 'CXXFLAGS+= -fsanitize=address\n'
+                if (noOptimize)
+                  local += 'O=1\n'
+                runTests(local, "test/unit/math/mix" + jumboFlags)
+              }
             }
-            post {
-                always {
-                    recordIssues(
-                        enabledForFailure: true,
-                        tools: [cppLint(),groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
-                    )
-                    deleteDir()
-                }
+          },
+          prim: {
+            runPod(image: image) {
+              stage('Prim Unit Tests') {
+                def local = 'CXXFLAGS+= -fsanitize=address\n'
+                if (noOptimize)
+                  local += 'O=0\n'
+                runTests(local, "test/unit/*_test.cpp")
+                runTests(local, "test/unit/math/*_test.cpp")
+                runTests(local, "test/unit/math/prim" + jumboFlags)
+                runTests(local, "test/unit/math/memory")
+              }
             }
-        }
-
-        stage('Verify changes') {
-            agent {
-                docker {
-                    image 'stanorg/ci:gpu-cpp17'
-                    label 'linux'
-                }
+          },
+          laplace: {
+            runPod(image: image, memory: '32Gi') {
+              stage('Laplace Unit Tests') {
+                def local = 'CXXFLAGS+= -march=native -mtune=native\nO=3\n'
+                if (!noOptimize)
+                  local += 'CXXFLAGS+= -fsanitize=address'
+                runTests(local, "test/unit/math/laplace/*_test.cpp")
+              }
             }
-            steps {
-                script {
-
-                    retry(3) { checkout scm }
-                    sh 'git clean -xffd'
-
-                    def paths = ['stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format'].join(" ")
-                    skipRemainingStages = utils.verifyChanges(paths)
-
-                }
+          },
+          gpu: {
+            runPod(image: image, memory: '32Gi', gpus: 1) {
+              stage('OpenCL GPU tests') {
+                def local = """CXX=$CLANG_CXX -Werror
+STAN_OPENCL=true
+OPENCL_PLATFORM_ID_GPU=0
+OPENCL_DEVICE_ID=0
+"""
+                if (noOptimize)
+                  local += 'O=1\n'
+                runTests(local, "test/unit/math/opencl") // TODO(bward): try to enable
+                runTests(local, "test/unit/multiple_translation_units_test.cpp")
+              }
             }
-            post { always { retry(3) { deleteDir() } } }
-        }
+          }
+      }
 
-        stage('Quick tests') {
-            when {
-                expression {
-                    !skipRemainingStages
-                }
+      stage('Always-run tests') {
+        parallel failFast: true,
+          mpi: {
+            runPod(image: image) {
+              stage('Laplace Unit Tests') {
+                def local = "CXX=$MPICXX\nCXX_TYPE=gcc\nSTAN_MPI=true\n"
+                runTests(local, "test/unit/math/prim/functor")
+                runTests(local, "test/unit/math/rev/functor")
+              }
             }
-            failFast true
-            parallel {
-                stage('Headers check') {
-                    when {
-                        expression {
-                            !skipRemainingStages
-                        }
-                    }
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'linux'
-                        }
-                    }
-
-                    steps {
-                        retry(1){
-                            unstash 'MathSetup'
-                            sh "echo CXX=${CLANG_CXX} -Werror > make/local"
-                            sh "make -j${PARALLEL} test-headers"
-                        }
-                    }
-                    post { always { deleteDir() } }
+          },
+          expr: {
+            runPod(image: image, memory: '64Gi') {
+              stage('Expressions test') {
+                def local = "CXX=$CLANG_CXX -Werror\nO=0\n"
+                writeFile(file: 'make/local', text: local)
+                sh "python ./test/code_generator_test.py"
+                sh "python ./test/signature_parser_test.py"
+                sh "python ./test/statement_types_test.py"
+                sh "python ./test/varmat_compatibility_summary_test.py"
+                sh "python ./test/varmat_compatibility_test.py"
+                withEnv(['PATH+TBB=./lib/tbb']) {
+                  sh "python ./test/expressions/test_expression_testing_framework.py"
+                  runTests(local, 'test/expressions')
+                  sh "make clean-all"
+                  runTests(local + "STAN_THREADS=true\n", 'test/expressions --only-functions reduce_sum map_rect')
                 }
-                stage('Run changed unit tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'linux'
-                            args '--cap-add SYS_PTRACE'
-                        }
-                    }
-                    when {
-                        allOf {
-                            expression {
-                                env.BRANCH_NAME ==~ /PR-\d+/
-                            }
-                            expression {
-                                !skipRemainingStages
-                            }
-                        }
-                    }
-                    steps {
-                        retry(3) { checkout scm }
-
-                        sh "echo O=3 >> make/local"
-                        sh "echo CXXFLAGS+=-march=native -mtune=native >> make/local"
-                        sh "./runTests.py -j${PARALLEL} --changed --debug"
-
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
+              }
             }
-        }
-
-        stage('Full Unit Tests') {
-            when {
-                expression {
-                    !skipRemainingStages
+          },
+          thread: {
+            runPod(image: image) {
+              stage('Threading tests') {
+                def local = "CXX=$CLANG_CXX -Werror\nSTAN_THREADS=true\n"
+                if (mainBranch) {
+                  runTests(local, "test/unit")
+                } else {
+                  runTests(local, "test/unit -f thread")
+                  runTests(local, "test/unit -f map_rect")
+                  runTests(local, "test/unit -f reduce_sum")
                 }
+              }
             }
-            failFast true
-            parallel {
-                stage('Rev/Fwd Unit Tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'linux'
-                            args '--cap-add SYS_PTRACE'
-                        }
-                    }
-                    when {
-                        expression {
-                            !skipRemainingStages
-                        }
-                    }
-                    steps {
-                        unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+          }
+      }
 
-                        script {
-                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
-                                sh "echo O=0 >> make/local"
-                            }
-
-                            runTests("test/unit/math/rev")
-                            runTests("test/unit/math/fwd")
-                        }
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Mix Unit Tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'linux && 8core'
-                            args '--cap-add SYS_PTRACE'
-                        }
-                    }
-                    when {
-                        expression {
-                            !skipRemainingStages
-                        }
-                    }
-                    steps {
-                        unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-                        script {
-                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
-                                sh "echo O=1 >> make/local"
-                            }
-                            runTests("test/unit/math/mix", true)
-                        }
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Prim Unit Tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'linux'
-                            args '--cap-add SYS_PTRACE'
-                        }
-                    }
-                    when {
-                        expression {
-                            !skipRemainingStages
-                        }
-                    }
-                    steps {
-                        unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-                        script {
-                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
-                                sh "echo O=0 >> make/local"
-                            }
-                            runTests("test/unit/*_test.cpp", false)
-                            runTests("test/unit/math/*_test.cpp", false)
-                            runTests("test/unit/math/prim", true)
-                            runTests("test/unit/math/memory", false)
-                        }
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Laplace Unit Tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'linux'
-                            args '--cap-add SYS_PTRACE'
-                        }
-                    }
-                    when {
-                        expression {
-                            !skipRemainingStages
-                        }
-                    }
-                    steps {
-                        unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -march=native -mtune=native >> make/local"
-                        sh "echo O=3 >> make/local"
-                        script {
-                            if (params.optimizeUnitTests || isBranch('develop') || isBranch('master')) {
-                                sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-                            }
-                            runTests("test/unit/math/laplace/*_test.cpp", false)
-                        }
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('OpenCL GPU tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'v100'
-                            args '--gpus 1'
-                        }
-                    }
-                    steps {
-                        script {
-                            unstash 'MathSetup'
-                            sh """
-                                echo CXX=${CLANG_CXX} -Werror > make/local
-                                echo STAN_OPENCL=true >> make/local
-                                echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local
-                                echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local
-                            """
-                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
-                                sh "echo O=1 >> make/local"
-                            }
-                            runTests("test/unit/math/opencl", false) // TODO(bward): try to enable
-                            runTests("test/unit/multiple_translation_units_test.cpp")
-                        }
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-            }
-        }
-        stage('Always-run tests') {
-            when {
-                expression {
-                    !skipRemainingStages
-                }
-            }
-            failFast true
-            parallel {
-                stage('MPI tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'linux'
-                        }
-                    }
-                    steps {
-                        unstash 'MathSetup'
-                        sh """
-                            echo CXX=${MPICXX} > make/local
-                            echo CXX_TYPE=gcc >> make/local
-                            echo STAN_MPI=true >> make/local
-                        """
-                        runTests("test/unit/math/prim/functor")
-                        runTests("test/unit/math/rev/functor")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Expressions test') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'linux'
-                        }
-                    }
-                    steps {
-                        unstash 'MathSetup'
-                        script {
-                            sh "echo O=0 > make/local"
-                            sh "echo CXX=${CLANG_CXX} -Werror >> make/local"
-                            sh "python ./test/code_generator_test.py"
-                            sh "python ./test/signature_parser_test.py"
-                            sh "python ./test/statement_types_test.py"
-                            sh "python ./test/varmat_compatibility_summary_test.py"
-                            sh "python ./test/varmat_compatibility_test.py"
-                            withEnv(['PATH+TBB=./lib/tbb']) {
-                                sh "python ./test/expressions/test_expression_testing_framework.py"
-                                sh "cat make/local"
-                                try { sh "./runTests.py -j${PARALLEL} test/expressions" }
-                                finally { junit 'test/**/*.xml' }
-                            }
-                            sh "make clean-all"
-                            sh "echo STAN_THREADS=true >> make/local"
-                            withEnv(['PATH+TBB=./lib/tbb']) {
-                                try {
-                                    sh "cat make/local"
-                                    sh "./runTests.py -j${PARALLEL} test/expressions --only-functions reduce_sum map_rect"
-				                }
-                                finally { junit 'test/**/*.xml' }
-                            }
-                        }
-                    }
-                    post { always { deleteDir() } }
-                }
-
-                stage('Threading tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu-cpp17'
-                            label 'linux'
-                        }
-                    }
-                    steps {
-                        script {
-                            retry(1){
-                                unstash 'MathSetup'
-                                sh "echo CXX=${CLANG_CXX} -Werror > make/local"
-                                sh "echo STAN_THREADS=true >> make/local"
-                                sh "export STAN_NUM_THREADS=4"
-                                if (isBranch('develop') || isBranch('master')) {
-                                    runTests("test/unit")
-                                    sh "find . -name *_test.xml | xargs rm"
-                                } else {
-                                    runTests("test/unit -f thread")
-                                    sh "find . -name *_test.xml | xargs rm"
-                                    runTests("test/unit -f map_rect")
-                                    sh "find . -name *_test.xml | xargs rm"
-                                    runTests("test/unit -f reduce_sum")
-                                }
-                            }
-                        }
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-            }
-        }
-
-        stage ('Discover changed distribution tests') {
-            when {
-                expression {
-                    !skipRemainingStages
-                }
-            }
-            agent {
-                docker {
-                    image 'stanorg/ci:gpu-cpp17'
-                    label 'linux'
-                }
-            }
-            steps {
-                script {
-                    retry(3) { checkout scm }
-
-                    if (params.withRowVector || isBranch('develop') || isBranch('master')) {
-                        sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
-                        sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
-                    }
-
-                    if (params.runAllDistributions || isBranch('develop') || isBranch('master')) {
-                        changedDistributionTests = sh(script:"python3 test/prob/getDependencies.py --pretend-all", returnStdout:true).trim().readLines()
-                    } else {
-                        changedDistributionTests = sh(script:"python3 test/prob/getDependencies.py", returnStdout:true).trim().readLines()
-                    }
-                }
-            }
-        }
-
+      def cores_per_test = 6
+      def parallel_tests = 10
+      runPod(image: image, cpus: cores_per_test*parallel_tests) {
         stage ('Distribution tests') {
-            when {
-                allOf {
-                    expression {
-                        !skipRemainingStages
-                    }
-                    expression {
-                        !changedDistributionTests.isEmpty()
-                    }
-                }
-            }
-            agent { label 'linux && docker' }
-            steps {
-                script {
-                    def tests = [:]
+          def local = "CXX=$CLANG_CXX\nO=0\nN_TESTS=100\n"
+          if (params.withRowVector || mainBranch) {
+            local += "CXXFLAGS+= -DSTAN_TEST_ROW_VECTORS -DSTAN_PROB_TEST_ALL\n"
+          }
+          writeFile(file: 'make/local', text: local)
 
-                    def executors = 10
-                    def tests_per_executor = Math.ceil((changedDistributionTests.size() / executors).doubleValue()).toInteger()
-                    def idx = 0
-                    for (f in changedDistributionTests.collate(tests_per_executor)) {
-                        idx = idx + 1
-                        def names = f.join(" ")
-                        tests["Distribution Tests: ${idx} / ${executors}"] = { node ("linux && docker && 8core") {
-                            deleteDir()
-                            docker.image('stanorg/ci:gpu-cpp17').inside {
-                                catchError(buildResult: "FAILURE", stageResult: "FAILURE") {
-                                    unstash 'MathSetup'
-                                    sh """
-                                        echo CXX=${CLANG_CXX} > make/local
-                                        echo O=0 >> make/local
-                                        echo N_TESTS=${N_TESTS} >> make/local
-                                        """
-                                    script {
-                                        if (params.withRowVector || isBranch('develop') || isBranch('master')) {
-                                            sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
-                                            sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
-                                        }
-                                    }
-                                    sh "cat make/local"
-                                    sh "./runTests.py -j${PARALLEL} ${names}"
-                                }
-                                deleteDir()
-                            }
-                        } }
-                    }
-                    tests.failFast = true
-                    parallel tests
-                }
-            }
-            post {
-                always {
-                    retry(3) { deleteDir() }
-                }
-            }
+          def cmd = 'python3 test/prob/getDependencies.py'
+          if (params.runAllDistributions || mainBranch) {
+            cmd += ' --pretend-all'
+          }
+          sh """
+            unset PARALLEL
+            $cmd | parallel --halt now,fail=1 -r -j$parallel_tests ./runTests.py -j$cores_per_test {}
+          """
         }
+      }
 
+      if (env.CHANGE_TARGET) {
         stage('Upstream tests') {
-            agent { label 'linux' }
-            when {
-                allOf {
-                    expression {
-                        env.BRANCH_NAME ==~ /PR-\d+/
-                    }
-                    expression {
-                        !skipRemainingStages
-                    }
-                }
-            }
-            steps {
-                build(job: "Stan/Stan/${stan_pr()}",
-                        parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
-                                    string(name: 'cmdstan_pr', value: cmdstan_pr())])
-            }
+          build(job: "CCM/Stan/stan/$params.stan_pr",
+            parameters: [
+              booleanParam(name: 'downstream', value: true),
+              string(name: 'math_pr', value: env.BRANCH_NAME),
+              string(name: 'cmdstan_pr', value: params.cmdstan_pr)
+            ])
         }
+      }
+    }
 
+    if (env.BRANCH_NAME == 'develop') {
+      runPod(image: image, cpus: 2) {
         stage('Upload doxygen') {
-            agent {
-                docker {
-                    image 'stanorg/ci:gpu-cpp17'
-                    label 'linux'
-                }
+          def branch = 'gh-pages'
+          sh 'make doxygen'
+          dir('gh-pages') {
+            def scm = scmGit(
+              branches: [[name: "refs/heads/$branch"]],
+              userRemoteConfigs: [[credentialsId: 'stan-github', url: 'https://github.com/stan-dev/math.git']])
+            checkout(scm: scm, changelog: false, poll: false)
+            sh '''
+              rm -rf *
+              mv ../doc/api/html/* .
+              git add .
+              git commit --amend -m "auto generated docs from Jenkins"
+            '''
+            withCredentials([gitUsernamePassword(credentialsId: 'stan-github', gitToolName: 'git-tool')]) {
+              sh "git push --force origin HEAD:$branch"
             }
-            when { branch 'develop'}
-            steps {
-                retry(3) { checkout scm }
-                withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
-                                                  usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-                    sh """#!/bin/bash
-                        set -x
-                        make doxygen
-                        cd doc/api/html
-                        git init
-                        git checkout -b gh-pages
-                        git config user.email "mc.stanislaw@gmail.com"
-                        git config user.name "Stan Jenkins"
-                        git add -f .
-                        git commit --author='Stan BuildBot <mc.stanislaw@gmail.com>' -m "auto generated docs from Jenkins"
-                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git gh-pages --force
-                        """
-                }
-            }
-            post { always { deleteDir() } }
+          }
         }
 
-    }
-
-    post {
-        always {
-            node("linux") {
-                recordIssues(
-                    enabledForFailure: false,
-                    tool: clang()
-                )
-            }
+        stage('Update upstream') {
+          dir('stan') {
+            updateSubmodule('stan', 'develop', 'lib/stan_math')
+          }
         }
-        success {
-            script {
-                utils.updateUpstream(env, 'stan')
-                utils.mailBuildResults("SUCCESSFUL")
-            }
-        }
-        unstable { script { utils.mailBuildResults("UNSTABLE", alsoNotify()) } }
-        failure { script { utils.mailBuildResults("FAILURE", alsoNotify()) } }
+      }
     }
+  }
 }
+
+emailFailure()
