@@ -42,7 +42,7 @@ struct bernoulli_logit_likelihood {
   template <typename ThetaVec, typename YVec, typename Mean>
   inline auto operator()(const ThetaVec& theta, const YVec& y,
                          const std::vector<int>& y_index, Mean&& mean,
-                         std::ostream* pstream) const {
+                         std::ostream* msgs) const {
     Eigen::VectorXd counts_per_group = Eigen::VectorXd::Zero(theta.size());
     Eigen::VectorXd n_per_group = Eigen::VectorXd::Zero(theta.size());
 
@@ -116,13 +116,13 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
 template <bool propto = false, typename Mean, typename CovarFun,
           typename CovarArgs>
 inline auto laplace_marginal_bernoulli_logit_lpmf(
-    const std::vector<int>& y, const std::vector<int>& n_samples, Mean&& mean,
+    const std::vector<int>& y, const std::vector<int>& y_index, Mean&& mean,
     int hessian_block_size, CovarFun&& covariance_function,
     CovarArgs&& covar_args, std::ostream* msgs) {
   auto options = laplace_options_default{hessian_block_size};
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},
-      std::forward_as_tuple(to_vector(y), n_samples, std::forward<Mean>(mean)),
+      std::forward_as_tuple(to_vector(y), y_index, std::forward<Mean>(mean)),
       std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), options, msgs);
 }
