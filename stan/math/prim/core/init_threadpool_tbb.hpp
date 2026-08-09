@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/err/invalid_argument.hpp>
 
-#include <boost/lexical_cast.hpp>
+#include <charconv>
 
 #ifndef TBB_INTERFACE_NEW
 #include <tbb/tbb_stddef.h>
@@ -21,6 +21,7 @@
 #endif
 
 #include <cstdlib>
+#include <cstring>
 #include <thread>
 
 namespace stan {
@@ -48,9 +49,10 @@ inline int get_num_threads() {
 #ifdef STAN_THREADS
   const char* env_stan_num_threads = std::getenv("STAN_NUM_THREADS");
   if (env_stan_num_threads != nullptr) {
-    try {
-      const int env_num_threads
-          = boost::lexical_cast<int>(env_stan_num_threads);
+    int env_num_threads = 0;
+    const char* end = env_stan_num_threads + std::strlen(env_stan_num_threads);
+    auto result = std::from_chars(env_stan_num_threads, end, env_num_threads);
+    if (result.ec == std::errc() && result.ptr == end) {
       if (env_num_threads > 0) {
         num_threads = env_num_threads;
       } else if (env_num_threads == -1) {
@@ -61,7 +63,7 @@ inline int get_num_threads() {
                          "The STAN_NUM_THREADS environment variable is '",
                          "' but it must be positive or -1");
       }
-    } catch (const boost::bad_lexical_cast&) {
+    } else {
       invalid_argument("get_num_threads(int)", "STAN_NUM_THREADS",
                        env_stan_num_threads,
                        "The STAN_NUM_THREADS environment variable is '",
