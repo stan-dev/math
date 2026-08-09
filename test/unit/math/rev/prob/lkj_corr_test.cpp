@@ -2,13 +2,13 @@
 #include <test/unit/math/rev/prob/lkj_corr_cholesky_test_functors.hpp>
 #include <test/unit/math/rev/prob/test_gradients.hpp>
 #include <test/unit/math/rev/util.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <random>
 #include <boost/math/distributions.hpp>
 #include <gtest/gtest.h>
 
 TEST_F(AgradRev, ProbDistributionsLkjCorr_var) {
   using stan::math::var;
-  boost::random::mt19937 rng;
+  std::mt19937 rng;
   int K = 4;
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Sigma_d(K, K);
@@ -29,7 +29,7 @@ TEST_F(AgradRev, ProbDistributionsLkjCorr_var) {
 
 TEST_F(AgradRev, ProbDistributionsLkjCorrCholesky_var) {
   using stan::math::var;
-  boost::random::mt19937 rng;
+  std::mt19937 rng;
   int K = 4;
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
   Sigma.setZero();

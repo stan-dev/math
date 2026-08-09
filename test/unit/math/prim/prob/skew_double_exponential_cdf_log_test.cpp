@@ -2,7 +2,6 @@
 #include <vector>
 #include <gtest/gtest.h>
 
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
 #include <boost/math/tools/promotion.hpp>
 

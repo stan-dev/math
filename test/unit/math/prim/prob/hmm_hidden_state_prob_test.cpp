@@ -1,7 +1,6 @@
 #include <test/unit/math/prim/prob/hmm_util.hpp>
 #include <stan/math/prim/prob/hmm_hidden_state_prob.hpp>
 #include <boost/math/distributions.hpp>
-#include <boost/random.hpp>
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>

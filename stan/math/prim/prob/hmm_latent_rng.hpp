@@ -5,7 +5,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/hmm_check.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <boost/random.hpp>
+#include <random>
 #include <vector>
 
 namespace stan {
@@ -69,7 +69,7 @@ inline std::vector<int> hmm_latent_rng(const T_omega& log_omegas,
   std::vector<double> probs(n_states);
   Eigen::Map<Eigen::VectorXd> probs_vec(probs.data(), n_states);
   probs_vec = alphas.col(n_transitions) / alphas.col(n_transitions).sum();
-  boost::random::discrete_distribution<> cat_hidden(probs);
+  std::discrete_distribution<> cat_hidden(probs.begin(), probs.end());
   hidden_states[n_transitions] = cat_hidden(rng) + stan::error_index::value;
 
   for (int n = n_transitions; n-- > 0;) {
@@ -84,7 +84,7 @@ inline std::vector<int> hmm_latent_rng(const T_omega& log_omegas,
 
     // discrete_distribution produces samples in [0, K), so
     // we need to add 1 to generate over [1, K).
-    boost::random::discrete_distribution<> cat_hidden(probs);
+    std::discrete_distribution<> cat_hidden(probs.begin(), probs.end());
     hidden_states[n] = cat_hidden(rng) + stan::error_index::value;
 
     // update backwards state

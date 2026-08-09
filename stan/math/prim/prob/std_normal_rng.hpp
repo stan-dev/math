@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_PROB_STD_NORMAL_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -18,13 +17,9 @@ namespace math {
  */
 template <class RNG>
 inline double std_normal_rng(RNG& rng) {
-  using boost::normal_distribution;
-  using boost::variate_generator;
+  std::normal_distribution<> norm_rng(0, 1);
 
-  variate_generator<RNG&, normal_distribution<>> norm_rng(
-      rng, normal_distribution<>(0, 1));
-
-  return norm_rng();
+  return norm_rng(rng);
 }
 
 }  // namespace math

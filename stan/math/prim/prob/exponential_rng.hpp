@@ -5,8 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
-#include <boost/random/exponential_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -27,8 +26,6 @@ namespace math {
 template <typename T_inv, class RNG>
 inline typename VectorBuilder<true, double, T_inv>::type exponential_rng(
     const T_inv& beta, RNG& rng) {
-  using boost::exponential_distribution;
-  using boost::variate_generator;
   static constexpr const char* function = "exponential_rng";
   using T_beta_ref = ref_type_t<T_inv>;
   T_beta_ref beta_ref = beta;
@@ -39,9 +36,8 @@ inline typename VectorBuilder<true, double, T_inv>::type exponential_rng(
   VectorBuilder<true, double, T_inv> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    variate_generator<RNG&, exponential_distribution<> > exp_rng(
-        rng, exponential_distribution<>(beta_vec[n]));
-    output[n] = exp_rng();
+    std::exponential_distribution<> exp_rng(beta_vec[n]);
+    output[n] = exp_rng(rng);
   }
 
   return output.data();

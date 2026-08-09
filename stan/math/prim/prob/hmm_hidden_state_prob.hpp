@@ -5,7 +5,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/hmm_check.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <boost/random.hpp>
 #include <vector>
 
 namespace stan {

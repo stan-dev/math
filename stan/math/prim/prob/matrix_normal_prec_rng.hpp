@@ -4,8 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -33,8 +32,6 @@ inline Eigen::MatrixXd matrix_normal_prec_rng(const Eigen::MatrixXd &Mu,
                                               const Eigen::MatrixXd &Sigma,
                                               const Eigen::MatrixXd &D,
                                               RNG &rng) {
-  using boost::normal_distribution;
-  using boost::variate_generator;
   static constexpr const char *function = "matrix_normal_prec_rng";
   check_positive(function, "Sigma rows", Sigma.rows());
   check_finite(function, "Sigma", Sigma);
@@ -79,8 +76,7 @@ inline Eigen::MatrixXd matrix_normal_prec_rng(const Eigen::MatrixXd &Mu,
   int m = Sigma.rows();
   int n = D.rows();
 
-  variate_generator<RNG &, normal_distribution<>> std_normal_rng(
-      rng, normal_distribution<>(0, 1));
+  std::normal_distribution<> std_normal_rng(0, 1);
 
   // X = sqrt[DS]^(-1) C sqrt[DD]^(-1)
   // X ~ N[0, DS, DD]
@@ -93,7 +89,7 @@ inline Eigen::MatrixXd matrix_normal_prec_rng(const Eigen::MatrixXd &Mu,
     for (int row = 0; row < m; ++row) {
       double stddev = row_stddev(row) * col_stddev(col);
       // C(row, col) = std_normal_rng();
-      X(row, col) = stddev * std_normal_rng();
+      X(row, col) = stddev * std_normal_rng(rng);
     }
   }
 

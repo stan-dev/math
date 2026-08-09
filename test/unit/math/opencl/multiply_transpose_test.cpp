@@ -4,10 +4,10 @@
 #include <stan/math/opencl/multiply_transpose.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <test/unit/util.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <random>
 #include <gtest/gtest.h>
 #include <algorithm>
-boost::random::mt19937 rng;
+std::mt19937 rng;
 
 TEST(MathMatrixOpenCL, multiply_transpose_exception_fail_zero) {
   stan::math::row_vector_d rv(0);

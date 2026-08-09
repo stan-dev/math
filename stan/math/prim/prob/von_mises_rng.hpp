@@ -6,9 +6,8 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -45,8 +44,6 @@ namespace math {
 template <typename T_loc, typename T_conc, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
     const T_loc& mu, const T_conc& kappa, RNG& rng) {
-  using boost::variate_generator;
-  using boost::random::uniform_real_distribution;
   using T_mu_ref = ref_type_t<T_loc>;
   using T_kappa_ref = ref_type_t<T_conc>;
   static constexpr const char* function = "von_mises_rng";
@@ -64,14 +61,13 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
   size_t N = max_size(mu, kappa_ref);
   VectorBuilder<true, double, T_loc, T_conc> output(N);
 
-  variate_generator<RNG&, uniform_real_distribution<> > uniform_rng(
-      rng, uniform_real_distribution<>(0.0, 1.0));
+  std::uniform_real_distribution<> uniform_rng(0.0, 1.0);
 
   for (size_t n = 0; n < N; ++n) {
     // for kappa sufficiently close to zero, it reduces to a
     // circular uniform distribution centered at mu
     if (kappa_vec[n] < 1.4e-8) {
-      output[n] = (uniform_rng() - 0.5) * TWO_PI
+      output[n] = (uniform_rng(rng) - 0.5) * TWO_PI
                   + std::fmod(std::fmod(mu_vec[n], TWO_PI) + TWO_PI, TWO_PI);
       continue;
     }
@@ -83,10 +79,10 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
     bool done = false;
     double W;
     while (!done) {
-      double Z = std::cos(pi() * uniform_rng());
+      double Z = std::cos(pi() * uniform_rng(rng));
       W = (1 + s * Z) / (s + Z);
       double Y = kappa_vec[n] * (s - W);
-      double U2 = uniform_rng();
+      double U2 = uniform_rng(rng);
       done = Y * (2 - Y) - U2 > 0;
 
       if (!done) {
@@ -94,7 +90,7 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
       }
     }
 
-    double U3 = uniform_rng() - 0.5;
+    double U3 = uniform_rng(rng) - 0.5;
     double sign = ((U3 >= 0) - (U3 <= 0));
 
     //  it's really an fmod() with a positivity constraint

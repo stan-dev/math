@@ -15,8 +15,6 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <boost/random/weibull_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 

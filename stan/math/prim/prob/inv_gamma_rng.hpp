@@ -5,8 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
-#include <boost/random/gamma_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -32,8 +31,6 @@ namespace math {
 template <typename T_shape, typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_shape, T_scale>::type
 inv_gamma_rng(const T_shape& alpha, const T_scale& beta, RNG& rng) {
-  using boost::variate_generator;
-  using boost::random::gamma_distribution;
   using T_alpha_ref = ref_type_t<T_shape>;
   using T_beta_ref = ref_type_t<T_scale>;
   static constexpr const char* function = "inv_gamma_rng";
@@ -50,10 +47,9 @@ inv_gamma_rng(const T_shape& alpha, const T_scale& beta, RNG& rng) {
   VectorBuilder<true, double, T_shape, T_scale> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    variate_generator<RNG&, gamma_distribution<> > gamma_rng(
-        rng, gamma_distribution<>(alpha_vec[n],
-                                  1 / static_cast<double>(beta_vec[n])));
-    output[n] = 1 / gamma_rng();
+    std::gamma_distribution<> gamma_rng(
+        alpha_vec[n], 1 / static_cast<double>(beta_vec[n]));
+    output[n] = 1 / gamma_rng(rng);
   }
 
   return output.data();

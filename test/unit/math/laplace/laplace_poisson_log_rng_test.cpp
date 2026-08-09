@@ -2,7 +2,7 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/laplace/laplace_utility.hpp>
 
-#include <boost/random/mersenne_twister.hpp>
+#include <random>
 #include <boost/math/distributions.hpp>
 
 #include <gtest/gtest.h>
@@ -20,7 +20,7 @@ TEST_F(laplace_count_two_dim_diag_test, poisson_log_likelihood) {
   Eigen::MatrixXd K_laplace
       = stan::math::test::laplace_covariance(theta_root, phi);
 
-  boost::random::mt19937 rng;
+  std::mt19937 rng;
   rng.seed(1954);
   Eigen::MatrixXd theta_pred = laplace_latent_poisson_log_rng(
       y, y_index, 0, 1, stan::math::test::diagonal_kernel_functor{},

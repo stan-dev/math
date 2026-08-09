@@ -2,9 +2,7 @@
 #define TEST_UNIT_UTIL_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/typeof/typeof.hpp>
+#include <random>
 #include <test/unit/pretty_print_types.hpp>
 #include <gtest/gtest.h>
 #include <type_traits>
@@ -214,8 +212,8 @@ namespace test {
 
 auto make_sparse_matrix_random(int rows, int cols) {
   using eigen_triplet = Eigen::Triplet<double>;
-  boost::mt19937 gen;
-  boost::random::uniform_real_distribution<double> dist(0.0, 1.0);
+  std::mt19937 gen;
+  std::uniform_real_distribution<double> dist(0.0, 1.0);
   std::vector<eigen_triplet> tripletList;
   for (int i = 0; i < rows; ++i) {
     for (int j = 0; j < cols; ++j) {

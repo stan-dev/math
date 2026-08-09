@@ -5,8 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
-#include <boost/random/bernoulli_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -28,8 +27,6 @@ namespace math {
 template <typename T_theta, class RNG>
 inline typename VectorBuilder<true, int, T_theta>::type bernoulli_rng(
     const T_theta& theta, RNG& rng) {
-  using boost::bernoulli_distribution;
-  using boost::variate_generator;
   static constexpr const char* function = "bernoulli_rng";
   ref_type_t<T_theta> theta_ref = theta;
   check_bounded(function, "Probability parameter", value_of(theta_ref), 0.0,
@@ -40,9 +37,8 @@ inline typename VectorBuilder<true, int, T_theta>::type bernoulli_rng(
   VectorBuilder<true, int, T_theta> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    variate_generator<RNG&, bernoulli_distribution<> > bernoulli_rng(
-        rng, bernoulli_distribution<>(theta_vec[n]));
-    output[n] = bernoulli_rng();
+    std::bernoulli_distribution bernoulli_rng(theta_vec[n]);
+    output[n] = bernoulli_rng(rng);
   }
 
   return output.data();

@@ -5,8 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
-#include <boost/random/uniform_01.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -32,8 +31,6 @@ namespace math {
 template <typename T_scale, typename T_shape, class RNG>
 inline typename VectorBuilder<true, double, T_scale, T_shape>::type
 loglogistic_rng(const T_scale& alpha, const T_shape& beta, RNG& rng) {
-  using boost::uniform_01;
-  using boost::variate_generator;
   using std::pow;
   using T_alpha_ref = ref_type_t<T_scale>;
   using T_beta_ref = ref_type_t<T_shape>;
@@ -51,8 +48,8 @@ loglogistic_rng(const T_scale& alpha, const T_shape& beta, RNG& rng) {
   VectorBuilder<true, double, T_scale, T_shape> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    variate_generator<RNG&, uniform_01<> > uniform01_rng(rng, uniform_01<>());
-    const double tmp = uniform01_rng();
+    std::uniform_real_distribution<> uniform01_rng(0, 1);
+    const double tmp = uniform01_rng(rng);
     output[n] = alpha_vec[n] * pow(tmp / (1 - tmp), 1 / beta_vec[n]);
   }
   return output.data();

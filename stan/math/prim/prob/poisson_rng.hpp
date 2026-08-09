@@ -7,8 +7,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <boost/random/poisson_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -29,8 +28,6 @@ namespace math {
 template <typename T_rate, class RNG>
 inline typename VectorBuilder<true, int, T_rate>::type poisson_rng(
     const T_rate& lambda, RNG& rng) {
-  using boost::variate_generator;
-  using boost::random::poisson_distribution;
   static constexpr const char* function = "poisson_rng";
   const auto& lambda_ref = to_ref(lambda);
   check_positive(function, "Rate parameter", lambda_ref);
@@ -41,9 +38,8 @@ inline typename VectorBuilder<true, int, T_rate>::type poisson_rng(
   VectorBuilder<true, int, T_rate> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    variate_generator<RNG&, poisson_distribution<> > poisson_rng(
-        rng, poisson_distribution<>(lambda_vec[n]));
-    output[n] = poisson_rng();
+    std::poisson_distribution<> poisson_rng(lambda_vec[n]);
+    output[n] = poisson_rng(rng);
   }
 
   return output.data();

@@ -1,6 +1,5 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
 
 TEST(ProbNegBinomial2, ccdf_log_matches_lccdf) {

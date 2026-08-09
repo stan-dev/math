@@ -7,8 +7,7 @@
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/prob/normal_rng.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -39,8 +38,6 @@ template <typename T_loc, typename T_scale, typename T_shape, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_scale, T_shape>::type
 skew_normal_rng(const T_loc& mu, const T_scale& sigma, const T_shape& alpha,
                 RNG& rng) {
-  using boost::variate_generator;
-  using boost::random::normal_distribution;
   static constexpr const char* function = "skew_normal_rng";
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
                          sigma, "Shape Parameter", alpha);
@@ -57,11 +54,10 @@ skew_normal_rng(const T_loc& mu, const T_scale& sigma, const T_shape& alpha,
   size_t N = max_size(mu, sigma, alpha);
   VectorBuilder<true, double, T_loc, T_scale, T_shape> output(N);
 
-  variate_generator<RNG&, normal_distribution<> > norm_rng(
-      rng, normal_distribution<>(0, 1));
+  std::normal_distribution<> norm_rng(0, 1);
   for (size_t n = 0; n < N; ++n) {
-    double r1 = norm_rng();
-    double r2 = norm_rng();
+    double r1 = norm_rng(rng);
+    double r2 = norm_rng(rng);
 
     if (r2 > alpha_vec[n] * r1) {
       r1 = -r1;

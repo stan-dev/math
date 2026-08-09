@@ -8,9 +8,8 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/vector_seq_view.hpp>
 #include <stan/math/prim/prob/inv_gamma_rng.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -42,10 +41,6 @@ inline typename StdVectorBuilder<true, Eigen::VectorXd, T_loc>::type
 multi_student_t_rng(
     double nu, const T_loc& mu,
     const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S, RNG& rng) {
-  using boost::normal_distribution;
-  using boost::variate_generator;
-  using boost::random::gamma_distribution;
-
   static constexpr const char* function = "multi_student_t_rng";
   check_not_nan(function, "Degrees of freedom parameter", nu);
   check_positive(function, "Degrees of freedom parameter", nu);
@@ -78,14 +73,13 @@ multi_student_t_rng(
 
   StdVectorBuilder<true, Eigen::VectorXd, T_loc> output(N);
 
-  variate_generator<RNG&, normal_distribution<> > std_normal_rng(
-      rng, normal_distribution<>(0, 1));
+  std::normal_distribution<> std_normal_rng(0, 1);
 
   double w = inv_gamma_rng(nu / 2, nu / 2, rng);
   for (size_t n = 0; n < N; ++n) {
     Eigen::VectorXd z(S.cols());
     for (int i = 0; i < S.cols(); i++) {
-      z(i) = std_normal_rng();
+      z(i) = std_normal_rng(rng);
     }
     z *= std::sqrt(w);
     output[n] = as_column_vector_or_scalar(mu_vec[n]) + llt_of_S.matrixL() * z;

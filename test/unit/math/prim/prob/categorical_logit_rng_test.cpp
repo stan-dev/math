@@ -1,13 +1,13 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
+#include <random>
 #include <boost/math/distributions.hpp>
 #include <limits>
 
 TEST(ProbDistributionsCategoricalLogit, error_check) {
   using Eigen::VectorXd;
   using stan::math::categorical_logit_rng;
-  boost::random::mt19937 rng;
+  std::mt19937 rng;
 
   VectorXd beta(3);
 
@@ -27,7 +27,7 @@ TEST(ProbDistributionsCategoricalLogit, error_check) {
 TEST(ProbDistributionsCategoricalLogit, chiSquareGoodnessFitTest) {
   using Eigen::VectorXd;
   using stan::math::softmax;
-  boost::random::mt19937 rng;
+  std::mt19937 rng;
   int N = 10000;
   int K = 3;
   VectorXd beta(K);

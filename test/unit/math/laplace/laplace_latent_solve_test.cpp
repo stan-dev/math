@@ -2,7 +2,6 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/laplace/laplace_utility.hpp>
 
-#include <boost/random/mersenne_twister.hpp>
 
 #include <gtest/gtest.h>
 #include <stdexcept>

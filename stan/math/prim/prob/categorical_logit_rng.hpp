@@ -6,8 +6,7 @@
 #include <stan/math/prim/fun/cumulative_sum.hpp>
 #include <stan/math/prim/fun/softmax.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <boost/random/uniform_01.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -27,16 +26,14 @@ namespace math {
  */
 template <class RNG>
 inline int categorical_logit_rng(const Eigen::VectorXd& beta, RNG& rng) {
-  using boost::uniform_01;
-  using boost::variate_generator;
   static constexpr const char* function = "categorical_logit_rng";
   check_finite(function, "Log odds parameter", beta);
 
-  variate_generator<RNG&, uniform_01<> > uniform01_rng(rng, uniform_01<>());
+  std::uniform_real_distribution<> uniform01_rng(0, 1);
   Eigen::VectorXd theta = softmax(beta);
   Eigen::VectorXd index = cumulative_sum(theta);
 
-  double c = uniform01_rng();
+  double c = uniform01_rng(rng);
   int b = 0;
   while (c > index(b)) {
     b++;

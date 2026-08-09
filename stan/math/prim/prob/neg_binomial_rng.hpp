@@ -6,9 +6,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
-#include <boost/random/gamma_distribution.hpp>
-#include <boost/random/poisson_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -34,9 +32,6 @@ namespace math {
 template <typename T_shape, typename T_inv, class RNG>
 inline typename VectorBuilder<true, int, T_shape, T_inv>::type neg_binomial_rng(
     const T_shape& alpha, const T_inv& beta, RNG& rng) {
-  using boost::gamma_distribution;
-  using boost::variate_generator;
-  using boost::random::poisson_distribution;
   using T_alpha_ref = ref_type_t<T_shape>;
   using T_beta_ref = ref_type_t<T_inv>;
   static constexpr const char* function = "neg_binomial_rng";
@@ -53,8 +48,8 @@ inline typename VectorBuilder<true, int, T_shape, T_inv>::type neg_binomial_rng(
   VectorBuilder<true, int, T_shape, T_inv> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    double rng_from_gamma = variate_generator<RNG&, gamma_distribution<> >(
-        rng, gamma_distribution<>(alpha_vec[n], 1.0 / beta_vec[n]))();
+    double rng_from_gamma = std::gamma_distribution<>(
+        alpha_vec[n], 1.0 / beta_vec[n])(rng);
 
     // same as the constraints for poisson_rng
     check_less(function, "Random number that came from gamma distribution",
@@ -65,8 +60,7 @@ inline typename VectorBuilder<true, int, T_shape, T_inv>::type neg_binomial_rng(
                       "Random number that came from gamma distribution",
                       rng_from_gamma);
 
-    output[n] = variate_generator<RNG&, poisson_distribution<> >(
-        rng, poisson_distribution<>(rng_from_gamma))();
+    output[n] = std::poisson_distribution<>(rng_from_gamma)(rng);
   }
 
   return output.data();

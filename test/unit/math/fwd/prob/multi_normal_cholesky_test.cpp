@@ -1,6 +1,5 @@
 #include <stan/math/fwd.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
 
 TEST(ProbDistributionsMultiNormalCholesky, fvar_double) {

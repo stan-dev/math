@@ -4,8 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 #include <vector>
 
 namespace stan {
@@ -29,17 +28,13 @@ template <class RNG>
 inline Eigen::VectorXd multi_normal_semidefinite_rng(
     const Eigen::VectorXd &mu, const Eigen::LDLT<Eigen::MatrixXd> &S_ldlt,
     RNG &rng) {
-  using boost::normal_distribution;
-  using boost::variate_generator;
-
-  variate_generator<RNG &, normal_distribution<>> std_normal_rng(
-      rng, normal_distribution<>(0, 1));
+  std::normal_distribution<> std_normal_rng(0, 1);
 
   Eigen::VectorXd stddev = S_ldlt.vectorD().array().sqrt().matrix();
   size_t M = S_ldlt.vectorD().size();
   Eigen::VectorXd z(M);
   for (int i = 0; i < M; i++) {
-    z(i) = stddev(i) * std_normal_rng();
+    z(i) = stddev(i) * std_normal_rng(rng);
   }
 
   Eigen::VectorXd Y

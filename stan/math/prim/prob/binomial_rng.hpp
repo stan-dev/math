@@ -5,8 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
-#include <boost/random/binomial_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -31,8 +30,6 @@ namespace math {
 template <typename T_N, typename T_theta, class RNG>
 inline typename VectorBuilder<true, int, T_N, T_theta>::type binomial_rng(
     const T_N& N, const T_theta& theta, RNG& rng) {
-  using boost::binomial_distribution;
-  using boost::variate_generator;
   using T_N_ref = ref_type_t<T_N>;
   using T_theta_ref = ref_type_t<T_theta>;
   static constexpr const char* function = "binomial_rng";
@@ -50,10 +47,9 @@ inline typename VectorBuilder<true, int, T_N, T_theta>::type binomial_rng(
   VectorBuilder<true, int, T_N, T_theta> output(M);
 
   for (size_t m = 0; m < M; ++m) {
-    variate_generator<RNG&, binomial_distribution<> > binomial_rng(
-        rng, binomial_distribution<>(N_vec[m], theta_vec[m]));
+    std::binomial_distribution<> binomial_rng(N_vec[m], theta_vec[m]);
 
-    output[m] = binomial_rng();
+    output[m] = binomial_rng(rng);
   }
 
   return output.data();

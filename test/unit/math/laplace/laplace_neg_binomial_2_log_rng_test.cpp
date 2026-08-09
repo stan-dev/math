@@ -2,7 +2,7 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/laplace/laplace_utility.hpp>
 
-#include <boost/random/mersenne_twister.hpp>
+#include <random>
 #include <boost/math/distributions.hpp>
 
 #include <gtest/gtest.h>
@@ -96,7 +96,7 @@ TEST(laplace_latent_neg_binomial_2_log_rng, count_two_dim_diag) {
       = algebra_solver(stationary_point_nb(), theta_0, phi, d0, di0);
   Eigen::MatrixXd K_laplace = laplace_covariance_nb(theta_root, phi, eta);
 
-  boost::random::mt19937 rng;
+  std::mt19937 rng;
   rng.seed(1954);
   Eigen::MatrixXd theta_benchmark
       = stan::math::multi_normal_rng(theta_root, K_laplace, rng);

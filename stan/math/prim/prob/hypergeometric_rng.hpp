@@ -12,7 +12,6 @@ namespace math {
 
 template <class RNG>
 inline int hypergeometric_rng(int N, int a, int b, RNG& rng) {
-  using boost::variate_generator;
   using boost::math::hypergeometric_distribution;
   static constexpr const char* function = "hypergeometric_rng";
   check_bounded(function, "Draws parameter", value_of(N), 0, a + b);

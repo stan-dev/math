@@ -5,8 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -35,8 +34,6 @@ template <typename T_lower, typename T_upper, class RNG>
 inline typename VectorBuilder<true, int, T_lower, T_upper>::type
 discrete_range_rng(const T_lower& lower, const T_upper& upper, RNG& rng) {
   static constexpr const char* function = "discrete_range_rng";
-  using boost::variate_generator;
-  using boost::random::uniform_int_distribution;
   check_consistent_sizes(function, "Lower bound parameter", lower,
                          "Upper bound parameter", upper);
   check_greater_or_equal(function, "Upper bound parameter", upper, lower);
@@ -47,10 +44,10 @@ discrete_range_rng(const T_lower& lower, const T_upper& upper, RNG& rng) {
   VectorBuilder<true, int, T_lower, T_upper> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    variate_generator<RNG&, uniform_int_distribution<>> discrete_range_rng(
-        rng, uniform_int_distribution<>(lower_vec[n], upper_vec[n]));
+    std::uniform_int_distribution<> discrete_range_rng(lower_vec[n],
+                                                        upper_vec[n]);
 
-    output[n] = discrete_range_rng();
+    output[n] = discrete_range_rng(rng);
   }
 
   return output.data();

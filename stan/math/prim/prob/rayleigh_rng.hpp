@@ -6,9 +6,8 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -29,8 +28,6 @@ namespace math {
 template <typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_scale>::type rayleigh_rng(
     const T_scale& sigma, RNG& rng) {
-  using boost::variate_generator;
-  using boost::random::uniform_real_distribution;
   static constexpr const char* function = "rayleigh_rng";
   const auto& sigma_ref = to_ref(sigma);
   check_positive_finite(function, "Scale parameter", sigma_ref);
@@ -39,10 +36,9 @@ inline typename VectorBuilder<true, double, T_scale>::type rayleigh_rng(
   size_t N = stan::math::size(sigma);
   VectorBuilder<true, double, T_scale> output(N);
 
-  variate_generator<RNG&, uniform_real_distribution<> > uniform_rng(
-      rng, uniform_real_distribution<>(0.0, 1.0));
+  std::uniform_real_distribution<> uniform_rng(0.0, 1.0);
   for (size_t n = 0; n < N; ++n) {
-    output[n] = sigma_vec[n] * std::sqrt(-2.0 * std::log(uniform_rng()));
+    output[n] = sigma_vec[n] * std::sqrt(-2.0 * std::log(uniform_rng(rng)));
   }
 
   return output.data();

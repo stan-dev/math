@@ -1,7 +1,7 @@
 #include <stan/math.hpp>
 #include <stan/math/mix.hpp>
 
-#include <boost/random/mersenne_twister.hpp>
+#include <random>
 #include <boost/math/distributions.hpp>
 
 #include <gtest/gtest.h>
@@ -74,7 +74,7 @@ TEST(laplace_bernoulli_logit_rng, two_dim_diag) {
   std::vector<double> d0;
   std::vector<int> di0;
   std::vector<Eigen::VectorXd> x_dummy;
-  boost::random::mt19937 rng;
+  std::mt19937 rng;
   rng.seed(1954);
   Eigen::MatrixXd theta_pred = laplace_latent_bernoulli_logit_rng(
       y, y_index, mean, 1, diagonal_kernel_functor{},

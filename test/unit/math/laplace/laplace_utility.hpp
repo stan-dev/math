@@ -4,6 +4,7 @@
 #include <test/unit/math/laplace/aki_disease_data/x1.hpp>
 #include <boost/algorithm/string.hpp>
 #include <iostream>
+#include <random>
 #include <gtest/gtest.h>
 
 namespace stan {
@@ -411,7 +412,7 @@ class laplace_count_two_dim_diag_test : public ::testing::Test {
   std::vector<int> di0;
   Eigen::MatrixXd K_laplace;
   Eigen::MatrixXd theta_benchmark;
-  boost::random::mt19937 rng;
+  std::mt19937 rng;
   double tol;
   int n_sim;
 };

@@ -6,9 +6,8 @@
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <boost/random/exponential_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -34,8 +33,6 @@ namespace math {
 template <typename T_shape, typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_shape, T_scale>::type pareto_rng(
     const T_scale& y_min, const T_shape& alpha, RNG& rng) {
-  using boost::exponential_distribution;
-  using boost::variate_generator;
   static constexpr const char* function = "pareto_rng";
   check_consistent_sizes(function, "Scale Parameter", y_min, "Shape parameter",
                          alpha);
@@ -50,9 +47,8 @@ inline typename VectorBuilder<true, double, T_shape, T_scale>::type pareto_rng(
   VectorBuilder<true, double, T_scale, T_shape> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    variate_generator<RNG&, exponential_distribution<> > exp_rng(
-        rng, exponential_distribution<>(alpha_vec[n]));
-    output[n] = y_min_vec[n] * std::exp(exp_rng());
+    std::exponential_distribution<> exp_rng(alpha_vec[n]);
+    output[n] = y_min_vec[n] * std::exp(exp_rng(rng));
   }
 
   return output.data();

@@ -3,7 +3,7 @@
 #include <stan/math/opencl/prim.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <test/unit/util.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <random>
 #include <gtest/gtest.h>
 #include <algorithm>
 
@@ -29,7 +29,7 @@ TEST(MathMatrixCL, mdivide_left_tri_low_cl_exception) {
 }
 
 inline void mdivide_left_tri_low_Ab_test(int size) {
-  boost::random::mt19937 rng;
+  std::mt19937 rng;
   auto m1 = stan::math::matrix_d(size, size);
   for (int i = 0; i < size; i++) {
     for (int j = 0; j < i; j++) {
@@ -57,7 +57,7 @@ inline void mdivide_left_tri_low_Ab_test(int size) {
 }
 
 inline void mdivide_left_tri_low_A_test(int size) {
-  boost::random::mt19937 rng;
+  std::mt19937 rng;
   auto m1 = stan::math::matrix_d(size, size);
   for (int i = 0; i < size; i++) {
     for (int j = 0; j < i; j++) {

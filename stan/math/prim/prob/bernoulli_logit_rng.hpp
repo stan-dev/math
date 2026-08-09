@@ -6,8 +6,7 @@
 #include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
-#include <boost/random/bernoulli_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -29,8 +28,6 @@ namespace math {
 template <typename T_t, class RNG>
 inline typename VectorBuilder<true, int, T_t>::type bernoulli_logit_rng(
     const T_t& t, RNG& rng) {
-  using boost::bernoulli_distribution;
-  using boost::variate_generator;
   ref_type_t<T_t> t_ref = t;
   check_finite("bernoulli_logit_rng", "Logit transformed probability parameter",
                t_ref);
@@ -40,9 +37,8 @@ inline typename VectorBuilder<true, int, T_t>::type bernoulli_logit_rng(
   VectorBuilder<true, int, T_t> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    variate_generator<RNG&, bernoulli_distribution<> > bernoulli_rng(
-        rng, bernoulli_distribution<>(inv_logit(t_vec[n])));
-    output[n] = bernoulli_rng();
+    std::bernoulli_distribution bernoulli_rng(inv_logit(t_vec[n]));
+    output[n] = bernoulli_rng(rng);
   }
 
   return output.data();

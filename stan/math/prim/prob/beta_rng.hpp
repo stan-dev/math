@@ -6,10 +6,8 @@
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
-#include <boost/random/gamma_distribution.hpp>
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -35,9 +33,6 @@ namespace math {
 template <typename T_shape1, typename T_shape2, class RNG>
 inline typename VectorBuilder<true, double, T_shape1, T_shape2>::type beta_rng(
     const T_shape1 &alpha, const T_shape2 &beta, RNG &rng) {
-  using boost::variate_generator;
-  using boost::random::gamma_distribution;
-  using boost::random::uniform_real_distribution;
   using T_alpha_ref = ref_type_t<T_shape1>;
   using T_beta_ref = ref_type_t<T_shape2>;
   static constexpr const char *function = "beta_rng";
@@ -53,29 +48,24 @@ inline typename VectorBuilder<true, double, T_shape1, T_shape2>::type beta_rng(
   size_t N = max_size(alpha, beta);
   VectorBuilder<true, double, T_shape1, T_shape2> output(N);
 
-  variate_generator<RNG &, uniform_real_distribution<>> uniform_rng(
-      rng, uniform_real_distribution<>(0.0, 1.0));
+  std::uniform_real_distribution<> uniform_rng(0.0, 1.0);
   for (size_t n = 0; n < N; ++n) {
     // If alpha and beta are large, trust the usual ratio of gammas
     // method for generating beta random variables. If any parameter
     // is small, work in log space and use Marsaglia and Tsang's trick
     if (alpha_vec[n] > 1.0 && beta_vec[n] > 1.0) {
-      variate_generator<RNG &, gamma_distribution<>> rng_gamma_alpha(
-          rng, gamma_distribution<>(alpha_vec[n], 1.0));
-      variate_generator<RNG &, gamma_distribution<>> rng_gamma_beta(
-          rng, gamma_distribution<>(beta_vec[n], 1.0));
-      double a = rng_gamma_alpha();
-      double b = rng_gamma_beta();
+      std::gamma_distribution<> rng_gamma_alpha(alpha_vec[n], 1.0);
+      std::gamma_distribution<> rng_gamma_beta(beta_vec[n], 1.0);
+      double a = rng_gamma_alpha(rng);
+      double b = rng_gamma_beta(rng);
       output[n] = a / (a + b);
     } else {
-      variate_generator<RNG &, gamma_distribution<>> rng_gamma_alpha(
-          rng, gamma_distribution<>(alpha_vec[n] + 1, 1.0));
-      variate_generator<RNG &, gamma_distribution<>> rng_gamma_beta(
-          rng, gamma_distribution<>(beta_vec[n] + 1, 1.0));
-      double log_a = std::log(uniform_rng()) / alpha_vec[n]
-                     + std::log(rng_gamma_alpha());
-      double log_b
-          = std::log(uniform_rng()) / beta_vec[n] + std::log(rng_gamma_beta());
+      std::gamma_distribution<> rng_gamma_alpha(alpha_vec[n] + 1, 1.0);
+      std::gamma_distribution<> rng_gamma_beta(beta_vec[n] + 1, 1.0);
+      double log_a = std::log(uniform_rng(rng)) / alpha_vec[n]
+                     + std::log(rng_gamma_alpha(rng));
+      double log_b = std::log(uniform_rng(rng)) / beta_vec[n]
+                     + std::log(rng_gamma_beta(rng));
       double log_sum = log_sum_exp(log_a, log_b);
       output[n] = std::exp(log_a - log_sum);
     }

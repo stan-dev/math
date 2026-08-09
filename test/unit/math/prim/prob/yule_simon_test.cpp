@@ -3,7 +3,7 @@
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 #include <test/unit/math/prim/prob/VectorIntRNGTestRig.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
+#include <random>
 #include <boost/math/distributions.hpp>
 #include <limits>
 #include <vector>
@@ -36,7 +36,7 @@ TEST(ProbDistributionsYuleSimon, distributionCheck) {
 }
 
 TEST(ProbDistributionsYuleSimon, error_check) {
-  boost::random::mt19937 rng;
+  std::mt19937 rng;
 
   EXPECT_NO_THROW(stan::math::yule_simon_rng(1.0, rng));
   EXPECT_NO_THROW(stan::math::yule_simon_rng(2.0, rng));

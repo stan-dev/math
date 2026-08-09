@@ -5,8 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
-#include <boost/random/lognormal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -32,8 +31,6 @@ namespace math {
 template <typename T_loc, typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_scale>::type lognormal_rng(
     const T_loc& mu, const T_scale& sigma, RNG& rng) {
-  using boost::variate_generator;
-  using boost::random::lognormal_distribution;
   using T_mu_ref = ref_type_t<T_loc>;
   using T_sigma_ref = ref_type_t<T_scale>;
   static constexpr const char* function = "lognormal_rng";
@@ -50,9 +47,8 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type lognormal_rng(
   VectorBuilder<true, double, T_loc, T_scale> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    variate_generator<RNG&, lognormal_distribution<> > lognorm_rng(
-        rng, lognormal_distribution<>(mu_vec[n], sigma_vec[n]));
-    output[n] = lognorm_rng();
+    std::lognormal_distribution<> lognorm_rng(mu_vec[n], sigma_vec[n]);
+    output[n] = lognorm_rng(rng);
   }
 
   return output.data();

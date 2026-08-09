@@ -8,9 +8,8 @@
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/prob/exponential_rng.hpp>
 #include <stan/math/prim/prob/normal_rng.hpp>
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <cmath>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -41,8 +40,6 @@ template <typename T_loc, typename T_scale, typename T_shape, class RNG>
 inline typename VectorBuilder<true, double, T_loc, T_scale, T_shape>::type
 pareto_type_2_rng(const T_loc& mu, const T_scale& lambda, const T_shape& alpha,
                   RNG& rng) {
-  using boost::variate_generator;
-  using boost::random::uniform_real_distribution;
   static constexpr const char* function = "pareto_type_2_rng";
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
                          lambda, "Shape Parameter", alpha);
@@ -59,10 +56,9 @@ pareto_type_2_rng(const T_loc& mu, const T_scale& lambda, const T_shape& alpha,
   size_t N = max_size(mu, lambda, alpha);
   VectorBuilder<true, double, T_loc, T_scale, T_shape> output(N);
 
-  variate_generator<RNG&, uniform_real_distribution<> > uniform_rng(
-      rng, uniform_real_distribution<>(0.0, 1.0));
+  std::uniform_real_distribution<> uniform_rng(0.0, 1.0);
   for (size_t n = 0; n < N; ++n) {
-    output[n] = (std::pow(1.0 - uniform_rng(), -1.0 / alpha_vec[n]) - 1.0)
+    output[n] = (std::pow(1.0 - uniform_rng(rng), -1.0 / alpha_vec[n]) - 1.0)
                     * lambda_vec[n]
                 + mu_vec[n];
   }

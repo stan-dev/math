@@ -5,7 +5,6 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/prob/categorical_rng.hpp>
-#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -13,7 +12,6 @@ namespace math {
 template <class RNG>
 inline int ordered_logistic_rng(
     double eta, const Eigen::Matrix<double, Eigen::Dynamic, 1>& c, RNG& rng) {
-  using boost::variate_generator;
   static constexpr const char* function = "ordered_logistic";
   check_finite(function, "Location parameter", eta);
   check_greater(function, "Size of cut points parameter", c.size(), 0);

@@ -8,8 +8,7 @@
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
-#include <boost/random/bernoulli_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 #include <vector>
 
 namespace stan {
@@ -42,8 +41,6 @@ namespace math {
 template <typename T_x, typename T_alpha, typename T_beta, class RNG>
 inline typename VectorBuilder<true, int, T_alpha>::type bernoulli_logit_glm_rng(
     const T_x& x, const T_alpha& alpha, const T_beta& beta, RNG& rng) {
-  using boost::bernoulli_distribution;
-  using boost::variate_generator;
   using T_x_ref = ref_type_t<T_x>;
   using T_alpha_ref = ref_type_t<T_alpha>;
   using T_beta_ref = ref_type_t<T_beta>;
@@ -76,9 +73,8 @@ inline typename VectorBuilder<true, int, T_alpha>::type bernoulli_logit_glm_rng(
 
   for (size_t m = 0; m < M; ++m) {
     double theta_m = alpha_vec[m] + x_beta(m);
-    variate_generator<RNG&, bernoulli_distribution<>> bernoulli_rng(
-        rng, bernoulli_distribution<>(inv_logit(theta_m)));
-    output[m] = bernoulli_rng();
+    std::bernoulli_distribution bernoulli_rng(inv_logit(theta_m));
+    output[m] = bernoulli_rng(rng);
   }
 
   return output.data();

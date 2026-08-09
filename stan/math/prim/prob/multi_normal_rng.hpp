@@ -7,8 +7,7 @@
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/vector_seq_view.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -34,8 +33,6 @@ inline typename StdVectorBuilder<true, Eigen::VectorXd, T_loc>::type
 multi_normal_rng(const T_loc& mu,
                  const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S,
                  RNG& rng) {
-  using boost::normal_distribution;
-  using boost::variate_generator;
   static constexpr const char* function = "multi_normal_rng";
   check_positive(function, "Covariance matrix rows", S.rows());
 
@@ -65,13 +62,12 @@ multi_normal_rng(const T_loc& mu,
 
   StdVectorBuilder<true, Eigen::VectorXd, T_loc> output(N);
 
-  variate_generator<RNG&, normal_distribution<> > std_normal_rng(
-      rng, normal_distribution<>(0, 1));
+  std::normal_distribution<> std_normal_rng(0, 1);
 
   for (size_t n = 0; n < N; ++n) {
     Eigen::VectorXd z(S.cols());
     for (int i = 0; i < S.cols(); i++) {
-      z(i) = std_normal_rng();
+      z(i) = std_normal_rng(rng);
     }
 
     output[n] = as_column_vector_or_scalar(mu_vec[n]) + llt_of_S.matrixL() * z;

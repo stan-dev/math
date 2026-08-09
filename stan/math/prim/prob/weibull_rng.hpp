@@ -5,8 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
-#include <boost/random/weibull_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -32,8 +31,6 @@ namespace math {
 template <typename T_shape, typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_shape, T_scale>::type weibull_rng(
     const T_shape& alpha, const T_scale& sigma, RNG& rng) {
-  using boost::variate_generator;
-  using boost::random::weibull_distribution;
   using T_alpha_ref = ref_type_t<T_shape>;
   using T_sigma_ref = ref_type_t<T_scale>;
   static constexpr const char* function = "weibull_rng";
@@ -50,9 +47,8 @@ inline typename VectorBuilder<true, double, T_shape, T_scale>::type weibull_rng(
   VectorBuilder<true, double, T_shape, T_scale> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    variate_generator<RNG&, weibull_distribution<> > weibull_rng(
-        rng, weibull_distribution<>(alpha_vec[n], sigma_vec[n]));
-    output[n] = weibull_rng();
+    std::weibull_distribution<> weibull_rng(alpha_vec[n], sigma_vec[n]);
+    output[n] = weibull_rng(rng);
   }
 
   return output.data();

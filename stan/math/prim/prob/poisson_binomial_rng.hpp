@@ -4,8 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/size.hpp>
-#include <boost/random/bernoulli_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -30,9 +29,8 @@ inline int poisson_binomial_rng(const T_theta& theta, RNG& rng) {
 
   int y = 0;
   for (size_t i = 0; i < theta.size(); ++i) {
-    boost::variate_generator<RNG&, boost::bernoulli_distribution<> >
-        bernoulli_rng(rng, boost::bernoulli_distribution<>(theta_ref[i]));
-    y += bernoulli_rng();
+    std::bernoulli_distribution bernoulli_rng(theta_ref[i]);
+    y += bernoulli_rng(rng);
   }
 
   return y;

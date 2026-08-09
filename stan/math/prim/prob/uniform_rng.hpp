@@ -7,8 +7,7 @@
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include <random>
 
 namespace stan {
 namespace math {
@@ -36,8 +35,6 @@ inline typename VectorBuilder<true, double, T_alpha, T_beta>::type uniform_rng(
     const T_alpha& alpha, const T_beta& beta, RNG& rng) {
   using T_alpha_ref = ref_type_t<T_alpha>;
   using T_beta_ref = ref_type_t<T_beta>;
-  using boost::variate_generator;
-  using boost::random::uniform_real_distribution;
   static constexpr const char* function = "uniform_rng";
   check_consistent_sizes(function, "Lower bound parameter", alpha,
                          "Upper bound parameter", beta);
@@ -52,10 +49,9 @@ inline typename VectorBuilder<true, double, T_alpha, T_beta>::type uniform_rng(
   size_t N = max_size(alpha, beta);
   VectorBuilder<true, double, T_alpha, T_beta> output(N);
 
-  variate_generator<RNG&, uniform_real_distribution<> > uniform_rng(
-      rng, uniform_real_distribution<>(0.0, 1.0));
+  std::uniform_real_distribution<> uniform_rng(0.0, 1.0);
   for (size_t n = 0; n < N; ++n) {
-    output[n] = (beta_vec[n] - alpha_vec[n]) * uniform_rng() + alpha_vec[n];
+    output[n] = (beta_vec[n] - alpha_vec[n]) * uniform_rng(rng) + alpha_vec[n];
   }
 
   return output.data();
