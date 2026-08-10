@@ -66,7 +66,8 @@ TEST(MathFunctor, map_shared_arg_reused) {
 TEST(MathFunctor, mapN_add) {
   std::vector<double> a{1.0, 2.0};
   std::vector<double> b{10.0, 20.0};
-  auto y = stan::math::mapN([](double u, double v) { return u + v; }, a, b);
+  auto y = stan::math::mapN([](double u, double v) { return u + v; },
+                            std::forward_as_tuple(a, b));
   ASSERT_EQ(y.size(), 2u);
   EXPECT_FLOAT_EQ(y[0], 11.0);
   EXPECT_FLOAT_EQ(y[1], 22.0);
@@ -75,7 +76,8 @@ TEST(MathFunctor, mapN_add) {
 TEST(MathFunctor, mapN_mixed_scalar_types) {
   std::vector<int> a{1, 2, 3};
   std::vector<double> b{0.5, 1.5, 2.5};
-  auto y = stan::math::mapN([](int u, double v) { return u + v; }, a, b);
+  auto y = stan::math::mapN([](int u, double v) { return u + v; },
+                            std::forward_as_tuple(a, b));
   ASSERT_EQ(y.size(), 3u);
   EXPECT_FLOAT_EQ(y[0], 1.5);
   EXPECT_FLOAT_EQ(y[1], 3.5);
@@ -86,8 +88,9 @@ TEST(MathFunctor, mapN_three_vectors) {
   std::vector<double> a{1.0, 2.0};
   std::vector<double> b{10.0, 20.0};
   std::vector<double> c{100.0, 200.0};
-  auto y = stan::math::mapN(
-      [](double u, double v, double w) { return u + v + w; }, a, b, c);
+  auto y
+      = stan::math::mapN([](double u, double v, double w) { return u + v + w; },
+                         std::forward_as_tuple(a, b, c));
   ASSERT_EQ(y.size(), 2u);
   EXPECT_FLOAT_EQ(y[0], 111.0);
   EXPECT_FLOAT_EQ(y[1], 222.0);
@@ -108,14 +111,16 @@ TEST(MathFunctor, mapN_shared_arg_reused) {
 TEST(MathFunctor, mapN_empty) {
   std::vector<double> a;
   std::vector<double> b;
-  auto y = stan::math::mapN([](double u, double v) { return u + v; }, a, b);
+  auto y = stan::math::mapN([](double u, double v) { return u + v; },
+                            std::forward_as_tuple(a, b));
   EXPECT_EQ(y.size(), 0u);
 }
 
 TEST(MathFunctor, mapN_size_mismatch) {
   std::vector<double> a{1.0, 2.0};
   std::vector<double> b{10.0};
-  EXPECT_THROW(stan::math::mapN([](double u, double v) { return u + v; }, a, b),
+  EXPECT_THROW(stan::math::mapN([](double u, double v) { return u + v; },
+                                std::forward_as_tuple(a, b)),
                std::invalid_argument);
 }
 
@@ -269,7 +274,7 @@ TEST(MathFunctor, row_mapN_add) {
   auto y
       = stan::math::row_mapN([](const Eigen::RowVectorXd& u,
                                 const Eigen::RowVectorXd& v) { return u + v; },
-                             a, b);
+                             std::forward_as_tuple(a, b));
 
   Eigen::MatrixXd expected(2, 2);
   expected << 11.0, 22.0, 33.0, 44.0;
@@ -303,7 +308,7 @@ TEST(MathFunctor, row_mapN_dim_mismatch) {
   EXPECT_THROW(
       stan::math::row_mapN([](const Eigen::RowVectorXd& u,
                               const Eigen::RowVectorXd& v) { return u + v; },
-                           a, b),
+                           std::forward_as_tuple(a, b)),
       std::invalid_argument);
 }
 
@@ -313,7 +318,7 @@ TEST(MathFunctor, row_mapN_empty) {
   auto y
       = stan::math::row_mapN([](const Eigen::RowVectorXd& u,
                                 const Eigen::RowVectorXd& v) { return u + v; },
-                             a, b);
+                             std::forward_as_tuple(a, b));
   EXPECT_EQ(y.rows(), 0);
   EXPECT_EQ(y.cols(), 0);
 }
@@ -327,7 +332,7 @@ TEST(MathFunctor, row_mapN_empty_result) {
         ++calls;
         return Eigen::RowVectorXd(0);
       },
-      a, b);
+      std::forward_as_tuple(a, b));
   EXPECT_EQ(y.rows(), 0);
   EXPECT_EQ(y.cols(), 0);
   EXPECT_EQ(calls, 1);
@@ -342,7 +347,7 @@ TEST(MathFunctor, row_mapN_mixed_scalar_types) {
       [](const auto& u, const auto& v) {
         return u.template cast<double>() + v;
       },
-      a, b);
+      std::forward_as_tuple(a, b));
 
   Eigen::MatrixXd expected(2, 2);
   expected << 1.5, 3.5, 5.5, 7.5;
@@ -364,7 +369,7 @@ TEST(MathFunctor, row_mapN_inconsistent_row_size) {
             }
             return Eigen::RowVectorXd::Ones(3);
           },
-          a, b),
+          std::forward_as_tuple(a, b)),
       std::invalid_argument);
 }
 
@@ -376,7 +381,7 @@ TEST(MathFunctor, col_mapN_add) {
 
   auto y = stan::math::col_mapN(
       [](const Eigen::VectorXd& u, const Eigen::VectorXd& v) { return u + v; },
-      a, b);
+      std::forward_as_tuple(a, b));
 
   Eigen::MatrixXd expected(2, 2);
   expected << 11.0, 22.0, 33.0, 44.0;
@@ -410,7 +415,7 @@ TEST(MathFunctor, col_mapN_dim_mismatch) {
   EXPECT_THROW(
       stan::math::col_mapN([](const Eigen::VectorXd& u,
                               const Eigen::VectorXd& v) { return u + v; },
-                           a, b),
+                           std::forward_as_tuple(a, b)),
       std::invalid_argument);
 }
 
@@ -419,7 +424,7 @@ TEST(MathFunctor, col_mapN_empty) {
   Eigen::MatrixXd b(2, 0);
   auto y = stan::math::col_mapN(
       [](const Eigen::VectorXd& u, const Eigen::VectorXd& v) { return u + v; },
-      a, b);
+      std::forward_as_tuple(a, b));
   EXPECT_EQ(y.rows(), 0);
   EXPECT_EQ(y.cols(), 0);
 }
@@ -433,7 +438,7 @@ TEST(MathFunctor, col_mapN_empty_result) {
         ++calls;
         return Eigen::VectorXd(0);
       },
-      a, b);
+      std::forward_as_tuple(a, b));
   EXPECT_EQ(y.rows(), 0);
   EXPECT_EQ(y.cols(), 0);
   EXPECT_EQ(calls, 1);
@@ -448,7 +453,7 @@ TEST(MathFunctor, col_mapN_mixed_scalar_types) {
       [](const auto& u, const auto& v) {
         return u.template cast<double>() + v;
       },
-      a, b);
+      std::forward_as_tuple(a, b));
 
   Eigen::MatrixXd expected(2, 2);
   expected << 1.5, 3.5, 5.5, 7.5;
@@ -469,7 +474,7 @@ TEST(MathFunctor, col_mapN_inconsistent_col_size) {
                      }
                      return Eigen::VectorXd::Ones(3);
                    },
-                   a, b),
+                   std::forward_as_tuple(a, b)),
                std::invalid_argument);
 }
 
@@ -506,7 +511,7 @@ TEST(MathFunctor, row_mapN_expression_inputs) {
   auto y
       = stan::math::row_mapN([](const Eigen::RowVectorXd& u,
                                 const Eigen::RowVectorXd& v) { return u + v; },
-                             a * b, c);
+                             std::forward_as_tuple(a * b, c));
 
   Eigen::MatrixXd expected(2, 2);
   expected << 11.0, 22.0, 33.0, 44.0;
@@ -523,7 +528,7 @@ TEST(MathFunctor, col_mapN_expression_inputs) {
 
   auto y = stan::math::col_mapN(
       [](const Eigen::VectorXd& u, const Eigen::VectorXd& v) { return u + v; },
-      a * b, c);
+      std::forward_as_tuple(a * b, c));
 
   Eigen::MatrixXd expected(2, 2);
   expected << 11.0, 22.0, 33.0, 44.0;
