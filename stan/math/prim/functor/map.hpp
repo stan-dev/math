@@ -215,8 +215,8 @@ inline auto row_mapN(F&& f, Tuple&& ms, Args&&... args) {
         return apply(
             [&f, &args..., &n_rows](auto&&... mrs) {
               using matrix_t
-                  = Eigen::Matrix<scalar_type_t<plain_type_t<decltype(f(
-                                      (mrs.row(0))..., args...))>>,
+                  = Eigen::Matrix<scalar_type_t<plain_type_t<decltype(
+                                      f((mrs.row(0))..., args...))>>,
                                   Eigen::Dynamic, Eigen::Dynamic>;
 
               if (n_rows == 0) {
@@ -280,8 +280,8 @@ inline auto col_mapN(F&& f, Tuple&& ms, Args&&... args) {
         return apply(
             [&f, &args..., &n_cols](auto&&... mrs) {
               using matrix_t
-                  = Eigen::Matrix<scalar_type_t<plain_type_t<decltype(f(
-                                      (mrs.col(0))..., args...))>>,
+                  = Eigen::Matrix<scalar_type_t<plain_type_t<decltype(
+                                      f((mrs.col(0))..., args...))>>,
                                   Eigen::Dynamic, Eigen::Dynamic>;
 
               if (n_cols == 0) {
