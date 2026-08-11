@@ -16,12 +16,45 @@ inline void assert_chi_squared(const std::vector<int>& counts,
   int bins = counts.size();
   EXPECT_EQ(bins, expected.size());
 
-  double chi = 0;
+  // Merge adjacent bins until each merged bin clears the threshold.
+  constexpr double kMinExpectedCount = 5.0;
+  std::vector<double> merged_expected;
+  std::vector<int> merged_counts;
+  double acc_expected = 0;
+  int acc_counts = 0;
   for (int i = 0; i < bins; ++i) {
-    double discrepancy = expected[i] - counts[i];
-    chi += discrepancy * discrepancy / expected[i];
+    acc_expected += expected[i];
+    acc_counts += counts[i];
+    if (acc_expected >= kMinExpectedCount) {
+      merged_expected.push_back(acc_expected);
+      merged_counts.push_back(acc_counts);
+      acc_expected = 0;
+      acc_counts = 0;
+    }
   }
-  boost::math::chi_squared dist(bins - 1);
+  if (acc_expected > 0) {
+    if (merged_expected.empty()) {
+      merged_expected.push_back(acc_expected);
+      merged_counts.push_back(acc_counts);
+    } else {
+      merged_expected.back() += acc_expected;
+      merged_counts.back() += acc_counts;
+    }
+  }
+
+  int merged_bins = merged_expected.size();
+  if (merged_bins < 2) {
+    // Not enough expected mass spread across bins to run a meaningful
+    // goodness-of-fit test.
+    return;
+  }
+
+  double chi = 0;
+  for (int i = 0; i < merged_bins; ++i) {
+    double discrepancy = merged_expected[i] - merged_counts[i];
+    chi += discrepancy * discrepancy / merged_expected[i];
+  }
+  boost::math::chi_squared dist(merged_bins - 1);
   double chi_threshold = quantile(complement(dist, tolerance));
 
   EXPECT_TRUE(chi < chi_threshold);

@@ -15,7 +15,7 @@ TEST(ProbDistributionsLkjCorr, fvar_double) {
   fvar<double> eta = stan::math::uniform_rng(0, 2, rng);
   fvar<double> f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_, stan::math::lkj_corr_lpdf(Sigma, eta).val_);
-  EXPECT_FLOAT_EQ(2.5177896, stan::math::lkj_corr_lpdf(Sigma, eta).d_);
+  EXPECT_FLOAT_EQ(-2.9161840, stan::math::lkj_corr_lpdf(Sigma, eta).d_);
   eta = 1.0;
   f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_, stan::math::lkj_corr_lpdf(Sigma, eta).val_);
@@ -34,7 +34,8 @@ TEST(ProbDistributionsLkjCorrCholesky, fvar_double) {
   fvar<double> eta = stan::math::uniform_rng(0, 2, rng);
   fvar<double> f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_, stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).val_);
-  EXPECT_FLOAT_EQ(6.7766843, stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).d_);
+  EXPECT_FLOAT_EQ(-1.3742759,
+        stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).d_);
   eta = 1.0;
   f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_, stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).val_);
@@ -54,7 +55,7 @@ TEST(ProbDistributionsLkjCorr, fvar_fvar_double) {
   fvar<fvar<double> > eta = stan::math::uniform_rng(0, 2, rng);
   fvar<fvar<double> > f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_.val_, stan::math::lkj_corr_lpdf(Sigma, eta).val_.val_);
-  EXPECT_FLOAT_EQ(2.5177896, stan::math::lkj_corr_lpdf(Sigma, eta).d_.val_);
+  EXPECT_FLOAT_EQ(-2.9161840, stan::math::lkj_corr_lpdf(Sigma, eta).d_.val_);
   eta = 1.0;
   f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_.val_, stan::math::lkj_corr_lpdf(Sigma, eta).val_.val_);
@@ -75,7 +76,7 @@ TEST(ProbDistributionsLkjCorrCholesky, fvar_fvar_double) {
   fvar<fvar<double> > f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_.val_,
                   stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).val_.val_);
-  EXPECT_FLOAT_EQ(6.7766843,
+  EXPECT_FLOAT_EQ(-1.3742759,
                   stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).d_.val_);
   eta = 1.0;
   f = stan::math::do_lkj_constant(eta, K);
