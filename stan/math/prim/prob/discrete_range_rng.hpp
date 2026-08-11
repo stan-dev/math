@@ -45,7 +45,7 @@ discrete_range_rng(const T_lower& lower, const T_upper& upper, RNG& rng) {
 
   for (size_t n = 0; n < N; ++n) {
     std::uniform_int_distribution<> discrete_range_rng(lower_vec[n],
-                                                        upper_vec[n]);
+                                                       upper_vec[n]);
 
     output[n] = discrete_range_rng(rng);
   }

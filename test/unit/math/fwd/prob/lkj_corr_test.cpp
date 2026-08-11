@@ -35,7 +35,7 @@ TEST(ProbDistributionsLkjCorrCholesky, fvar_double) {
   fvar<double> f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_, stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).val_);
   EXPECT_FLOAT_EQ(-1.3742759,
-        stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).d_);
+                  stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).d_);
   eta = 1.0;
   f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_, stan::math::lkj_corr_cholesky_lpdf(Sigma, eta).val_);

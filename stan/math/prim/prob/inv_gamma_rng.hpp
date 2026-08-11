@@ -47,8 +47,8 @@ inv_gamma_rng(const T_shape& alpha, const T_scale& beta, RNG& rng) {
   VectorBuilder<true, double, T_shape, T_scale> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    std::gamma_distribution<> gamma_rng(
-        alpha_vec[n], 1 / static_cast<double>(beta_vec[n]));
+    std::gamma_distribution<> gamma_rng(alpha_vec[n],
+                                        1 / static_cast<double>(beta_vec[n]));
     output[n] = 1 / gamma_rng(rng);
   }
 

@@ -48,8 +48,8 @@ inline typename VectorBuilder<true, int, T_shape, T_inv>::type neg_binomial_rng(
   VectorBuilder<true, int, T_shape, T_inv> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    double rng_from_gamma = std::gamma_distribution<>(
-        alpha_vec[n], 1.0 / beta_vec[n])(rng);
+    double rng_from_gamma
+        = std::gamma_distribution<>(alpha_vec[n], 1.0 / beta_vec[n])(rng);
 
     // same as the constraints for poisson_rng
     check_less(function, "Random number that came from gamma distribution",

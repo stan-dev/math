@@ -48,8 +48,8 @@ inline typename VectorBuilder<true, double, T_shape, T_inv>::type gamma_rng(
 
   for (size_t n = 0; n < N; ++n) {
     // Convert rate (inverse scale) argument to scale for std
-    std::gamma_distribution<> gamma_rng(
-        alpha_vec[n], 1 / static_cast<double>(beta_vec[n]));
+    std::gamma_distribution<> gamma_rng(alpha_vec[n],
+                                        1 / static_cast<double>(beta_vec[n]));
     output[n] = gamma_rng(rng);
   }
 
