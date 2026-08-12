@@ -126,8 +126,7 @@ class arkode_integrator {
         [&](const auto&... args_ref) {
           std::vector<int> unused_temp{
               0,
-              (check_finite(function_name, "ode parameters and data",
-                            args_ref),
+              (check_finite(function_name, "ode parameters and data", args_ref),
                0)...};
         },
         args_tuple_);
@@ -160,9 +159,8 @@ class arkode_integrator {
     std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y;
     y.reserve(ts_.size());
 
-    void* arkode_mem = ERKStepCreate(&arkode_integrator::erk_rhs,
-                                     value_of(t0_), nv_state_,
-                                     sundials_context_);
+    void* arkode_mem = ERKStepCreate(&arkode_integrator::erk_rhs, value_of(t0_),
+                                     nv_state_, sundials_context_);
     if (arkode_mem == nullptr) {
       throw std::runtime_error("ERKStepCreate failed to allocate memory");
     }
@@ -195,8 +193,8 @@ class arkode_integrator {
         double t_final = value_of(ts_[n]);
 
         if (t_final != t_init) {
-          int flag
-              = ERKStepEvolve(arkode_mem, t_final, nv_state_, &t_init, ARK_NORMAL);
+          int flag = ERKStepEvolve(arkode_mem, t_final, nv_state_, &t_init,
+                                   ARK_NORMAL);
           if (flag == ARK_TOO_MUCH_WORK) {
             throw_domain_error(function_name_, "", t_final,
                                "Failed to integrate to next output time (",
