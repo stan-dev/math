@@ -20,7 +20,6 @@
 #ifndef _SUNDIALS_HASHMAP_H
 #define _SUNDIALS_HASHMAP_H
 
-#include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -31,10 +30,10 @@
   This is a 64-bit implementation of the 'a' modification of the
   Fowler–Noll–Vo hash (i.e., FNV1-a).
  */
-static uint64_t fnv1a_hash(const char* str)
+static unsigned long fnv1a_hash(const char* str)
 {
-  const uint64_t prime = 14695981039346656037U;   /* prime */
-  uint64_t hash        = 1099511628211U;          /* offset basis */
+  const unsigned long prime = 14695981039346656037U;   /* prime */
+  unsigned long hash        = 1099511628211U;          /* offset basis */
   char c;
   while ((c = *str++))
     hash = (hash^c) * prime;

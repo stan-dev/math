@@ -1,3 +1,0 @@
-This file documents changes done for the stan-math project
-
-  - Backported bugfix for hashmap int overflow on Windows (https://github.com/LLNL/sundials/pull/421)
