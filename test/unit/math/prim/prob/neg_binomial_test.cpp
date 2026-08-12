@@ -164,7 +164,6 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
   double beta = p / (1 - p);
   int N = 1000;
   int K = stan::math::round(2 * std::pow(N, (1 - p)));
-  boost::math::chi_squared mydist(K - 1);
 
   int loc[K - 1];
   for (int i = 1; i < K; i++)
@@ -178,6 +177,30 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
     bin[i] = 0;
   expected_bin_sizes(expect, K, N, alpha, beta);
 
+  // alpha < 1 makes this distribution's tail very sparse, so most of the K
+  // bins have expected counts far below N; a single sample landing in one
+  // of them can dominate the statistic. Pool bins so each group has an
+  // expected count of at least 5, per standard chi-square goodness-of-fit
+  // practice. Grouping is based only on the theoretical expected counts
+  // (not the realized samples), so it doesn't bias the test.
+  const double min_expected_count = 5.0;
+  std::vector<int> group_end;  // exclusive upper bound of each group
+  double acc_exp = 0;
+  for (int j = 0; j < K; j++) {
+    acc_exp += expect[j];
+    if (acc_exp >= min_expected_count) {
+      group_end.push_back(j + 1);
+      acc_exp = 0;
+    }
+  }
+  if (acc_exp > 0) {
+    if (!group_end.empty()) {
+      group_end.back() = K;
+    } else {
+      group_end.push_back(K);
+    }
+  }
+
   while (count < N) {
     int a = stan::math::neg_binomial_rng(alpha, beta, rng);
     int i = 0;
@@ -187,12 +210,20 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
     count++;
   }
 
-  double chi = 0;
+  int num_groups = group_end.size();
+  boost::math::chi_squared mydist(num_groups - 1);
 
-  for (int j = 0; j < K; j++) {
-    if (expect[j] != 0) {
-      chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
+  double chi = 0;
+  int start = 0;
+  for (int g = 0; g < num_groups; g++) {
+    double obs = 0;
+    double exp = 0;
+    for (int j = start; j < group_end[g]; j++) {
+      obs += bin[j];
+      exp += expect[j];
     }
+    chi += (obs - exp) * (obs - exp) / exp;
+    start = group_end[g];
   }
 
   EXPECT_LT(chi, boost::math::quantile(boost::math::complement(mydist, 1e-6)));
