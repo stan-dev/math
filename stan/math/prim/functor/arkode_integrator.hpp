@@ -22,7 +22,7 @@ namespace math {
 
 /**
  * Integrator interface for ARKODE's ERKStep explicit adaptive Runge-Kutta
- * solver, using one of ERKStep's built-in embedded Butcher tables. 
+ * solver, using one of ERKStep's built-in embedded Butcher tables.
  *
  * @tparam Table ID of the built-in ERKStep Butcher table to use, e.g.
  *   <code>ARKODE_CASH_KARP_6_4_5</code> or
@@ -110,7 +110,8 @@ class arkode_integrator {
 
     math::apply(
         [&](const auto&... args_ref) {
-          (check_finite(function_name, "ode parameters and data", args_ref), ...);
+          (check_finite(function_name, "ode parameters and data", args_ref),
+           ...);
         },
         args_tuple_);
 
