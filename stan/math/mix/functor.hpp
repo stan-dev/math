@@ -7,11 +7,13 @@
 #include <stan/math/mix/functor/grad_hessian.hpp>
 #include <stan/math/mix/functor/grad_tr_mat_times_hessian.hpp>
 #include <stan/math/mix/functor/gradient_dot_vector.hpp>
+#include <stan/math/mix/functor/gradient_variadic.hpp>
 #include <stan/math/mix/functor/hessian.hpp>
 #include <stan/math/mix/functor/laplace_base_rng.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
 #include <stan/math/mix/functor/laplace_marginal_density.hpp>
 #include <stan/math/mix/functor/hessian_block_diag.hpp>
 #include <stan/math/mix/functor/hessian_times_vector.hpp>
+#include <stan/math/mix/functor/hessian_times_vector_variadic.hpp>
 #include <stan/math/mix/functor/partial_derivative.hpp>
 #endif
