@@ -23,6 +23,7 @@
 #include <stan/math/prim/functor/ode_ckrk.hpp>
 #include <stan/math/prim/functor/ode_rk45.hpp>
 #include <stan/math/prim/functor/ode_store_sensitivities.hpp>
+#include <stan/math/prim/functor/map.hpp>
 #include <stan/math/prim/functor/map_if.hpp>
 #include <stan/math/prim/functor/map_rect.hpp>
 #include <stan/math/prim/functor/map_rect_combine.hpp>
