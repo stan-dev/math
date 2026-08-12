@@ -22,12 +22,7 @@ namespace math {
 
 /**
  * Integrator interface for ARKODE's ERKStep explicit adaptive Runge-Kutta
- * solver, using one of ERKStep's built-in embedded Butcher tables. This
- * replaces Boost's explicit steppers (<code>runge_kutta_cash_karp54</code>,
- * <code>runge_kutta_dopri5</code>), which pulled in a large boost::fusion /
- * boost::mpl header footprint. The coupled ODE system (including any
- * forward-sensitivity coupling) is treated as an opaque real-valued vector
- * field, exactly as the Boost-based implementations did.
+ * solver, using one of ERKStep's built-in embedded Butcher tables. 
  *
  * @tparam Table ID of the built-in ERKStep Butcher table to use, e.g.
  *   <code>ARKODE_CASH_KARP_6_4_5</code> or
@@ -59,20 +54,12 @@ class arkode_integrator {
   std::vector<double> coupled_state_;
   N_Vector nv_state_;
 
-  /**
-   * Implements the function of type ARKRhsFn which is the user-defined
-   * ODE RHS passed to ERKStep.
-   */
   static int erk_rhs(realtype t, N_Vector y, N_Vector ydot, void* user_data) {
     arkode_integrator* integrator = static_cast<arkode_integrator*>(user_data);
     integrator->rhs(t, NV_DATA_S(y), NV_DATA_S(ydot));
     return 0;
   }
 
-  /**
-   * Evaluates the RHS of the coupled ODE system at the given time and
-   * state, writing the result into dy_dt.
-   */
   inline void rhs(double t, const double y[], double dy_dt[]) {
     std::vector<double> z(y, y + coupled_state_.size());
     std::vector<double> dz_dt;
@@ -121,13 +108,9 @@ class arkode_integrator {
     check_finite(function_name, "initial time", t0_);
     check_finite(function_name, "times", ts_);
 
-    // Code from https://stackoverflow.com/a/17340003
     math::apply(
         [&](const auto&... args_ref) {
-          std::vector<int> unused_temp{
-              0,
-              (check_finite(function_name, "ode parameters and data", args_ref),
-               0)...};
+          (check_finite(function_name, "ode parameters and data", args_ref), ...);
         },
         args_tuple_);
 
