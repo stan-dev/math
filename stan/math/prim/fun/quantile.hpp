@@ -48,7 +48,7 @@ inline double quantile(const T& samples_vec, const double p) {
   } else if (p == 1.) {
     return x.maxCoeff();
   }
-  
+
   const double index = (n_sample - 1) * p;
   const size_t lo = std::floor(index);
 
@@ -58,7 +58,8 @@ inline double quantile(const T& samples_vec, const double p) {
   if (h == 0) {
     return x.coeff(lo);
   }
-  Eigen::Map<const Eigen::VectorXd> hi_map(x.data() + lo + 1, n_sample - (lo + 1));
+  Eigen::Map<const Eigen::VectorXd> hi_map(x.data() + lo + 1,
+                                           n_sample - (lo + 1));
   return (1 - h) * x.coeff(lo) + h * hi_map.minCoeff();
 }
 
