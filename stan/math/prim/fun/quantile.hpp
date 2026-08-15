@@ -1,13 +1,11 @@
 #ifndef STAN_MATH_PRIM_FUN_QUANTILE_HPP
 #define STAN_MATH_PRIM_FUN_QUANTILE_HPP
 
-#include <Eigen/Core>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <algorithm>
-#include <vector>
 
 namespace stan {
 namespace math {
