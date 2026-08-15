@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_QUANTILE_HPP
 #define STAN_MATH_PRIM_FUN_QUANTILE_HPP
 
+#include <Eigen/Core>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
@@ -82,8 +83,8 @@ inline double quantile(const T& samples_vec, const double p) {
  */
 template <typename T, typename Tp, require_all_vector_t<T, Tp>* = nullptr,
           require_vector_vt<std::is_arithmetic, T>* = nullptr,
-          require_std_vector_vt<std::is_arithmetic, Tp>* = nullptr>
-inline std::vector<double> quantile(const T& samples_vec, const Tp& ps) {
+          require_vector_vt<std::is_arithmetic, Tp>* = nullptr>
+inline plain_type_t<T> quantile(const T& samples_vec, const Tp& ps) {
   check_not_nan("quantile", "ps", ps);
   check_bounded("quantile", "ps", ps, 0, 1);
 
@@ -96,25 +97,17 @@ inline std::vector<double> quantile(const T& samples_vec, const Tp& ps) {
   Eigen::VectorXd x = as_array_or_scalar(samples_vec);
   check_not_nan("quantile", "samples_vec", x);
 
-  const auto& p = as_array_or_scalar(ps);
-  std::vector<double> ret(n_ps, 0.0);
+  plain_type_t<T> ret(n_ps);
 
   std::sort(x.data(), x.data() + n_sample, std::less<double>());
-  Eigen::ArrayXd index = (n_sample - 1) * p;
+  const Eigen::ArrayXd index = (n_sample - 1) * as_array_or_scalar(ps);
+  const Eigen::ArrayXd lo = index.floor();
+  const Eigen::ArrayXd h = index - lo;
 
   for (size_t i = 0; i < n_ps; ++i) {
-    if (p[i] == 0.) {
-      ret[i] = x.coeff(0);
-    } else if (p[i] == 1.) {
-      ret[i] = x.coeff(n_sample - 1);
-    } else {
-      size_t lo = std::floor(index[i]);
-      size_t hi = std::ceil(index[i]);
-
-      double h = index[i] - lo;
-
-      ret[i] = (1 - h) * x.coeff(lo) + h * x.coeff(hi);
-    }
+    const size_t l = static_cast<size_t>(lo.coeff(i));
+    const size_t u = l + (h.coeff(i) > 0);
+    ret[i] = (1 - h.coeff(i)) * x.coeff(l) + h.coeff(i) * x.coeff(u);
   }
   return ret;
 }
