@@ -41,21 +41,25 @@ inline double quantile(const T& samples_vec, const double p) {
   Eigen::VectorXd x = as_array_or_scalar(samples_vec);
   check_not_nan("quantile", "samples_vec", x);
 
-  if (n_sample == 1)
+  if (n_sample == 1) {
     return x.coeff(0);
-  else if (p == 0.)
-    return *std::min_element(x.data(), x.data() + n_sample);
-  else if (p == 1.)
-    return *std::max_element(x.data(), x.data() + n_sample);
+  } else if (p == 0.) {
+    return x.minCoeff();
+  } else if (p == 1.) {
+    return x.maxCoeff();
+  }
+  
+  const double index = (n_sample - 1) * p;
+  const size_t lo = std::floor(index);
 
-  double index = (n_sample - 1) * p;
-  size_t lo = std::floor(index);
-  size_t hi = std::ceil(index);
+  std::nth_element(x.data(), x.data() + lo, x.data() + n_sample);
 
-  std::sort(x.data(), x.data() + n_sample, std::less<double>());
-
-  double h = index - lo;
-  return (1 - h) * x.coeff(lo) + h * x.coeff(hi);
+  const double h = index - lo;
+  if (h == 0) {
+    return x.coeff(lo);
+  }
+  Eigen::Map<const Eigen::VectorXd> hi_map(x.data() + lo + 1, n_sample - (lo + 1));
+  return (1 - h) * x.coeff(lo) + h * hi_map.minCoeff();
 }
 
 /**
