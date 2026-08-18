@@ -94,21 +94,22 @@ inline ReturnT quantile(const T& samples_vec, const Tp& ps) {
   }
 
   check_not_nan("quantile", "samples_vec", samples_vec);
-  Eigen::ArrayXd x = as_array_or_scalar(samples_vec);
-  std::sort(x.begin(), x.end());
 
+  plain_type_t<T> x = samples_vec;
+  std::sort(x.begin(), x.end());
   ReturnT ret(n_ps);
-  Eigen::Map<Eigen::ArrayXd> ret_map(ret.data(), n_ps);
-  Eigen::Map<const Eigen::ArrayXd> ps_map(ps.data(), n_ps);
 
   const size_t nm1 = (n_sample - 1);
-  ret_map = ps_map.unaryExpr([&x, nm1](const double ps_i) {
-    const double idx_xi = nm1 * ps_i;
-    const size_t lo = static_cast<size_t>(idx_xi);
-    const double h = idx_xi - lo;
 
-    return (1 - h) * x[lo] + h * x[lo + (h != 0.0)];
-  });
+  for (size_t i = 0; i < n_ps; i++) {
+    const double sample_xi = nm1 * ps[i];
+    const size_t smpl_xi_int = static_cast<size_t>(sample_xi);
+    const double smpl_xi_frc = sample_xi - smpl_xi_int;
+    ret[i] = (1 - smpl_xi_frc) * x[smpl_xi_int];
+    if (smpl_xi_frc != 0.0) {
+      ret[i] += smpl_xi_frc * x[smpl_xi_int + 1];
+    }
+  }
 
   return ret;
 }
