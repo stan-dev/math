@@ -48,8 +48,9 @@ inline double quantile(const T& samples_vec, const double p) {
     return x.maxCoeff();
   }
 
-  const double index = (n_sample - 1) * p;
-  const size_t lo = std::floor(index);
+  const size_t nm1 = (n_sample - 1);
+  const double index = nm1 * p;
+  const size_t lo = static_cast<size_t>(index);
 
   std::nth_element(x.data(), x.data() + lo, x.data() + n_sample);
 
@@ -57,9 +58,7 @@ inline double quantile(const T& samples_vec, const double p) {
   if (h == 0) {
     return x.coeff(lo);
   }
-  Eigen::Map<const Eigen::VectorXd> hi_map(x.data() + lo + 1,
-                                           n_sample - (lo + 1));
-  return (1 - h) * x.coeff(lo) + h * hi_map.minCoeff();
+  return (1 - h) * x.coeff(lo) + h * x.tail(nm1 - lo).minCoeff();
 }
 
 /**
@@ -79,10 +78,12 @@ inline double quantile(const T& samples_vec, const double p) {
  * @throw std::invalid_argument If any of the values are NaN or size 0.
  * @throw std::domain_error If `p<0` or `p>1` for any p in ps.
  */
-template <typename T, typename Tp, require_all_vector_t<T, Tp>* = nullptr,
+template <typename T, typename Tp,
+          typename ReturnT = promote_scalar_t<double, Tp>,
+          require_all_vector_t<T, Tp>* = nullptr,
           require_vector_vt<std::is_arithmetic, T>* = nullptr,
           require_vector_vt<std::is_arithmetic, Tp>* = nullptr>
-inline plain_type_t<T> quantile(const T& samples_vec, const Tp& ps) {
+inline ReturnT quantile(const T& samples_vec, const Tp& ps) {
   check_not_nan("quantile", "ps", ps);
   check_bounded("quantile", "ps", ps, 0, 1);
 
@@ -92,21 +93,23 @@ inline plain_type_t<T> quantile(const T& samples_vec, const Tp& ps) {
     return {};
   }
 
-  Eigen::VectorXd x = as_array_or_scalar(samples_vec);
-  check_not_nan("quantile", "samples_vec", x);
+  check_not_nan("quantile", "samples_vec", samples_vec);
+  Eigen::ArrayXd x = as_array_or_scalar(samples_vec);
+  std::sort(x.begin(), x.end());
 
-  plain_type_t<T> ret(n_ps);
+  ReturnT ret(n_ps);
+  Eigen::Map<Eigen::ArrayXd> ret_map(ret.data(), n_ps);
+  Eigen::Map<const Eigen::ArrayXd> ps_map(ps.data(), n_ps);
 
-  std::sort(x.data(), x.data() + n_sample, std::less<double>());
-  const Eigen::ArrayXd index = (n_sample - 1) * as_array_or_scalar(ps);
-  const Eigen::ArrayXd lo = index.floor();
-  const Eigen::ArrayXd h = index - lo;
+  const size_t nm1 = (n_sample - 1);
+  ret_map = ps_map.unaryExpr([&x, nm1](const double ps_i) {
+    const double idx_xi = nm1 * ps_i;
+    const size_t lo = static_cast<size_t>(idx_xi);
+    const double h = idx_xi - lo;
 
-  for (size_t i = 0; i < n_ps; ++i) {
-    const size_t l = static_cast<size_t>(lo.coeff(i));
-    const size_t u = l + (h.coeff(i) > 0);
-    ret[i] = (1 - h.coeff(i)) * x.coeff(l) + h.coeff(i) * x.coeff(u);
-  }
+    return (1 - h) * x[lo] + h * x[lo + (h != 0.0)];
+  });
+
   return ret;
 }
 

@@ -105,7 +105,7 @@ inline void test_quantile_double() {
   p[2] = 0.2;
   p[3] = 1;
 
-  T ret = quantile(v, p);
+  Tp ret = quantile(v, p);
   EXPECT_FLOAT_EQ(ret[0], -0.28);
   EXPECT_FLOAT_EQ(ret[1], -0.196);
   EXPECT_FLOAT_EQ(ret[2], -0.112);
@@ -145,7 +145,7 @@ inline void test_quantile_double() {
   // check size 1 first argument works
   T v1(1);
   v1[0] = -0.07;
-  T ret1 = quantile(v1, p);
+  Tp ret1 = quantile(v1, p);
   EXPECT_FLOAT_EQ(ret1[0], -0.07);
   EXPECT_FLOAT_EQ(ret1[1], -0.07);
   EXPECT_FLOAT_EQ(ret1[2], -0.07);
