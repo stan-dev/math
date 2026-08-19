@@ -93,9 +93,9 @@ inline ReturnT quantile(const T& samples_vec, const Tp& ps) {
     return {};
   }
 
-  check_not_nan("quantile", "samples_vec", samples_vec);
-
   plain_type_t<T> x = samples_vec;
+  check_not_nan("quantile", "samples_vec", x);
+
   std::sort(x.begin(), x.end());
   ReturnT ret(n_ps);
 
