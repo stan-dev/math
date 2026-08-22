@@ -139,6 +139,8 @@
 #include <stan/math/prim/prob/inv_gamma_lcdf.hpp>
 #include <stan/math/prim/prob/inv_gamma_lpdf.hpp>
 #include <stan/math/prim/prob/inv_gamma_rng.hpp>
+#include <stan/math/prim/prob/inv_gaussian_lpdf.hpp>
+#include <stan/math/prim/prob/inv_gaussian_rng.hpp>
 #include <stan/math/prim/prob/inv_wishart_cholesky_lpdf.hpp>
 #include <stan/math/prim/prob/inv_wishart_cholesky_rng.hpp>
 #include <stan/math/prim/prob/inv_wishart_lpdf.hpp>
