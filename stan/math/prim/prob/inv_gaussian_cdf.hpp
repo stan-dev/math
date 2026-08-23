@@ -110,7 +110,8 @@ inline return_type_t<T_y, T_loc, T_shape> inv_gaussian_cdf(
     // 0 / 0 on its own. The inner select covers elements whose log CDF has
     // saturated to -inf at an interior y.
     const auto& is_underflow = to_ref(lcdf_elt == NEGATIVE_INFTY);
-    const auto& w_dens = to_ref(cdf * exp(internal::log_phi(z1) - lcdf_elt));
+    const auto& w_dens
+        = to_ref(cdf * exp(internal::log_std_normal_density(z1) - lcdf_elt));
     const auto& w_upper = to_ref(cdf * exp(log_upper - lcdf_elt));
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)

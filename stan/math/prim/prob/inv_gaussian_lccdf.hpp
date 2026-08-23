@@ -152,7 +152,8 @@ inline return_type_t<T_y, T_loc, T_shape> inv_gaussian_lccdf(
     // 0 / 0 on its own. The inner select covers elements whose survivor has
     // underflowed to -inf.
     const auto& is_underflow = to_ref(lccdf_elt == NEGATIVE_INFTY);
-    const auto& w_dens = to_ref(exp(internal::log_phi(z1) - lccdf_elt));
+    const auto& w_dens
+        = to_ref(exp(internal::log_std_normal_density(z1) - lccdf_elt));
     const auto& w_upper = to_ref(exp(log_upper - lccdf_elt));
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)

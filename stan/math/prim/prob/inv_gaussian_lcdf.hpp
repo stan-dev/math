@@ -74,23 +74,24 @@ inline auto log_Phi(T&& z) {
  * Return the log of the standard normal density at the specified value.
  */
 template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline return_type_t<T> log_phi(const T& z) {
+inline return_type_t<T> log_std_normal_density(const T& z) {
   return -0.5 * square(z) - HALF_LOG_TWO_PI;
 }
 
-struct log_phi_fun {
+struct log_std_normal_density_fun {
   template <typename T>
   static inline auto fun(T&& z) {
-    return log_phi(std::forward<T>(z));
+    return log_std_normal_density(std::forward<T>(z));
   }
 };
 
 /**
- * A vectorized version of log_phi().
+ * A vectorized version of log_std_normal_density().
  */
 template <typename T, require_container_t<T>* = nullptr>
-inline auto log_phi(T&& z) {
-  return apply_scalar_unary<log_phi_fun, T>::apply(std::forward<T>(z));
+inline auto log_std_normal_density(T&& z) {
+  return apply_scalar_unary<log_std_normal_density_fun, T>::apply(
+      std::forward<T>(z));
 }
 
 /**
@@ -109,7 +110,7 @@ inline return_type_t<T1, T2> log_scaled_upper_term(const T1& z1, const T2& z2) {
   using std::log;
   if (value_of_rec(z2) > -LOG_PHI_ASYMPTOTIC_CUTOFF) {
     const auto s = inv_square(z2);
-    return log_phi(z1) - log(z2)
+    return log_std_normal_density(z1) - log(z2)
            + log1p(s * (-1.0 + s * (3.0 + s * (-15.0 + s * 105.0))));
   }
   return 0.5 * (square(z2) - square(z1)) + log_Phi(-z2);
@@ -221,7 +222,8 @@ inline return_type_t<T_y, T_loc, T_shape> inv_gaussian_lcdf(
     // 0 / 0 on its own. The inner select covers elements whose log CDF has
     // saturated to -inf at an interior y.
     const auto& is_underflow = to_ref(lcdf_elt == NEGATIVE_INFTY);
-    const auto& w_dens = to_ref(exp(internal::log_phi(z1) - lcdf_elt));
+    const auto& w_dens
+        = to_ref(exp(internal::log_std_normal_density(z1) - lcdf_elt));
     const auto& w_upper = to_ref(exp(log_upper - lcdf_elt));
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)
