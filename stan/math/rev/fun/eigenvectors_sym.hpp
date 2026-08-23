@@ -12,6 +12,14 @@
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/fun/eigenvectors_sym.hpp>
 
+#include <limits>
+
+// W-40: relative eigenvalue gap below kappa * max(1, |w|_inf) * eps marks a
+// numerically degenerate eigenvalue cluster for the reverse-mode adjoint.
+#ifndef STAN_MATH_EIGEN_GAP_KAPPA
+#define STAN_MATH_EIGEN_GAP_KAPPA 1e3
+#endif
+
 namespace stan {
 namespace math {
 
@@ -37,6 +45,34 @@ inline auto eigenvectors_sym(const T& m) {
 
   reverse_pass_callback([arena_m, eigenvals, eigenvecs]() mutable {
     const auto p = arena_m.val().cols();
+    // Eigenvalue pairs with a gap below STAN_MATH_EIGEN_GAP_KAPPA *
+    // max(1, |w|_inf) * eps are treated as one numerically degenerate
+    // cluster: the individual eigenvectors are not identifiable at machine
+    // resolution (any orthogonal basis of the cluster subspace is a valid
+    // answer), and the standard adjoint's 1/(w_j - w_i) coupling amplifies
+    // rounding-level differences to O(1/eps). For such pairs the coupling
+    // is replaced by its minimal-norm (zero) value -- the cluster-gauge
+    // choice; cross-cluster pairs keep the standard formula. Well-separated
+    // spectra (min adjacent gap >= threshold) take the original code path
+    // below VERBATIM, so results there are bit-identical to the unguarded
+    // implementation.
+    const double eigengap_tau = STAN_MATH_EIGEN_GAP_KAPPA
+                                * std::max(1.0, eigenvals.cwiseAbs().maxCoeff())
+                                * std::numeric_limits<double>::epsilon();
+    const bool has_degenerate_gap
+        = p > 1 && (eigenvals.tail(p - 1) - eigenvals.head(p - 1)).minCoeff()
+                       < eigengap_tau;
+    if (unlikely(has_degenerate_gap)) {
+      Eigen::MatrixXd gaps = eigenvals.rowwise().replicate(p).transpose()
+                             - eigenvals.rowwise().replicate(p);
+      Eigen::MatrixXd f = (gaps.array().abs() >= eigengap_tau)
+                              .select(gaps.array().inverse(),
+                                      Eigen::MatrixXd::Zero(p, p));
+      arena_m.adj()
+          += eigenvecs.val()
+             * f.cwiseProduct(eigenvecs.val().transpose() * eigenvecs.adj_op())
+             * eigenvecs.val().transpose();
+    } else {
     Eigen::MatrixXd f = (1
                          / (eigenvals.rowwise().replicate(p).transpose()
                             - eigenvals.rowwise().replicate(p))
@@ -46,6 +82,7 @@ inline auto eigenvectors_sym(const T& m) {
         += eigenvecs.val()
            * f.cwiseProduct(eigenvecs.val().transpose() * eigenvecs.adj_op())
            * eigenvecs.val().transpose();
+    }
   });
 
   return return_t(eigenvecs);
