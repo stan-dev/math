@@ -6,7 +6,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <algorithm>
-#include <vector>
 
 namespace stan {
 namespace math {
@@ -41,21 +40,25 @@ inline double quantile(const T& samples_vec, const double p) {
   Eigen::VectorXd x = as_array_or_scalar(samples_vec);
   check_not_nan("quantile", "samples_vec", x);
 
-  if (n_sample == 1)
+  if (n_sample == 1) {
     return x.coeff(0);
-  else if (p == 0.)
-    return *std::min_element(x.data(), x.data() + n_sample);
-  else if (p == 1.)
-    return *std::max_element(x.data(), x.data() + n_sample);
+  } else if (p == 0.) {
+    return x.minCoeff();
+  } else if (p == 1.) {
+    return x.maxCoeff();
+  }
 
-  double index = (n_sample - 1) * p;
-  size_t lo = std::floor(index);
-  size_t hi = std::ceil(index);
+  const size_t nm1 = (n_sample - 1);
+  const double index = nm1 * p;
+  const size_t lo = static_cast<size_t>(index);
 
-  std::sort(x.data(), x.data() + n_sample, std::less<double>());
+  std::nth_element(x.data(), x.data() + lo, x.data() + n_sample);
 
-  double h = index - lo;
-  return (1 - h) * x.coeff(lo) + h * x.coeff(hi);
+  const double h = index - lo;
+  if (h == 0) {
+    return x.coeff(lo);
+  }
+  return (1 - h) * x.coeff(lo) + h * x.tail(nm1 - lo).minCoeff();
 }
 
 /**
@@ -75,10 +78,12 @@ inline double quantile(const T& samples_vec, const double p) {
  * @throw std::invalid_argument If any of the values are NaN or size 0.
  * @throw std::domain_error If `p<0` or `p>1` for any p in ps.
  */
-template <typename T, typename Tp, require_all_vector_t<T, Tp>* = nullptr,
+template <typename T, typename Tp,
+          typename ReturnT = promote_scalar_t<double, Tp>,
+          require_all_vector_t<T, Tp>* = nullptr,
           require_vector_vt<std::is_arithmetic, T>* = nullptr,
-          require_std_vector_vt<std::is_arithmetic, Tp>* = nullptr>
-inline std::vector<double> quantile(const T& samples_vec, const Tp& ps) {
+          require_vector_vt<std::is_arithmetic, Tp>* = nullptr>
+inline ReturnT quantile(const T& samples_vec, const Tp& ps) {
   check_not_nan("quantile", "ps", ps);
   check_bounded("quantile", "ps", ps, 0, 1);
 
@@ -88,29 +93,24 @@ inline std::vector<double> quantile(const T& samples_vec, const Tp& ps) {
     return {};
   }
 
-  Eigen::VectorXd x = as_array_or_scalar(samples_vec);
+  plain_type_t<T> x = samples_vec;
   check_not_nan("quantile", "samples_vec", x);
 
-  const auto& p = as_array_or_scalar(ps);
-  std::vector<double> ret(n_ps, 0.0);
+  std::sort(x.begin(), x.end());
+  ReturnT ret(n_ps);
 
-  std::sort(x.data(), x.data() + n_sample, std::less<double>());
-  Eigen::ArrayXd index = (n_sample - 1) * p;
+  const size_t nm1 = (n_sample - 1);
 
-  for (size_t i = 0; i < n_ps; ++i) {
-    if (p[i] == 0.) {
-      ret[i] = x.coeff(0);
-    } else if (p[i] == 1.) {
-      ret[i] = x.coeff(n_sample - 1);
-    } else {
-      size_t lo = std::floor(index[i]);
-      size_t hi = std::ceil(index[i]);
-
-      double h = index[i] - lo;
-
-      ret[i] = (1 - h) * x.coeff(lo) + h * x.coeff(hi);
+  for (size_t i = 0; i < n_ps; i++) {
+    const double sample_xi = nm1 * ps[i];
+    const size_t smpl_xi_int = static_cast<size_t>(sample_xi);
+    const double smpl_xi_frc = sample_xi - smpl_xi_int;
+    ret[i] = (1 - smpl_xi_frc) * x[smpl_xi_int];
+    if (smpl_xi_frc != 0.0) {
+      ret[i] += smpl_xi_frc * x[smpl_xi_int + 1];
     }
   }
+
   return ret;
 }
 
