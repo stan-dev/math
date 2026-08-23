@@ -619,8 +619,8 @@ TEST_F(AgradRev, bernoulli_glm_cutoff_partials_sign) {
                                    n, x, 0.0 - h, theta))
                             / (2 * h);
     EXPECT_NEAR(expected, fd_alpha, 1e-6 * std::fabs(fd_alpha))
-        << "analytic alpha derivative disagrees with finite differences for n = "
-        << n;
+        << "analytic alpha derivative disagrees with finite differences "
+        << "for n = " << n;
 
     // autodiff gradients
     var alpha = 0.0;
