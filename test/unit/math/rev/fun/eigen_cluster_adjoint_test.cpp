@@ -9,6 +9,7 @@
 #include <gtest/gtest.h>
 
 #include <cmath>
+#include <cstdint>
 #include <utility>
 #include <vector>
 
@@ -44,7 +45,7 @@ using stan::math::var;
 
 // Integer-only xorshift so generated matrices are identical on every
 // platform (double rounding of integer arithmetic is exact).
-unsigned long long lcg_state = 88172645463325252ULL;
+std::uint64_t lcg_state = 88172645463325252ULL;
 double lcgu() {  // uniform-ish in (-1, 1)
   lcg_state ^= lcg_state << 13;
   lcg_state ^= lcg_state >> 7;
