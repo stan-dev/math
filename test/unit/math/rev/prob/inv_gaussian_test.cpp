@@ -159,3 +159,168 @@ TEST_F(AgradRev, inv_gaussian_vectorized_matches_scalar) {
     EXPECT_FLOAT_EQ(scalar_adj_y(i), vec_adj_y(i));
   }
 }
+
+// Boundary adjoints are asserted directly here; expect_ad's finite-difference
+// stencil steps off the support at y == 0 and is NaN at y == inf.
+TEST_F(AgradRev, inv_gaussian_boundary_partials_are_zero) {
+  using stan::math::var;
+  double inf = std::numeric_limits<double>::infinity();
+
+  auto check = [](auto f, double yv, const char* what) {
+    var y = yv;
+    var mu = 1.0;
+    var lambda = 2.0;
+    var out = f(y, mu, lambda);
+    out.grad();
+    EXPECT_FLOAT_EQ(0.0, y.adj()) << what << " d/dy at y=" << yv;
+    EXPECT_FLOAT_EQ(0.0, mu.adj()) << what << " d/dmu at y=" << yv;
+    EXPECT_FLOAT_EQ(0.0, lambda.adj()) << what << " d/dlambda at y=" << yv;
+    stan::math::recover_memory();
+  };
+
+  auto lpdf = [](const auto& y, const auto& mu, const auto& lambda) {
+    return stan::math::inv_gaussian_lpdf(y, mu, lambda);
+  };
+  auto cdf = [](const auto& y, const auto& mu, const auto& lambda) {
+    return stan::math::inv_gaussian_cdf(y, mu, lambda);
+  };
+  auto lcdf = [](const auto& y, const auto& mu, const auto& lambda) {
+    return stan::math::inv_gaussian_lcdf(y, mu, lambda);
+  };
+  auto lccdf = [](const auto& y, const auto& mu, const auto& lambda) {
+    return stan::math::inv_gaussian_lccdf(y, mu, lambda);
+  };
+
+  for (double b : {0.0, inf}) {
+    check(lpdf, b, "lpdf");
+    check(cdf, b, "cdf");
+    check(lcdf, b, "lcdf");
+    check(lccdf, b, "lccdf");
+  }
+}
+
+// A y == 0 element contributes a log survivor of zero and leaves the other
+// elements alone, gradients included.
+TEST_F(AgradRev, inv_gaussian_lccdf_zero_boundary_is_elementwise) {
+  using stan::math::var;
+  using stan::math::vector_v;
+
+  EXPECT_FLOAT_EQ(0.0, stan::math::inv_gaussian_lccdf(0.0, 1.0, 2.0));
+
+  std::vector<double> y{0.0, 5.0};
+  EXPECT_FLOAT_EQ(stan::math::inv_gaussian_lccdf(5.0, 1.0, 2.0),
+                  stan::math::inv_gaussian_lccdf(y, 1.0, 2.0));
+
+  vector_v y_v(2);
+  y_v << 0.0, 5.0;
+  var mu = 1.0;
+  var lambda = 2.0;
+  var out = stan::math::inv_gaussian_lccdf(y_v, mu, lambda);
+  out.grad();
+  double adj_boundary = y_v(0).adj();
+  double adj_finite = y_v(1).adj();
+  double adj_mu = mu.adj();
+  double adj_lambda = lambda.adj();
+  stan::math::recover_memory();
+
+  var y_s = 5.0;
+  var mu_s = 1.0;
+  var lambda_s = 2.0;
+  var out_s = stan::math::inv_gaussian_lccdf(y_s, mu_s, lambda_s);
+  out_s.grad();
+  EXPECT_FLOAT_EQ(0.0, adj_boundary);
+  EXPECT_FLOAT_EQ(y_s.adj(), adj_finite);
+  EXPECT_FLOAT_EQ(mu_s.adj(), adj_mu);
+  EXPECT_FLOAT_EQ(lambda_s.adj(), adj_lambda);
+  stan::math::recover_memory();
+}
+
+// Deep in the upper tail the survivor's two terms agree to the last bit and
+// the guarded difference underflows to -inf at a finite y. The partials are
+// zero there, and the guard fires deterministically at these points.
+TEST_F(AgradRev, inv_gaussian_lccdf_underflow_partials_are_zero) {
+  using stan::math::var;
+  double inf = std::numeric_limits<double>::infinity();
+  for (double y_dbl : {1e-2, 1.0, 10.0}) {
+    var y = y_dbl;
+    var mu = 1e-3;
+    var lambda = 1e14;
+    var out = stan::math::inv_gaussian_lccdf(y, mu, lambda);
+    EXPECT_FLOAT_EQ(-inf, out.val()) << "y=" << y_dbl;
+    out.grad();
+    EXPECT_FLOAT_EQ(0.0, y.adj()) << "y=" << y_dbl;
+    EXPECT_FLOAT_EQ(0.0, mu.adj()) << "y=" << y_dbl;
+    EXPECT_FLOAT_EQ(0.0, lambda.adj()) << "y=" << y_dbl;
+    stan::math::recover_memory();
+  }
+}
+
+// lambda / y overflows for representable arguments, saturating the log CDF to
+// -inf at an interior y. The saturation mask zeroes every partial there.
+TEST_F(AgradRev, inv_gaussian_saturation_partials_are_zero) {
+  using stan::math::var;
+  double inf = std::numeric_limits<double>::infinity();
+
+  auto check = [](auto f, double y_dbl, double mu_dbl, double lambda_dbl,
+                  double val, const char* what) {
+    var y = y_dbl;
+    var mu = mu_dbl;
+    var lambda = lambda_dbl;
+    var out = f(y, mu, lambda);
+    EXPECT_FLOAT_EQ(val, out.val()) << what;
+    out.grad();
+    EXPECT_FLOAT_EQ(0.0, y.adj()) << what;
+    EXPECT_FLOAT_EQ(0.0, mu.adj()) << what;
+    EXPECT_FLOAT_EQ(0.0, lambda.adj()) << what;
+    stan::math::recover_memory();
+  };
+
+  auto lcdf = [](const auto& y, const auto& mu, const auto& lambda) {
+    return stan::math::inv_gaussian_lcdf(y, mu, lambda);
+  };
+  auto cdf = [](const auto& y, const auto& mu, const auto& lambda) {
+    return stan::math::inv_gaussian_cdf(y, mu, lambda);
+  };
+  auto lccdf = [](const auto& y, const auto& mu, const auto& lambda) {
+    return stan::math::inv_gaussian_lccdf(y, mu, lambda);
+  };
+
+  // lambda / y = 1e310 overflows; y is far below mu, so the lower tail
+  // saturates
+  check(lcdf, 1e-10, 1.0, 1e300, -inf, "lcdf");
+  check(cdf, 1e-10, 1.0, 1e300, 0.0, "cdf");
+  // y is above mu, so the survivor saturates
+  check(lccdf, 2e-3, 1e-3, 1e308, -inf, "lccdf");
+}
+
+// The same for the y == inf boundary of the lcdf and cdf.
+TEST_F(AgradRev, inv_gaussian_inf_boundary_is_elementwise) {
+  using stan::math::var;
+  using stan::math::vector_v;
+  double inf = std::numeric_limits<double>::infinity();
+
+  vector_v y_v(2);
+  y_v << inf, 0.5;
+  var mu = 1.0;
+  var lambda = 2.0;
+  var out = stan::math::inv_gaussian_lcdf(y_v, mu, lambda);
+  out.grad();
+  double vec_val = out.val();
+  double adj_boundary = y_v(0).adj();
+  double adj_finite = y_v(1).adj();
+  double adj_mu = mu.adj();
+  double adj_lambda = lambda.adj();
+  stan::math::recover_memory();
+
+  var y_s = 0.5;
+  var mu_s = 1.0;
+  var lambda_s = 2.0;
+  var out_s = stan::math::inv_gaussian_lcdf(y_s, mu_s, lambda_s);
+  out_s.grad();
+  EXPECT_FLOAT_EQ(out_s.val(), vec_val);
+  EXPECT_FLOAT_EQ(0.0, adj_boundary);
+  EXPECT_FLOAT_EQ(y_s.adj(), adj_finite);
+  EXPECT_FLOAT_EQ(mu_s.adj(), adj_mu);
+  EXPECT_FLOAT_EQ(lambda_s.adj(), adj_lambda);
+  stan::math::recover_memory();
+}

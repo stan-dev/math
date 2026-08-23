@@ -10,8 +10,7 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log_diff_exp.hpp>
-#include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/fun/promote_scalar.hpp>
+#include <stan/math/prim/fun/select.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
@@ -76,9 +75,11 @@ inline auto log_diff_exp_guarded(T1&& a, T2&& b) {
  * that first happens at \f$\log S = -5 \times 10^5\f$, so the survivor is
  * zero to any representable precision there.
  *
- * <p>A boundary observation short-circuits the whole return:
- * \f$y = 0\f$ and \f$y = \infty\f$ each take the result to their
- * limit. The partials are zero at both.
+ * <p>Both boundaries are handled elementwise: \f$y = 0\f$ contributes
+ * \f$\log 1 = 0\f$ and \f$y = \infty\f$ contributes \f$-\infty\f$, so a
+ * container mixing a boundary with ordinary observations sums to the same
+ * value as its elements taken one at a time. The partials are zero at both,
+ * and wherever the survivor has underflowed.
  *
  * @tparam T_y type of scalar
  * @tparam T_loc type of mean parameter
@@ -123,12 +124,9 @@ inline return_type_t<T_y, T_loc, T_shape> inv_gaussian_lccdf(
 
   auto ops_partials = make_partials_propagator(y_ref, mu_ref, lambda_ref);
 
-  if (sum(promote_scalar<int>(y_val == 0))) {
-    return ops_partials.build(0);
-  }
-  if (sum(promote_scalar<int>(y_val == INFTY))) {
-    return ops_partials.build(NEGATIVE_INFTY);
-  }
+  // Boundary masks; see inv_gaussian_lcdf.
+  const auto& is_inf = to_ref(y_val == INFTY);
+  const auto& is_bdry = to_ref((y_val == 0) || (y_val == INFTY));
 
   constexpr bool any_ad = is_any_autodiff_v<T_y, T_loc, T_shape>;
 
@@ -140,8 +138,9 @@ inline return_type_t<T_y, T_loc, T_shape> inv_gaussian_lccdf(
   const auto& z2 = to_ref(sqrt_lambda_over_y * (y_over_mu + 1.0));
 
   const auto& log_upper = to_ref(internal::log_scaled_upper_term(z1, z2));
-  const auto& lccdf_elt = to_ref(
-      internal::log_diff_exp_guarded(internal::log_Phi(-z1), log_upper));
+  const auto& lccdf_elt = to_ref(select(
+      is_inf, T_partials_return(NEGATIVE_INFTY),
+      internal::log_diff_exp_guarded(internal::log_Phi(-z1), log_upper)));
 
   T_partials_return lccdf = sum(lccdf_elt);
 
@@ -152,17 +151,26 @@ inline return_type_t<T_y, T_loc, T_shape> inv_gaussian_lccdf(
     // Each partial is masked separately: at y == inf the shape partial is
     // 0 / 0 on its own. The inner select covers elements whose survivor has
     // underflowed to -inf.
+    const auto& is_underflow = to_ref(lccdf_elt == NEGATIVE_INFTY);
     const auto& w_dens = to_ref(exp(internal::log_phi(z1) - lccdf_elt));
     const auto& w_upper = to_ref(exp(log_upper - lccdf_elt));
     if constexpr (is_autodiff_v<T_y>) {
-      partials<0>(ops_partials) = -w_dens * sqrt_lambda_over_y * inv_y;
+      partials<0>(ops_partials)
+          = select(is_bdry, T_partials_return(0),
+                   select(is_underflow, T_partials_return(0),
+                          -w_dens * sqrt_lambda_over_y * inv_y));
     }
     if constexpr (is_autodiff_v<T_loc>) {
-      partials<1>(ops_partials) = 2.0 * lambda_val * w_upper * square(inv_mu);
+      partials<1>(ops_partials)
+          = select(is_bdry, T_partials_return(0),
+                   select(is_underflow, T_partials_return(0),
+                          2.0 * lambda_val * w_upper * square(inv_mu)));
     }
     if constexpr (is_autodiff_v<T_shape>) {
-      partials<2>(ops_partials)
-          = w_dens * inv_y / sqrt_lambda_over_y - 2.0 * w_upper * inv_mu;
+      partials<2>(ops_partials) = select(
+          is_bdry, T_partials_return(0),
+          select(is_underflow, T_partials_return(0),
+                 w_dens * inv_y / sqrt_lambda_over_y - 2.0 * w_upper * inv_mu));
     }
   }
   return ops_partials.build(lccdf);

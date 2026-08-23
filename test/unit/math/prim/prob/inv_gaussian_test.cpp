@@ -128,6 +128,31 @@ TEST(ProbDistributionsInvGaussian, boundaries) {
   EXPECT_FLOAT_EQ(1.0, inv_gaussian_cdf(inf, 1.0, 2.0));
 }
 
+TEST(ProbDistributionsInvGaussian, boundariesInContainer) {
+  using stan::math::inv_gaussian_cdf;
+  using stan::math::inv_gaussian_lccdf;
+  using stan::math::inv_gaussian_lcdf;
+  using stan::math::inv_gaussian_lpdf;
+  double inf = std::numeric_limits<double>::infinity();
+  std::vector<double> y_inf{inf, 0.5};
+  std::vector<double> y_zero{0.0, 0.5};
+
+  // a factor of one / a summand of zero: the finite element carries the value
+  EXPECT_FLOAT_EQ(inv_gaussian_lcdf(0.5, 1.0, 2.0),
+                  inv_gaussian_lcdf(y_inf, 1.0, 2.0));
+  EXPECT_FLOAT_EQ(inv_gaussian_cdf(0.5, 1.0, 2.0),
+                  inv_gaussian_cdf(y_inf, 1.0, 2.0));
+  EXPECT_FLOAT_EQ(inv_gaussian_lccdf(0.5, 1.0, 2.0),
+                  inv_gaussian_lccdf(y_zero, 1.0, 2.0));
+
+  // the boundary absorbs the reduction: the whole return is the boundary
+  EXPECT_FLOAT_EQ(-inf, inv_gaussian_lpdf(y_inf, 1.0, 2.0));
+  EXPECT_FLOAT_EQ(-inf, inv_gaussian_lpdf(y_zero, 1.0, 2.0));
+  EXPECT_FLOAT_EQ(-inf, inv_gaussian_lcdf(y_zero, 1.0, 2.0));
+  EXPECT_FLOAT_EQ(0.0, inv_gaussian_cdf(y_zero, 1.0, 2.0));
+  EXPECT_FLOAT_EQ(-inf, inv_gaussian_lccdf(y_inf, 1.0, 2.0));
+}
+
 // 2 lambda / mu is past the overflow point of exp for all of these.
 TEST(ProbDistributionsInvGaussian, largeExpFactor) {
   using stan::math::inv_gaussian_lccdf;
