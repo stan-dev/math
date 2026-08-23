@@ -35,8 +35,8 @@ namespace math {
  * \exp(-\lambda (y - \mu)^2 / (2 \mu^2 y))\f$, with support
  * \f$y \in (0, \infty)\f$ and variance \f$\mu^3 / \lambda\f$.
  *
- * <p>\f$y = 0\f$ is accepted and returns \f$-\infty\f$; a negative
- * \f$y\f$ throws.
+ * <p>Both \f$y = 0\f$ and \f$y = \infty\f$ are accepted and return
+ * \f$-\infty\f$; only a negative \f$y\f$ throws.
  *
  * @tparam T_y type of scalar
  * @tparam T_loc type of mean parameter
@@ -86,9 +86,10 @@ inline return_type_t<T_y, T_loc, T_shape> inv_gaussian_lpdf(
 
   auto ops_partials = make_partials_propagator(y_ref, mu_ref, lambda_ref);
 
-  // y == 0 has zero density and LOG_ZERO absorbs the sum.
+  // Both boundaries of the support have zero density and LOG_ZERO absorbs the
+  // sum, so the whole container short-circuits exactly.
   // The gradients are technically ill-defined, but treated as zero.
-  if (sum(promote_scalar<int>(y_val == 0))) {
+  if (sum(promote_scalar<int>((y_val == 0) || (y_val == INFTY)))) {
     return ops_partials.build(LOG_ZERO);
   }
 

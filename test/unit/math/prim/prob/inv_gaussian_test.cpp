@@ -121,6 +121,8 @@ TEST(ProbDistributionsInvGaussian, boundaries) {
   EXPECT_FLOAT_EQ(-inf, inv_gaussian_lcdf(0.0, 1.0, 2.0));
   EXPECT_FLOAT_EQ(0.0, inv_gaussian_lccdf(0.0, 1.0, 2.0));
   EXPECT_FLOAT_EQ(0.0, inv_gaussian_cdf(0.0, 1.0, 2.0));
+  // y == inf is in the closure of the support: zero density, saturated CDF
+  EXPECT_FLOAT_EQ(-inf, inv_gaussian_lpdf(inf, 1.0, 2.0));
   EXPECT_FLOAT_EQ(0.0, inv_gaussian_lcdf(inf, 1.0, 2.0));
   EXPECT_FLOAT_EQ(-inf, inv_gaussian_lccdf(inf, 1.0, 2.0));
   EXPECT_FLOAT_EQ(1.0, inv_gaussian_cdf(inf, 1.0, 2.0));
