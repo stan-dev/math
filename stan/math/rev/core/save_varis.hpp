@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 
@@ -34,6 +35,9 @@ template <typename Arith, require_st_arithmetic<Arith>* = nullptr,
 inline vari** save_varis(vari** dest, Arith&& x, Pargs&&... args);
 
 inline vari** save_varis(vari** dest);
+
+template <typename Tuple, require_tuple_t<Tuple>* = nullptr, typename... Pargs>
+inline vari** save_varis(vari** dest, Tuple&& x, Pargs&&... args);
 
 /**
  * Save the vari pointer in x into the memory pointed to by dest,
@@ -142,6 +146,28 @@ inline vari** save_varis(vari** dest, Arith&& x, Pargs&&... args) {
  * @param dest Pointer
  */
 inline vari** save_varis(vari** dest) { return dest; }
+
+/**
+ * Save the vari pointers in a tuple into the memory pointed to by dest
+ * by unpacking the tuple and recursively processing each element.
+ *
+ * @tparam Tuple A std::tuple type
+ * @tparam Pargs Types of remaining arguments
+ * @param[in, out] dest Pointer to where vari pointers are saved
+ * @param[in] x A tuple potentially containing vars
+ * @param[in] args Additional arguments to have their varis saved
+ * @return Final position of dest pointer
+ */
+template <typename Tuple, require_tuple_t<Tuple>*, typename... Pargs>
+inline vari** save_varis(vari** dest, Tuple&& x, Pargs&&... args) {
+  dest = stan::math::apply(
+      [dest](auto&&... inner_args) {
+        return save_varis(dest,
+                          std::forward<decltype(inner_args)>(inner_args)...);
+      },
+      std::forward<Tuple>(x));
+  return save_varis(dest, std::forward<Pargs>(args)...);
+}
 
 }  // namespace math
 }  // namespace stan
