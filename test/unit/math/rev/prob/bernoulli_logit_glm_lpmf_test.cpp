@@ -584,3 +584,57 @@ TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
   EXPECT_THROW(stan::math::bernoulli_logit_glm_lpmf(y, x, alpha, betaw2),
                std::domain_error);
 }
+
+//  For ytheta > cutoff the value branch is -exp(-ytheta), so the derivative
+//  with respect to theta is signs * exp(-ytheta) with signs = 2y - 1.
+//  Regression test: the theta_derivative (ytheta > cutoff) branch used to
+//  return -exp_m_ytheta without the signs factor, which has the wrong sign
+//  whenever y = 1 and theta > cutoff (and, symmetrically, for y = 0 with
+//  theta < -cutoff), feeding the x/alpha/beta adjoints.
+TEST_F(AgradRev, bernoulli_glm_cutoff_partials_sign) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  const double cutoff = 20;
+  const double h = 1e-3;  // keeps both FD points inside the same branch
+  Eigen::Matrix<double, Dynamic, Dynamic> x(1, 1);
+  x << 1.0;
+  for (int n = 0; n <= 1; ++n) {
+    const double theta = (n == 1 ? 1.0 : -1.0) * (cutoff + 5);
+    const double signs = 2 * n - 1;
+    const double expected = signs * std::exp(-signs * theta);
+
+    // finite-difference reference from the double implementation
+    const double fd_beta = (stan::math::bernoulli_logit_glm_lpmf(n, x, 0.0,
+                                                                 theta + h)
+                            - stan::math::bernoulli_logit_glm_lpmf(n, x, 0.0,
+                                                                   theta - h))
+                           / (2 * h);
+    EXPECT_NEAR(expected, fd_beta, 1e-6 * std::fabs(fd_beta))
+        << "analytic beta derivative disagrees with finite differences for n = "
+        << n;
+    const double fd_alpha = (stan::math::bernoulli_logit_glm_lpmf(n, x, 0.0 + h,
+                                                                  theta)
+                             - stan::math::bernoulli_logit_glm_lpmf(
+                                   n, x, 0.0 - h, theta))
+                            / (2 * h);
+    EXPECT_NEAR(expected, fd_alpha, 1e-6 * std::fabs(fd_alpha))
+        << "analytic alpha derivative disagrees with finite differences for n = "
+        << n;
+
+    // autodiff gradients
+    var alpha = 0.0;
+    Matrix<var, Dynamic, 1> beta(1, 1);
+    beta << theta;
+    var lp = stan::math::bernoulli_logit_glm_lpmf(n, x, alpha, beta);
+    lp.grad();
+    EXPECT_NEAR(beta(0).adj(), expected, 1e-9 * std::fabs(expected))
+        << "beta gradient has the wrong sign or magnitude for n = " << n
+        << ", theta = " << theta << ", adj = " << beta(0).adj()
+        << ", expected = " << expected;
+    EXPECT_NEAR(alpha.adj(), expected, 1e-9 * std::fabs(expected))
+        << "alpha gradient has the wrong sign or magnitude for n = " << n
+        << ", theta = " << theta << ", adj = " << alpha.adj()
+        << ", expected = " << expected;
+  }
+}
