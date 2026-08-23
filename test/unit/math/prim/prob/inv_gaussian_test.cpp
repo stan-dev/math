@@ -58,6 +58,39 @@ TEST(ProbDistributionsInvGaussian, error_check) {
       std::domain_error);
 }
 
+TEST(ProbDistributionsInvGaussian, rngStableForLargeMuOverLambda) {
+  boost::random::mt19937 rng(1234);
+  for (double mu : {1.0, 1e3, 1e6, 1e9, 1e12}) {
+    for (double lambda : {1e-8, 1e-4, 1.0, 1e4}) {
+      for (int i = 0; i < 2000; ++i) {
+        double d = stan::math::inv_gaussian_rng(mu, lambda, rng);
+        ASSERT_TRUE(std::isfinite(d)) << "mu=" << mu << " lambda=" << lambda;
+        ASSERT_GT(d, 0.0) << "mu=" << mu << " lambda=" << lambda;
+      }
+    }
+  }
+}
+
+// The sample variance of an inverse Gaussian is heavy tailed, so its
+// tolerance is wider than the mean's.
+TEST(ProbDistributionsInvGaussian, rngMomentsAtLargeMu) {
+  boost::random::mt19937 rng(4321);
+  const double mu = 1e3;
+  const double lambda = 1e3;
+  const int N = 200000;
+  double sum = 0;
+  double sum_sq = 0;
+  for (int i = 0; i < N; ++i) {
+    double d = stan::math::inv_gaussian_rng(mu, lambda, rng);
+    sum += d;
+    sum_sq += d * d;
+  }
+  double mean = sum / N;
+  double var = sum_sq / N - mean * mean;
+  EXPECT_NEAR(mu, mean, 0.05 * mu);
+  EXPECT_NEAR(mu * mu * mu / lambda, var, 0.15 * mu * mu * mu / lambda);
+}
+
 // reference values from mpmath at 60 digits
 
 TEST(ProbDistributionsInvGaussian, values) {
