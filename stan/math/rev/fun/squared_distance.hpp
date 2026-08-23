@@ -21,11 +21,11 @@ namespace math {
 inline var squared_distance(const var& a, const var& b) {
   check_finite("squared_distance", "a", a);
   check_finite("squared_distance", "b", b);
-  return make_callback_vari(std::pow(a.val() - b.val(), 2),
-                            [a, b](const auto& vi) mutable {
-                              const double diff = 2.0 * (a.val() - b.val());
-                              a.adj() += vi.adj_ * diff;
-                              b.adj() -= vi.adj_ * diff;
+  const double diff = a.val() - b.val();
+  return make_callback_vari(diff * diff, [a, b, diff](const auto& vi) mutable {
+                              const double adj_diff = 2.0 * diff;
+                              a.adj() += vi.adj_ * adj_diff;
+                              b.adj() -= vi.adj_ * adj_diff;
                             });
 }
 
@@ -35,9 +35,9 @@ inline var squared_distance(const var& a, const var& b) {
 inline var squared_distance(const var& a, double b) {
   check_finite("squared_distance", "a", a);
   check_finite("squared_distance", "b", b);
-  return make_callback_vari(std::pow(a.val() - b, 2),
-                            [a, b](const auto& vi) mutable {
-                              a.adj() += vi.adj_ * 2.0 * (a.val() - b);
+  const double diff = a.val() - b;
+  return make_callback_vari(diff * diff, [a, b, diff](const auto& vi) mutable {
+                              a.adj() += vi.adj_ * 2.0 * diff;
                             });
 }
 
