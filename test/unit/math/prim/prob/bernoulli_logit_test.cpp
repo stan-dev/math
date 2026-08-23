@@ -105,7 +105,8 @@ TEST(ProbDistributionsBernoulliLogit, cutoff_partials_sign) {
                        - stan::math::bernoulli_logit_lpmf(n, theta - h))
                       / (2 * h);
     EXPECT_NEAR(expected, fd, 1e-6 * std::fabs(fd))
-        << "analytic derivative disagrees with finite differences for n = " << n;
+        << "analytic derivative disagrees with finite differences for n = "
+        << n;
 
     // autodiff gradient
     var theta_v = theta;
