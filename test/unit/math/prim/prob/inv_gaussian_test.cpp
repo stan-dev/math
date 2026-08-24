@@ -121,7 +121,6 @@ TEST(ProbDistributionsInvGaussian, boundaries) {
   EXPECT_FLOAT_EQ(-inf, inv_gaussian_lcdf(0.0, 1.0, 2.0));
   EXPECT_FLOAT_EQ(0.0, inv_gaussian_lccdf(0.0, 1.0, 2.0));
   EXPECT_FLOAT_EQ(0.0, inv_gaussian_cdf(0.0, 1.0, 2.0));
-  // y == inf is in the closure of the support: zero density, saturated CDF
   EXPECT_FLOAT_EQ(-inf, inv_gaussian_lpdf(inf, 1.0, 2.0));
   EXPECT_FLOAT_EQ(0.0, inv_gaussian_lcdf(inf, 1.0, 2.0));
   EXPECT_FLOAT_EQ(-inf, inv_gaussian_lccdf(inf, 1.0, 2.0));
@@ -206,8 +205,6 @@ TEST(ProbDistributionsInvGaussian, probabilityNeverExceedsOne) {
   EXPECT_FLOAT_EQ(-4.99000499999999997e17, inv_gaussian_lcdf(1e-4, 1e-1, 1e14));
 }
 
-// At y == mu the CDF is a fixed quantity independent of the scale of mu, so
-// all of these must agree.
 TEST(ProbDistributionsInvGaussian, medianIsScaleInvariant) {
   using stan::math::inv_gaussian_lccdf;
   using stan::math::inv_gaussian_lcdf;

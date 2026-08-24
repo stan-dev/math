@@ -75,11 +75,8 @@ inline auto log_diff_exp_guarded(T1&& a, T2&& b) {
  * that first happens at \f$\log S = -5 \times 10^5\f$, so the survivor is
  * zero to any representable precision there.
  *
- * <p>Both boundaries are handled elementwise: \f$y = 0\f$ contributes
- * \f$\log 1 = 0\f$ and \f$y = \infty\f$ contributes \f$-\infty\f$, so a
- * container mixing a boundary with ordinary observations sums to the same
- * value as its elements taken one at a time. The partials are zero at both,
- * and wherever the survivor has underflowed.
+ * <p>Both boundaries of the support are handled elementwise; the partials
+ * are zero at both, and wherever the survivor has underflowed.
  *
  * @tparam T_y type of scalar
  * @tparam T_loc type of mean parameter

@@ -34,10 +34,8 @@ namespace math {
  * \f$\Phi(z_1) + e^{2\lambda/\mu}\Phi(-z_2)\f$ overflows a double above
  * \f$2\lambda/\mu = 710\f$. See <code>inv_gaussian_lcdf</code>.
  *
- * <p>Both boundaries are handled elementwise: \f$y = 0\f$ contributes a
- * factor of zero and \f$y = \infty\f$ a factor of one, so a container mixing
- * a boundary with ordinary observations multiplies to the same value as its
- * elements taken one at a time. The partials are zero at both.
+ * <p>Both boundaries of the support are handled elementwise; the partials
+ * are zero at both.
  *
  * @tparam T_y type of scalar
  * @tparam T_loc type of mean parameter

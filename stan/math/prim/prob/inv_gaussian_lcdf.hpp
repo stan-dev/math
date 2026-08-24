@@ -141,13 +141,10 @@ inline auto log_scaled_upper_term(T1&& z1, T2&& z2) {
  * \f$z_{1,2} = \sqrt{\lambda/y}\,(y/\mu \mp 1)\f$. The factor
  * \f$e^{2\lambda/\mu}\f$ overflows a double above \f$2\lambda/\mu = 710\f$,
  * so the two terms are combined in log space. That grouping of \f$z\f$ is
- * exact at \f$y = \mu\f$ and returns \f$z_1 = 0\f$ there for any
- * \f$\lambda\f$.
+ * exact in floating point at \f$y = \mu\f$.
  *
- * <p>Both boundaries are handled elementwise: \f$y = 0\f$ contributes
- * \f$-\infty\f$ and \f$y = \infty\f$ contributes \f$\log 1 = 0\f$, so a
- * container mixing a boundary with ordinary observations sums to the same
- * value as its elements taken one at a time. The partials are zero at both.
+ * <p>Both boundaries of the support are handled elementwise; the partials
+ * are zero at both.
  *
  * @tparam T_y type of scalar
  * @tparam T_loc type of mean parameter

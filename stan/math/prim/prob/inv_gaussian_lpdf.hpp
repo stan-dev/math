@@ -98,7 +98,6 @@ inline return_type_t<T_y, T_loc, T_shape> inv_gaussian_lpdf(
   const auto& inv_mu = to_ref_if<any_ad>(inv(mu_val));
   const auto& inv_y = to_ref_if<any_ad>(inv(y_val));
   const auto& y_m_mu = to_ref_if<any_ad>(y_val - mu_val);
-  // (y - mu)^2 / (2 mu^2 y)
   const auto& half_sq_scaled = to_ref(0.5 * square(y_m_mu * inv_mu) * inv_y);
 
   size_t N = max_size(y, mu, lambda);

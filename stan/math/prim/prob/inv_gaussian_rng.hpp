@@ -30,11 +30,9 @@ namespace math {
  * candidate roots and a Bernoulli draw selects between them. The method is
  * exact, with no rejection step.
  *
- * <p>The smaller root is formed as
- * \f$x = \mu / (1 + u/2 + \sqrt{u + u^2/4})\f$ with
- * \f$u = \mu w / \lambda\f$. Since \f$(1 + u/2)^2 - (u + u^2/4) = 1\f$
- * exactly, this form subtracts nothing and stays accurate for \f$u\f$ up to
- * \f$10^{20}\f$.
+ * <p>The smaller root is computed in reciprocal form; since
+ * \f$(1 + u/2)^2 - (u + u^2/4) = 1\f$ exactly, it subtracts nothing and
+ * stays accurate for \f$u = \mu w / \lambda\f$ up to \f$10^{20}\f$.
  *
  * @tparam T_loc type of mean parameter
  * @tparam T_shape type of shape parameter
