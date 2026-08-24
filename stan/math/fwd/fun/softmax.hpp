@@ -29,24 +29,25 @@ inline auto softmax(T&& x) {
 /**
  * Return the softmax of the specified vector of `fvar` values.
  *
- * @tparam Vec Eigen vector with `fvar` scalar
- * @param x vector to transform
- * @return softmax of the vector, or an empty result if the input is empty
+ * @tparam Mat Eigen vector or matrix with `fvar` scalar
+ * @param x vector or matrix to transform
+ * @return softmax of the vector, matrix, or an empty result if the input is 
+ *   empty
  */
-template <typename Vec, require_eigen_vector_vt<is_fvar, Vec>* = nullptr>
-inline auto softmax(Vec&& x) {
-  using vec = std::decay_t<Vec>;
-  constexpr int Rows = vec::RowsAtCompileTime;
-  constexpr int Cols = vec::ColsAtCompileTime;
-  using T = typename value_type_t<vec>::Scalar;
-  decltype(auto) x_ref = to_ref(std::forward<Vec>(x));
+template <typename Mat, require_eigen_vt<is_fvar, Mat>* = nullptr>
+inline auto softmax(Mat&& x) {
+  using mat = std::decay_t<Mat>;
+  constexpr int Rows = mat::RowsAtCompileTime;
+  constexpr int Cols = mat::ColsAtCompileTime;
+  using T = typename value_type_t<mat>::Scalar;
+  decltype(auto) x_ref = to_ref(std::forward<Mat>(x));
   if (x_ref.size() == 0) {
     return Eigen::Matrix<fvar<T>, Rows, Cols>{};
   }
   const auto s = softmax(value_of(x_ref));
   const auto d_in = x_ref.d();
-  const auto dot_sd = s.dot(d_in);
-  Eigen::Matrix<fvar<T>, Rows, Cols> result(x_ref.size());
+  const auto dot_sd = (s.array() * d_in.array()).sum();
+  Eigen::Matrix<fvar<T>, Rows, Cols> result(x_ref.rows(), x_ref.cols());
   result.val() = s;
   result.d() = (s.array() * (d_in.array() - dot_sd)).matrix();
   return result;

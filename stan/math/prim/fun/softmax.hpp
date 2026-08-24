@@ -11,7 +11,9 @@ namespace stan {
 namespace math {
 
 /**
- * Return the softmax of the specified vector, or of each vector in a container.
+ * Return the softmax of the specified vector or matrix, or of each
+ * vector or matrix in a container. For a matrix, the softmax is
+ * taken over all elements.
  *
  * \f$
  * \mbox{softmax}(y)
@@ -38,17 +40,15 @@ namespace math {
  * \end{array}
  * \f$
  *
- * @tparam Container type of input: an Eigen vector, `std::vector` of doubles,
- *   or nested container whose scalar type is arithmetic
- * @param x vector or container of vectors to transform
+ * @tparam Container type of input: an Eigen vector, Eigen matrix, 
+ *   `std::vector` of vectors or matrices, or nested container whose scalar 
+ *   type is arithmetic
+ * @param x vector, matrix, or container to transform.
  * @return softmax of the input, preserving the container structure; an empty
- *   result if any input vector is empty
+ *   result if any input vector or matrix is empty.
  */
 template <typename Container, require_st_arithmetic<Container>* = nullptr,
-          require_container_t<Container>* = nullptr,
-          require_not_t<bool_constant<
-              is_eigen<std::decay_t<Container>>::value
-              && !is_eigen_vector<std::decay_t<Container>>::value>>* = nullptr>
+          require_container_t<Container>* = nullptr>
 inline auto softmax(Container&& x) {
   return make_holder(
       [](auto&& a) {

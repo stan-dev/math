@@ -8,15 +8,17 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/log_softmax.hpp>
+#include <stan/math/prim/fun/softmax.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
 
 namespace stan {
 namespace math {
 
 /**
- * Return the log softmax of the specified vector or row vector.
+ * Return the log softmax of the specified vector, row vector, or matrix.
  *
- * @tparam T a `var_value` or Eigen vector/row_vector with `var` scalar
+ * @tparam T a `var_value` or Eigen vector, row_vector, or matrix with 
+ *   `var` scalar
  * @param x input
  * @return log softmax of the input, or an empty result if the input is empty
  */
@@ -31,8 +33,9 @@ inline auto log_softmax(T&& x) {
   arena_t<return_t> res = log_softmax(x_arena.val());
   reverse_pass_callback([x_arena, res]() mutable {
     const auto& res_adj = to_ref(res.adj());
+    const auto s = softmax(x_arena.val());
     x_arena.adj().array()
-        += res_adj.array() - res_adj.sum() * res.val().array().exp();
+        += res_adj.array() - res_adj.sum() * s.array();
   });
   return res;
 }
