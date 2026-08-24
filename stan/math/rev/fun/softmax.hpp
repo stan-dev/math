@@ -17,7 +17,7 @@ namespace math {
 /**
  * Return the softmax of the specified vector, row vector, or matrix.
  *
- * @tparam T a `var_value` or Eigen vector, row_vector, or matrix with 
+ * @tparam T a `var_value` or Eigen vector, row_vector, or matrix with
  *   `var` scalar
  * @param x input
  * @return softmax of the input, or an empty result if the input is empty
@@ -33,8 +33,7 @@ inline auto softmax(T&& x) {
   arena_t<return_t> res = softmax(x_arena.val());
   reverse_pass_callback([x_arena, res]() mutable {
     const auto dot_sd = (res.val().array() * res.adj().array()).sum();
-    x_arena.adj().array()
-        += res.val().array() * (res.adj().array() - dot_sd);
+    x_arena.adj().array() += res.val().array() * (res.adj().array() - dot_sd);
   });
   return res;
 }

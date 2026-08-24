@@ -12,8 +12,8 @@ namespace stan {
 namespace math {
 
 /**
- * Return the natural logarithm of the softmax of the specified vector or 
- * matrix, or of each vector or matrix in a container. For a matrix, the 
+ * Return the natural logarithm of the softmax of the specified vector or
+ * matrix, or of each vector or matrix in a container. For a matrix, the
  * log-softmax is taken over all elements.
  *  *
  * \f$
@@ -36,8 +36,8 @@ namespace math {
  * \right.
  * \f$
  *
- * @tparam Container type of input: an Eigen vector, Eigen matrix, 
- *   `std::vector` of vectors or matrices, or nested container whose scalar 
+ * @tparam Container type of input: an Eigen vector, Eigen matrix,
+ *   `std::vector` of vectors or matrices, or nested container whose scalar
  *   type is arithmetic
  * @param x vector, matrix, or container to transform.
  * @return softmax of the input, preserving the container structure; an empty

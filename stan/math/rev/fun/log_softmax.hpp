@@ -17,7 +17,7 @@ namespace math {
 /**
  * Return the log softmax of the specified vector, row vector, or matrix.
  *
- * @tparam T a `var_value` or Eigen vector, row_vector, or matrix with 
+ * @tparam T a `var_value` or Eigen vector, row_vector, or matrix with
  *   `var` scalar
  * @param x input
  * @return log softmax of the input, or an empty result if the input is empty
@@ -34,8 +34,7 @@ inline auto log_softmax(T&& x) {
   reverse_pass_callback([x_arena, res]() mutable {
     const auto& res_adj = to_ref(res.adj());
     const auto s = softmax(x_arena.val());
-    x_arena.adj().array()
-        += res_adj.array() - res_adj.sum() * s.array();
+    x_arena.adj().array() += res_adj.array() - res_adj.sum() * s.array();
   });
   return res;
 }

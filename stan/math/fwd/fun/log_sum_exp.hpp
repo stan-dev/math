@@ -57,11 +57,10 @@ inline auto log_sum_exp(T&& x) {
         using T_fvar_inner = typename value_type_t<decltype(v)>::Scalar;
         using mat_type = Eigen::Matrix<T_fvar_inner, -1, -1>;
         mat_type vals = v.val();
-        
+
         const auto probs = softmax(vals);
-        return fvar<T_fvar_inner>(
-          log_sum_exp(vals),
-          v.d().cwiseProduct(probs).sum());
+        return fvar<T_fvar_inner>(log_sum_exp(vals),
+                                  v.d().cwiseProduct(probs).sum());
       });
 }
 

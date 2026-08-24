@@ -31,7 +31,7 @@ inline auto softmax(T&& x) {
  *
  * @tparam Mat Eigen vector or matrix with `fvar` scalar
  * @param x vector or matrix to transform
- * @return softmax of the vector, matrix, or an empty result if the input is 
+ * @return softmax of the vector, matrix, or an empty result if the input is
  *   empty
  */
 template <typename Mat, require_eigen_vt<is_fvar, Mat>* = nullptr>
