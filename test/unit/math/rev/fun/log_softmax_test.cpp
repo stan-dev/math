@@ -61,7 +61,7 @@ TEST_F(AgradRev, log_softmax_var_value_row_vector) {
   EXPECT_FLOAT_EQ(1.0 - 3.0 * std::exp(2.0) / denom, x.adj()(2));
 }
 
-TEST(AgradRev, log_softmax_negative_infinity_has_finite_adjoint) {
+TEST_F(AgradRev, log_softmax_negative_infinity_has_finite_adjoint) {
   using stan::math::log_softmax;
   using stan::math::sum;
   using stan::math::var_value;
@@ -92,7 +92,7 @@ TEST(AgradRev, log_softmax_negative_infinity_has_finite_adjoint) {
   EXPECT_NEAR(1.0 - 4.0 * p3, x.adj()(3), 1e-12);
 }
 
-TEST(AgradRev, log_softmax_adjoint_uses_stable_softmax) {
+TEST_F(AgradRev, log_softmax_adjoint_uses_stable_softmax) {
   using stan::math::log_softmax;
   using stan::math::sum;
   using stan::math::var_value;

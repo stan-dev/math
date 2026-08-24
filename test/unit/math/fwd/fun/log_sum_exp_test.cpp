@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-TEST(AgradFwdLogSumExp, derivative_does_not_overflow) {
+TEST(AgradFwd, log_sum_exp_derivative_does_not_overflow) {
   using stan::math::fvar;
   using stan::math::log_sum_exp;
   

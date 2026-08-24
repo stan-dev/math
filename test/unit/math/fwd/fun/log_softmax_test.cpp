@@ -79,7 +79,7 @@ TEST(AgradFwd, log_softmax_many_small_probabilities) {
   EXPECT_NEAR(1.0 - tangent, y(0).d(), 1e-12);
   EXPECT_NEAR(2.0 - tangent, y(1).d(), 1e-12);
 }
-TEST(Agrad, log_softmax_positive_infinity_consistent_with_prim) {
+TEST(AgradFwd, log_softmax_positive_infinity_consistent_with_prim) {
   using stan::math::fvar;
   using stan::math::log_softmax;
   

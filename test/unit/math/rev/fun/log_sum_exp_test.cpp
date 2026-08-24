@@ -62,7 +62,7 @@ TEST_F(AgradRev, log_sum_exp_tests_large_values) {
   EXPECT_FLOAT_EQ(a8.adj(), 0.0);
 }
 
-TEST(AgradRev, log_sum_exp_negative_infinity_has_zero_adjoint) {
+TEST_F(AgradRev, log_sum_exp_negative_infinity_has_zero_adjoint) {
   using stan::math::log_sum_exp;
   using stan::math::var_value;
   
@@ -87,7 +87,7 @@ TEST(AgradRev, log_sum_exp_negative_infinity_has_zero_adjoint) {
   EXPECT_NEAR(e3 / denom, x.adj()(3), 1e-12);
 }
 
-TEST(AgradRev, log_sum_exp_adjoint_uses_stable_softmax) {
+TEST_F(AgradRev, log_sum_exp_adjoint_uses_stable_softmax) {
   using stan::math::log_sum_exp;
   using stan::math::var_value;
   
