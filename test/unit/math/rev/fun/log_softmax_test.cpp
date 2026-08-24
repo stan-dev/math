@@ -73,7 +73,7 @@ TEST(AgradRev, log_softmax_negative_infinity_has_finite_adjoint) {
   
   var_value<Eigen::VectorXd> x(v);
   
-  const auto y = log_softmax(x);
+  auto y = log_softmax(x);
   sum(y).grad();
   
   const double e1 = std::exp(1.0);

@@ -73,7 +73,7 @@ TEST(AgradRev, log_sum_exp_negative_infinity_has_zero_adjoint) {
   
   var_value<Eigen::VectorXd> x(v);
   
-  const auto y = log_sum_exp(x);
+  auto y = log_sum_exp(x);
   y.grad();
   
   const double e1 = std::exp(1.0);
