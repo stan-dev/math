@@ -1,13 +1,16 @@
 #ifndef STAN_MATH_MIX_FUNCTOR_GRADIENT_VARIADIC_HPP
 #define STAN_MATH_MIX_FUNCTOR_GRADIENT_VARIADIC_HPP
 
+#include <stan/math/mix/functor/internal/autodiff_utils.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/conditional_copy_and_promote.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/to_arena.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <ostream>
 #include <tuple>
@@ -18,11 +21,13 @@ namespace math {
 /**
  * Return the gradient of a scalar functor with respect to its first argument.
  *
- * The functor must be callable as `f(theta, msgs, args...)`. This overload is
- * used when none of the inputs contain reverse-mode variables.
+ * The functor must be callable as `f(theta, msgs, args...)` with an
+ * elementwise reverse-mode `theta`. This overload is used when none of the
+ * inputs contain reverse-mode variables. Forward-mode inputs are not
+ * supported.
  *
  * @tparam F type of functor
- * @tparam ThetaVec Eigen column vector type
+ * @tparam ThetaVec column vector type
  * @tparam Args types of additional arguments
  * @param f functor returning a scalar
  * @param theta argument with respect to which the gradient is taken
@@ -31,8 +36,9 @@ namespace math {
  * @return gradient of `f` with respect to `theta`
  */
 template <typename F, typename ThetaVec, typename... Args,
-          require_eigen_col_vector_t<ThetaVec>* = nullptr,
+          require_col_vector_t<ThetaVec>* = nullptr,
           require_t<is_vt_not_complex<ThetaVec>>* = nullptr,
+          require_not_t<internal::contains_fvar<ThetaVec, Args...>>* = nullptr,
           require_not_t<is_any_var_scalar<ThetaVec, Args...>>* = nullptr>
 inline Eigen::VectorXd gradient(const F& f, const ThetaVec& theta,
                                 std::ostream* msgs, const Args&... args) {
@@ -56,10 +62,12 @@ inline Eigen::VectorXd gradient(const F& f, const ThetaVec& theta,
  *
  * For output adjoints `w`, the reverse pass propagates
  * `H(theta) * w` to `theta` and the corresponding mixed partials to
- * `args...`. The functor must be callable with `fvar<var>` inputs.
+ * `args...`. The functor must be callable both with an elementwise
+ * reverse-mode `theta` and with `fvar<var>` inputs during the reverse pass.
+ * Forward-mode inputs to this function are not supported.
  *
  * @tparam F type of functor
- * @tparam ThetaVec Eigen column vector type
+ * @tparam ThetaVec column vector type
  * @tparam Args types of additional arguments
  * @param f functor returning a scalar
  * @param theta argument with respect to which the gradient is taken
@@ -68,8 +76,9 @@ inline Eigen::VectorXd gradient(const F& f, const ThetaVec& theta,
  * @return gradient of `f` with respect to `theta`
  */
 template <typename F, typename ThetaVec, typename... Args,
-          require_eigen_col_vector_t<ThetaVec>* = nullptr,
+          require_col_vector_t<ThetaVec>* = nullptr,
           require_t<is_vt_not_complex<ThetaVec>>* = nullptr,
+          require_not_t<internal::contains_fvar<ThetaVec, Args...>>* = nullptr,
           require_t<is_any_var_scalar<ThetaVec, Args...>>* = nullptr>
 inline Eigen::Matrix<var, Eigen::Dynamic, 1> gradient(
     const F& f, const ThetaVec& theta, std::ostream* msgs,
@@ -81,7 +90,7 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> gradient(
   }
 
   auto theta_arena = to_arena(theta);
-  auto* args_arena = make_chainable_ptr(std::make_tuple(args...));
+  auto* args_arena = make_chainable_ptr(std::make_tuple(eval(args)...));
   Eigen::VectorXd g(n);
   {
     nested_rev_autodiff nested;
@@ -105,8 +114,9 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> gradient(
       theta_fvar.coeffRef(i)
           = fvar<var>(theta_arena.coeff(i), res.adj().coeff(i));
     }
+    auto args_matvar = internal::from_var_value_rec(*args_arena);
     auto args_fvar
-        = internal::shallow_copy_vargs<fvar<var>>(*args_arena);
+        = internal::shallow_copy_vargs<fvar<var>>(args_matvar);
     fvar<var> fx = math::apply(
         [&](const auto&... inner_args) {
           return f(theta_fvar, msgs, inner_args...);

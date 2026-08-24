@@ -1,5 +1,7 @@
 #include <stan/math/mix/functor/gradient_variadic.hpp>
 #include <gtest/gtest.h>
+#include <type_traits>
+#include <utility>
 
 namespace gradient_variadic_test {
 
@@ -14,6 +16,21 @@ struct cubic_functor {
     return c * theta_cubed / 6.0 + b.dot(theta);
   }
 };
+
+template <typename ThetaVec, typename = void>
+struct is_gradient_callable : std::false_type {};
+
+template <typename ThetaVec>
+struct is_gradient_callable<
+    ThetaVec,
+    std::void_t<decltype(stan::math::gradient(
+        cubic_functor{}, std::declval<const ThetaVec&>(), nullptr,
+        std::declval<const Eigen::VectorXd&>(), 1.0))>> : std::true_type {};
+
+using fvar_vector
+    = Eigen::Matrix<stan::math::fvar<double>, Eigen::Dynamic, 1>;
+static_assert(is_gradient_callable<Eigen::Vector3d>::value);
+static_assert(!is_gradient_callable<fvar_vector>::value);
 
 }  // namespace gradient_variadic_test
 
@@ -58,6 +75,33 @@ TEST(MathMixFunctor, GradientVariadicReverse) {
   EXPECT_TRUE(b_var.adj().isApprox(w, 1e-12));
   EXPECT_NEAR(c_var.adj(),
               0.5 * (w.array() * theta.array().square()).sum(), 1e-12);
+  stan::math::recover_memory();
+}
+
+TEST(MathMixFunctor, GradientVariadicReverseVarMatrix) {
+  using stan::math::var;
+  using stan::math::var_value;
+  Eigen::VectorXd theta(3);
+  Eigen::VectorXd b(3);
+  Eigen::VectorXd w(3);
+  theta << 0.4, -0.7, 1.2;
+  b << 0.3, -0.2, 0.5;
+  w << -0.5, 0.8, 0.2;
+  const double c = 1.3;
+
+  var_value<Eigen::VectorXd> theta_var = theta;
+  var_value<Eigen::VectorXd> b_var = b;
+  auto g = stan::math::gradient(
+      gradient_variadic_test::cubic_functor{}, theta_var, nullptr, b_var, c);
+  var target = w.dot(g);
+  target.grad();
+
+  Eigen::VectorXd expected
+      = 0.5 * c * theta.array().square().matrix() + b;
+  Eigen::VectorXd theta_adj = c * w.array() * theta.array();
+  EXPECT_TRUE(g.val().isApprox(expected, 1e-12));
+  EXPECT_TRUE(theta_var.adj().isApprox(theta_adj, 1e-12));
+  EXPECT_TRUE(b_var.adj().isApprox(w, 1e-12));
   stan::math::recover_memory();
 }
 

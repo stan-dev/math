@@ -1,14 +1,17 @@
 #ifndef STAN_MATH_MIX_FUNCTOR_HESSIAN_TIMES_VECTOR_VARIADIC_HPP
 #define STAN_MATH_MIX_FUNCTOR_HESSIAN_TIMES_VECTOR_VARIADIC_HPP
 
+#include <stan/math/mix/functor/internal/autodiff_utils.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/conditional_copy_and_promote.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/to_arena.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <ostream>
 #include <tuple>
@@ -19,12 +22,13 @@ namespace math {
 /**
  * Return the Hessian of a scalar functor times a vector.
  *
- * The functor must be callable as `f(theta, msgs, args...)`. This overload is
- * used when none of the inputs contain reverse-mode variables.
+ * The functor must be callable as `f(theta, msgs, args...)` with an
+ * `fvar<var>` `theta`. This overload is used when none of the inputs contain
+ * reverse-mode variables. Forward-mode inputs are not supported.
  *
  * @tparam F type of functor
- * @tparam ThetaVec Eigen column vector type
- * @tparam VVec Eigen column vector type
+ * @tparam ThetaVec column vector type
+ * @tparam VVec column vector type
  * @tparam Args types of additional arguments
  * @param f functor returning a scalar
  * @param theta argument with respect to which the Hessian is taken
@@ -35,9 +39,11 @@ namespace math {
  * @throw std::invalid_argument if `theta` and `v` have different sizes
  */
 template <typename F, typename ThetaVec, typename VVec, typename... Args,
-          require_all_eigen_col_vector_t<ThetaVec, VVec>* = nullptr,
+          require_all_col_vector_t<ThetaVec, VVec>* = nullptr,
           require_all_t<is_vt_not_complex<ThetaVec>, is_vt_not_complex<VVec>>*
           = nullptr,
+          require_not_t<
+              internal::contains_fvar<ThetaVec, VVec, Args...>>* = nullptr,
           require_not_t<is_any_var_scalar<ThetaVec, VVec, Args...>>* = nullptr>
 inline Eigen::VectorXd hessian_times_vector(const F& f, const ThetaVec& theta,
                                             const VVec& v, std::ostream* msgs,
@@ -68,12 +74,13 @@ inline Eigen::VectorXd hessian_times_vector(const F& f, const ThetaVec& theta,
  *
  * For output adjoints `w`, the reverse pass propagates the third-order
  * contraction `grad(v' * H(theta) * w)` to `theta` and `args...`, and
- * `H(theta) * w` to `v`. The functor must be callable with
- * `fvar<fvar<var>>` inputs.
+ * `H(theta) * w` to `v`. The functor must be callable with both `fvar<var>`
+ * and `fvar<fvar<var>>` inputs. Forward-mode inputs to this function are not
+ * supported.
  *
  * @tparam F type of functor
- * @tparam ThetaVec Eigen column vector type
- * @tparam VVec Eigen column vector type
+ * @tparam ThetaVec column vector type
+ * @tparam VVec column vector type
  * @tparam Args types of additional arguments
  * @param f functor returning a scalar
  * @param theta argument with respect to which the Hessian is taken
@@ -84,9 +91,11 @@ inline Eigen::VectorXd hessian_times_vector(const F& f, const ThetaVec& theta,
  * @throw std::invalid_argument if `theta` and `v` have different sizes
  */
 template <typename F, typename ThetaVec, typename VVec, typename... Args,
-          require_all_eigen_col_vector_t<ThetaVec, VVec>* = nullptr,
+          require_all_col_vector_t<ThetaVec, VVec>* = nullptr,
           require_all_t<is_vt_not_complex<ThetaVec>, is_vt_not_complex<VVec>>*
           = nullptr,
+          require_not_t<
+              internal::contains_fvar<ThetaVec, VVec, Args...>>* = nullptr,
           require_t<is_any_var_scalar<ThetaVec, VVec, Args...>>* = nullptr>
 inline Eigen::Matrix<var, Eigen::Dynamic, 1> hessian_times_vector(
     const F& f, const ThetaVec& theta, const VVec& v, std::ostream* msgs,
@@ -101,7 +110,7 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> hessian_times_vector(
 
   auto theta_arena = to_arena(theta);
   auto v_arena = to_arena(v);
-  auto* args_arena = make_chainable_ptr(std::make_tuple(args...));
+  auto* args_arena = make_chainable_ptr(std::make_tuple(eval(args)...));
   Eigen::VectorXd hv(n);
   {
     nested_rev_autodiff nested;
@@ -133,8 +142,9 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> hessian_times_vector(
               fvar<var>(theta_arena.coeff(i), v_arena.coeff(i)),
               fvar<var>(res.adj().coeff(i), 0.0));
         }
+        auto args_matvar = internal::from_var_value_rec(*args_arena);
         auto args_ffvar
-            = internal::shallow_copy_vargs<fvar<fvar<var>>>(*args_arena);
+            = internal::shallow_copy_vargs<fvar<fvar<var>>>(args_matvar);
         fvar<fvar<var>> fx = math::apply(
             [&](const auto&... inner_args) {
               return f(theta_ffvar, msgs, inner_args...);
