@@ -171,6 +171,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
 STAN_OPENCL=true
 OPENCL_PLATFORM_ID_GPU=0
 OPENCL_DEVICE_ID=0
+LDFLAGS_OPENCL=-L/usr/local/cuda/targets/x86_64-linux/lib
 """
                 if (noOptimize)
                   local += 'O=1\n'
