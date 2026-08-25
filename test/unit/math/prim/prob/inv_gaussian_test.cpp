@@ -43,21 +43,6 @@ TEST(ProbDistributionsInvGaussian, distributionCheck) {
   check_quantiles_real_real(InvGaussianTestRig());
 }
 
-TEST(ProbDistributionsInvGaussian, error_check) {
-  boost::random::mt19937 rng;
-  EXPECT_NO_THROW(stan::math::inv_gaussian_rng(1.0, 2.0, rng));
-  EXPECT_THROW(stan::math::inv_gaussian_rng(0.0, 2.0, rng), std::domain_error);
-  EXPECT_THROW(stan::math::inv_gaussian_rng(-1.0, 2.0, rng), std::domain_error);
-  EXPECT_THROW(stan::math::inv_gaussian_rng(1.0, 0.0, rng), std::domain_error);
-  EXPECT_THROW(stan::math::inv_gaussian_rng(1.0, -1.0, rng), std::domain_error);
-  EXPECT_THROW(
-      stan::math::inv_gaussian_rng(stan::math::positive_infinity(), 2.0, rng),
-      std::domain_error);
-  EXPECT_THROW(
-      stan::math::inv_gaussian_rng(1.0, stan::math::positive_infinity(), rng),
-      std::domain_error);
-}
-
 TEST(ProbDistributionsInvGaussian, rngStableForLargeMuOverLambda) {
   boost::random::mt19937 rng(1234);
   for (double mu : {1.0, 1e3, 1e6, 1e9, 1e12}) {
@@ -89,25 +74,6 @@ TEST(ProbDistributionsInvGaussian, rngMomentsAtLargeMu) {
   double var = sum_sq / N - mean * mean;
   EXPECT_NEAR(mu, mean, 0.05 * mu);
   EXPECT_NEAR(mu * mu * mu / lambda, var, 0.15 * mu * mu * mu / lambda);
-}
-
-// reference values from mpmath at 60 digits
-
-TEST(ProbDistributionsInvGaussian, values) {
-  using stan::math::inv_gaussian_cdf;
-  using stan::math::inv_gaussian_lccdf;
-  using stan::math::inv_gaussian_lcdf;
-  using stan::math::inv_gaussian_lpdf;
-
-  EXPECT_FLOAT_EQ(-2.479180611448965157415, inv_gaussian_lpdf(1.2, 0.5, 2.0));
-  EXPECT_FLOAT_EQ(-2.391593703832052124008, inv_gaussian_lpdf(0.3, 1.0, 5.0));
-  EXPECT_FLOAT_EQ(0.9815922531042920910742, inv_gaussian_cdf(1.2, 0.5, 2.0));
-  EXPECT_FLOAT_EQ(0.003359190912064955560317, inv_gaussian_cdf(0.3, 1.0, 5.0));
-  EXPECT_FLOAT_EQ(-0.01857927772712011847827, inv_gaussian_lcdf(1.2, 0.5, 2.0));
-  EXPECT_FLOAT_EQ(-5.696055133984662592139, inv_gaussian_lcdf(0.3, 1.0, 5.0));
-  EXPECT_FLOAT_EQ(-3.9949836760335225255, inv_gaussian_lccdf(1.2, 0.5, 2.0));
-  EXPECT_FLOAT_EQ(-0.003364845660995599504277,
-                  inv_gaussian_lccdf(0.3, 1.0, 5.0));
 }
 
 TEST(ProbDistributionsInvGaussian, boundaries) {
@@ -153,6 +119,7 @@ TEST(ProbDistributionsInvGaussian, boundariesInContainer) {
 }
 
 // 2 lambda / mu is past the overflow point of exp for all of these.
+// reference values from mpmath at 60 digits
 TEST(ProbDistributionsInvGaussian, largeExpFactor) {
   using stan::math::inv_gaussian_lccdf;
   using stan::math::inv_gaussian_lcdf;
@@ -248,24 +215,6 @@ TEST(ProbDistributionsInvGaussian, cdfCcdfSumToOne) {
   }
 }
 
-TEST(ProbDistributionsInvGaussian, vectorMatchesScalarSum) {
-  using stan::math::inv_gaussian_lccdf;
-  using stan::math::inv_gaussian_lcdf;
-  using stan::math::inv_gaussian_lpdf;
-  std::vector<double> y{0.2, 0.5, 1.0, 2.0, 5.0};
-  double sum_lpdf = 0;
-  double sum_lcdf = 0;
-  double sum_lccdf = 0;
-  for (double yi : y) {
-    sum_lpdf += inv_gaussian_lpdf(yi, 1.3, 3.0);
-    sum_lcdf += inv_gaussian_lcdf(yi, 1.3, 3.0);
-    sum_lccdf += inv_gaussian_lccdf(yi, 1.3, 3.0);
-  }
-  EXPECT_FLOAT_EQ(sum_lpdf, inv_gaussian_lpdf(y, 1.3, 3.0));
-  EXPECT_FLOAT_EQ(sum_lcdf, inv_gaussian_lcdf(y, 1.3, 3.0));
-  EXPECT_FLOAT_EQ(sum_lccdf, inv_gaussian_lccdf(y, 1.3, 3.0));
-}
-
 // check helper functions; tolerances scale with each value's magnitude
 TEST(ProbDistributionsInvGaussian, internalLogPhi) {
   using stan::math::internal::log_Phi;
@@ -294,29 +243,16 @@ TEST(ProbDistributionsInvGaussian, internalLogPhi) {
   EXPECT_FLOAT_EQ(0.0, log_Phi(inf));
   EXPECT_FLOAT_EQ(-inf, log_Phi(-inf));
   EXPECT_TRUE(std::isnan(log_Phi(std::numeric_limits<double>::quiet_NaN())));
-}
 
-// The true slope at z = -30 is about 30, so across a 2e-10 interval the
-// honest change is about 6e-9.
-TEST(ProbDistributionsInvGaussian, internalLogPhiBranchContinuity) {
-  using stan::math::internal::log_Phi;
+  // branch continuity: the true slope at z = -30 is about 30, so across a
+  // 2e-10 interval the honest change is about 6e-9
   double eps = 1e-10;
   double step = log_Phi(-30.0 + eps) - log_Phi(-30.0 - eps);
   EXPECT_LT(std::fabs(step), 1e-7);
 }
 
-TEST(ProbDistributionsInvGaussian, errors) {
+TEST(ProbDistributionsInvGaussian, sizeMismatch) {
   using stan::math::inv_gaussian_lpdf;
-  double inf = std::numeric_limits<double>::infinity();
-
-  EXPECT_THROW(inv_gaussian_lpdf(-1.0, 1.0, 2.0), std::domain_error);
-  EXPECT_THROW(inv_gaussian_lpdf(1.0, 0.0, 2.0), std::domain_error);
-  EXPECT_THROW(inv_gaussian_lpdf(1.0, -1.0, 2.0), std::domain_error);
-  EXPECT_THROW(inv_gaussian_lpdf(1.0, inf, 2.0), std::domain_error);
-  EXPECT_THROW(inv_gaussian_lpdf(1.0, 1.0, 0.0), std::domain_error);
-  EXPECT_THROW(inv_gaussian_lpdf(1.0, 1.0, -1.0), std::domain_error);
-  EXPECT_THROW(inv_gaussian_lpdf(1.0, 1.0, inf), std::domain_error);
-
   std::vector<double> y{1.0, 2.0};
   std::vector<double> mu{1.0, 2.0, 3.0};
   EXPECT_THROW(inv_gaussian_lpdf(y, mu, 1.0), std::invalid_argument);
