@@ -230,7 +230,7 @@ LDFLAGS_OPENCL=-L/usr/local/cuda/targets/x86_64-linux/lib
 
       def cores_per_test = 6
       def parallel_tests = 10
-      runPod(image: image, cpus: cores_per_test*parallel_tests) {
+      runPod(image: image, cpus: cores_per_test*parallel_tests, memory: '128Gi') {
         stage ('Distribution tests') {
           def local = "CXX=$CLANG_CXX\nO=0\nN_TESTS=100\n"
           if (params.withRowVector || mainBranch) {
