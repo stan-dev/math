@@ -13,113 +13,141 @@ TEST(ProbStdNormal, ccdf_log_matches_lccdf) {
 TEST(ProbStdNormal, lccdf_tail) {
   using stan::math::std_normal_lccdf;
 
-  // The test values come from 4.6.1
+  // The test values come from R 4.6.1 and cover the expected useful range of
+  // the function. When z <= -38.5, even the log of the CCDF is
+  // indistinguishable from 0.0 in double precision.
   //
-  // q <- seq(-10, 37.5, by = 0.5)
+  // q <-
+  //   c(
+  //     seq(-38, -11, by = 1.0),
+  //     seq(-10, 10, by = 0.5),
+  //     seq(11, 50, by = 1.0),
+  //     10^seq(2, 8, by = 1)
+  //   )
   // for (i in 1:length(q)) {
   //   cat(
   //     sprintf(
-  //       "EXPECT_FLOAT_EQ(%.22g, std_normal_lccdf(%.1f));\n",
+  //       "EXPECT_FLOAT_EQ(%#.17g, std_normal_lccdf(%.17g));\n",
   //       pnorm(q[i], lower.tail = FALSE, log.p = TRUE),
   //       q[i]
   //     )
   //   )
   // }
 
-  EXPECT_FLOAT_EQ(-7.619853024160526919908e-24, std_normal_lccdf(-10.0));
-  EXPECT_FLOAT_EQ(-1.049451507536260815732e-21, std_normal_lccdf(-9.5));
-  EXPECT_FLOAT_EQ(-1.128588405953840782741e-19, std_normal_lccdf(-9.0));
-  EXPECT_FLOAT_EQ(-9.479534822203319190782e-18, std_normal_lccdf(-8.5));
-  EXPECT_FLOAT_EQ(-6.220960574271786832586e-16, std_normal_lccdf(-8.0));
-  EXPECT_FLOAT_EQ(-3.19089167291094746711e-14, std_normal_lccdf(-7.5));
-  EXPECT_FLOAT_EQ(-1.279812543886654064677e-12, std_normal_lccdf(-7.0));
-  EXPECT_FLOAT_EQ(-4.016000583939758853991e-11, std_normal_lccdf(-6.5));
-  EXPECT_FLOAT_EQ(-9.865876455243755941787e-10, std_normal_lccdf(-6.0));
-  EXPECT_FLOAT_EQ(-1.898956264618946382412e-08, std_normal_lccdf(-5.5));
-  EXPECT_FLOAT_EQ(-2.866516129637635770404e-07, std_normal_lccdf(-5.0));
-  EXPECT_FLOAT_EQ(-3.397678896834465718134e-06, std_normal_lccdf(-4.5));
-  EXPECT_FLOAT_EQ(-3.167174337748926703532e-05, std_normal_lccdf(-4.0));
-  EXPECT_FLOAT_EQ(-0.0002326561413768044451859, std_normal_lccdf(-3.5));
-  EXPECT_FLOAT_EQ(-0.001350809964748193783141, std_normal_lccdf(-3.0));
-  EXPECT_FLOAT_EQ(-0.006229025485860002417371, std_normal_lccdf(-2.5));
-  EXPECT_FLOAT_EQ(-0.02301290932896349339387, std_normal_lccdf(-2.0));
-  EXPECT_FLOAT_EQ(-0.0691434556122339921691, std_normal_lccdf(-1.5));
-  EXPECT_FLOAT_EQ(-0.172753779023449877128, std_normal_lccdf(-1.0));
-  EXPECT_FLOAT_EQ(-0.3689464152886565151412, std_normal_lccdf(-0.5));
-  EXPECT_FLOAT_EQ(-0.6931471805599452862268, std_normal_lccdf(0.0));
-  EXPECT_FLOAT_EQ(-1.175911761593618543031, std_normal_lccdf(0.5));
-  EXPECT_FLOAT_EQ(-1.841021645009263574266, std_normal_lccdf(1.0));
-  EXPECT_FLOAT_EQ(-2.705944400823889761654, std_normal_lccdf(1.5));
-  EXPECT_FLOAT_EQ(-3.78318433368203166367, std_normal_lccdf(2.0));
-  EXPECT_FLOAT_EQ(-5.081648277278690173375, std_normal_lccdf(2.5));
-  EXPECT_FLOAT_EQ(-6.607726221510349162713, std_normal_lccdf(3.0));
-  EXPECT_FLOAT_EQ(-8.36606530834409412023, std_normal_lccdf(3.5));
-  EXPECT_FLOAT_EQ(-10.36010148652729156993, std_normal_lccdf(4.0));
-  EXPECT_FLOAT_EQ(-12.59241973571307937618, std_normal_lccdf(4.5));
-  EXPECT_FLOAT_EQ(-15.06499839398872531149, std_normal_lccdf(5.0));
-  EXPECT_FLOAT_EQ(-17.77937635262525972735, std_normal_lccdf(5.5));
-  EXPECT_FLOAT_EQ(-20.73676894997470654403, std_normal_lccdf(6.0));
-  EXPECT_FLOAT_EQ(-23.93814949516183787637, std_normal_lccdf(6.5));
-  EXPECT_FLOAT_EQ(-27.38430749881107573174, std_normal_lccdf(7.0));
-  EXPECT_FLOAT_EQ(-31.07589090289000210987, std_normal_lccdf(7.5));
-  EXPECT_FLOAT_EQ(-35.0134371599145524101, std_normal_lccdf(8.0));
-  EXPECT_FLOAT_EQ(-39.19739642821767233727, std_normal_lccdf(8.5));
-  EXPECT_FLOAT_EQ(-43.62814911333211398414, std_normal_lccdf(9.0));
-  EXPECT_FLOAT_EQ(-48.30601929896523216712, std_normal_lccdf(9.5));
-  EXPECT_FLOAT_EQ(-53.23128515051246978373, std_normal_lccdf(10.0));
-  EXPECT_FLOAT_EQ(-58.40418706107324453569, std_normal_lccdf(10.5));
-  EXPECT_FLOAT_EQ(-63.82493409442371756768, std_normal_lccdf(11.0));
-  EXPECT_FLOAT_EQ(-69.49370912909535036306, std_normal_lccdf(11.5));
-  EXPECT_FLOAT_EQ(-75.41067300156879582573, std_normal_lccdf(12.0));
-  EXPECT_FLOAT_EQ(-81.57596787074388089422, std_normal_lccdf(12.5));
-  EXPECT_FLOAT_EQ(-87.98971997102252373679, std_normal_lccdf(13.0));
-  EXPECT_FLOAT_EQ(-94.65204188128289786164, std_normal_lccdf(13.5));
-  EXPECT_FLOAT_EQ(-101.5630344074499618046, std_normal_lccdf(14.0));
-  EXPECT_FLOAT_EQ(-108.7227881543204688342, std_normal_lccdf(14.5));
-  EXPECT_FLOAT_EQ(-116.1313848457116932877, std_normal_lccdf(15.0));
-  EXPECT_FLOAT_EQ(-123.788898439410374408, std_normal_lccdf(15.5));
-  EXPECT_FLOAT_EQ(-131.6953960737596958097, std_normal_lccdf(16.0));
-  EXPECT_FLOAT_EQ(-139.850938875285208951, std_normal_lccdf(16.5));
-  EXPECT_FLOAT_EQ(-148.255582650980386461, std_normal_lccdf(17.0));
-  EXPECT_FLOAT_EQ(-156.9093784843464050027, std_normal_lccdf(17.5));
-  EXPECT_FLOAT_EQ(-165.8123732507141880888, std_normal_lccdf(18.0));
-  EXPECT_FLOAT_EQ(-174.9646100645466049173, std_normal_lccdf(18.5));
-  EXPECT_FLOAT_EQ(-184.3661286691609575428, std_normal_lccdf(19.0));
-  EXPECT_FLOAT_EQ(-194.0169657774974893982, std_normal_lccdf(19.5));
-  EXPECT_FLOAT_EQ(-203.9171553710972659701, std_normal_lccdf(20.0));
-  EXPECT_FLOAT_EQ(-214.066728963263813057, std_normal_lccdf(20.5));
-  EXPECT_FLOAT_EQ(-224.4657158314144851374, std_normal_lccdf(21.0));
-  EXPECT_FLOAT_EQ(-235.114143222833007485, std_normal_lccdf(21.5));
-  EXPECT_FLOAT_EQ(-246.0120365373809079301, std_normal_lccdf(22.0));
-  EXPECT_FLOAT_EQ(-257.1594194901841774481, std_normal_lccdf(22.5));
-  EXPECT_FLOAT_EQ(-268.5563142568631178619, std_normal_lccdf(23.0));
-  EXPECT_FLOAT_EQ(-280.2027416034976567971, std_normal_lccdf(23.5));
-  EXPECT_FLOAT_EQ(-292.0987210032077996402, std_normal_lccdf(24.0));
-  EXPECT_FLOAT_EQ(-304.2442707409637137062, std_normal_lccdf(24.5));
-  EXPECT_FLOAT_EQ(-316.6394080080202684258, std_normal_lccdf(25.0));
-  EXPECT_FLOAT_EQ(-329.2841489871795488398, std_normal_lccdf(25.5));
-  EXPECT_FLOAT_EQ(-342.1785089299278297403, std_normal_lccdf(26.0));
-  EXPECT_FLOAT_EQ(-355.3225022263559935709, std_normal_lccdf(26.5));
-  EXPECT_FLOAT_EQ(-368.7161424686563577779, std_normal_lccdf(27.0));
-  EXPECT_FLOAT_EQ(-382.3594425088898560716, std_normal_lccdf(27.5));
-  EXPECT_FLOAT_EQ(-396.252414511631059213, std_normal_lccdf(28.0));
-  EXPECT_FLOAT_EQ(-410.3950700020255908385, std_normal_lccdf(28.5));
-  EXPECT_FLOAT_EQ(-424.7874199097301470829, std_normal_lccdf(29.0));
-  EXPECT_FLOAT_EQ(-439.4294746091502474883, std_normal_lccdf(29.5));
-  EXPECT_FLOAT_EQ(-454.3212439563432099021, std_normal_lccdf(30.0));
-  EXPECT_FLOAT_EQ(-469.4627373229121189979, std_normal_lccdf(30.5));
-  EXPECT_FLOAT_EQ(-484.8539636271792687694, std_normal_lccdf(31.0));
-  EXPECT_FLOAT_EQ(-500.494931362897091276, std_normal_lccdf(31.5));
-  EXPECT_FLOAT_EQ(-516.3856486257253664007, std_normal_lccdf(32.0));
-  EXPECT_FLOAT_EQ(-532.5261231376803152671, std_normal_lccdf(32.5));
-  EXPECT_FLOAT_EQ(-548.9163622697381015314, std_normal_lccdf(33.0));
-  EXPECT_FLOAT_EQ(-565.5563730627579843713, std_normal_lccdf(33.5));
-  EXPECT_FLOAT_EQ(-582.4461622468717223455, std_normal_lccdf(34.0));
-  EXPECT_FLOAT_EQ(-599.5857362594723554139, std_normal_lccdf(34.5));
-  EXPECT_FLOAT_EQ(-616.9751012619225321032, std_normal_lccdf(35.0));
-  EXPECT_FLOAT_EQ(-634.6142631550883379532, std_normal_lccdf(35.5));
-  EXPECT_FLOAT_EQ(-652.5032275937984422853, std_normal_lccdf(36.0));
-  EXPECT_FLOAT_EQ(-670.642000000313714736, std_normal_lccdf(36.5));
-  EXPECT_FLOAT_EQ(-689.0305855768906440062, std_normal_lccdf(37.0));
-  EXPECT_FLOAT_EQ(-707.6689893175072256781, std_normal_lccdf(37.5));
+  EXPECT_FLOAT_EQ(-2.8854283510039645e-316, std_normal_lccdf(-38));
+  EXPECT_FLOAT_EQ(-5.7255712225245771e-300, std_normal_lccdf(-37));
+  EXPECT_FLOAT_EQ(-4.1826240657972830e-284, std_normal_lccdf(-36));
+  EXPECT_FLOAT_EQ(-1.1249107064724062e-268, std_normal_lccdf(-35));
+  EXPECT_FLOAT_EQ(-1.1138987855743795e-253, std_normal_lccdf(-34));
+  EXPECT_FLOAT_EQ(-4.0611856209158557e-239, std_normal_lccdf(-33));
+  EXPECT_FLOAT_EQ(-5.4520806035123956e-225, std_normal_lccdf(-32));
+  EXPECT_FLOAT_EQ(-2.6952500812005002e-211, std_normal_lccdf(-31));
+  EXPECT_FLOAT_EQ(-4.9067139271481872e-198, std_normal_lccdf(-30));
+  EXPECT_FLOAT_EQ(-3.2897852667043802e-185, std_normal_lccdf(-29));
+  EXPECT_FLOAT_EQ(-8.1238694696594273e-173, std_normal_lccdf(-28));
+  EXPECT_FLOAT_EQ(-7.3894810068850200e-161, std_normal_lccdf(-27));
+  EXPECT_FLOAT_EQ(-2.4760633155033892e-149, std_normal_lccdf(-26));
+  EXPECT_FLOAT_EQ(-3.0566967063825616e-138, std_normal_lccdf(-25));
+  EXPECT_FLOAT_EQ(-1.3903921185497032e-127, std_normal_lccdf(-24));
+  EXPECT_FLOAT_EQ(-2.3306370062206492e-117, std_normal_lccdf(-23));
+  EXPECT_FLOAT_EQ(-1.4398924351450790e-107, std_normal_lccdf(-22));
+  EXPECT_FLOAT_EQ(-3.2792780189790367e-98, std_normal_lccdf(-21));
+  EXPECT_FLOAT_EQ(-2.7536241186062337e-89, std_normal_lccdf(-20));
+  EXPECT_FLOAT_EQ(-8.5272239526309772e-81, std_normal_lccdf(-19));
+  EXPECT_FLOAT_EQ(-9.7409489189371508e-73, std_normal_lccdf(-18));
+  EXPECT_FLOAT_EQ(-4.1059962020989074e-65, std_normal_lccdf(-17));
+  EXPECT_FLOAT_EQ(-6.3887544005380882e-58, std_normal_lccdf(-16));
+  EXPECT_FLOAT_EQ(-3.6709661993127514e-51, std_normal_lccdf(-15));
+  EXPECT_FLOAT_EQ(-7.7935368191928000e-45, std_normal_lccdf(-14));
+  EXPECT_FLOAT_EQ(-6.1171643995498803e-39, std_normal_lccdf(-13));
+  EXPECT_FLOAT_EQ(-1.7764821120776790e-33, std_normal_lccdf(-12));
+  EXPECT_FLOAT_EQ(-1.9106595744986757e-28, std_normal_lccdf(-11));
+  EXPECT_FLOAT_EQ(-7.6198530241605269e-24, std_normal_lccdf(-10));
+  EXPECT_FLOAT_EQ(-1.0494515075362608e-21, std_normal_lccdf(-9.5));
+  EXPECT_FLOAT_EQ(-1.1285884059538408e-19, std_normal_lccdf(-9));
+  EXPECT_FLOAT_EQ(-9.4795348222033192e-18, std_normal_lccdf(-8.5));
+  EXPECT_FLOAT_EQ(-6.2209605742717868e-16, std_normal_lccdf(-8));
+  EXPECT_FLOAT_EQ(-3.1908916729109475e-14, std_normal_lccdf(-7.5));
+  EXPECT_FLOAT_EQ(-1.2798125438866541e-12, std_normal_lccdf(-7));
+  EXPECT_FLOAT_EQ(-4.0160005839397589e-11, std_normal_lccdf(-6.5));
+  EXPECT_FLOAT_EQ(-9.8658764552437559e-10, std_normal_lccdf(-6));
+  EXPECT_FLOAT_EQ(-1.8989562646189464e-08, std_normal_lccdf(-5.5));
+  EXPECT_FLOAT_EQ(-2.8665161296376358e-07, std_normal_lccdf(-5));
+  EXPECT_FLOAT_EQ(-3.3976788968344657e-06, std_normal_lccdf(-4.5));
+  EXPECT_FLOAT_EQ(-3.1671743377489267e-05, std_normal_lccdf(-4));
+  EXPECT_FLOAT_EQ(-0.00023265614137680445, std_normal_lccdf(-3.5));
+  EXPECT_FLOAT_EQ(-0.0013508099647481938, std_normal_lccdf(-3));
+  EXPECT_FLOAT_EQ(-0.0062290254858600024, std_normal_lccdf(-2.5));
+  EXPECT_FLOAT_EQ(-0.023012909328963493, std_normal_lccdf(-2));
+  EXPECT_FLOAT_EQ(-0.069143455612233992, std_normal_lccdf(-1.5));
+  EXPECT_FLOAT_EQ(-0.17275377902344988, std_normal_lccdf(-1));
+  EXPECT_FLOAT_EQ(-0.36894641528865652, std_normal_lccdf(-0.5));
+  EXPECT_FLOAT_EQ(-0.69314718055994529, std_normal_lccdf(0));
+  EXPECT_FLOAT_EQ(-1.1759117615936185, std_normal_lccdf(0.5));
+  EXPECT_FLOAT_EQ(-1.8410216450092636, std_normal_lccdf(1));
+  EXPECT_FLOAT_EQ(-2.7059444008238898, std_normal_lccdf(1.5));
+  EXPECT_FLOAT_EQ(-3.7831843336820317, std_normal_lccdf(2));
+  EXPECT_FLOAT_EQ(-5.0816482772786902, std_normal_lccdf(2.5));
+  EXPECT_FLOAT_EQ(-6.6077262215103492, std_normal_lccdf(3));
+  EXPECT_FLOAT_EQ(-8.3660653083440941, std_normal_lccdf(3.5));
+  EXPECT_FLOAT_EQ(-10.360101486527292, std_normal_lccdf(4));
+  EXPECT_FLOAT_EQ(-12.592419735713079, std_normal_lccdf(4.5));
+  EXPECT_FLOAT_EQ(-15.064998393988725, std_normal_lccdf(5));
+  EXPECT_FLOAT_EQ(-17.779376352625260, std_normal_lccdf(5.5));
+  EXPECT_FLOAT_EQ(-20.736768949974707, std_normal_lccdf(6));
+  EXPECT_FLOAT_EQ(-23.938149495161838, std_normal_lccdf(6.5));
+  EXPECT_FLOAT_EQ(-27.384307498811076, std_normal_lccdf(7));
+  EXPECT_FLOAT_EQ(-31.075890902890002, std_normal_lccdf(7.5));
+  EXPECT_FLOAT_EQ(-35.013437159914552, std_normal_lccdf(8));
+  EXPECT_FLOAT_EQ(-39.197396428217672, std_normal_lccdf(8.5));
+  EXPECT_FLOAT_EQ(-43.628149113332114, std_normal_lccdf(9));
+  EXPECT_FLOAT_EQ(-48.306019298965232, std_normal_lccdf(9.5));
+  EXPECT_FLOAT_EQ(-53.231285150512470, std_normal_lccdf(10));
+  EXPECT_FLOAT_EQ(-63.824934094423718, std_normal_lccdf(11));
+  EXPECT_FLOAT_EQ(-75.410673001568796, std_normal_lccdf(12));
+  EXPECT_FLOAT_EQ(-87.989719971022524, std_normal_lccdf(13));
+  EXPECT_FLOAT_EQ(-101.56303440744996, std_normal_lccdf(14));
+  EXPECT_FLOAT_EQ(-116.13138484571169, std_normal_lccdf(15));
+  EXPECT_FLOAT_EQ(-131.69539607375970, std_normal_lccdf(16));
+  EXPECT_FLOAT_EQ(-148.25558265098039, std_normal_lccdf(17));
+  EXPECT_FLOAT_EQ(-165.81237325071419, std_normal_lccdf(18));
+  EXPECT_FLOAT_EQ(-184.36612866916096, std_normal_lccdf(19));
+  EXPECT_FLOAT_EQ(-203.91715537109727, std_normal_lccdf(20));
+  EXPECT_FLOAT_EQ(-224.46571583141449, std_normal_lccdf(21));
+  EXPECT_FLOAT_EQ(-246.01203653738091, std_normal_lccdf(22));
+  EXPECT_FLOAT_EQ(-268.55631425686312, std_normal_lccdf(23));
+  EXPECT_FLOAT_EQ(-292.09872100320780, std_normal_lccdf(24));
+  EXPECT_FLOAT_EQ(-316.63940800802027, std_normal_lccdf(25));
+  EXPECT_FLOAT_EQ(-342.17850892992783, std_normal_lccdf(26));
+  EXPECT_FLOAT_EQ(-368.71614246865636, std_normal_lccdf(27));
+  EXPECT_FLOAT_EQ(-396.25241451163106, std_normal_lccdf(28));
+  EXPECT_FLOAT_EQ(-424.78741990973015, std_normal_lccdf(29));
+  EXPECT_FLOAT_EQ(-454.32124395634321, std_normal_lccdf(30));
+  EXPECT_FLOAT_EQ(-484.85396362717927, std_normal_lccdf(31));
+  EXPECT_FLOAT_EQ(-516.38564862572537, std_normal_lccdf(32));
+  EXPECT_FLOAT_EQ(-548.91636226973810, std_normal_lccdf(33));
+  EXPECT_FLOAT_EQ(-582.44616224687172, std_normal_lccdf(34));
+  EXPECT_FLOAT_EQ(-616.97510126192253, std_normal_lccdf(35));
+  EXPECT_FLOAT_EQ(-652.50322759379844, std_normal_lccdf(36));
+  EXPECT_FLOAT_EQ(-689.03058557689064, std_normal_lccdf(37));
+  EXPECT_FLOAT_EQ(-726.55721601882010, std_normal_lccdf(38));
+  EXPECT_FLOAT_EQ(-765.08315656437753, std_normal_lccdf(39));
+  EXPECT_FLOAT_EQ(-804.60844201375380, std_normal_lccdf(40));
+  EXPECT_FLOAT_EQ(-845.13310460177456, std_normal_lccdf(41));
+  EXPECT_FLOAT_EQ(-886.65717424372951, std_normal_lccdf(42));
+  EXPECT_FLOAT_EQ(-929.18067875247391, std_normal_lccdf(43));
+  EXPECT_FLOAT_EQ(-972.70364403073665, std_normal_lccdf(44));
+  EXPECT_FLOAT_EQ(-1017.2260942419524, std_normal_lccdf(45));
+  EXPECT_FLOAT_EQ(-1062.7480519624305, std_normal_lccdf(46));
+  EXPECT_FLOAT_EQ(-1109.2695383172531, std_normal_lccdf(47));
+  EXPECT_FLOAT_EQ(-1156.7905731019453, std_normal_lccdf(48));
+  EXPECT_FLOAT_EQ(-1205.3111748916654, std_normal_lccdf(49));
+  EXPECT_FLOAT_EQ(-1254.8313611394199, std_normal_lccdf(50));
+  EXPECT_FLOAT_EQ(-5005.5242086942053, std_normal_lccdf(100));
+  EXPECT_FLOAT_EQ(-500007.82669481216, std_normal_lccdf(1000));
+  EXPECT_FLOAT_EQ(-50000010.129278913, std_normal_lccdf(10000));
+  EXPECT_FLOAT_EQ(-5000000012.4318638, std_normal_lccdf(100000));
+  EXPECT_FLOAT_EQ(-500000000014.73444, std_normal_lccdf(1000000));
+  EXPECT_FLOAT_EQ(-50000000000017.039, std_normal_lccdf(10000000));
+  EXPECT_FLOAT_EQ(-5000000000000019.0, std_normal_lccdf(100000000));
 }
