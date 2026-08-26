@@ -20,31 +20,37 @@ TEST_F(AgradRev, mathMixScalFun_std_normal_lccdf) {
   // stan::test::expect_ad(tols, f, 0.1 * stan::math::SQRT_TWO);
 }
 
-namespace {
-auto lccdf = [](const auto& y) { return stan::math::std_normal_lccdf(y); };
+namespace std_normal_lccdf_mix_test {
+auto fn = [](const auto& y) { return stan::math::std_normal_lccdf(y); };
 constexpr double dir = normal_lcdf_tail_test::orientation::lccdf;
-}  // namespace
+}  // namespace std_normal_lccdf_mix_test
 
 TEST_F(AgradRev, mathMixScalFun_std_normal_lccdf_defect_inputs) {
-  normal_lcdf_tail_test::expect_ad_at_defect_inputs(lccdf, dir);
+  normal_lcdf_tail_test::expect_ad_at_defect_inputs(
+      std_normal_lccdf_mix_test::fn, std_normal_lccdf_mix_test::dir);
 }
 
 TEST_F(AgradRev, mathMixScalFun_std_normal_lccdf_branch_cutoffs) {
-  normal_lcdf_tail_test::expect_ad_across_cutoffs(lccdf, dir);
+  normal_lcdf_tail_test::expect_ad_across_cutoffs(
+      std_normal_lccdf_mix_test::fn, std_normal_lccdf_mix_test::dir);
 }
 
 TEST_F(AgradRev, mathMixScalFun_std_normal_lccdf_tail_derivatives) {
-  normal_lcdf_tail_test::expect_tail_derivatives(lccdf, dir);
+  normal_lcdf_tail_test::expect_tail_derivatives(
+      std_normal_lccdf_mix_test::fn, std_normal_lccdf_mix_test::dir);
 }
 
 TEST_F(AgradRev, mathMixScalFun_std_normal_lccdf_derivatives_are_finite) {
-  normal_lcdf_tail_test::expect_derivatives_finite(lccdf);
+  normal_lcdf_tail_test::expect_derivatives_finite(
+      std_normal_lccdf_mix_test::fn);
 }
 
 TEST_F(AgradRev, mathMixScalFun_std_normal_lccdf_far_tail_gradient) {
-  normal_lcdf_tail_test::expect_far_tail_gradient(lccdf, dir);
+  normal_lcdf_tail_test::expect_far_tail_gradient(
+      std_normal_lccdf_mix_test::fn, std_normal_lccdf_mix_test::dir);
 }
 
 TEST_F(AgradRev, mathMixScalFun_std_normal_lccdf_branch_accuracy) {
-  normal_lcdf_tail_test::expect_branch_accuracy(lccdf, dir);
+  normal_lcdf_tail_test::expect_branch_accuracy(std_normal_lccdf_mix_test::fn,
+                                                std_normal_lccdf_mix_test::dir);
 }
