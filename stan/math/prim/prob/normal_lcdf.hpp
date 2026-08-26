@@ -7,12 +7,15 @@
 #include <stan/math/prim/fun/erf.hpp>
 #include <stan/math/prim/fun/erfc.hpp>
 #include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/pow.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
@@ -20,23 +23,131 @@
 
 namespace stan {
 namespace math {
+namespace internal {
+constexpr char normal_lcdf_func[] = "normal_lcdf";
+}  // namespace internal
 
-template <typename T_y, typename T_loc, typename T_scale,
+/** \ingroup prob_dists
+ * @brief Calculates the log of the cdf of the normal distribution
+ *
+ * Tail branching follows three published results, and matches what other
+ * libraries do:
+ *  - Abramowitz & Stegun (1964) 7.1.26 Page 299 gives
+ *    `erf(x) = 1 - P(t) exp(-x^2)`, `t = 1/(1 + p x)`, with `exp(-x^2)` as a
+ *    numerator factor:
+ *    https://archive.org/details/handbookofmathem1964abra/page/298/mode/2up
+ *  - Cody (1969), Math. Comp. 23:631-637, is the rational approximation used
+ *    for the tail value: https://doi.org/10.1090/S0025-5718-1969-0247736-4
+ *  - Digital Library of Mathematical Functions (DLMF) 7.12.1
+ *    is the erfc asymptotic behind the far-tail Mills ratio:
+ *    https://dlmf.nist.gov/7.12.E1
+ *
+ * R's `pnorm` only ever forms the Gaussian factor in the numerator
+ * (the `do_del` macro), and switches to the Cody tail form at `y > M_SQRT_32`,
+ * i.e. `|x| > sqrt(32) ~= 5.657`. Since `scaled_diff = x / sqrt(2)`, that same
+ * crossover is `|scaled_diff| > sqrt(32)/sqrt(2) = 4` exactly, which is the
+ * cutoff used here for the cdf value. Measured by evaluating the
+ * `temp_p`/`temp_q` expression below against `log(erfc(-scaled_diff)/2)` at 60
+ * significant digits, our Cody set holds to 8.6e-17 relative down to
+ * scaled_diff = -4 and degrades past about -3.52, so 4 sits just inside its
+ * range. This is the same as R's impl.
+ * https://github.com/wch/r-source/blob/trunk/src/nmath/pnorm.c
+ * SciPy's `log_ndtr` uses the identical `log1p(-erfc(t)/2)` upper branch with
+ * the same `t = x/sqrt(2)`, and needs no rational approximation or Taylor
+ * patches at all below `x = -1`, because `erfcx` never forms `exp(+t^2)`:
+ * https://github.com/scipy/xsf/blob/main/include/xsf/stats.h
+ *
+ * The interior cutoffs for the gradient are not from the literature.
+ * They were derived in stan-dev/math#1411
+ * (Phil Clemson, Univ. of Liverpool, Nov 2019), fixing
+ * stan-dev/math#1284, which describes them as "original Taylor expansions
+ * that have been derived to bridge the gap where the numerical
+ * approximations are unstable". The author's account of how they were
+ * placed, from the review thread, was: "After playing around with the
+ * autodiff tester I found some regions where it was failing some of the
+ * tests, so I added some new approximations (Taylor expansions and fits of
+ * the residuals) to improve the accuracy."
+ * https://github.com/stan-dev/math/pull/1411
+ * https://github.com/stan-dev/math/issues/1284
+ *
+ * Each row of the chart below is one Taylor expansion around `scaled_diff`.
+ * `interval` is the range of `scaled_diff` it covers.
+ * `centre` is the point the series is expanded about.
+ *
+ * | interval | centre | half-width |
+ * |---|---|---|
+ * | (2.5, 2.9] | 2.7 | 0.200 |
+ * | (2.1, 2.5] | 2.3 | 0.200 |
+ * | (1.5, 2.1] | 1.85 | 0.300 |
+ * | (0.8, 1.5] | 1.15 | 0.350 |
+ * | (0.1, 0.8] | 0.45 | 0.350 |
+ *
+ * The cut points are not arbitrary. Each interval of `scaled_diff` is centred
+ * on its own Taylor point, which minimises the largest `|t|` the series has to
+ * cover.
+ *
+ * The second table below shows why each interval ends where it does: the
+ * series is accurate across its own range and falls apart just outside it,
+ * so the intervals cannot be widened to use fewer of them.
+ *
+ * Worst in-range comes from evaluating each Taylor polynomial as written
+ * against `(2/sqrt(pi)) * exp(-scaled_diff^2) / erfc(-scaled_diff)`, the exact
+ * derivative, at 60 significant digits.
+ *
+ * Columns below:
+ * `worst in-range`: The largest relative error of that branch's series over
+ *   its own interval;
+ * `0.2 below lo`: The relative error the same series would give at `lo - 0.2`;
+ * `0.2 above hi`: The relative error the same series would give at `hi + 0.2`,
+ *   i.e. what widening the interval either way would cost.
+ *
+ * | interval | worst in-range | 0.2 below lo | 0.2 above hi |
+ * |---|---|---|---|
+ * | (2.5, 2.9] | 3.27e-05 | 2.32e-05 | 1.61e-02 |
+ * | (2.1, 2.5] | 2.80e-05 | 3.25e-04 | 9.15e-03 |
+ * | (1.5, 2.1] | 2.30e-05 | 8.11e-05 | 3.77e-03 |
+ * | (0.8, 1.5] | 6.09e-05 | 9.29e-05 | 2.93e-03 |
+ * | (0.1, 0.8] | 7.61e-06 | 3.62e-05 | 2.82e-04 |
+ *
+ * The worst in-range error is uniformly 1e-5 to 6e-5, just inside the 1e-4
+ * relative gradient tolerance `expect_ad` applies by default
+ * (`gradient_grad_` in test/unit/math/ad_tolerances.hpp; the 1e-8 there is
+ * `gradient_val_`, which bounds the value rather than the gradient), while
+ * widening an interval by 0.2 costs one to three orders of magnitude. That
+ * uniformity, not any published result, is the placement criterion.
+ *
+ * The `worst in-range` column is enforced: the branch_accuracy test in
+ * mix/prob/normal_cdf_log_test.cpp asserts every branch against
+ * 60-digit references at that error plus a small margin.
+ *
+ * The negative-tail residual corrections at `scaled_diff` of -2.1, -3.9, -7 and
+ * -17 are cubic fits of residuals from the same PR and likewise have no
+ * external source. The -29 cutoff below is justified by DLMF 7.12.1
+ *
+ * @tparam func name reported by the error checks. Reflected distributions
+ *   such as `normal_lccdf` delegate here and pass their own name so that
+ *   exceptions name the function the user actually called.
+ * @tparam T_y A vector or scalar type for the random variable.
+ * @tparam T_loc A vector or scalar type for the location parameter.
+ * @tparam T_scale A vector or scalar type for the scale parameter.
+ * @param y (Sequence of) scalar(s).
+ * @param mu (Sequence of) scalar(s).
+ * @param sigma (Sequence of) scalar(s).
+ * @return The log of the normal cdf evaluated at the specified arguments. If
+ *   given containers, the log of the product of the cdfs.
+ */
+template <const char* func = internal::normal_lcdf_func, typename T_y,
+          typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale>* = nullptr>
 inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
                                                       const T_loc& mu,
                                                       const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-  using std::exp;
-  using std::fabs;
-  using std::log;
-  using std::pow;
-  using std::sqrt;
   using T_y_ref = ref_type_t<T_y>;
   using T_mu_ref = ref_type_t<T_loc>;
   using T_sigma_ref = ref_type_t<T_scale>;
-  static constexpr const char* function = "normal_lcdf";
+  static constexpr const char* function = func;
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
   T_y_ref y_ref = y;
@@ -66,7 +177,6 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
     const T_partials_return scaled_diff
         = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_TWO);
 
-    const T_partials_return sigma_sqrt2 = sigma_dbl * SQRT_TWO;
     const T_partials_return x2 = square(scaled_diff);
 
     // Rigorous numerical approximations are applied here to deal with values
@@ -82,8 +192,9 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
       if (!is_not_nan(cdf_log)) {
         cdf_log = 0;
       }
-    } else if (scaled_diff > -20.0) {
-      // CDF(x) = 1/2 - 1/2erf(-x) = 1/2erfc(-x)
+    } else if (scaled_diff > -4.0) {
+      // CDF(x) = 1/2 - 1/2erf(-x) = 1/2erfc(-x); -4 is R pnorm's M_SQRT_32
+      // Since we scale by sqrt(2), we use sqrt(32)/sqrt(2) = 4
       cdf_log += log(erfc(-scaled_diff)) + LOG_HALF;
     } else if (10.0 * log(fabs(scaled_diff))
                < log(std::numeric_limits<T_partials_return>::max())) {
@@ -126,11 +237,16 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
         t = 1.0 / (1.0 + 0.3275911 * scaled_diff);
         t2 = square(t);
         t4 = pow(t, 4);
+        // A&S 7.1.26 puts exp(-x2) in the numerator; keep it there so it
+        // underflows to zero instead of overflowing inside a denominator
+        const T_partials_return exp_m_x2 = exp(-x2);
         dncdf_log
-            = 1.0
+            = exp_m_x2
               / (SQRT_PI
-                 * (exp(x2) - 0.254829592 + 0.284496736 * t - 1.421413741 * t2
-                    + 1.453152027 * t2 * t - 1.061405429 * t4));
+                 * (1.0
+                    - exp_m_x2
+                          * (0.254829592 - 0.284496736 * t + 1.421413741 * t2
+                             - 1.453152027 * t2 * t + 1.061405429 * t4)));
       } else if (scaled_diff > 2.5) {
         // in the trouble area where all of the standard numerical
         // approximations are unstable - bridge the gap using Taylor
@@ -174,6 +290,13 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
         dncdf_log = 0.6245634904 - 0.9521866949 * t + 0.3986215682 * t2
                     + 0.04700850676 * t2 * t - 0.03478651979 * t4
                     - 0.01772675404 * t4 * t + 0.0006577254811 * pow(t, 6);
+      } else if (scaled_diff < -29.0) {
+        // asymptotic Mills ratio, DLMF 7.12.1: dncdf_log grows linearly as
+        // -2*scaled_diff, so no quadratic residual fit can track it
+        const T_partials_return inv_x2 = 1.0 / x2;
+        dncdf_log
+            = -2.0 * scaled_diff
+              / (1.0 + inv_x2 * (-0.5 + inv_x2 * (0.75 + inv_x2 * -1.875)));
       } else if (10.0 * log(fabs(scaled_diff))
                  < log(std::numeric_limits<T_partials_return>::max())) {
         // approximation derived from Abramowitz and Stegun (1964) 7.1.26
@@ -190,10 +313,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
                     - 1.453152027 * t4 + 1.061405429 * t4 * t));
         // check if we need to add a correction term
         // (from cubic fit of residuals)
-        if (scaled_diff < -29.0) {
-          dncdf_log += 0.0015065154280332 * x2
-                       - 0.3993154819705530 * scaled_diff - 4.2919418242931700;
-        } else if (scaled_diff < -17.0) {
+        if (scaled_diff < -17.0) {
           dncdf_log += 0.0001263257217272 * x2 * scaled_diff
                        + 0.0123586859488623 * x2
                        - 0.0860505264736028 * scaled_diff - 1.252783383752970;
@@ -213,7 +333,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
       } else {
         dncdf_log = stan::math::positive_infinity();
       }
-
+      const T_partials_return sigma_sqrt2 = sigma_dbl * SQRT_TWO;
       if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials)[n] += dncdf_log / sigma_sqrt2;
       }

@@ -10,7 +10,7 @@ TEST(ProbNormal, cdf_log_matches_lcdf) {
   EXPECT_FLOAT_EQ((stan::math::normal_lcdf(y, mu, sigma)),
                   (stan::math::normal_cdf_log(y, mu, sigma)));
   EXPECT_FLOAT_EQ(
-      (stan::math::normal_lcdf<double, double, double>(y, mu, sigma)),
+      (stan::math::normal_lcdf(y, mu, sigma)),
       (stan::math::normal_cdf_log<double, double, double>(y, mu, sigma)));
 }
 
@@ -155,4 +155,73 @@ TEST(ProbNormal, lcdf_tails) {
   EXPECT_FLOAT_EQ(-4.1826240657972830e-284, normal_lcdf(36, 0, 1));
   EXPECT_FLOAT_EQ(-5.7255712225245771e-300, normal_lcdf(37, 0, 1));
   EXPECT_FLOAT_EQ(-2.8854283510039645e-316, normal_lcdf(38, 0, 1));
+}
+
+/**
+ * Value of log Phi against high-precision references.
+ *
+ * Each row carries the reference to 40 significant digits in a comment and
+ * the correctly-rounded double beside it, so a reviewer can check the
+ * rounding here and the reference itself in any arbitrary-precision tool.
+ * They were produced at 60 significant digits as `log(erfc(-s)/2)` with
+ * `s = (y - mu) / (sigma * sqrt(2))`, then rounded to double.
+ *
+ * The rows span all three branches of the value: `log1p(-erfc(s)/2)` for
+ * `s > 0`, `log(erfc(-s)) + LOG_HALF` for `-4 < s <= 0`, and the Cody
+ * rational approximation below that.
+ *
+ * Every row holds to 1e-14 except the last. There `s = 11.31` puts erfc into
+ * its far tail, where this platform's libm loses relative accuracy:
+ * `std::erfc(11.313708498984761)` returns 1.27775088010759500e-57 against a
+ * true 1.27774061192683864e-57, a relative error of 8.0e-06 that passes
+ * straight through. That is a libm limit rather than this function's, so the
+ * tolerance on that row is loose enough to stay portable.
+ */
+TEST(ProbNormal, lcdf_matches_high_precision_reference) {
+  struct value_ref {
+    double y;
+    double mu;
+    double sigma;
+    double expected;
+    double tol;
+  };
+  const value_ref cases[]
+      = {// s=2.12132 (log1p); -0.001350809964748193798841110490517380092729
+         {3.0, 0.0, 1.0, -0.0013508099647481938, 1e-14},
+         // s=0.707107 (log1p); -0.1727537790234498895264831735208007300094
+         {1.0, 0.0, 1.0, -0.17275377902344988, 1e-14},
+         // s=0.353553 (log1p); -0.3689464152886563930656156390431773405547
+         {0.5, 0.0, 1.0, -0.3689464152886564, 1e-14},
+         // s=0 (erfc); -0.6931471805599453094172321214581765680755
+         {0.0, 0.0, 1.0, -0.6931471805599453, 1e-14},
+         // s=-0.707107 (erfc); -1.841021645009263505770783073232529021548
+         {-1.0, 0.0, 1.0, -1.8410216450092636, 1e-14},
+         // s=-2.12132 (erfc); -6.607726221510349543276077083251514438781
+         {-3.0, 0.0, 1.0, -6.607726221510349, 1e-14},
+         // s=-3.53553 (erfc); -15.06499839398872573608370479189672560507
+         {-5.0, 0.0, 1.0, -15.064998393988725, 1e-14},
+         // s=-4.24264 (Cody); -20.7367689499747056549688537180999188204
+         {-6.0, 0.0, 1.0, -20.736768949974707, 1e-14},
+         // s=-7.07107 (Cody); -53.23128515051247057834702735413120987892
+         {-10.0, 0.0, 1.0, -53.23128515051247, 1e-14},
+         // s=-14.1421 (Cody); -203.9171553710972639368044586545269000525
+         {-20.0, 0.0, 1.0, -203.91715537109727, 1e-14},
+         // s=-26.5165 (Cody); -707.6689893175071910661131734572604413308
+         {-37.5, 0.0, 1.0, -707.6689893175072, 1e-14},
+         // s=-42.4264 (Cody); -1805.013560680567138700666808059022928381
+         {-60.0, 0.0, 1.0, -1805.0135606805673, 1e-14},
+         // s=-70.7107 (Cody); -5005.52420869420508862630245733002553134
+         {-100.0, 0.0, 1.0, -5005.524208694205, 1e-14},
+         // s=-212.132 (Cody); -45006.62273211866335985382181649804744182
+         {-300.0, 0.0, 1.0, -45006.62273211866, 1e-14},
+         // s=-3.29983 (erfc); -13.38983327471644676126972305600605540117
+         {-12.0, 2.0, 3.0, -13.389833274716446, 1e-14},
+         // s=11.3137 (log1p); -6.388703059634194605096774759212020048496e-58
+         {7.0, -1.0, 0.5, -6.388703059634195e-58, 1e-4}};
+
+  for (const value_ref& c : cases) {
+    const double got = stan::math::normal_lcdf(c.y, c.mu, c.sigma);
+    EXPECT_LT(std::fabs(got / c.expected - 1.0), c.tol)
+        << "log Phi at y = " << c.y << " got " << got << " want " << c.expected;
+  }
 }

@@ -5,6 +5,9 @@
 
 namespace stan {
 namespace math {
+namespace internal {
+constexpr char normal_lccdf_func[] = "normal_lccdf";
+}  // namespace internal
 
 template <typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
@@ -12,7 +15,8 @@ template <typename T_y, typename T_loc, typename T_scale,
 inline return_type_t<T_y, T_loc, T_scale> normal_lccdf(const T_y& y,
                                                        const T_loc& mu,
                                                        const T_scale& sigma) {
-  return normal_lcdf(-as_array_or_scalar(y), -as_array_or_scalar(mu), sigma);
+  return normal_lcdf<internal::normal_lccdf_func>(
+      -as_array_or_scalar(y), -as_array_or_scalar(mu), sigma);
 }
 
 }  // namespace math
