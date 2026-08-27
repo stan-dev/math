@@ -42,7 +42,7 @@ namespace math {
  * @param alpha (Sequence of) scale parameter(s)
  * @param beta (Sequence of) shape parameter(s)
  * @return The log of the product of the densities
- * @throw std::domain_error if alpha or beta is not positive
+ * @throw std::domain_error if alpha or beta is not positive or not finite
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_shape,
@@ -71,10 +71,10 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
 
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
-  check_positive(function, "Scale parameter", alpha_val);
+  check_positive_finite(function, "Scale parameter", alpha_val);
 
   // With β = +∞ this could be defined to be uniform, but we don't support that.
-  check_positive(function, "Shape parameter", beta_val);
+  check_positive_finite(function, "Shape parameter", beta_val);
 
   if (size_zero(y, mu, alpha, beta)) {
     return 0;
@@ -83,86 +83,100 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
     return 0;
   }
 
-  const auto& inv_beta1p
+  const auto& one_plus_inv_beta
       = to_ref_if<!is_constant<T_shape>::value>(inv(beta_val) + 1);
-  const auto& diff
+  const auto& residual
       = to_ref_if<!is_constant_all<T_y, T_loc>::value>(y_val - mu_val);
-  const auto& inv_alpha = to_ref(inv(alpha_val));
-  const auto& scaled_abs_diff
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_shape>::value>(abs(diff)
-                                                                * inv_alpha);
-  // pow(0, beta) is 0 for beta > 0, but autodiff of pow at base == 0
-  // produces NaN (0 * log(0) in the tangent) and pollutes the autodiff stack.
-  // Replace 0 with 1 in the base (pow(1, p) is always clean), then zero
-  // out those results afterward.
-  const auto& sad_is_zero = eval(value_of_rec(scaled_abs_diff) == 0);
-  auto safe_abs_diff = eval(scaled_abs_diff);
-  if constexpr (is_eigen_v<std::decay_t<decltype(sad_is_zero)>>) {
-    for (Eigen::Index i = 0; i < sad_is_zero.size(); ++i)
-      if (sad_is_zero.coeff(i))
-        safe_abs_diff.coeffRef(i) += 1;
+  const auto& inverse_scale
+      = to_ref_if<!is_constant_all<T_y, T_loc>::value>(inv(alpha_val));
+  const auto& scaled_residual = to_ref(residual / alpha_val);
+  const auto& abs_scaled_residual = to_ref(abs(scaled_residual));
+  const auto& scaled_residual_is_zero
+      = eval(value_of_rec(abs_scaled_residual) == 0);
+  auto abs_scaled_residual_or_one = eval(abs_scaled_residual);
+  if constexpr (is_eigen_v<std::decay_t<decltype(scaled_residual_is_zero)>>) {
+    abs_scaled_residual_or_one
+        = scaled_residual_is_zero.select(1.0, abs_scaled_residual_or_one);
   } else {
-    if (sad_is_zero)
-      safe_abs_diff += 1;
-  }
-  auto scaled_abs_diff_pow = eval(pow(safe_abs_diff, beta_val));
-  if constexpr (is_eigen_v<std::decay_t<decltype(sad_is_zero)>>) {
-    for (Eigen::Index i = 0; i < sad_is_zero.size(); ++i) {
-      if (sad_is_zero.coeff(i))
-        scaled_abs_diff_pow.coeffRef(i) = 0;
+    if (scaled_residual_is_zero) {
+      abs_scaled_residual_or_one += 1;
     }
-  } else {
-    if (sad_is_zero)
-      scaled_abs_diff_pow = 0;
   }
-  const size_t N = max_size(y, mu, alpha, beta);
+  auto abs_scaled_residual_pow_beta
+      = eval(pow(abs_scaled_residual_or_one, beta_val));
+  // At beta == 2 the kernel is exactly square(scaled_residual). Retaining that
+  // expression at the tie preserves the normal Hessian; differentiating the
+  // generic abs/pow expression would instead inherit abs'(0) == 0.
+  auto beta_is_two = eval(value_of_rec(beta_val) == 2.0);
+  auto apply_zero_residual_branch = [&](auto& generic_value,
+                                        const auto& beta_two_value) {
+    if constexpr (is_eigen_v<std::decay_t<decltype(scaled_residual_is_zero)>>) {
+      if constexpr (is_eigen_v<std::decay_t<decltype(beta_is_two)>>) {
+        generic_value = scaled_residual_is_zero.select(
+            beta_is_two.select(beta_two_value, 0.0), generic_value);
+      } else if (beta_is_two) {
+        generic_value
+            = scaled_residual_is_zero.select(beta_two_value, generic_value);
+      } else {
+        generic_value = scaled_residual_is_zero.select(0.0, generic_value);
+      }
+    } else if (scaled_residual_is_zero) {
+      if constexpr (is_eigen_v<std::decay_t<decltype(beta_is_two)>>) {
+        generic_value = beta_is_two.select(beta_two_value, 0.0);
+      } else {
+        generic_value = beta_is_two ? beta_two_value : 0;
+      }
+    }
+  };
+  auto beta_two_kernel = eval(square(scaled_residual) + 0.0 * beta_val);
+  apply_zero_residual_branch(abs_scaled_residual_pow_beta, beta_two_kernel);
+  const size_t num_terms = max_size(y, mu, alpha, beta);
 
-  T_partials_return logp = -sum(scaled_abs_diff_pow);
+  T_partials_return logp = -sum(abs_scaled_residual_pow_beta);
 
   if constexpr (include_summand<propto>::value) {
-    logp -= LOG_TWO * N;
+    logp -= LOG_TWO * num_terms;
   }
   if constexpr (include_summand<propto, T_scale>::value) {
-    logp -= sum(log(alpha_val)) * (N / math::size(alpha));
+    logp -= sum(log(alpha_val)) * (num_terms / math::size(alpha));
   }
   if constexpr (include_summand<propto, T_shape>::value) {
-    logp -= sum(lgamma(inv_beta1p)) * (N / math::size(beta));
+    logp -= sum(lgamma(one_plus_inv_beta)) * (num_terms / math::size(beta));
   }
 
   auto ops_partials
       = make_partials_propagator(y_ref, mu_ref, alpha_ref, beta_ref);
 
   if constexpr (!is_constant_all<T_y, T_loc>::value) {
-    // At y == mu, the derivative is 0 for beta >= 1, undefined for beta < 1.
-    // Use safe_abs_diff (0 replaced with 1) to avoid NaN from pow(0, beta-1).
-    auto rep_deriv = eval(sign(diff) * beta_val
-                          * pow(safe_abs_diff, beta_val - 1) * inv_alpha);
-    if constexpr (is_eigen_v<std::decay_t<decltype(sad_is_zero)>>) {
-      for (Eigen::Index i = 0; i < sad_is_zero.size(); ++i) {
-        if (sad_is_zero.coeff(i))
-          rep_deriv.coeffRef(i) = 0;
-      }
-    } else {
-      if (sad_is_zero)
-        rep_deriv = 0;
-    }
+    // At y == mu, the derivative is 0 for beta > 1 and undefined otherwise.
+    // Use abs_scaled_residual_or_one (0 replaced with 1) to avoid NaN from
+    // pow(0, beta-1), and preserve the exact normal curvature when beta == 2.
+    auto kernel_derivative_wrt_residual
+        = eval(sign(residual) * beta_val
+               * pow(abs_scaled_residual_or_one, beta_val - 1) * inverse_scale);
+    const auto& beta_two_kernel_derivative
+        = eval(2.0 * scaled_residual / alpha_val + 0.0 * beta_val);
+    apply_zero_residual_branch(kernel_derivative_wrt_residual,
+                               beta_two_kernel_derivative);
     if constexpr (!is_constant<T_y>::value) {
-      partials<0>(ops_partials) = -rep_deriv;
+      partials<0>(ops_partials) = -kernel_derivative_wrt_residual;
     }
     if constexpr (!is_constant<T_loc>::value) {
-      partials<1>(ops_partials) = std::move(rep_deriv);
+      partials<1>(ops_partials) = std::move(kernel_derivative_wrt_residual);
     }
   }
   if constexpr (!is_constant<T_scale>::value) {
     partials<2>(ops_partials)
-        = (beta_val * scaled_abs_diff_pow - 1) * inv_alpha;
+        = (beta_val * abs_scaled_residual_pow_beta - 1) * inverse_scale;
   }
   if constexpr (!is_constant<T_shape>::value) {
     // multiply_log(0, 0) = 0 by convention, but fvar autodiff of
-    // multiply_log at (0, 0) produces NaN.  safe_abs_diff avoids this.
+    // multiply_log at (0, 0) produces NaN. abs_scaled_residual_or_one avoids
+    // this.
     partials<3>(ops_partials)
-        = digamma(inv_beta1p) * inv_square(beta_val)
-          - multiply_log(scaled_abs_diff_pow, safe_abs_diff);
+        = digamma(one_plus_inv_beta) * inv_square(beta_val)
+          - multiply_log(abs_scaled_residual_pow_beta,
+                         abs_scaled_residual_or_one);
   }
 
   return ops_partials.build(logp);
