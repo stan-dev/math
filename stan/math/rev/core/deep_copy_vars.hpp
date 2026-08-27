@@ -2,11 +2,11 @@
 #define STAN_MATH_REV_CORE_DEEP_COPY_VARS_HPP
 
 #include <stan/math/prim/functor/apply.hpp>
+#include <stan/math/prim/functor/make_holder_tuple.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 
-#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -94,9 +94,8 @@ template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
 inline auto deep_copy_vars(Tuple&& arg) {
   return stan::math::apply(
       [](auto&&... tuple_args) {
-        return std::tuple{
-          deep_copy_vars(
-            std::forward<decltype(tuple_args)>(tuple_args))...};
+        return make_holder_tuple(
+            deep_copy_vars(std::forward<decltype(tuple_args)>(tuple_args))...);
       },
       std::forward<Tuple>(arg));
 }
