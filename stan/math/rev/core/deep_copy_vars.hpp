@@ -94,9 +94,9 @@ template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
 inline auto deep_copy_vars(Tuple&& arg) {
   return stan::math::apply(
       [](auto&&... tuple_args) {
-        return std::tuple<decltype(deep_copy_vars(
-            std::forward<decltype(tuple_args)>(tuple_args)))...>{
-            deep_copy_vars(std::forward<decltype(tuple_args)>(tuple_args))...};
+        return std::tuple{
+          deep_copy_vars(
+            std::forward<decltype(tuple_args)>(tuple_args))...};
       },
       std::forward<Tuple>(arg));
 }
