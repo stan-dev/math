@@ -154,3 +154,187 @@ TEST(ProbNormal, lccdf_tail) {
   EXPECT_FLOAT_EQ(-50000000000017.039, normal_lccdf(10000000, 0, 1));
   EXPECT_FLOAT_EQ(-5000000000000019.0, normal_lccdf(100000000, 0, 1));
 }
+
+TEST(ProbNormal, lccdf_with_mu_and_sigma) {
+  using stan::math::normal_lccdf;
+
+  // The test values come from R 4.6.1 and check behaviour around the branch
+  // points in `normal_lcdf` when mu != 0 and sigma != 1.
+  //
+  // parameter_sets <- list(
+  //   c(mu = 2, sigma = 3),
+  //   c(mu = -50, sigma = 20),
+  //   c(mu = 0.5, sigma = 0.01)
+  // )
+  // branch_points <- c(
+  //   2.9,
+  //   2.5,
+  //   2.1,
+  //   1.5,
+  //   0.8,
+  //   0.1,
+  //   0.0,
+  //   -2.1,
+  //   -3.9,
+  //   -4.0,
+  //   -7.0,
+  //   -17.0,
+  //   -29.0
+  // )
+  // test_vals <- sort(-c(branch_points - 0.01, branch_points + 0.01))
+  // for (pars in parameter_sets) {
+  //   mu <- pars[["mu"]]
+  //   sigma <- pars[["sigma"]]
+  //   q <- mu + sigma * sqrt(2) * test_vals
+  //   for (i in 1:length(q)) {
+  //     cat(
+  //       sprintf(
+  //         "EXPECT_FLOAT_EQ(%#.17g, normal_lccdf(%.17g, %.17g, %.17g));\n",
+  //         pnorm(q[i], mean = mu, sd = sigma, lower.tail = FALSE, log.p =
+  //         TRUE), q[i], mu, sigma
+  //       )
+  //     )
+  //   }
+  // }
+
+  EXPECT_FLOAT_EQ(-1.9328842921129592e-05,
+                  normal_lccdf(-10.346084399517119, 2, 3));
+  EXPECT_FLOAT_EQ(-2.1842328461060815e-05,
+                  normal_lccdf(-10.261231585774736, 2, 3));
+  EXPECT_FLOAT_EQ(-0.00019287133934318566,
+                  normal_lccdf(-8.6490281246694067, 2, 3));
+  EXPECT_FLOAT_EQ(-0.00021466697317301965,
+                  normal_lccdf(-8.5641753109270216, 2, 3));
+  EXPECT_FLOAT_EQ(-0.0014235903084217206,
+                  normal_lccdf(-6.9519718498216925, 2, 3));
+  EXPECT_FLOAT_EQ(-0.0015609874450218889,
+                  normal_lccdf(-6.8671190360793091, 2, 3));
+  EXPECT_FLOAT_EQ(-0.016496955508933941,
+                  normal_lccdf(-4.4063874375501211, 2, 3));
+  EXPECT_FLOAT_EQ(-0.017706913768612061,
+                  normal_lccdf(-4.3215346238077359, 2, 3));
+  EXPECT_FLOAT_EQ(-0.13467302655617183,
+                  normal_lccdf(-1.4365389565666216, 2, 3));
+  EXPECT_FLOAT_EQ(-0.14150397288270808,
+                  normal_lccdf(-1.3516861428242359, 2, 3));
+  EXPECT_FLOAT_EQ(-0.57658898698359096, normal_lccdf(1.5333095244168786, 2, 3));
+  EXPECT_FLOAT_EQ(-0.59667350159732879, normal_lccdf(1.6181623381592642, 2, 3));
+  EXPECT_FLOAT_EQ(-0.68192694790236175, normal_lccdf(1.9575735931288072, 2, 3));
+  EXPECT_FLOAT_EQ(-0.70449473678943686, normal_lccdf(2.042426406871193, 2, 3));
+  EXPECT_FLOAT_EQ(-6.4632170725824736, normal_lccdf(10.867119036079309, 2, 3));
+  EXPECT_FLOAT_EQ(-6.5552849228594905, normal_lccdf(10.951971849821692, 2, 3));
+  EXPECT_FLOAT_EQ(-17.786697578589479, normal_lccdf(18.503872272894021, 2, 3));
+  EXPECT_FLOAT_EQ(-17.947533669545574, normal_lccdf(18.588725086636405, 2, 3));
+  EXPECT_FLOAT_EQ(-18.598659064395832, normal_lccdf(18.928136341605949, 2, 3));
+  EXPECT_FLOAT_EQ(-18.763386609836139, normal_lccdf(19.012989155348336, 2, 3));
+  EXPECT_FLOAT_EQ(-52.080076508792267, normal_lccdf(31.656058402963808, 2, 3));
+  EXPECT_FLOAT_EQ(-52.362878114253100, normal_lccdf(31.740911216706191, 2, 3));
+  EXPECT_FLOAT_EQ(-292.75996176272099, normal_lccdf(74.082465274156661, 2, 3));
+  EXPECT_FLOAT_EQ(-293.44113419738113, normal_lccdf(74.167318087899062, 2, 3));
+  EXPECT_FLOAT_EQ(-845.05315712467279, normal_lccdf(124.99415351958808, 2, 3));
+  EXPECT_FLOAT_EQ(-846.21384596225801, normal_lccdf(125.07900633333048, 2, 3));
+  EXPECT_FLOAT_EQ(-1.9328842921129592e-05,
+                  normal_lccdf(-132.30722933011413, -50, 20));
+  EXPECT_FLOAT_EQ(-2.1842328461060734e-05,
+                  normal_lccdf(-131.74154390516492, -50, 20));
+  EXPECT_FLOAT_EQ(-0.00019287133934318566,
+                  normal_lccdf(-120.99352083112937, -50, 20));
+  EXPECT_FLOAT_EQ(-0.00021466697317302003,
+                  normal_lccdf(-120.42783540618014, -50, 20));
+  EXPECT_FLOAT_EQ(-0.0014235903084217224,
+                  normal_lccdf(-109.67981233214461, -50, 20));
+  EXPECT_FLOAT_EQ(-0.0015609874450218915,
+                  normal_lccdf(-109.11412690719538, -50, 20));
+  EXPECT_FLOAT_EQ(-0.016496955508933965,
+                  normal_lccdf(-92.709249583667471, -50, 20));
+  EXPECT_FLOAT_EQ(-0.017706913768612061,
+                  normal_lccdf(-92.143564158718235, -50, 20));
+  EXPECT_FLOAT_EQ(-0.13467302655617194,
+                  normal_lccdf(-72.910259710444137, -50, 20));
+  EXPECT_FLOAT_EQ(-0.14150397288270816,
+                  normal_lccdf(-72.3445742854949, -50, 20));
+  EXPECT_FLOAT_EQ(-0.57658898698359096,
+                  normal_lccdf(-53.11126983722081, -50, 20));
+  EXPECT_FLOAT_EQ(-0.59667350159732879,
+                  normal_lccdf(-52.545584412271573, -50, 20));
+  EXPECT_FLOAT_EQ(-0.68192694790236175,
+                  normal_lccdf(-50.282842712474618, -50, 20));
+  EXPECT_FLOAT_EQ(-0.70449473678943675,
+                  normal_lccdf(-49.717157287525382, -50, 20));
+  EXPECT_FLOAT_EQ(-6.4632170725824709,
+                  normal_lccdf(9.1141269071953843, -50, 20));
+  EXPECT_FLOAT_EQ(-6.5552849228594887,
+                  normal_lccdf(9.679812332144607, -50, 20));
+  EXPECT_FLOAT_EQ(-17.786697578589472,
+                  normal_lccdf(60.025815152626805, -50, 20));
+  EXPECT_FLOAT_EQ(-17.947533669545571,
+                  normal_lccdf(60.591500577576028, -50, 20));
+  EXPECT_FLOAT_EQ(-18.598659064395825,
+                  normal_lccdf(62.85424227737299, -50, 20));
+  EXPECT_FLOAT_EQ(-18.763386609836136,
+                  normal_lccdf(63.419927702322227, -50, 20));
+  EXPECT_FLOAT_EQ(-52.080076508792246,
+                  normal_lccdf(147.70705601975871, -50, 20));
+  EXPECT_FLOAT_EQ(-52.362878114253085,
+                  normal_lccdf(148.27274144470792, -50, 20));
+  EXPECT_FLOAT_EQ(-292.75996176272093,
+                  normal_lccdf(430.54976849437764, -50, 20));
+  EXPECT_FLOAT_EQ(-293.44113419738102,
+                  normal_lccdf(431.11545391932702, -50, 20));
+  EXPECT_FLOAT_EQ(-845.05315712467279,
+                  normal_lccdf(769.96102346392047, -50, 20));
+  EXPECT_FLOAT_EQ(-846.21384596225778,
+                  normal_lccdf(770.52670888886985, -50, 20));
+  EXPECT_FLOAT_EQ(-1.9328842921129514e-05,
+                  normal_lccdf(0.45884638533494293, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-2.1842328461060476e-05,
+                  normal_lccdf(0.45912922804741751, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.00019287133934318404,
+                  normal_lccdf(0.46450323958443529, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.00021466697317302003,
+                  normal_lccdf(0.46478608229690993, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.0014235903084217287,
+                  normal_lccdf(0.47016009383392771, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.0015609874450218850,
+                  normal_lccdf(0.47044293654640229, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.016496955508933885,
+                  normal_lccdf(0.47864537520816625, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.017706913768612078,
+                  normal_lccdf(0.47892821792064089, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.13467302655617194,
+                  normal_lccdf(0.48854487014477793, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.14150397288270869,
+                  normal_lccdf(0.48882771285725257, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.57658898698359251,
+                  normal_lccdf(0.49844436508138962, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.59667350159732790,
+                  normal_lccdf(0.4987272077938642, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.68192694790236308,
+                  normal_lccdf(0.49985857864376271, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.70449473678943542,
+                  normal_lccdf(0.50014142135623729, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-6.4632170725824585,
+                  normal_lccdf(0.52955706345359765, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-6.5552849228595038,
+                  normal_lccdf(0.52983990616607235, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-17.786697578589461,
+                  normal_lccdf(0.55501290757631339, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-17.947533669545543,
+                  normal_lccdf(0.55529575028878797, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-18.598659064395846,
+                  normal_lccdf(0.55642712113868653, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-18.763386609836136,
+                  normal_lccdf(0.55670996385116112, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-52.080076508792246,
+                  normal_lccdf(0.59885352800987934, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-52.362878114253050,
+                  normal_lccdf(0.59913637072235393, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-292.75996176272110,
+                  normal_lccdf(0.7402748842471889, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-293.44113419738096,
+                  normal_lccdf(0.74055772695966349, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-845.05315712467279,
+                  normal_lccdf(0.90998051173196026, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-846.21384596225801,
+                  normal_lccdf(0.91026335444443496, 0.5, 0.01));
+}

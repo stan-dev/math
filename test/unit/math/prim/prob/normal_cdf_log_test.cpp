@@ -16,7 +16,6 @@ TEST(ProbNormal, cdf_log_matches_lcdf) {
 
 TEST(ProbNormal, lcdf_tails) {
   using stan::math::normal_lcdf;
-  using std::exp;
 
   // The test values come from R 4.6.1 and cover the expected useful range of
   // the function. When z >= 38.5, even the log of the CDF is
@@ -224,4 +223,184 @@ TEST(ProbNormal, lcdf_matches_high_precision_reference) {
     EXPECT_LT(std::fabs(got / c.expected - 1.0), c.tol)
         << "log Phi at y = " << c.y << " got " << got << " want " << c.expected;
   }
+}
+
+TEST(ProbNormal, lcdf_with_mu_and_sigma) {
+  using stan::math::normal_lcdf;
+
+  // The test values come from R 4.6.1 and check behaviour around the branch
+  // points in `normal_lcdf` when mu != 0 and sigma != 1.
+  //
+  // parameter_sets <- list(
+  //   c(mu = 2, sigma = 3),
+  //   c(mu = -50, sigma = 20),
+  //   c(mu = 0.5, sigma = 0.01)
+  // )
+  // branch_points <- c(
+  //   2.9,
+  //   2.5,
+  //   2.1,
+  //   1.5,
+  //   0.8,
+  //   0.1,
+  //   0.0,
+  //   -2.1,
+  //   -3.9,
+  //   -4.0,
+  //   -7.0,
+  //   -17.0,
+  //   -29.0
+  // )
+  // test_vals <- sort(c(branch_points - 0.01, branch_points + 0.01))
+  // for (pars in parameter_sets) {
+  //   mu <- pars[["mu"]]
+  //   sigma <- pars[["sigma"]]
+  //   q <- mu + sigma * sqrt(2) * test_vals
+  //   for (i in 1:length(q)) {
+  //     cat(
+  //       sprintf(
+  //         "EXPECT_FLOAT_EQ(%#.17g, normal_lcdf(%.17g, %.17g, %.17g));\n",
+  //         pnorm(q[i], mean = mu, sd = sigma, lower.tail = TRUE, log.p =
+  //         TRUE), q[i], mu, sigma
+  //       )
+  //     )
+  //   }
+  // }
+
+  EXPECT_FLOAT_EQ(-846.21384596225801, normal_lcdf(-121.07900633333048, 2, 3));
+  EXPECT_FLOAT_EQ(-845.05315712467279, normal_lcdf(-120.99415351958808, 2, 3));
+  EXPECT_FLOAT_EQ(-293.44113419738113, normal_lcdf(-70.167318087899062, 2, 3));
+  EXPECT_FLOAT_EQ(-292.75996176272099, normal_lcdf(-70.082465274156661, 2, 3));
+  EXPECT_FLOAT_EQ(-52.362878114253100, normal_lcdf(-27.740911216706191, 2, 3));
+  EXPECT_FLOAT_EQ(-52.080076508792267, normal_lcdf(-27.656058402963808, 2, 3));
+  EXPECT_FLOAT_EQ(-18.763386609836139, normal_lcdf(-15.012989155348336, 2, 3));
+  EXPECT_FLOAT_EQ(-18.598659064395832, normal_lcdf(-14.928136341605949, 2, 3));
+  EXPECT_FLOAT_EQ(-17.947533669545574, normal_lcdf(-14.588725086636405, 2, 3));
+  EXPECT_FLOAT_EQ(-17.786697578589479, normal_lcdf(-14.503872272894021, 2, 3));
+  EXPECT_FLOAT_EQ(-6.5552849228594905, normal_lcdf(-6.9519718498216925, 2, 3));
+  EXPECT_FLOAT_EQ(-6.4632170725824736, normal_lcdf(-6.8671190360793091, 2, 3));
+  EXPECT_FLOAT_EQ(-0.70449473678943686, normal_lcdf(1.9575735931288072, 2, 3));
+  EXPECT_FLOAT_EQ(-0.68192694790236175, normal_lcdf(2.042426406871193, 2, 3));
+  EXPECT_FLOAT_EQ(-0.59667350159732879, normal_lcdf(2.381837661840736, 2, 3));
+  EXPECT_FLOAT_EQ(-0.57658898698359096, normal_lcdf(2.4666904755831216, 2, 3));
+  EXPECT_FLOAT_EQ(-0.14150397288270808, normal_lcdf(5.3516861428242359, 2, 3));
+  EXPECT_FLOAT_EQ(-0.13467302655617183, normal_lcdf(5.436538956566622, 2, 3));
+  EXPECT_FLOAT_EQ(-0.017706913768612061, normal_lcdf(8.3215346238077359, 2, 3));
+  EXPECT_FLOAT_EQ(-0.016496955508933941, normal_lcdf(8.4063874375501211, 2, 3));
+  EXPECT_FLOAT_EQ(-0.0015609874450218889,
+                  normal_lcdf(10.867119036079309, 2, 3));
+  EXPECT_FLOAT_EQ(-0.0014235903084217206,
+                  normal_lcdf(10.951971849821692, 2, 3));
+  EXPECT_FLOAT_EQ(-0.00021466697317301965,
+                  normal_lcdf(12.564175310927022, 2, 3));
+  EXPECT_FLOAT_EQ(-0.00019287133934318566,
+                  normal_lcdf(12.649028124669407, 2, 3));
+  EXPECT_FLOAT_EQ(-2.1842328461060815e-05,
+                  normal_lcdf(14.261231585774736, 2, 3));
+  EXPECT_FLOAT_EQ(-1.9328842921129592e-05,
+                  normal_lcdf(14.346084399517119, 2, 3));
+  EXPECT_FLOAT_EQ(-846.21384596225778,
+                  normal_lcdf(-870.52670888886985, -50, 20));
+  EXPECT_FLOAT_EQ(-845.05315712467279,
+                  normal_lcdf(-869.96102346392047, -50, 20));
+  EXPECT_FLOAT_EQ(-293.44113419738102,
+                  normal_lcdf(-531.11545391932702, -50, 20));
+  EXPECT_FLOAT_EQ(-292.75996176272093,
+                  normal_lcdf(-530.54976849437764, -50, 20));
+  EXPECT_FLOAT_EQ(-52.362878114253085,
+                  normal_lcdf(-248.27274144470792, -50, 20));
+  EXPECT_FLOAT_EQ(-52.080076508792246,
+                  normal_lcdf(-247.70705601975871, -50, 20));
+  EXPECT_FLOAT_EQ(-18.763386609836139,
+                  normal_lcdf(-163.41992770232224, -50, 20));
+  EXPECT_FLOAT_EQ(-18.598659064395825,
+                  normal_lcdf(-162.85424227737298, -50, 20));
+  EXPECT_FLOAT_EQ(-17.947533669545571,
+                  normal_lcdf(-160.59150057757603, -50, 20));
+  EXPECT_FLOAT_EQ(-17.786697578589479,
+                  normal_lcdf(-160.02581515262682, -50, 20));
+  EXPECT_FLOAT_EQ(-6.5552849228594887,
+                  normal_lcdf(-109.67981233214461, -50, 20));
+  EXPECT_FLOAT_EQ(-6.4632170725824709,
+                  normal_lcdf(-109.11412690719538, -50, 20));
+  EXPECT_FLOAT_EQ(-0.70449473678943675,
+                  normal_lcdf(-50.282842712474618, -50, 20));
+  EXPECT_FLOAT_EQ(-0.68192694790236175,
+                  normal_lcdf(-49.717157287525382, -50, 20));
+  EXPECT_FLOAT_EQ(-0.59667350159732879,
+                  normal_lcdf(-47.454415587728427, -50, 20));
+  EXPECT_FLOAT_EQ(-0.57658898698359096,
+                  normal_lcdf(-46.88873016277919, -50, 20));
+  EXPECT_FLOAT_EQ(-0.14150397288270808,
+                  normal_lcdf(-27.655425714505096, -50, 20));
+  EXPECT_FLOAT_EQ(-0.13467302655617192,
+                  normal_lcdf(-27.089740289555859, -50, 20));
+  EXPECT_FLOAT_EQ(-0.017706913768612061,
+                  normal_lcdf(-7.8564358412817654, -50, 20));
+  EXPECT_FLOAT_EQ(-0.016496955508933965,
+                  normal_lcdf(-7.2907504163325285, -50, 20));
+  EXPECT_FLOAT_EQ(-0.0015609874450218915,
+                  normal_lcdf(9.1141269071953843, -50, 20));
+  EXPECT_FLOAT_EQ(-0.0014235903084217224,
+                  normal_lcdf(9.679812332144607, -50, 20));
+  EXPECT_FLOAT_EQ(-0.00021466697317302003,
+                  normal_lcdf(20.427835406180137, -50, 20));
+  EXPECT_FLOAT_EQ(-0.00019287133934318566,
+                  normal_lcdf(20.993520831129374, -50, 20));
+  EXPECT_FLOAT_EQ(-2.1842328461060815e-05,
+                  normal_lcdf(31.741543905164903, -50, 20));
+  EXPECT_FLOAT_EQ(-1.9328842921129592e-05,
+                  normal_lcdf(32.307229330114126, -50, 20));
+  EXPECT_FLOAT_EQ(-846.21384596225801,
+                  normal_lcdf(0.089736645555565042, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-845.05315712467279,
+                  normal_lcdf(0.090019488268039738, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-293.44113419738096,
+                  normal_lcdf(0.25944227304033651, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-292.75996176272099,
+                  normal_lcdf(0.25972511575281115, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-52.362878114253100,
+                  normal_lcdf(0.40086362927764602, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-52.080076508792246,
+                  normal_lcdf(0.40114647199012066, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-18.763386609836136,
+                  normal_lcdf(0.44329003614883888, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-18.598659064395846,
+                  normal_lcdf(0.44357287886131347, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-17.947533669545582,
+                  normal_lcdf(0.44470424971121197, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-17.786697578589461,
+                  normal_lcdf(0.44498709242368661, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-6.5552849228594852,
+                  normal_lcdf(0.47016009383392771, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-6.4632170725824754,
+                  normal_lcdf(0.47044293654640229, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.70449473678943542,
+                  normal_lcdf(0.49985857864376271, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.68192694790236308,
+                  normal_lcdf(0.50014142135623729, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.59667350159733179,
+                  normal_lcdf(0.50127279220613574, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.57658898698358851,
+                  normal_lcdf(0.50155563491861044, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.14150397288270869,
+                  normal_lcdf(0.51117228714274743, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.13467302655617061,
+                  normal_lcdf(0.51145512985522212, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.017706913768612078,
+                  normal_lcdf(0.52107178207935911, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.016496955508934111,
+                  normal_lcdf(0.5213546247918337, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.0015609874450219117,
+                  normal_lcdf(0.52955706345359765, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.0014235903084217016,
+                  normal_lcdf(0.52983990616607235, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.00021466697317301539,
+                  normal_lcdf(0.53521391770309013, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-0.00019287133934318404,
+                  normal_lcdf(0.53549676041556471, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-2.1842328461060476e-05,
+                  normal_lcdf(0.54087077195258249, 0.5, 0.01));
+  EXPECT_FLOAT_EQ(-1.9328842921129514e-05,
+                  normal_lcdf(0.54115361466505707, 0.5, 0.01));
 }

@@ -13,7 +13,6 @@ TEST(ProbStdNormal, cdf_log_matches_lcdf) {
 
 TEST(ProbStdNormal, lcdf_tails) {
   using stan::math::std_normal_lcdf;
-  using std::exp;
 
   // The test values come from R 4.6.1 and cover the expected useful range of
   // the function. When z >= 38.5, even the log of the CDF is
