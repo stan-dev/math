@@ -1,0 +1,5 @@
+var structstan_1_1math_1_1apply__scalar__unary_3_01_f_00_01_t_00_01require__complex__t_3_01_t_01_4_01_4 =
+[
+    [ "return_t", "structstan_1_1math_1_1apply__scalar__unary_3_01_f_00_01_t_00_01require__complex__t_3_01_t_01_4_01_4_ac00975a0c6d573d7dff8fff29d0e8582.html#ac00975a0c6d573d7dff8fff29d0e8582", null ],
+    [ "apply", "structstan_1_1math_1_1apply__scalar__unary_3_01_f_00_01_t_00_01require__complex__t_3_01_t_01_4_01_4_a954a7b740415b7663847bca8bcd10bc1.html#a954a7b740415b7663847bca8bcd10bc1", null ]
+];

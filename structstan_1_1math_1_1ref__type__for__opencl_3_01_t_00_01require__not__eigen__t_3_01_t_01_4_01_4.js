@@ -1,0 +1,4 @@
+var structstan_1_1math_1_1ref__type__for__opencl_3_01_t_00_01require__not__eigen__t_3_01_t_01_4_01_4 =
+[
+    [ "type", "structstan_1_1math_1_1ref__type__for__opencl_3_01_t_00_01require__not__eigen__t_3_01_t_01_4_01_4_a84e91a8e06060528ae4f23726505b19b.html#a84e91a8e06060528ae4f23726505b19b", null ]
+];

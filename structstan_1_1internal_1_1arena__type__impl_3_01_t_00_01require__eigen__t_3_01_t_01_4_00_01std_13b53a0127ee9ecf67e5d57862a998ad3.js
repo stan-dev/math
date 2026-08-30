@@ -1,0 +1,4 @@
+var structstan_1_1internal_1_1arena__type__impl_3_01_t_00_01require__eigen__t_3_01_t_01_4_00_01std_13b53a0127ee9ecf67e5d57862a998ad3 =
+[
+    [ "type", "structstan_1_1internal_1_1arena__type__impl_3_01_t_00_01require__eigen__t_3_01_t_01_4_00_01std_13b53a0127ee9ecf67e5d57862a998ad3_a13523d69a83e1ca65df36ad35f2d714e.html#a13523d69a83e1ca65df36ad35f2d714e", null ]
+];
