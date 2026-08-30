@@ -51,10 +51,10 @@ inline int get_num_threads() {
   }
 
   const std::string_view value(env_stan_num_threads);
-  int num_threads{};
+  int num_threads;
   const auto [end, error]
       = std::from_chars(value.begin(), value.end(), num_threads);
-  if (error != std::errc{} || end != value.end()
+  if (error != std::errc() || end != value.end()
       || (num_threads < 1 && num_threads != -1)) {
     invalid_argument("get_num_threads(int)", "STAN_NUM_THREADS",
                      env_stan_num_threads,
