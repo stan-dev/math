@@ -1,0 +1,4 @@
+var structstan_1_1plain__type_3_01_t_00_01require__t_3_01stan_1_1math_1_1conjunction_3_01is__var_3_07504fa89f82ef6358551ab505323783d =
+[
+    [ "type", "structstan_1_1plain__type_3_01_t_00_01require__t_3_01stan_1_1math_1_1conjunction_3_01is__var_3_07504fa89f82ef6358551ab505323783d_acacbb3efd946d13158e652f5dffad9a0.html#acacbb3efd946d13158e652f5dffad9a0", null ]
+];
