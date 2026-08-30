@@ -1,0 +1,4 @@
+var structstan_1_1value__type_3_01_t_00_01std_1_1enable__if__t_3_01std_1_1is__pointer_3_01_t_01_4_1_1value_01_4_01_4 =
+[
+    [ "type", "structstan_1_1value__type_3_01_t_00_01std_1_1enable__if__t_3_01std_1_1is__pointer_3_01_t_01_4_1_1value_01_4_01_4_aff9cf3995eb2052bdd04d1cc2f1ed205.html#aff9cf3995eb2052bdd04d1cc2f1ed205", null ]
+];

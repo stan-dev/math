@@ -1,0 +1,4 @@
+var structstan_1_1math_1_1promote__scalar__type_3_01std_1_1tuple_3_01_promotion_scalars_8_8_8_01_4_06b2709eda18a3a5fb6e91279902bd742 =
+[
+    [ "type", "structstan_1_1math_1_1promote__scalar__type_3_01std_1_1tuple_3_01_promotion_scalars_8_8_8_01_4_06b2709eda18a3a5fb6e91279902bd742_aebe11c440cc1aeac6cfefa1e386c6f09.html#aebe11c440cc1aeac6cfefa1e386c6f09", null ]
+];

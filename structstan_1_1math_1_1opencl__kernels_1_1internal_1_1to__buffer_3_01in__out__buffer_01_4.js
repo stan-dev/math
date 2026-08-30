@@ -1,0 +1,4 @@
+var structstan_1_1math_1_1opencl__kernels_1_1internal_1_1to__buffer_3_01in__out__buffer_01_4 =
+[
+    [ "type", "structstan_1_1math_1_1opencl__kernels_1_1internal_1_1to__buffer_3_01in__out__buffer_01_4_a4ee670ec382eb4e9f52733a5d40dbe75.html#a4ee670ec382eb4e9f52733a5d40dbe75", null ]
+];

@@ -1,0 +1,6 @@
+var struct_eigen_1_1internal_1_1traits_3_01stan_1_1math_1_1arena__matrix_3_01_t_00_01stan_1_1requireeecde6a16dbbb84a3a643bfe9e87521b =
+[
+    [ "base", "struct_eigen_1_1internal_1_1traits_3_01stan_1_1math_1_1arena__matrix_3_01_t_00_01stan_1_1requireeecde6a16dbbb84a3a643bfe9e87521b_a2e1daf53f0af40c1094330b0fa90a897.html#a2e1daf53f0af40c1094330b0fa90a897", null ],
+    [ "Scalar", "struct_eigen_1_1internal_1_1traits_3_01stan_1_1math_1_1arena__matrix_3_01_t_00_01stan_1_1requireeecde6a16dbbb84a3a643bfe9e87521b_a63767cf7bf1414d17e92338033a55c80.html#a63767cf7bf1414d17e92338033a55c80", null ],
+    [ "XprKind", "struct_eigen_1_1internal_1_1traits_3_01stan_1_1math_1_1arena__matrix_3_01_t_00_01stan_1_1requireeecde6a16dbbb84a3a643bfe9e87521b_a6b30279945cc8c2c463817f14ec571ff.html#a6b30279945cc8c2c463817f14ec571ff", null ]
+];
