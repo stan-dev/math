@@ -1,0 +1,5 @@
+var structstan_1_1math_1_1apply__scalar__unary_3_01_f_00_01_t_00_01require__std__vector__t_3_01_t_01_4_01_4 =
+[
+    [ "return_t", "structstan_1_1math_1_1apply__scalar__unary_3_01_f_00_01_t_00_01require__std__vector__t_3_01_t_01_4_01_4_abdc6547b45d82c865d1889c2d5526293.html#abdc6547b45d82c865d1889c2d5526293", null ],
+    [ "apply", "structstan_1_1math_1_1apply__scalar__unary_3_01_f_00_01_t_00_01require__std__vector__t_3_01_t_01_4_01_4_a184e46b45713a95a19697ceb71a31eb4.html#a184e46b45713a95a19697ceb71a31eb4", null ]
+];
