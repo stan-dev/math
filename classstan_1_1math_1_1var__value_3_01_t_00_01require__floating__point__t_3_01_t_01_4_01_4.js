@@ -1,0 +1,26 @@
+var classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4 =
+[
+    [ "value_type", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_ace0a6b25c0006578a0dfa2f47dd9bfb9.html#ace0a6b25c0006578a0dfa2f47dd9bfb9", null ],
+    [ "vari_type", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_acc45a89e4427fbc8ac93be0b57f0e5a5.html#acc45a89e4427fbc8ac93be0b57f0e5a5", null ],
+    [ "var_value", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_a933393c8b11a311102a56fbb8d155709.html#a933393c8b11a311102a56fbb8d155709", null ],
+    [ "var_value", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_ad90c225d9a5b37448c98f2993618f0c4.html#ad90c225d9a5b37448c98f2993618f0c4", null ],
+    [ "var_value", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_a1cb252b59c28b9a4ceacb34c52f6d707.html#a1cb252b59c28b9a4ceacb34c52f6d707", null ],
+    [ "is_uninitialized", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_a7c635e4ee4d70a5d3112ac258d693336.html#a7c635e4ee4d70a5d3112ac258d693336", null ],
+    [ "val", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_af84fb1dae0a0ee18ce62de7b4592a2cf.html#af84fb1dae0a0ee18ce62de7b4592a2cf", null ],
+    [ "adj", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_a1aa671f4fff413262e5feba0bd416d51.html#a1aa671f4fff413262e5feba0bd416d51", null ],
+    [ "adj", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_aff72e7f360e8ccf8239b61b4b03f455e.html#aff72e7f360e8ccf8239b61b4b03f455e", null ],
+    [ "grad", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_a10371b7c9177aa4c269d251dfc56f4cb.html#a10371b7c9177aa4c269d251dfc56f4cb", null ],
+    [ "grad", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_ab270e3c655c5b6b6da7f2fc733eb4976.html#ab270e3c655c5b6b6da7f2fc733eb4976", null ],
+    [ "operator*", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_aac95547c47a1e0c114bc1d497e8b04fd.html#aac95547c47a1e0c114bc1d497e8b04fd", null ],
+    [ "operator->", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_a25241730f910d6e590ad741347539dd3.html#a25241730f910d6e590ad741347539dd3", null ],
+    [ "operator+=", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_a00b70e9178130b2b6b45b7fd7a6772a2.html#a00b70e9178130b2b6b45b7fd7a6772a2", null ],
+    [ "operator+=", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_a500bd9eb22b11146cea0ba67e9ef4872.html#a500bd9eb22b11146cea0ba67e9ef4872", null ],
+    [ "operator-=", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_ab514e06ced2faa3bc52cd13ae195b812.html#ab514e06ced2faa3bc52cd13ae195b812", null ],
+    [ "operator-=", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_a9047cb19db454057b8871ed8b0750337.html#a9047cb19db454057b8871ed8b0750337", null ],
+    [ "operator*=", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_ab2228869ccc84cd944d487d295bf9c62.html#ab2228869ccc84cd944d487d295bf9c62", null ],
+    [ "operator*=", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_a20ba02ecce3705cdc7ffb9b3dacc9332.html#a20ba02ecce3705cdc7ffb9b3dacc9332", null ],
+    [ "operator/=", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_a3e1dbd9b65f56c08fc7a101201863f70.html#a3e1dbd9b65f56c08fc7a101201863f70", null ],
+    [ "operator/=", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_a1508e9af307162f787120c0281ef4a37.html#a1508e9af307162f787120c0281ef4a37", null ],
+    [ "operator<<", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_aac5898014cb68b5dcef993f416300091.html#aac5898014cb68b5dcef993f416300091", null ],
+    [ "vi_", "classstan_1_1math_1_1var__value_3_01_t_00_01require__floating__point__t_3_01_t_01_4_01_4_a3d6ebc5860c10837f87be3e036e16491.html#a3d6ebc5860c10837f87be3e036e16491", null ]
+];
