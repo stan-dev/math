@@ -1,0 +1,4 @@
+var structstan_1_1scalar__lub_3_01std_1_1complex_3_01_t1_01_4_00_01std_1_1complex_3_01_t2_01_4_01_4 =
+[
+    [ "type", "structstan_1_1scalar__lub_3_01std_1_1complex_3_01_t1_01_4_00_01std_1_1complex_3_01_t2_01_4_01_4_a22e33a1c38e93f67d8250eceee2fe73d.html#a22e33a1c38e93f67d8250eceee2fe73d", null ]
+];

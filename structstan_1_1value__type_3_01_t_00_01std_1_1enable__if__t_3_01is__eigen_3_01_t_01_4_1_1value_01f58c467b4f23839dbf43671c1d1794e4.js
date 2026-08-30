@@ -1,0 +1,4 @@
+var structstan_1_1value__type_3_01_t_00_01std_1_1enable__if__t_3_01is__eigen_3_01_t_01_4_1_1value_01f58c467b4f23839dbf43671c1d1794e4 =
+[
+    [ "type", "structstan_1_1value__type_3_01_t_00_01std_1_1enable__if__t_3_01is__eigen_3_01_t_01_4_1_1value_01f58c467b4f23839dbf43671c1d1794e4_a2235954d85ab53f363e1c1b9e3a94c08.html#a2235954d85ab53f363e1c1b9e3a94c08", null ]
+];

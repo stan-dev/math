@@ -1,0 +1,5 @@
+var classstan_1_1math_1_1internal_1_1partials__propagator_3_01_return_type_00_01require__arithmetic_546dd1abdc60ef359e088ffb98cbe7df =
+[
+    [ "partials_propagator", "classstan_1_1math_1_1internal_1_1partials__propagator_3_01_return_type_00_01require__arithmetic_546dd1abdc60ef359e088ffb98cbe7df_ab845bcac897c91fff0f41011e2d713bb.html#ab845bcac897c91fff0f41011e2d713bb", null ],
+    [ "build", "group__type__trait_ga1cba770da72af398608ca2b2f4061dd5.html#ga1cba770da72af398608ca2b2f4061dd5", null ]
+];

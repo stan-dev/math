@@ -1,0 +1,4 @@
+var struct_eigen_1_1_scalar_binary_op_traits_3_01std_1_1complex_3_01stan_1_1math_1_1fvar_3_01_t_01_45857bf479d176be3731a2ba67ba9e358 =
+[
+    [ "ReturnType", "struct_eigen_1_1_scalar_binary_op_traits_3_01std_1_1complex_3_01stan_1_1math_1_1fvar_3_01_t_01_45857bf479d176be3731a2ba67ba9e358_a3cf41991ce822ae3e60e3b04775d7868.html#a3cf41991ce822ae3e60e3b04775d7868", null ]
+];

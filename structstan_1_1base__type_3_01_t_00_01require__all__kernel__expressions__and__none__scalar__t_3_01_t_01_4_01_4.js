@@ -1,0 +1,4 @@
+var structstan_1_1base__type_3_01_t_00_01require__all__kernel__expressions__and__none__scalar__t_3_01_t_01_4_01_4 =
+[
+    [ "type", "structstan_1_1base__type_3_01_t_00_01require__all__kernel__expressions__and__none__scalar__t_3_01_t_01_4_01_4_a8a22e967d8cbf18fdf4bfb63e7173daf.html#a8a22e967d8cbf18fdf4bfb63e7173daf", null ]
+];
