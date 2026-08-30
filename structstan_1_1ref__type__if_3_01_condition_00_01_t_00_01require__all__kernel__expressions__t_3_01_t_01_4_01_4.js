@@ -1,0 +1,6 @@
+var structstan_1_1ref__type__if_3_01_condition_00_01_t_00_01require__all__kernel__expressions__t_3_01_t_01_4_01_4 =
+[
+    [ "T_plain", "structstan_1_1ref__type__if_3_01_condition_00_01_t_00_01require__all__kernel__expressions__t_3_01_t_01_4_01_4_aff12c14b3489d3a74a77fe171fbc28fc.html#aff12c14b3489d3a74a77fe171fbc28fc", null ],
+    [ "T_optionally_ref", "structstan_1_1ref__type__if_3_01_condition_00_01_t_00_01require__all__kernel__expressions__t_3_01_t_01_4_01_4_a2fb9e0955a434808ec60d87853d9cbd2.html#a2fb9e0955a434808ec60d87853d9cbd2", null ],
+    [ "type", "structstan_1_1ref__type__if_3_01_condition_00_01_t_00_01require__all__kernel__expressions__t_3_01_t_01_4_01_4_abc31547161322a15279d9e9b5ec9520c.html#abc31547161322a15279d9e9b5ec9520c", null ]
+];

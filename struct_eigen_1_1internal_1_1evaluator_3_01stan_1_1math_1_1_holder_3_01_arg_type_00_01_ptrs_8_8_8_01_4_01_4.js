@@ -1,0 +1,23 @@
+var struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4 =
+[
+    [ "PlainObjectType", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_aa686dfc3213cdeda5479ecfad22dc586.html#aa686dfc3213cdeda5479ecfad22dc586", null ],
+    [ "XprType", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_aeb5bc1b909698556c1967b96b5e4008c.html#aeb5bc1b909698556c1967b96b5e4008c", null ],
+    [ "ArgTypeNestedCleaned", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a7f48e38672fa44ca518f0cc33e8fe6af.html#a7f48e38672fa44ca518f0cc33e8fe6af", null ],
+    [ "CoeffReturnType", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a1074be641d5ca8c9cf78c619bd7a3223.html#a1074be641d5ca8c9cf78c619bd7a3223", null ],
+    [ "Scalar", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a64d02cc00c36181a834d8fb37a7b28ba.html#a64d02cc00c36181a834d8fb37a7b28ba", null ],
+    [ "evaluator", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_af2dbdebef7c602efa10c276b30848b57.html#af2dbdebef7c602efa10c276b30848b57", null ],
+    [ "evaluator", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_addadeb22bbfac4e2c533c12158c4e967.html#addadeb22bbfac4e2c533c12158c4e967", null ],
+    [ "coeff", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a685b62ca228a0e59773b35de586c45b3.html#a685b62ca228a0e59773b35de586c45b3", null ],
+    [ "coeff", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a61c06a83bc89dee2655869ae58f25bfe.html#a61c06a83bc89dee2655869ae58f25bfe", null ],
+    [ "coeffRef", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_acfbffdc24116ec613b18fdb8baf5cc59.html#acfbffdc24116ec613b18fdb8baf5cc59", null ],
+    [ "coeffRef", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a4ac349abb820bde34ed606adf9c0bd31.html#a4ac349abb820bde34ed606adf9c0bd31", null ],
+    [ "packet", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_aca1e4d97f6570869e1e893be9ebec24d.html#aca1e4d97f6570869e1e893be9ebec24d", null ],
+    [ "packet", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_aa6dc27e83bdb3b8a827537fb7a450de2.html#aa6dc27e83bdb3b8a827537fb7a450de2", null ],
+    [ "writePacket", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a3bcde79d75592a78315007c36c56f393.html#a3bcde79d75592a78315007c36c56f393", null ],
+    [ "writePacket", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a43dde659e257361c41be442ee9372f7a.html#a43dde659e257361c41be442ee9372f7a", null ],
+    [ "packetSegment", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_ac49413ecc9e7d192f53ab68be7c9b2a1.html#ac49413ecc9e7d192f53ab68be7c9b2a1", null ],
+    [ "packetSegment", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_aca03ec9ae1a5675105015f6c82a4ed8c.html#aca03ec9ae1a5675105015f6c82a4ed8c", null ],
+    [ "writePacketSegment", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a7f6b2e0c0ad3830b45d343ed6abbd4e8.html#a7f6b2e0c0ad3830b45d343ed6abbd4e8", null ],
+    [ "writePacketSegment", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a817993df10bb8286bf2f29aab108f8eb.html#a817993df10bb8286bf2f29aab108f8eb", null ],
+    [ "m_argImpl", "struct_eigen_1_1internal_1_1evaluator_3_01stan_1_1math_1_1_holder_3_01_arg_type_00_01_ptrs_8_8_8_01_4_01_4_a1523fd4b5e90cdcc42266dbfe12e906a.html#a1523fd4b5e90cdcc42266dbfe12e906a", null ]
+];
