@@ -17,7 +17,7 @@
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/hypergeometric_pFq.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 
 namespace stan {
 namespace math {
@@ -29,7 +29,7 @@ namespace internal {
  * more background (and other possible special-cases), see:
  * https://functions.wolfram.com/HypergeometricFunctions/Hypergeometric2F1/03/
  *
- * The return value is wrapped in a boost::optional<> type so that a void
+ * The return value is wrapped in a std::optional<> type so that a void
  * return is possible if no special-case rules are applicable
  *
  * @tparam Ta1 Type of scalar first 'a' argument
@@ -43,7 +43,7 @@ namespace internal {
  * @return Gauss hypergeometric function
  */
 template <typename Ta1, typename Ta2, typename Tb, typename Tz,
-          typename RtnT = boost::optional<return_type_t<Ta1, Ta2, Tb, Tz>>,
+          typename RtnT = std::optional<return_type_t<Ta1, Ta2, Tb, Tz>>,
           require_all_arithmetic_t<Ta1, Ta2, Tb, Tz>* = nullptr>
 inline RtnT hyper_2F1_special_cases(const Ta1& a1, const Ta2& a2, const Tb& b,
                                     const Tz& z) {
@@ -149,7 +149,7 @@ inline RtnT hyper_2F1_special_cases(const Ta1& a1, const Ta2& a2, const Tb& b,
  */
 template <typename Ta1, typename Ta2, typename Tb, typename Tz,
           typename ScalarT = return_type_t<Ta1, Ta2, Tb, Tz>,
-          typename OptT = boost::optional<ScalarT>,
+          typename OptT = std::optional<ScalarT>,
           require_all_arithmetic_t<Ta1, Ta2, Tb, Tz>* = nullptr>
 inline return_type_t<Ta1, Ta2, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
                                                           const Ta2& a2,
@@ -168,15 +168,15 @@ inline return_type_t<Ta1, Ta2, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
   // Check whether value can be calculated by any special-case rules
   // before estimating infinite sum
   OptT special_case_a1a2 = internal::hyper_2F1_special_cases(a1, a2, b, z);
-  if (special_case_a1a2.is_initialized()) {
-    return special_case_a1a2.get();
+  if (special_case_a1a2.has_value()) {
+    return special_case_a1a2.value();
   }
 
   // Check whether any special case rules apply with 'a' arguments reversed
   // as 2F1(a1, a2, b, z) = 2F1(a2, a1, b, z)
   OptT special_case_a2a1 = internal::hyper_2F1_special_cases(a2, a1, b, z);
-  if (special_case_a2a1.is_initialized()) {
-    return special_case_a2a1.get();
+  if (special_case_a2a1.has_value()) {
+    return special_case_a2a1.value();
   }
 
   Eigen::Matrix<double, 2, 1> a_args(2);
