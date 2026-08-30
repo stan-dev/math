@@ -1,0 +1,4 @@
+var structstan_1_1internal_1_1return__type__impl_3_01std_1_1tuple_3_01_t_8_8_8_01_4_00_01_ts_8_8_8_01_4 =
+[
+    [ "type", "structstan_1_1internal_1_1return__type__impl_3_01std_1_1tuple_3_01_t_8_8_8_01_4_00_01_ts_8_8_8_01_4_a2330b34a52ce241c9142f7d168b389d4.html#a2330b34a52ce241c9142f7d168b389d4", null ]
+];

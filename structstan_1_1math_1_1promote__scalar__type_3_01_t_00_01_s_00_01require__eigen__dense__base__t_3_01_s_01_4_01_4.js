@@ -1,0 +1,4 @@
+var structstan_1_1math_1_1promote__scalar__type_3_01_t_00_01_s_00_01require__eigen__dense__base__t_3_01_s_01_4_01_4 =
+[
+    [ "type", "structstan_1_1math_1_1promote__scalar__type_3_01_t_00_01_s_00_01require__eigen__dense__base__t_3_01_s_01_4_01_4_aa86ea25d30f5548c571d7b428b177f3d.html#aa86ea25d30f5548c571d7b428b177f3d", null ]
+];

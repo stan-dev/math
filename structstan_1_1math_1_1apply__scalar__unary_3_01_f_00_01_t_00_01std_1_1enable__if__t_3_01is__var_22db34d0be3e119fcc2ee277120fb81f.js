@@ -1,0 +1,5 @@
+var structstan_1_1math_1_1apply__scalar__unary_3_01_f_00_01_t_00_01std_1_1enable__if__t_3_01is__var_22db34d0be3e119fcc2ee277120fb81f =
+[
+    [ "return_t", "structstan_1_1math_1_1apply__scalar__unary_3_01_f_00_01_t_00_01std_1_1enable__if__t_3_01is__var_22db34d0be3e119fcc2ee277120fb81f_a17d2769db2990c574b9f4e4f5881ecc5.html#a17d2769db2990c574b9f4e4f5881ecc5", null ],
+    [ "apply", "structstan_1_1math_1_1apply__scalar__unary_3_01_f_00_01_t_00_01std_1_1enable__if__t_3_01is__var_22db34d0be3e119fcc2ee277120fb81f_a4a108e27a3b9c2e94b6034812ce79615.html#a4a108e27a3b9c2e94b6034812ce79615", null ]
+];

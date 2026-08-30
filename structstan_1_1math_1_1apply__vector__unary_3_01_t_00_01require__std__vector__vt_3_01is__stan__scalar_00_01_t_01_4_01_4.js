@@ -1,0 +1,8 @@
+var structstan_1_1math_1_1apply__vector__unary_3_01_t_00_01require__std__vector__vt_3_01is__stan__scalar_00_01_t_01_4_01_4 =
+[
+    [ "T_vt", "structstan_1_1math_1_1apply__vector__unary_3_01_t_00_01require__std__vector__vt_3_01is__stan__scalar_00_01_t_01_4_01_4_a702deef59a0813cbd262fe15f550d7f0.html#a702deef59a0813cbd262fe15f550d7f0", null ],
+    [ "T_map", "structstan_1_1math_1_1apply__vector__unary_3_01_t_00_01require__std__vector__vt_3_01is__stan__scalar_00_01_t_01_4_01_4_a9abcc386a5bb0053a145db9605fdfa9e.html#a9abcc386a5bb0053a145db9605fdfa9e", null ],
+    [ "apply", "structstan_1_1math_1_1apply__vector__unary_3_01_t_00_01require__std__vector__vt_3_01is__stan__scalar_00_01_t_01_4_01_4_aa2a92234a5d403422214281cdc480f40.html#aa2a92234a5d403422214281cdc480f40", null ],
+    [ "apply_no_holder", "structstan_1_1math_1_1apply__vector__unary_3_01_t_00_01require__std__vector__vt_3_01is__stan__scalar_00_01_t_01_4_01_4_ae5bee8a71591936f0e2d6be59d2cc2cd.html#ae5bee8a71591936f0e2d6be59d2cc2cd", null ],
+    [ "reduce", "structstan_1_1math_1_1apply__vector__unary_3_01_t_00_01require__std__vector__vt_3_01is__stan__scalar_00_01_t_01_4_01_4_a943180c2afa9954e13a24c2e8c47e1c9.html#a943180c2afa9954e13a24c2e8c47e1c9", null ]
+];

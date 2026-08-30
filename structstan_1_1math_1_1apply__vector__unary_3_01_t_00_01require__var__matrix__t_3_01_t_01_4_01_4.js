@@ -1,0 +1,6 @@
+var structstan_1_1math_1_1apply__vector__unary_3_01_t_00_01require__var__matrix__t_3_01_t_01_4_01_4 =
+[
+    [ "apply", "structstan_1_1math_1_1apply__vector__unary_3_01_t_00_01require__var__matrix__t_3_01_t_01_4_01_4_a1736ddaa243376e28ee7975b1e31acdf.html#a1736ddaa243376e28ee7975b1e31acdf", null ],
+    [ "apply_no_holder", "structstan_1_1math_1_1apply__vector__unary_3_01_t_00_01require__var__matrix__t_3_01_t_01_4_01_4_a7a0101435ce409e64853934c0c3230d5.html#a7a0101435ce409e64853934c0c3230d5", null ],
+    [ "reduce", "structstan_1_1math_1_1apply__vector__unary_3_01_t_00_01require__var__matrix__t_3_01_t_01_4_01_4_a1b0724ea7a9d6b73f7ba3568e19efb42.html#a1b0724ea7a9d6b73f7ba3568e19efb42", null ]
+];

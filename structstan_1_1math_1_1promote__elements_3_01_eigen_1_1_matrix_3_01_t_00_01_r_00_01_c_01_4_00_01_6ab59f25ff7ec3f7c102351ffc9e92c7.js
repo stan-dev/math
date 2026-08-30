@@ -1,0 +1,4 @@
+var structstan_1_1math_1_1promote__elements_3_01_eigen_1_1_matrix_3_01_t_00_01_r_00_01_c_01_4_00_01_6ab59f25ff7ec3f7c102351ffc9e92c7 =
+[
+    [ "promote", "structstan_1_1math_1_1promote__elements_3_01_eigen_1_1_matrix_3_01_t_00_01_r_00_01_c_01_4_00_01_6ab59f25ff7ec3f7c102351ffc9e92c7_afbf53320e31642f247db589718830f97.html#afbf53320e31642f247db589718830f97", null ]
+];
