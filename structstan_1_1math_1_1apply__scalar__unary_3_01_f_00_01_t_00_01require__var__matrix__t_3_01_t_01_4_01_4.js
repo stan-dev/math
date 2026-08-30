@@ -1,0 +1,5 @@
+var structstan_1_1math_1_1apply__scalar__unary_3_01_f_00_01_t_00_01require__var__matrix__t_3_01_t_01_4_01_4 =
+[
+    [ "return_t", "structstan_1_1math_1_1apply__scalar__unary_3_01_f_00_01_t_00_01require__var__matrix__t_3_01_t_01_4_01_4_a49d994664c6d2bca47d5084e9e24f554.html#a49d994664c6d2bca47d5084e9e24f554", null ],
+    [ "apply", "structstan_1_1math_1_1apply__scalar__unary_3_01_f_00_01_t_00_01require__var__matrix__t_3_01_t_01_4_01_4_a543fb284ff0a1df50fc3d334b2c66b06.html#a543fb284ff0a1df50fc3d334b2c66b06", null ]
+];

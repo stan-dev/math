@@ -1,0 +1,4 @@
+var structstan_1_1math_1_1internal_1_1change__eigen__options__impl_3_01var__value_3_01_mat_01_4_00_02b9d6870ee3e3416dd34fcd075941b87 =
+[
+    [ "type", "structstan_1_1math_1_1internal_1_1change__eigen__options__impl_3_01var__value_3_01_mat_01_4_00_02b9d6870ee3e3416dd34fcd075941b87_abbbcc553feb40aa199936fee48f051f9.html#abbbcc553feb40aa199936fee48f051f9", null ]
+];
