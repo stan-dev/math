@@ -1,0 +1,4 @@
+var structstan_1_1math_1_1promote__scalar__type_3_01_t_00_01_s_00_01require__all__t_3_01is__var_3_016c5eccdcd81e20b0fa598b6620378090 =
+[
+    [ "type", "structstan_1_1math_1_1promote__scalar__type_3_01_t_00_01_s_00_01require__all__t_3_01is__var_3_016c5eccdcd81e20b0fa598b6620378090_ac321bbf48132a4f2f9905083a560ff5b.html#ac321bbf48132a4f2f9905083a560ff5b", null ]
+];

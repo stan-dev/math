@@ -1,0 +1,4 @@
+var structstan_1_1math_1_1promote__scalar__type_3_01_t_00_01_s_00_01require__eigen__sparse__base__t_3_01_s_01_4_01_4 =
+[
+    [ "type", "structstan_1_1math_1_1promote__scalar__type_3_01_t_00_01_s_00_01require__eigen__sparse__base__t_3_01_s_01_4_01_4_a65404973f5e6187fe6243da564f51b21.html#a65404973f5e6187fe6243da564f51b21", null ]
+];

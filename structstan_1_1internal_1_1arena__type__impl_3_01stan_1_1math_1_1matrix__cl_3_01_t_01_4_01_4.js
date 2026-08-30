@@ -1,0 +1,4 @@
+var structstan_1_1internal_1_1arena__type__impl_3_01stan_1_1math_1_1matrix__cl_3_01_t_01_4_01_4 =
+[
+    [ "type", "structstan_1_1internal_1_1arena__type__impl_3_01stan_1_1math_1_1matrix__cl_3_01_t_01_4_01_4_a24cbb7e43a9e1e0d3e7bb7f3248c0a66.html#a24cbb7e43a9e1e0d3e7bb7f3248c0a66", null ]
+];

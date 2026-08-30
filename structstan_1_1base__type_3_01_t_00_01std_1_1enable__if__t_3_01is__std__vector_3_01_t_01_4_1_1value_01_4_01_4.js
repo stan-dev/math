@@ -1,0 +1,4 @@
+var structstan_1_1base__type_3_01_t_00_01std_1_1enable__if__t_3_01is__std__vector_3_01_t_01_4_1_1value_01_4_01_4 =
+[
+    [ "type", "structstan_1_1base__type_3_01_t_00_01std_1_1enable__if__t_3_01is__std__vector_3_01_t_01_4_1_1value_01_4_01_4_a13fb29bfc81687310587726035a09dea.html#a13fb29bfc81687310587726035a09dea", null ]
+];
