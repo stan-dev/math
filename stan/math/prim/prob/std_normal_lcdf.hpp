@@ -20,9 +20,38 @@
 
 namespace stan {
 namespace math {
+namespace internal {
+constexpr char std_normal_lcdf_func[] = "std_normal_lcdf";
+}  // namespace internal
 
+/** \ingroup prob_dists
+ * @brief Calculates the log of the cdf of the standard normal distribution
+ *
+ * The piecewise structure here is the same as `normal_lcdf`, and the
+ * cutoffs, their provenance and the measurements behind them are documented
+ * once, on that function. See prim/prob/normal_lcdf.hpp. That covers the
+ * A&S 7.1.26, Cody (1969) and DLMF 7.12.1 references, the R `pnorm` and
+ * SciPy `log_ndtr` cross-references, why the erfc/Cody crossover sits at 4,
+ * the stan-dev/math#1411 origin of the interior Taylor cutoffs, and the two
+ * cutoff tables.
+ *
+ * Two differences apply when reading it here. The scaled variable is
+ * `scaled_y = y * INV_SQRT_TWO`, not `scaled_diff = (y - mu) / (sigma *
+ * SQRT_TWO)`; since `mu = 0` and `sigma = 1` the two coincide, so every
+ * cutoff value transfers unchanged. And the test that enforces the
+ * `worst in-range` column for this function is the branch_accuracy test in
+ * mix/prob/std_normal_cdf_log_test.cpp.
+ *
+ * @tparam func name reported by the error checks. Reflected distributions
+ *   such as `std_normal_lccdf` delegate here and pass their own name so that
+ *   exceptions name the function the user actually called.
+ * @tparam T_y A vector or scalar type for the random variable.
+ * @param y (Sequence of) scalar(s).
+ * @return The log of the standard normal cdf evaluated at the specified
+ *   argument. If given a container, the log of the product of the cdfs.
+ */
 template <
-    typename T_y,
+    const char* func = internal::std_normal_lcdf_func, typename T_y,
     require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T_y>* = nullptr>
 inline return_type_t<T_y> std_normal_lcdf(const T_y& y) {
   using T_partials_return = partials_return_t<T_y>;
@@ -31,7 +60,7 @@ inline return_type_t<T_y> std_normal_lcdf(const T_y& y) {
   using std::log;
   using std::pow;
   using T_y_ref = ref_type_t<T_y>;
-  static constexpr const char* function = "std_normal_lcdf";
+  static constexpr const char* function = func;
   T_y_ref y_ref = y;
   check_not_nan(function, "Random variable", y_ref);
 
@@ -63,8 +92,9 @@ inline return_type_t<T_y> std_normal_lcdf(const T_y& y) {
       if (!is_not_nan(lcdf)) {
         lcdf = 0;
       }
-    } else if (scaled_y > -20.0) {
-      // CDF(x) = 1/2 - 1/2erf(-x) = 1/2erfc(-x)
+    } else if (scaled_y > -4.0) {
+      // CDF(x) = 1/2 - 1/2erf(-x) = 1/2erfc(-x); -4 is R pnorm's M_SQRT_32
+      // crossover expressed in scaled_y, sqrt(32)/sqrt(2)
       lcdf += log(erfc(-scaled_y)) + LOG_HALF;
     } else if (10.0 * log(fabs(scaled_y))
                < log(std::numeric_limits<T_partials_return>::max())) {
@@ -107,9 +137,14 @@ inline return_type_t<T_y> std_normal_lcdf(const T_y& y) {
         t = 1.0 / (1.0 + 0.3275911 * scaled_y);
         t2 = square(t);
         t4 = pow(t, 4);
-        dnlcdf = INV_SQRT_PI
-                 / (exp(x2) - 0.254829592 + 0.284496736 * t - 1.421413741 * t2
-                    + 1.453152027 * t2 * t - 1.061405429 * t4);
+        // A&S 7.1.26 puts exp(-x2) in the numerator; keep it there so it
+        // underflows to zero instead of overflowing inside a denominator
+        const T_partials_return exp_m_x2 = exp(-x2);
+        dnlcdf = INV_SQRT_PI * exp_m_x2
+                 / (1.0
+                    - exp_m_x2
+                          * (0.254829592 - 0.284496736 * t + 1.421413741 * t2
+                             - 1.453152027 * t2 * t + 1.061405429 * t4));
       } else if (scaled_y > 2.5) {
         // in the trouble area where all of the standard numerical
         // approximations are unstable - bridge the gap using Taylor
@@ -153,6 +188,12 @@ inline return_type_t<T_y> std_normal_lcdf(const T_y& y) {
         dnlcdf = 0.6245634904 - 0.9521866949 * t + 0.3986215682 * t2
                  + 0.04700850676 * t2 * t - 0.03478651979 * t4
                  - 0.01772675404 * t4 * t + 0.0006577254811 * pow(t, 6);
+      } else if (scaled_y < -29.0) {
+        // asymptotic Mills ratio, DLMF 7.12.1: dnlcdf grows linearly as
+        // -2*scaled_y, so no quadratic residual fit can track it
+        const T_partials_return inv_x2 = 1.0 / x2;
+        dnlcdf = -2.0 * scaled_y
+                 / (1.0 + inv_x2 * (-0.5 + inv_x2 * (0.75 + inv_x2 * -1.875)));
       } else if (10.0 * log(fabs(scaled_y))
                  < log(std::numeric_limits<T_partials_return>::max())) {
         // approximation derived from Abramowitz and Stegun (1964) 7.1.26
@@ -167,10 +208,7 @@ inline return_type_t<T_y> std_normal_lcdf(const T_y& y) {
                     - 1.453152027 * t4 + 1.061405429 * t4 * t);
         // check if we need to add a correction term
         // (from cubic fit of residuals)
-        if (scaled_y < -29.0) {
-          dnlcdf += 0.0015065154280332 * x2 - 0.3993154819705530 * scaled_y
-                    - 4.2919418242931700;
-        } else if (scaled_y < -17.0) {
+        if (scaled_y < -17.0) {
           dnlcdf += 0.0001263257217272 * x2 * scaled_y + 0.0123586859488623 * x2
                     - 0.0860505264736028 * scaled_y - 1.252783383752970;
         } else if (scaled_y < -7.0) {

@@ -2,6 +2,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <tuple>
 #include <vector>
 
 TEST_F(AgradRev, Rev_accumulate_adjoints_zero_args) {
@@ -436,4 +437,40 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_sum) {
 
   EXPECT_EQ(ptr, storage.data() + num_vars);
   stan::math::recover_memory();
+}
+
+TEST_F(AgradRev, Rev_accumulate_adjoints_tuple_args) {
+  const std::tuple<> empty;
+  const auto data = std::make_tuple(1, Eigen::VectorXd::Ones(2));
+  Eigen::VectorXd data_storage = Eigen::VectorXd::Zero(2);
+  double* data_ptr
+      = stan::math::accumulate_adjoints(data_storage.data(), empty, data);
+  EXPECT_EQ(data_storage.data(), data_ptr);
+  EXPECT_FLOAT_EQ(0.0, data_storage(0));
+  EXPECT_FLOAT_EQ(0.0, data_storage(1));
+
+  stan::math::var before = 1.0;
+  stan::math::var first = 2.0;
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vars(2);
+  vars << 3.0, 4.0;
+  stan::math::var last = 5.0;
+  stan::math::var after = 6.0;
+  before.vi_->adj_ = 1.0;
+  first.vi_->adj_ = 2.0;
+  vars(0).vi_->adj_ = 3.0;
+  vars(1).vi_->adj_ = 4.0;
+  last.vi_->adj_ = 5.0;
+  after.vi_->adj_ = 6.0;
+  auto nested = std::make_tuple(first, std::make_tuple(vars, 7), last);
+  Eigen::VectorXd storage = Eigen::VectorXd::Constant(8, 10.0);
+
+  double* ptr = stan::math::accumulate_adjoints(storage.data(), before, nested,
+                                                std::make_tuple(after));
+
+  EXPECT_EQ(storage.data() + 6, ptr);
+  for (int i = 0; i < 6; ++i) {
+    EXPECT_FLOAT_EQ(11.0 + i, storage(i));
+  }
+  EXPECT_FLOAT_EQ(10.0, storage(6));
+  EXPECT_FLOAT_EQ(10.0, storage(7));
 }
