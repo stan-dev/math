@@ -1,0 +1,4 @@
+var structstan_1_1internal_1_1is__all__var__scalar__impl_3_01std_1_1tuple_3_01_types_8_8_8_01_4_01_4 =
+[
+    [ "value", "structstan_1_1internal_1_1is__all__var__scalar__impl_3_01std_1_1tuple_3_01_types_8_8_8_01_4_01_4_a295cf521a331c52359bfa126488038ee.html#a295cf521a331c52359bfa126488038ee", null ]
+];

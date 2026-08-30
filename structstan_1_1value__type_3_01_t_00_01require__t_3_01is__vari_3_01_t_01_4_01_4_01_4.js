@@ -1,0 +1,4 @@
+var structstan_1_1value__type_3_01_t_00_01require__t_3_01is__vari_3_01_t_01_4_01_4_01_4 =
+[
+    [ "type", "structstan_1_1value__type_3_01_t_00_01require__t_3_01is__vari_3_01_t_01_4_01_4_01_4_aed96e9cf8bc564e6ea3d954374d28a9b.html#aed96e9cf8bc564e6ea3d954374d28a9b", null ]
+];

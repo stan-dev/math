@@ -1,0 +1,4 @@
+var structstan_1_1math_1_1ref__type__for__opencl_3_01_t_00_01require__arena__matrix__t_3_01_t_01_4_01_4 =
+[
+    [ "type", "structstan_1_1math_1_1ref__type__for__opencl_3_01_t_00_01require__arena__matrix__t_3_01_t_01_4_01_4_a2afdb0380f0c4aa75c29c0177e005a78.html#a2afdb0380f0c4aa75c29c0177e005a78", null ]
+];

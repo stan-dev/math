@@ -1,0 +1,4 @@
+var structstan_1_1math_1_1append__return__type_3_01std_1_1vector_3_01_t1_01_4_00_01std_1_1vector_3_01_t2_01_4_01_4 =
+[
+    [ "type", "structstan_1_1math_1_1append__return__type_3_01std_1_1vector_3_01_t1_01_4_00_01std_1_1vector_3_01_t2_01_4_01_4_aaa1edadccb08ee8ddce14b5873b426bd.html#aaa1edadccb08ee8ddce14b5873b426bd", null ]
+];
