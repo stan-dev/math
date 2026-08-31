@@ -13,7 +13,6 @@
 #include <stan/math/prim/fun/sign.hpp>
 #include <stan/math/prim/fun/hypergeometric_2F1.hpp>
 #include <cmath>
-#include <boost/optional.hpp>
 
 namespace stan {
 namespace math {
