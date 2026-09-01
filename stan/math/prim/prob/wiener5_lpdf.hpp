@@ -542,17 +542,6 @@ inline auto wiener5_grad_w(const T_y& y, const T_a& a, const T_v& v,
   const auto n_large_density
       = wiener5_density_large_reaction_time_terms(y, a, w, log_error);
 
-  const auto n_small_grad
-      = wiener5_n_terms_small_t<false, GradientCalc::ON>(y, a, w, log_error);
-  const auto n_large_grad
-      = wiener5_gradient_large_reaction_time_terms<GradientCalc::ON>(y, a, w,
-                                                                     log_error);
-
-  const int n_small = static_cast<int>(
-      fmax(value_of_rec(n_small_density), value_of_rec(n_small_grad)));
-  const int n_large = static_cast<int>(
-      fmax(value_of_rec(n_large_density), value_of_rec(n_large_grad)));
-
   ret_t series_grad_w = 0.0;
 
   if (2.0 * n_small_density <= n_large_density) {
@@ -564,7 +553,10 @@ inline auto wiener5_grad_w(const T_y& y, const T_a& a, const T_v& v,
     // dR_s/dw = sum_k (z_k^2 / t* - 1)
     //                  exp(-z_k^2 / (2 t*)).
     ret_t max_log = NEGATIVE_INFTY;
-
+    const auto n_small_grad
+        = wiener5_n_terms_small_t<false, GradientCalc::ON>(y, a, w, log_error);
+    const int n_small = static_cast<int>(
+        fmax(value_of_rec(n_small_density), value_of_rec(n_small_grad)));
     for (int k = -n_small; k <= n_small; ++k) {
       const double kd = static_cast<double>(k);
       const auto z = q + 2.0 * kd;
@@ -596,9 +588,13 @@ inline auto wiener5_grad_w(const T_y& y, const T_a& a, const T_v& v,
     // dR_l/dw = -sum_{k=1}^{K}
     //             k^2 pi cos(k pi q)
     //             exp(-(k^2 - 1) pi^2 t* / 2).
+    const auto n_large_grad
+        = wiener5_gradient_large_reaction_time_terms<GradientCalc::ON>(
+            y, a, w, log_error);
+    const int n_large = static_cast<int>(
+        fmax(value_of_rec(n_large_density), value_of_rec(n_large_grad)));
     ret_t raw = 0.0;
     ret_t draw_dw = 0.0;
-
     const auto half_pi2_y = 0.5 * square(pi()) * y_asq;
 
     for (int k = 1; k <= n_large; ++k) {
