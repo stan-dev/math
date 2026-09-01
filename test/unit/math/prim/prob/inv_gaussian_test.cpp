@@ -166,8 +166,11 @@ TEST(ProbDistributionsInvGaussian, probabilityNeverExceedsOne) {
       }
     }
   }
-  // against mpmath at 60 digits
-  EXPECT_NEAR(-0.693147179298379049, inv_gaussian_lcdf(0.1, 0.1, 1e16), 1e-12);
+  // against mpmath at 60 digits. At y == mu the rounding of y * (1 / mu) - 1
+  // is amplified by sqrt(lambda / y), here to about sqrt(1e17) * 1e-16 ~ 3e-8,
+  // and the rounding differs across platforms, so the tolerance carries that
+  // scale.
+  EXPECT_NEAR(-0.693147179298379049, inv_gaussian_lcdf(0.1, 0.1, 1e16), 1e-6);
   EXPECT_FLOAT_EQ(-4.04999999999999999e17, inv_gaussian_lcdf(1e-4, 1e-3, 1e14));
   EXPECT_FLOAT_EQ(-4.99000499999999997e17, inv_gaussian_lcdf(1e-4, 1e-1, 1e14));
 }
@@ -176,6 +179,10 @@ TEST(ProbDistributionsInvGaussian, medianIsScaleInvariant) {
   using stan::math::inv_gaussian_lccdf;
   using stan::math::inv_gaussian_lcdf;
   for (double lambda_over_mu : {1e2, 1e6, 1e11, 1e13}) {
+    // y == mu probes the rounding of y * (1 / mu) - 1, which z1 and z2
+    // amplify by sqrt(lambda / mu); the rounding differs across platforms,
+    // so the tolerance carries that scale.
+    double tol = 1e-13 + std::sqrt(lambda_over_mu) * 1e-15;
     double ref_lcdf = 0;
     double ref_lccdf = 0;
     bool first = true;
@@ -188,14 +195,16 @@ TEST(ProbDistributionsInvGaussian, medianIsScaleInvariant) {
         ref_lccdf = b;
         first = false;
       } else {
-        EXPECT_NEAR(ref_lcdf, a, 1e-13);
-        EXPECT_NEAR(ref_lccdf, b, 1e-13);
+        EXPECT_NEAR(ref_lcdf, a, tol);
+        EXPECT_NEAR(ref_lccdf, b, tol);
       }
     }
   }
-  // F(mu) for a very large shape approaches 1/2 from above
-  EXPECT_NEAR(-0.693147181822, inv_gaussian_lccdf(1e-3, 1e-3, 1e14), 1e-11);
-  EXPECT_NEAR(-0.693147180686, inv_gaussian_lccdf(1e-3, 1e-3, 1e16), 1e-11);
+  // F(mu) for a very large shape approaches 1/2 from above. The same
+  // sqrt(lambda / mu) amplification bounds the error here, at about 3e-7
+  // for lambda / mu = 1e17 and 3e-6 for 1e19.
+  EXPECT_NEAR(-0.693147181822, inv_gaussian_lccdf(1e-3, 1e-3, 1e14), 1e-6);
+  EXPECT_NEAR(-0.693147180686, inv_gaussian_lccdf(1e-3, 1e-3, 1e16), 1e-5);
 }
 
 TEST(ProbDistributionsInvGaussian, cdfCcdfSumToOne) {
