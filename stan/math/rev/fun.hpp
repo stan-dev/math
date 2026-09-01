@@ -118,10 +118,12 @@
 #include <stan/math/rev/fun/logit.hpp>
 #include <stan/math/rev/fun/matrix_exp_multiply.hpp>
 #include <stan/math/rev/fun/matrix_power.hpp>
+#include <stan/math/rev/fun/max.hpp>
 #include <stan/math/rev/fun/mdivide_left.hpp>
 #include <stan/math/rev/fun/mdivide_left_ldlt.hpp>
 #include <stan/math/rev/fun/mdivide_left_spd.hpp>
 #include <stan/math/rev/fun/mdivide_left_tri.hpp>
+#include <stan/math/rev/fun/min.hpp>
 #include <stan/math/rev/fun/modified_bessel_first_kind.hpp>
 #include <stan/math/rev/fun/modified_bessel_second_kind.hpp>
 #include <stan/math/rev/fun/multiply.hpp>
