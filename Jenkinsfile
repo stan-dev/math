@@ -213,7 +213,7 @@ LDFLAGS_OPENCL=-L/usr/local/cuda/targets/x86_64-linux/lib
             }
           },
           thread: {
-            runPod(image: image) {
+            runPod(image: image, memory: '32Gi') {
               stage('Threading tests') {
                 def local = "CXX=$CLANG_CXX -Werror\nSTAN_THREADS=true\n"
                 if (mainBranch) {
