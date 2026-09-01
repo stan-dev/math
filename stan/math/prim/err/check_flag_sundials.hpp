@@ -5,6 +5,7 @@
 #include <stan/math/prim/err/domain_error.hpp>
 #include <kinsol/kinsol.h>
 #include <cvodes/cvodes.h>
+#include <arkode/arkode.h>
 #include <array>
 
 namespace stan {
@@ -13,6 +14,7 @@ namespace math {
 #define CHECK_CVODES_CALL(call) cvodes_check(call, #call)
 #define CHECK_IDAS_CALL(call) idas_check(call, #call)
 #define CHECK_KINSOL_CALL(call) kinsol_check(call, #call)
+#define CHECK_ARKODE_CALL(call) arkode_check(call, #call)
 
 /**
  * Map cvodes error flag to actually error msg. The most frequent
@@ -364,6 +366,94 @@ inline void idas_check(int flag, const char* func_name) {
     std::ostringstream ss;
     ss << func_name << " failed with error flag " << flag << ": \n"
        << idas_flag_msg(flag).at(1);
+    throw std::domain_error(ss.str());
+  }
+}
+
+/**
+ * Map ARKODE error flag to an error msg. Mirrors cvodes_flag_msg above;
+ * ARKODE reuses the same numbering scheme as CVODES for the codes that are
+ * shared between the two solvers.
+ *
+ * @param flag
+ *
+ * @return error msg string constant and actually informative msg
+ */
+inline std::array<std::string, 2> arkode_flag_msg(int flag) {
+  std::array<std::string, 2> msg;
+  switch (flag) {
+    case -1:
+      msg = {"ARK_TOO_MUCH_WORK",
+             "The solver took mxstep internal steps but could not reach "
+             "tout"};
+      break;  // NOLINT
+    case -2:
+      msg = {"ARK_TOO_MUCH_ACC",
+             "The solver could not satisfy the accuracy demanded by the user "
+             "for some internal step"};
+      break;  // NOLINT
+    case -3:
+      msg = {"ARK_ERR_FAILURE",
+             "Error test failures occurred too many times during one "
+             "internal time step or minimum step size was reached"};
+      break;  // NOLINT
+    case -4:
+      msg = {"ARK_CONV_FAILURE",
+             "Convergence test failures occurred too many times during one "
+             "internal time step or minimum step size was reached"};
+      break;  // NOLINT
+    case -8:
+      msg = {"ARK_RHSFUNC_FAIL",
+             "The right-hand side function failed in an unrecoverable "
+             "manner"};
+      break;  // NOLINT
+    case -9:
+      msg = {"ARK_FIRST_RHSFUNC_ERR",
+             "The right-hand side function failed at the first call"};
+      break;  // NOLINT
+    case -10:
+      msg = {"ARK_REPTD_RHSFUNC_ERR",
+             "The right-hand side function had repeated recoverable errors"};
+      break;  // NOLINT
+    case -11:
+      msg = {"ARK_UNREC_RHSFUNC_ERR",
+             "The right-hand side function had a recoverable error, but no "
+             "recovery is possible"};
+      break;  // NOLINT
+    case -19:
+      msg = {"ARK_CONSTR_FAIL",
+             "The inequality constraints were violated and the solver was "
+             "unable to recover"};
+      break;  // NOLINT
+    case -20:
+      msg = {"ARK_MEM_FAIL", "A memory allocation failed"};
+      break;  // NOLINT
+    case -21:
+      msg = {"ARK_MEM_NULL", "The arkode_mem argument was NULL"};
+      break;  // NOLINT
+    case -22:
+      msg = {"ARK_ILL_INPUT", "One of the function inputs is illegal"};
+      break;  // NOLINT
+    case -23:
+      msg = {"ARK_NO_MALLOC",
+             "The ARKODE memory block was not allocated by a call to an "
+             "*Init function"};
+      break;  // NOLINT
+    case -27:
+      msg = {"ARK_TOO_CLOSE",
+             "The output and initial times are too close to each other"};
+      break;  // NOLINT
+    default:
+      msg = {"ARK_UNKNOWN_ERROR", "Unrecognized ARKODE error flag"};
+  }
+  return msg;
+}
+
+inline void arkode_check(int flag, const char* func_name) {
+  if (flag < 0) {
+    std::ostringstream ss;
+    ss << func_name << " failed with error flag " << flag << ": \n"
+       << arkode_flag_msg(flag).at(1) << ".";
     throw std::domain_error(ss.str());
   }
 }
