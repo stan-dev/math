@@ -132,7 +132,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
             }
           },
           mix: {
-            runPod(image: image, memory: '128Gi') {
+            runPod(image: image, cpus: 8, memory: '192Gi') {
               stage('Mix Unit Tests') {
                 def local = 'CXXFLAGS+= -fsanitize=address\n'
                 if (noOptimize)
