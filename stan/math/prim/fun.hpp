@@ -326,7 +326,9 @@
 #include <stan/math/prim/fun/to_matrix.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/to_row_vector.hpp>
+#include <stan/math/prim/fun/to_row_vector_array.hpp>
 #include <stan/math/prim/fun/to_vector.hpp>
+#include <stan/math/prim/fun/to_vector_array.hpp>
 #include <stan/math/prim/fun/trace.hpp>
 #include <stan/math/prim/fun/trace_dot.hpp>
 #include <stan/math/prim/fun/trace_gen_inv_quad_form_ldlt.hpp>
