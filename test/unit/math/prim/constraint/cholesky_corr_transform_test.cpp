@@ -6,8 +6,9 @@ TEST(ProbTransform, CholeskyCorrelation4) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> L(4, 4);
-  L << 1, 0, 0, 0, -0.2, 0.9797959, 0, 0, 0.5, -0.3, 0.8124038, 0, 0.7, -0.2,
-      0.6, 0.3316625;
+  L << 1., 0., 0., 0., 0.137406408, 0.990514755, 0., 0., 0.182409918,
+      0.217317336, 0.958905521, 0., -0.13727584, 0.443593876, 0.837969972,
+      0.286681258;
 
   Matrix<double, Dynamic, 1> y = stan::math::cholesky_corr_free(L);
 
@@ -103,7 +104,8 @@ TEST(ProbTransform, CholeskyCorrelationRoundTrips) {
   test_cholesky_correlation_values(L2);
 
   Matrix<double, Dynamic, Dynamic> L4(4, 4);
-  L4 << 1, 0, 0, 0, -0.2, 0.9797959, 0, 0, 0.5, -0.3, 0.8124038, 0, 0.7, -0.2,
-      0.6, 0.3316625;
+  L4 << 1., 0., 0., 0., 0.14489293, 0.98944734, 0., 0., -0.050876204,
+      -0.884785168, 0.463213577, 0., -0.412684102, -0.49899983, -0.67896005,
+      0.345983023;
   test_cholesky_correlation_values(L4);
 }
