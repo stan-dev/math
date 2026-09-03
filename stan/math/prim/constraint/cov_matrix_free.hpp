@@ -38,8 +38,7 @@ template <typename T, require_eigen_t<T>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free(
     const T& y) {
   const auto& y_ref = to_ref(y);
-  check_square("cov_matrix_free", "y", y_ref);
-  check_nonzero_size("cov_matrix_free", "y", y_ref);
+  check_cov_matrix("cov_matrix_free", "y", y_ref);
 
   using std::log;
   int K = y_ref.rows();
