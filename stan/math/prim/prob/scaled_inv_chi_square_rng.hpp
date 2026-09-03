@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <boost/random/chi_squared_distribution.hpp>
@@ -39,6 +40,9 @@ scaled_inv_chi_square_rng(const T_deg& nu, const T_scale& s, RNG& rng) {
   static constexpr const char* function = "scaled_inv_chi_square_rng";
   check_consistent_sizes(function, "Location parameter", nu, "Scale Parameter",
                          s);
+  if (size_zero(nu, s)) {
+    return {};
+  }
   const auto& nu_ref = to_ref(nu);
   const auto& s_ref = to_ref(s);
   check_positive_finite(function, "Degrees of freedom parameter", nu_ref);

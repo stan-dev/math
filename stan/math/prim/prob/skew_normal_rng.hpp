@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/prob/normal_rng.hpp>
@@ -44,6 +45,9 @@ skew_normal_rng(const T_loc& mu, const T_scale& sigma, const T_shape& alpha,
   static constexpr const char* function = "skew_normal_rng";
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
                          sigma, "Shape Parameter", alpha);
+  if (size_zero(mu, sigma, alpha)) {
+    return {};
+  }
   const auto& mu_ref = to_ref(mu);
   const auto& sigma_ref = to_ref(sigma);
   const auto& alpha_ref = to_ref(alpha);
