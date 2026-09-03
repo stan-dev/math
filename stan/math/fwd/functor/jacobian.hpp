@@ -14,14 +14,14 @@ inline void jacobian(const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
   using Eigen::Dynamic;
   using Eigen::Matrix;
   Matrix<fvar<T>, Dynamic, 1> x_fvar(x.size());
-  J.resize(x_fvar.size(), x.size());
-  fx.resize(x_fvar.size());
   for (int k = 0; k < x.size(); ++k) {
     x_fvar(k) = fvar<T>(x(k), 0);
   }
   x_fvar(0) = fvar<T>(x(0), 1);
   Matrix<fvar<T>, Dynamic, 1> fx_fvar = f(x_fvar);
+  // size the outputs from the range of f, which is only known once f is applied
   fx = fx_fvar.val();
+  J.resize(fx_fvar.size(), x.size());
   J.col(0) = fx_fvar.d();
   const fvar<T> switch_fvar(0, 1);  // flips the tangents on and off
   for (int i = 1; i < x.size(); ++i) {
