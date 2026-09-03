@@ -1,6 +1,7 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
+#include <limits>
 #include <vector>
 
 // -----------------------------------------------------------------------
@@ -189,6 +190,112 @@ TEST(ProbMultinomialLogitGLM, negInfAlpha) {
   EXPECT_FLOAT_EQ(expected, logp);
 }
 
+TEST(ProbMultinomialLogitGLM, extremeFiniteLogitsStayOnLogScale) {
+  Eigen::MatrixXd x(1, 0);
+
+  auto check = [&](const std::vector<int>& counts,
+                   const Eigen::RowVectorXd& logits) {
+    std::vector<std::vector<int>> y{counts};
+    Eigen::MatrixXd beta(0, logits.size());
+    const double expected
+        = stan::math::multinomial_logit_lpmf(counts, logits.transpose());
+    const double actual
+        = stan::math::multinomial_logit_glm_lpmf(y, x, logits, beta);
+    EXPECT_TRUE(std::isfinite(actual));
+    EXPECT_NEAR(expected, actual, 1e-12);
+
+    const Eigen::RowVectorXd shifted = logits.array() + 1000000.0;
+    EXPECT_NEAR(actual,
+                stan::math::multinomial_logit_glm_lpmf(y, x, shifted, beta),
+                1e-10);
+    EXPECT_EQ(0,
+              stan::math::multinomial_logit_glm_lpmf<true>(y, x, logits, beta));
+    EXPECT_EQ(
+        0, stan::math::multinomial_logit_glm_lpmf<true>(y, x, shifted, beta));
+  };
+
+  Eigen::RowVectorXd logits2(2);
+  logits2 << 0, -1000;
+  check({1, 0}, logits2);
+  check({0, 1}, logits2);
+  check({0, 0}, logits2);
+
+  Eigen::RowVectorXd logits3(3);
+  logits3 << 1000, 0, -1000;
+  check({2, 1, 3}, logits3);
+  check({0, 4, 0}, logits3);
+}
+
+TEST(ProbMultinomialLogitGLM, zeroAndInfiniteBoundaries) {
+  Eigen::MatrixXd x(1, 0);
+  Eigen::MatrixXd beta(0, 2);
+  Eigen::RowVectorXd alpha(2);
+  alpha << 0, -stan::math::INFTY;
+
+  EXPECT_TRUE(std::isfinite(stan::math::multinomial_logit_glm_lpmf(
+      std::vector<std::vector<int>>{{2, 0}}, x, alpha, beta)));
+  EXPECT_EQ(-stan::math::INFTY,
+            stan::math::multinomial_logit_glm_lpmf(
+                std::vector<std::vector<int>>{{0, 1}}, x, alpha, beta));
+
+  alpha.setConstant(-stan::math::INFTY);
+  EXPECT_EQ(0, stan::math::multinomial_logit_glm_lpmf(
+                   std::vector<std::vector<int>>{{0, 0}}, x, alpha, beta));
+
+  Eigen::RowVectorXd alpha1(1);
+  alpha1 << 17;
+  Eigen::MatrixXd beta1(0, 1);
+  EXPECT_EQ(0, stan::math::multinomial_logit_glm_lpmf(
+                   std::vector<std::vector<int>>{{5}}, x, alpha1, beta1));
+
+  Eigen::MatrixXd x_empty_classes(2, 1);
+  x_empty_classes << 0.5, -0.3;
+  Eigen::RowVectorXd alpha_empty(0);
+  Eigen::MatrixXd beta_empty(1, 0);
+  std::vector<std::vector<int>> y_empty_classes(2);
+  EXPECT_EQ(0, stan::math::multinomial_logit_glm_lpmf(
+                   y_empty_classes, x_empty_classes, alpha_empty, beta_empty));
+  EXPECT_EQ(0, stan::math::multinomial_logit_glm_lpmf<true>(
+                   y_empty_classes, x_empty_classes, alpha_empty, beta_empty));
+  x_empty_classes(0, 0) = stan::math::INFTY;
+  EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf(
+                   y_empty_classes, x_empty_classes, alpha_empty, beta_empty),
+               std::domain_error);
+}
+
+TEST(ProbMultinomialLogitGLM, eigenExpressionsMatchEvaluatedInputs) {
+  std::vector<std::vector<int>> y{{2, 1, 3}, {0, 4, 1}};
+  Eigen::MatrixXd x_storage(4, 2);
+  x_storage << 0.1, 0.2, 1.0, -0.5, -0.3, 0.7, 0.4, -0.2;
+  Eigen::MatrixXd x_add(2, 2);
+  x_add << 0.2, -0.1, 0.3, 0.4;
+  Eigen::VectorXd alpha_col(3), alpha_add(3);
+  alpha_col << 0.1, -0.3, 0.2;
+  alpha_add << 0.2, 0.1, -0.2;
+  Eigen::MatrixXd beta_left(2, 2), beta_right(2, 3);
+  beta_left << 1.0, 0.2, -0.1, 0.8;
+  beta_right << 0.3, -0.2, 0.1, -0.1, 0.4, -0.3;
+
+  const auto x_eval = (x_storage.middleRows(1, 2) + x_add).eval();
+  const auto alpha_eval = (alpha_col + alpha_add).transpose().eval();
+  const auto beta_eval = (beta_left * beta_right).eval();
+  const double expected = stan::math::multinomial_logit_glm_lpmf(
+      y, x_eval, alpha_eval, beta_eval);
+  const double actual = stan::math::multinomial_logit_glm_lpmf(
+      y, x_storage.middleRows(1, 2) + x_add,
+      (alpha_col + alpha_add).transpose(), beta_left * beta_right);
+  EXPECT_DOUBLE_EQ(expected, actual);
+
+  Eigen::MatrixXd alpha_matrix(4, 3);
+  alpha_matrix << 0, 0, 0, 0.1, -0.3, 0.2, -0.2, 0.4, 0.1, 0, 0, 0;
+  EXPECT_DOUBLE_EQ(
+      stan::math::multinomial_logit_glm_lpmf(
+          y, x_eval, alpha_matrix.middleRows(1, 2).eval(), beta_eval),
+      stan::math::multinomial_logit_glm_lpmf(
+          y, x_storage.middleRows(1, 2) + x_add, alpha_matrix.middleRows(1, 2),
+          beta_left * beta_right));
+}
+
 // -----------------------------------------------------------------------
 // Error handling
 // -----------------------------------------------------------------------
@@ -223,16 +330,45 @@ TEST(ProbMultinomialLogitGLM, throwsCorrectly) {
   EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf(y, x, alpha_inf, beta),
                std::domain_error);
 
+  Eigen::RowVectorXd alpha_nan = alpha;
+  alpha_nan[0] = std::numeric_limits<double>::quiet_NaN();
+  EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf(y, x, alpha_nan, beta),
+               std::domain_error);
+
   // Infinite beta
   Eigen::MatrixXd beta_inf = beta;
   beta_inf(0, 0) = stan::math::INFTY;
   EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf(y, x, alpha, beta_inf),
                std::domain_error);
 
+  Eigen::MatrixXd beta_nan = beta;
+  beta_nan(0, 0) = std::numeric_limits<double>::quiet_NaN();
+  EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf(y, x, alpha, beta_nan),
+               std::domain_error);
+
   // Infinite x
   Eigen::MatrixXd x_inf = x;
   x_inf(0, 0) = stan::math::INFTY;
   EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf(y, x_inf, alpha, beta),
+               std::domain_error);
+
+  Eigen::MatrixXd x_nan = x;
+  x_nan(0, 0) = std::numeric_limits<double>::quiet_NaN();
+  EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf(y, x_nan, alpha, beta),
+               std::domain_error);
+
+  // Validation is not elided when propto=true and all parameters are constant.
+  EXPECT_THROW(
+      stan::math::multinomial_logit_glm_lpmf<true>(y, x_inf, alpha, beta),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::multinomial_logit_glm_lpmf<true>(y, x, alpha_inf, beta),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::multinomial_logit_glm_lpmf<true>(y, x, alpha, beta_inf),
+      std::domain_error);
+  EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf<true>(
+                   {{-1, 2, 3}, {2, 1, 0}}, x, alpha, beta),
                std::domain_error);
 
   // alpha cols mismatch with K (beta has 3 cols but alpha has 2 cols)

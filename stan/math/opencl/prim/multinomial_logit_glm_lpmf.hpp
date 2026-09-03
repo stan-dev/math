@@ -12,10 +12,12 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 
+#include <type_traits>
 #include <vector>
 
 namespace stan {
@@ -50,7 +52,9 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
     const std::vector<std::vector<int>>& y, T_x&& x, T_alpha&& alpha,
     T_beta&& beta) {
   if (size_zero(y)) {
-    return 0;
+    return multinomial_logit_glm_lpmf<propto>(
+        matrix_cl<int>(0, beta.cols()), std::forward<T_x>(x),
+        std::forward<T_alpha>(alpha), std::forward<T_beta>(beta));
   }
   return multinomial_logit_glm_lpmf<propto>(
       matrix_cl<int>(as_array_or_scalar(y)), std::forward<T_x>(x),
@@ -63,7 +67,8 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
  * This is an OpenCL overload of
  * `prim/prob/multinomial_logit_glm_lpmf.hpp`.
  * Alpha can be either a shared 1×K row vector or an N×K per-instance matrix.
- * @tparam T_y expression of the outcome count matrix (N×K kernel expression)
+ * @tparam T_y nonscalar `int`-valued expression of the outcome count matrix
+ * (N×K kernel expression)
  * @tparam T_x expression of the design matrix (N×M kernel expression)
  * @tparam T_alpha expression of the intercept (1×K or N×K kernel expression)
  * @tparam T_beta expression of the weight matrix (M×K kernel expression)
@@ -81,8 +86,10 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
  */
 template <bool propto = false, typename T_y, typename T_x, typename T_alpha,
           typename T_beta,
-          require_all_prim_or_rev_kernel_expression_t<T_y, T_x, T_alpha,
-                                                      T_beta>* = nullptr>
+          require_nonscalar_prim_or_rev_kernel_expression_t<T_y>* = nullptr,
+          require_all_prim_or_rev_kernel_expression_t<T_x, T_alpha,
+                                                      T_beta>* = nullptr,
+          require_st_same<T_y, int>* = nullptr>
 inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
     T_y&& y, T_x&& x, T_alpha&& alpha, T_beta&& beta) {
   using T_partials_return = partials_return_t<T_x, T_alpha, T_beta>;
@@ -110,16 +117,39 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
     return 0;
   }
 
-  if constexpr (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
-    return 0;
-  }
-
   decltype(auto) y_val = eval(value_of(y));
   decltype(auto) x_val = eval(value_of(x));
   decltype(auto) alpha_val = eval(value_of(alpha));
   decltype(auto) beta_val = eval(value_of(beta));
 
+  auto validate_inputs = [&]() {
+    auto check_y = check_cl(function, "outcome counts", y_val, "nonnegative");
+    auto check_x = check_cl(function, "Design matrix", x_val, "finite");
+    auto check_alpha = check_cl(function, "Intercept", alpha_val,
+                                "less than positive infinity");
+    auto check_beta = check_cl(function, "Weight matrix", beta_val, "finite");
+    results(check_y, check_x, check_alpha, check_beta) = expressions(
+        y_val >= 0, isfinite(x_val), alpha_val < INFTY, isfinite(beta_val));
+  };
+
+  if (N_classes == 0) {
+    validate_inputs();
+    return 0;
+  }
+
+  if constexpr (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
+    validate_inputs();
+    return 0;
+  }
+
   matrix_cl<double> x_beta_cl = x_val * beta_val;
+  decltype(auto) alpha_val_cl = [&]() -> decltype(auto) {
+    if constexpr (std::is_same_v<scalar_type_t<decltype(alpha_val)>, double>) {
+      return (alpha_val);
+    } else {
+      return matrix_cl<double>(cast<double>(alpha_val));
+    }
+  }();
 
   const int local_size
       = opencl_kernels::multinomial_logit_glm.get_option("LOCAL_SIZE_");
@@ -136,7 +166,7 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
   try {
     opencl_kernels::multinomial_logit_glm(
         cl::NDRange(local_size * wgs), cl::NDRange(local_size), logp_cl,
-        delta_cl, y_val, x_beta_cl, alpha_val, N_instances, N_classes,
+        delta_cl, y_val, x_beta_cl, alpha_val_cl, N_instances, N_classes,
         is_alpha_vector, need_delta, !propto);
   } catch (const cl::Error& e) {
     check_opencl_error(function, e);
@@ -145,11 +175,7 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
   if (!std::isfinite(logp)) {
-    check_cl(function, "outcome counts", y_val, "nonnegative") = y_val >= 0;
-    check_cl(function, "Design matrix", x_val, "finite") = isfinite(x_val);
-    check_cl(function, "Intercept", alpha_val, "finite") = isfinite(alpha_val);
-    check_cl(function, "Weight matrix", beta_val, "finite")
-        = isfinite(beta_val);
+    validate_inputs();
   }
 
   auto ops_partials = make_partials_propagator(std::forward<T_x>(x),

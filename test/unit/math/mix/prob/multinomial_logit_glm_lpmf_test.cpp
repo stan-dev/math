@@ -97,3 +97,22 @@ TEST_F(AgradRev, mathMixScalFun_multinomial_logit_glm_lpmf_boundaries) {
     stan::test::expect_ad(f(y), x_big, alpha_big_mat, beta_big);
   }
 }
+
+TEST_F(AgradRev, mathMixScalFun_multinomial_logit_glm_lpmf_extreme_finite) {
+  auto f = [](const auto& y) {
+    return [=](const auto& x, const auto& alpha, const auto& beta) {
+      return stan::math::multinomial_logit_glm_lpmf(y, x, alpha, beta);
+    };
+  };
+  std::vector<std::vector<int>> y{{0, 1}};
+  Eigen::MatrixXd x(1, 1);
+  x << 0;
+  Eigen::RowVectorXd alpha_row(2);
+  alpha_row << 0, -1000;
+  Eigen::MatrixXd alpha_mat(1, 2);
+  alpha_mat = alpha_row;
+  Eigen::MatrixXd beta = Eigen::MatrixXd::Zero(1, 2);
+
+  stan::test::expect_ad(f(y), x, alpha_row, beta);
+  stan::test::expect_ad(f(y), x, alpha_mat, beta);
+}

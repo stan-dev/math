@@ -3,17 +3,18 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/add.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
-#include <stan/math/prim/fun/lmultiply.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
-#include <stan/math/prim/fun/to_matrix.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
-#include <cmath>
+#include <limits>
 #include <vector>
 
 namespace stan {
@@ -110,19 +111,28 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
   if (size_zero(y)) {
     return 0;
   }
+
+  decltype(auto) x_ref = to_ref(std::forward<T_x>(x));
+  decltype(auto) alpha_ref = to_ref(std::forward<T_alpha>(alpha));
+  decltype(auto) beta_ref = to_ref(std::forward<T_beta>(beta));
+
   for (size_t n = 0; n < N_instances; ++n) {
     check_size_match(function, "Size of outcome vector", y[n].size(),
                      "number of classes", N_classes);
     check_nonnegative(function, "outcome counts", y[n]);
   }
+  check_finite(function, "Matrix of independent variables", x_ref);
+  check_finite(function, "Weight matrix", beta_ref);
+  check_less(function, "Intercept", alpha_ref,
+             std::numeric_limits<double>::infinity());
+
+  if (N_classes == 0) {
+    return 0;
+  }
 
   if constexpr (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;
   }
-
-  decltype(auto) x_ref = to_ref(std::forward<T_x>(x));
-  decltype(auto) alpha_ref = to_ref(std::forward<T_alpha>(alpha));
-  decltype(auto) beta_ref = to_ref(std::forward<T_beta>(beta));
 
   decltype(auto) x_val = to_ref_if<is_autodiff_v<T_beta>>(value_of(x_ref));
   decltype(auto) beta_val = to_ref_if<is_autodiff_v<T_x>>(value_of(beta_ref));
@@ -134,33 +144,44 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
     eta = add(multiply(x_val, beta_val), value_of(alpha_ref)).array();
   }
 
-  // Row-max shift for numerical stability; cancels in log-softmax.
-  const auto exp_eta = exp((eta.colwise() - eta.rowwise().maxCoeff()));
-  const Array<eta_ret_t, Dynamic, Dynamic> softmax_mat
-      = exp_eta.colwise() / exp_eta.rowwise().sum();
-
   const Array<double, Dynamic, Dynamic> y_mat = as_array_or_scalar(y);
   const Array<double, Dynamic, 1> instance_totals = y_mat.rowwise().sum();
 
-  // lmultiply implements 0*log(0)=0: classes with softmax=0 and y=0 contribute
-  // 0.
-  T_partials_return logp = lmultiply(y_mat, softmax_mat).sum();
+  // Materialize each reused part of the shifted log-softmax exactly once.
+  const Array<eta_ret_t, Dynamic, 1> eta_max = eta.rowwise().maxCoeff();
+  const Array<eta_ret_t, Dynamic, Dynamic> shifted_eta
+      = eta.colwise() - eta_max;
+  const Array<eta_ret_t, Dynamic, Dynamic> exp_shifted = exp(shifted_eta);
+  const Array<eta_ret_t, Dynamic, 1> sum_exp = exp_shifted.rowwise().sum();
+
+  T_partials_return logp = 0;
+  for (size_t n = 0; n < N_instances; ++n) {
+    for (size_t k = 0; k < N_classes; ++k) {
+      if (y_mat(n, k) != 0) {
+        logp += y_mat(n, k) * shifted_eta(n, k);
+      }
+    }
+    if (instance_totals(n) != 0) {
+      logp -= instance_totals(n) * log(sum_exp(n));
+    }
+  }
   if constexpr (include_summand<propto>::value) {
     logp += lgamma(instance_totals + 1.0).sum() - lgamma(y_mat + 1.0).sum();
   }
 
-  if (!std::isfinite(value_of_rec(logp))) {
-    check_finite(function, "Matrix of independent variables", x_ref);
-    check_finite(function, "Weight matrix", beta_ref);
-    check_finite(function, "Intercept", alpha_ref);
-  }
-
   auto ops_partials = make_partials_propagator(x_ref, alpha_ref, beta_ref);
   if constexpr (is_any_autodiff_v<T_x, T_alpha, T_beta>) {
-    const auto delta
-        = (y_mat
-           - softmax_mat * instance_totals.replicate(1, softmax_mat.cols()))
-              .eval();
+    Array<eta_ret_t, Dynamic, 1> instance_scale(N_instances);
+    for (size_t n = 0; n < N_instances; ++n) {
+      instance_scale(n)
+          = instance_totals(n) == 0 ? 0 : instance_totals(n) / sum_exp(n);
+    }
+    auto delta = (y_mat - exp_shifted.colwise() * instance_scale).eval();
+    for (size_t n = 0; n < N_instances; ++n) {
+      if (instance_totals(n) == 0) {
+        delta.row(n).setZero();
+      }
+    }
 
     if constexpr (is_autodiff_v<T_x>) {
       partials<0>(ops_partials)

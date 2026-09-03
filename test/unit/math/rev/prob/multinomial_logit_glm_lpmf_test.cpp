@@ -188,6 +188,179 @@ TYPED_TEST(ProbDistributionsMultinomialLogitGLM, matrix_alpha_grads) {
       EXPECT_NEAR(alpha1.adj()(n, k), alpha2.adj()(n, k), eps);
 }
 
+TYPED_TEST(ProbDistributionsMultinomialLogitGLM,
+           extreme_broadcast_alpha_value_and_gradients) {
+  using stan::math::multinomial_logit_glm_lpmf;
+  using stan::math::var;
+  using matrix_v = typename TypeParam::matrix_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
+  std::vector<std::vector<int>> y{{0, 1}, {1, 0}};
+  Eigen::MatrixXd x_val(2, 1);
+  x_val << 0, 0;
+  Eigen::RowVectorXd alpha_val(2);
+  alpha_val << 0, -1000;
+  Eigen::MatrixXd beta_val(1, 2);
+  beta_val << 0, 0;
+
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> x1 = x_val,
+                                                     beta1 = beta_val;
+  Eigen::Matrix<var, 1, Eigen::Dynamic> alpha1 = alpha_val;
+  matrix_v x2 = x_val;
+  row_vector_v alpha2 = alpha_val;
+  matrix_v beta2 = beta_val;
+
+  var res1 = multinomial_logit_glm_simple_lpmf<false>(y, x1, alpha1, beta1);
+  var res2 = multinomial_logit_glm_lpmf(y, x2, alpha2, beta2);
+  (res1 + res2).grad();
+  EXPECT_NEAR(res1.val(), res2.val(), 1e-12);
+  EXPECT_NEAR(-1000, res2.val(), 1e-12);
+  EXPECT_TRUE(x1.adj().isApprox(x2.adj(), 1e-12));
+  EXPECT_TRUE(alpha1.adj().isApprox(alpha2.adj(), 1e-12));
+  EXPECT_TRUE(beta1.adj().isApprox(beta2.adj(), 1e-12));
+
+  stan::math::set_zero_all_adjoints();
+  res1 = multinomial_logit_glm_simple_lpmf<true>(y, x1, alpha1, beta1);
+  res2 = multinomial_logit_glm_lpmf<true>(y, x2, alpha2, beta2);
+  (res1 + res2).grad();
+  EXPECT_NEAR(res1.val(), res2.val(), 1e-12);
+  EXPECT_NEAR(-1000, res2.val(), 1e-12);
+  EXPECT_TRUE(x1.adj().isApprox(x2.adj(), 1e-12));
+  EXPECT_TRUE(alpha1.adj().isApprox(alpha2.adj(), 1e-12));
+  EXPECT_TRUE(beta1.adj().isApprox(beta2.adj(), 1e-12));
+}
+
+TYPED_TEST(ProbDistributionsMultinomialLogitGLM,
+           extreme_matrix_alpha_value_and_gradients) {
+  using stan::math::multinomial_logit_glm_lpmf;
+  using stan::math::var;
+  using matrix_v = typename TypeParam::matrix_v;
+  std::vector<std::vector<int>> y{{0, 1, 0}, {1, 0, 2}};
+  Eigen::MatrixXd x_val(2, 1);
+  x_val << 0, 0;
+  Eigen::MatrixXd alpha_val(2, 3);
+  alpha_val << 1000, 0, -1000, 0, -1000, -2000;
+  Eigen::MatrixXd beta_val = Eigen::MatrixXd::Zero(1, 3);
+
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> x1 = x_val,
+                                                     alpha1 = alpha_val,
+                                                     beta1 = beta_val;
+  matrix_v x2 = x_val;
+  matrix_v alpha2 = alpha_val;
+  matrix_v beta2 = beta_val;
+
+  var res1 = 0;
+  auto lin = stan::math::to_ref(stan::math::multiply(x1, beta1) + alpha1);
+  for (int n = 0; n < x_val.rows(); ++n) {
+    res1 += stan::math::multinomial_logit_lpmf(y[n],
+                                               lin.row(n).transpose().eval());
+  }
+  var res2 = multinomial_logit_glm_lpmf(y, x2, alpha2, beta2);
+  (res1 + res2).grad();
+  EXPECT_NEAR(res1.val(), res2.val(), 1e-10);
+  EXPECT_TRUE(x1.adj().isApprox(x2.adj(), 1e-10));
+  EXPECT_TRUE(alpha1.adj().isApprox(alpha2.adj(), 1e-10));
+  EXPECT_TRUE(beta1.adj().isApprox(beta2.adj(), 1e-10));
+
+  stan::math::set_zero_all_adjoints();
+  res1 = 0;
+  for (int n = 0; n < x_val.rows(); ++n) {
+    res1 += stan::math::multinomial_logit_lpmf<true>(
+        y[n], lin.row(n).transpose().eval());
+  }
+  res2 = multinomial_logit_glm_lpmf<true>(y, x2, alpha2, beta2);
+  (res1 + res2).grad();
+  EXPECT_NEAR(res1.val(), res2.val(), 1e-10);
+  EXPECT_TRUE(x1.adj().isApprox(x2.adj(), 1e-10));
+  EXPECT_TRUE(alpha1.adj().isApprox(alpha2.adj(), 1e-10));
+  EXPECT_TRUE(beta1.adj().isApprox(beta2.adj(), 1e-10));
+}
+
+TYPED_TEST(ProbDistributionsMultinomialLogitGLM,
+           zero_total_all_neg_inf_and_zero_classes_have_zero_gradients) {
+  using stan::math::multinomial_logit_glm_lpmf;
+  using stan::math::var;
+  using matrix_v = typename TypeParam::matrix_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
+
+  Eigen::MatrixXd x_val(1, 1);
+  x_val << 0.4;
+  Eigen::MatrixXd alpha_val
+      = Eigen::MatrixXd::Constant(1, 2, -stan::math::INFTY);
+  Eigen::MatrixXd beta_val(1, 2);
+  beta_val << 0.2, -0.3;
+  matrix_v x = x_val;
+  matrix_v alpha = alpha_val;
+  matrix_v beta = beta_val;
+  var res = multinomial_logit_glm_lpmf(std::vector<std::vector<int>>{{0, 0}}, x,
+                                       alpha, beta);
+  res.grad();
+  EXPECT_EQ(0, res.val());
+  EXPECT_TRUE(x.adj().isZero());
+  EXPECT_TRUE(alpha.adj().isZero());
+  EXPECT_TRUE(beta.adj().isZero());
+
+  stan::math::set_zero_all_adjoints();
+  Eigen::MatrixXd x0_val(2, 1);
+  x0_val << 0.5, -0.2;
+  matrix_v x0 = x0_val;
+  row_vector_v alpha0 = Eigen::RowVectorXd(0);
+  matrix_v beta0 = Eigen::MatrixXd(1, 0);
+  var res0 = multinomial_logit_glm_lpmf(std::vector<std::vector<int>>(2), x0,
+                                        alpha0, beta0);
+  res0.grad();
+  EXPECT_EQ(0, res0.val());
+  EXPECT_TRUE(x0.adj().isZero());
+}
+
+TEST_F(AgradRev, MultinomialLogitGLM_eigen_expression_gradients) {
+  using stan::math::multinomial_logit_glm_lpmf;
+  using stan::math::var;
+  std::vector<std::vector<int>> y{{2, 1, 3}, {0, 4, 1}};
+
+  Eigen::MatrixXd x_storage_val(4, 2);
+  x_storage_val << 0.1, 0.2, 1.0, -0.5, -0.3, 0.7, 0.4, -0.2;
+  Eigen::MatrixXd x_add_val(2, 2);
+  x_add_val << 0.2, -0.1, 0.3, 0.4;
+  Eigen::VectorXd alpha_col_val(3), alpha_add_val(3);
+  alpha_col_val << 0.1, -0.3, 0.2;
+  alpha_add_val << 0.2, 0.1, -0.2;
+  Eigen::MatrixXd beta_left_val(2, 2), beta_right_val(2, 3);
+  beta_left_val << 1.0, 0.2, -0.1, 0.8;
+  beta_right_val << 0.3, -0.2, 0.1, -0.1, 0.4, -0.3;
+
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> x_storage1 = x_storage_val;
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> x_add1 = x_add_val;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> alpha_col1 = alpha_col_val;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> alpha_add1 = alpha_add_val;
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> beta_left1 = beta_left_val;
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> beta_right1
+      = beta_right_val;
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> x_storage2 = x_storage_val;
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> x_add2 = x_add_val;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> alpha_col2 = alpha_col_val;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> alpha_add2 = alpha_add_val;
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> beta_left2 = beta_left_val;
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> beta_right2
+      = beta_right_val;
+
+  var expected = multinomial_logit_glm_lpmf(
+      y, (x_storage1.middleRows(1, 2) + x_add1).eval(),
+      (alpha_col1 + alpha_add1).transpose().eval(),
+      (beta_left1 * beta_right1).eval());
+  var actual = multinomial_logit_glm_lpmf(
+      y, x_storage2.middleRows(1, 2) + x_add2,
+      (alpha_col2 + alpha_add2).transpose(), beta_left2 * beta_right2);
+  (expected + actual).grad();
+
+  EXPECT_NEAR(expected.val(), actual.val(), 1e-12);
+  EXPECT_TRUE(x_storage1.adj().isApprox(x_storage2.adj(), 1e-12));
+  EXPECT_TRUE(x_add1.adj().isApprox(x_add2.adj(), 1e-12));
+  EXPECT_TRUE(alpha_col1.adj().isApprox(alpha_col2.adj(), 1e-12));
+  EXPECT_TRUE(alpha_add1.adj().isApprox(alpha_add2.adj(), 1e-12));
+  EXPECT_TRUE(beta_left1.adj().isApprox(beta_left2.adj(), 1e-12));
+  EXPECT_TRUE(beta_right1.adj().isApprox(beta_right2.adj(), 1e-12));
+}
+
 TYPED_TEST(ProbDistributionsMultinomialLogitGLM, interfaces) {
   using stan::math::multinomial_logit_glm_lpmf;
   using matrix_v = typename TypeParam::matrix_v;
