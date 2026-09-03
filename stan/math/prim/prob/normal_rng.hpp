@@ -44,6 +44,10 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type normal_rng(
   check_finite(function, "Location parameter", mu_ref);
   check_positive_finite(function, "Scale parameter", sigma_ref);
 
+  if (size_zero(mu_ref, sigma_ref)) {
+    return {};
+  }
+
   scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
   scalar_seq_view<T_sigma_ref> sigma_vec(sigma_ref);
   size_t N = max_size(mu, sigma);
