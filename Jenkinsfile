@@ -216,12 +216,14 @@ LDFLAGS_OPENCL=-L/usr/local/cuda/targets/x86_64-linux/lib
             runPod(image: image, cpus: 16, memory: '128Gi') {
               stage('Threading tests') {
                 def local = "CXX=$CLANG_CXX -Werror\nSTAN_THREADS=true\n"
-                if (mainBranch) {
-                  runTests(local, "test/unit")
-                } else {
-                  runTests(local, "test/unit -f thread")
-                  runTests(local, "test/unit -f map_rect")
-                  runTests(local, "test/unit -f reduce_sum")
+                withEnv(['STAN_NUM_THREADS=4', 'PARALLEL=4']) {
+                  if (mainBranch) {
+                    runTests(local, "test/unit")
+                  } else {
+                    runTests(local, "test/unit -f thread")
+                    runTests(local, "test/unit -f map_rect")
+                    runTests(local, "test/unit -f reduce_sum")
+                  }
                 }
               }
             }
