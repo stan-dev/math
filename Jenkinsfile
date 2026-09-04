@@ -245,7 +245,7 @@ LDFLAGS_OPENCL=-L/usr/local/cuda/targets/x86_64-linux/lib
           sh """
             $cmd > changed-tests
             if [ -s changed-tests ] ; then
-              ./runTests.py -j${cores_per_test*parallel_tests} --make-only `< changed-tests`
+              ./runTests.py -j${cores_per_test*parallel_tests} --make-only `cat changed-tests`
               unset PARALLEL
               parallel --halt now,fail=1 -r -j$parallel_tests ./runTests.py --test-only -j$cores_per_test {} < changed-tests
             fi
