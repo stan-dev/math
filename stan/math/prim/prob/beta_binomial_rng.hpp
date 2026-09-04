@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/prob/binomial_rng.hpp>
 #include <stan/math/prim/prob/beta_rng.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 
 namespace stan {
 namespace math {
@@ -38,6 +39,10 @@ beta_binomial_rng(const T_N &N, const T_shape1 &alpha, const T_shape2 &beta,
   static constexpr const char *function = "beta_binomial_rng";
   check_consistent_sizes(function, "First prior sample size parameter", alpha,
                          "Second prior sample size parameter", beta);
+
+  if (size_zero(N, alpha, beta)) {
+    return {};
+  }
 
   T_N_ref N_ref = N;
   T_alpha_ref alpha_ref = alpha;
