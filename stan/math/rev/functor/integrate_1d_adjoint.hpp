@@ -40,7 +40,7 @@ namespace internal {
  *
  * `shift_gradient_integrand`: when true (and the value integral `I` is finite
  * and non-zero) each component adjoint is computed as
- * `integrator(d f / d arg + f) - I` instead of `integrator(d f / d arg)`,
+ * `integrator(d f / d arg + c f) - c I` instead of `integrator(d f / d arg)`,
  * which can make the computation better behaving.
  *
  * @tparam shift_gradient_integrand see above
@@ -102,6 +102,9 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_adjoint(
   if constexpr (is_any_var_scalar_v<Args...>) {
     const bool shift = shift_gradient_integrand && integral != 0.0
                        && !is_inf(integral) && !is_nan(integral);
+    // Shift constant. The inverse golden ratio is unlikely to be a
+    // saturated gradient.
+    constexpr double shift_c = 0.6180339887498949;
     auto args_adj = make_zeroed_arena(std::forward_as_tuple(args...));
     {
       nested_rev_autodiff argument_nest;
@@ -121,9 +124,9 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_adjoint(
           if (is_nan(gradient) && fx.val() == 0) {
             gradient = 0.0;
           }
-          return shift ? gradient + fx.val() : gradient;
+          return shift ? gradient + shift_c * fx.val() : gradient;
         });
-        return shift ? result - integral : result;
+        return shift ? result - shift_c * integral : result;
       };
       std::size_t param_index = 0;
       auto assign_grad = [&](auto&& adj, auto&& target) {
