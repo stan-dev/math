@@ -72,7 +72,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
               recipientProviders: [[$class: 'RequesterRecipientProvider']],
               to: env.CHANGE_AUTHOR_EMAIL)
           sh '''
-            git add -u src
+            git add -u stan test
             git commit -m "[Jenkins] auto-formatting by `clang-format --version`"
           '''
           gitPush(gitScm: scmGit(
