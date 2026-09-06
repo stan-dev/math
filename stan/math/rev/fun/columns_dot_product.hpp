@@ -35,11 +35,11 @@ inline Eigen::Matrix<return_type_t<Mat1, Mat2>, 1,
                      std::decay_t<Mat1>::ColsAtCompileTime>
 columns_dot_product(Mat1&& v1, Mat2&& v2) {
   check_matching_dims("check_matching_dims", "v1", v1, "v2", v2);
-  Eigen::Matrix<var, 1, std::decay_t<Mat1>::ColsAtCompileTime> ret(1,
-                                                                   v1.cols());
+  const size_t v1_cols = v1.cols();
+  Eigen::Matrix<var, 1, std::decay_t<Mat1>::ColsAtCompileTime> ret(1, v1_cols);
   decltype(auto) v1_ref = to_ref(std::forward<Mat1>(v1));
   decltype(auto) v2_ref = to_ref(std::forward<Mat2>(v2));
-  for (size_type j = 0; j < v1.cols(); ++j) {
+  for (size_type j = 0; j < v1_cols; ++j) {
     ret.coeffRef(j) = dot_product(v1_ref.col(j), v2_ref.col(j));
   }
   return ret;
