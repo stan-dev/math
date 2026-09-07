@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <boost/random/cauchy_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -39,6 +40,10 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type cauchy_rng(
   using T_sigma_ref = ref_type_t<T_scale>;
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
                          sigma);
+  if (size_zero(mu, sigma)) {
+    return {};
+  }
+
   T_mu_ref mu_ref = mu;
   T_sigma_ref sigma_ref = sigma;
   check_finite(function, "Location parameter", mu_ref);

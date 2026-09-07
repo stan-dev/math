@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <boost/random/weibull_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -39,6 +40,9 @@ inline typename VectorBuilder<true, double, T_shape, T_scale>::type weibull_rng(
   static constexpr const char* function = "weibull_rng";
   check_consistent_sizes(function, "Shape parameter", alpha, "Scale Parameter",
                          sigma);
+  if (size_zero(alpha, sigma)) {
+    return {};
+  }
   T_alpha_ref alpha_ref = alpha;
   T_sigma_ref sigma_ref = sigma;
   check_positive_finite(function, "Shape parameter", alpha_ref);
