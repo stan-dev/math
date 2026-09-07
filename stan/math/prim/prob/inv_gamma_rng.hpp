@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -39,6 +40,10 @@ inv_gamma_rng(const T_shape& alpha, const T_scale& beta, RNG& rng) {
   static constexpr const char* function = "inv_gamma_rng";
   check_consistent_sizes(function, "Shape parameter", alpha, "Scale Parameter",
                          beta);
+  if (size_zero(alpha, beta)) {
+    return {};
+  }
+
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
   check_positive_finite(function, "Shape parameter", alpha_ref);
