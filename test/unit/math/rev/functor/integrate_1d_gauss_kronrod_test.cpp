@@ -528,7 +528,7 @@ struct f_odd {
       const T1 &x, const T2 &xc, std::ostream *msgs,
       const std::vector<T3> &theta, const std::vector<double> &x_r,
       const std::vector<int> &x_i) const {
-    return theta[0] * x * exp(-x * x);   // odd: integral over [-1, 1] is 0
+    return theta[0] * x * exp(-x * x);  // odd: integral over [-1, 1] is 0
   }
 };
 
@@ -538,7 +538,7 @@ struct f_negative {
       const T1 &x, const T2 &xc, std::ostream *msgs,
       const std::vector<T3> &theta, const std::vector<double> &x_r,
       const std::vector<int> &x_i) const {
-    return -theta[0] * exp(-x * x);      // negative everywhere, I < 0
+    return -theta[0] * exp(-x * x);  // negative everywhere, I < 0
   }
 };
 
@@ -572,4 +572,4 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_GradientShift_guards) {
   }
 }
 
-}
+}  // namespace integrate_1d_gk_test
