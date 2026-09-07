@@ -72,7 +72,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
               recipientProviders: [[$class: 'RequesterRecipientProvider']],
               to: env.CHANGE_AUTHOR_EMAIL)
           sh '''
-            git add -u src
+            git add -u stan test
             git commit -m "[Jenkins] auto-formatting by `clang-format --version`"
           '''
           gitPush(gitScm: scmGit(
@@ -158,9 +158,15 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
             runPod(image: image, memory: '32Gi') {
               stage('Laplace Unit Tests') {
                 def local = 'CXXFLAGS+= -march=native -mtune=native\nO=3\n'
-                if (!noOptimize)
-                  local += 'CXXFLAGS+= -fsanitize=address'
+
                 runTests(local, "test/unit/math/laplace/*_test.cpp")
+
+                if (mainBranch) {
+                  // only run ASAN on a selected test to avoid extremely long CI times
+                  sh 'make clean'
+                  local += 'CXXFLAGS+= -fsanitize=address'
+                  runTests(local, "test/unit/math/laplace/laplace_marginal_lpdf_moto_test.cpp")
+                }
               }
             }
           },
@@ -186,7 +192,7 @@ LDFLAGS_OPENCL=-L/usr/local/cuda/targets/x86_64-linux/lib
         parallel failFast: true,
           mpi: {
             runPod(image: image) {
-              stage('Laplace Unit Tests') {
+              stage('MPI Tests') {
                 def local = "CXX=$MPICXX\nCXX_TYPE=gcc\nSTAN_MPI=true\n"
                 runTests(local, "test/unit/math/prim/functor")
                 runTests(local, "test/unit/math/rev/functor")
@@ -213,10 +219,10 @@ LDFLAGS_OPENCL=-L/usr/local/cuda/targets/x86_64-linux/lib
             }
           },
           thread: {
-            runPod(image: image, cpus: 16, memory: '128Gi') {
+            runPod(image: image, cpus: 8, memory: '128Gi') {
               stage('Threading tests') {
                 def local = "CXX=$CLANG_CXX -Werror\nSTAN_THREADS=true\n"
-                withEnv(['STAN_NUM_THREADS=4', 'PARALLEL=4']) {
+                withEnv(['STAN_NUM_THREADS=4', 'PARALLEL=8']) { // runTests currently only runs 1 test at a time post-build
                   if (mainBranch) {
                     runTests(local, "test/unit")
                   } else {
