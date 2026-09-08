@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUN_PCHIP_HPP
-#define STAN_MATH_PRIM_FUN_PCHIP_HPP
+#ifndef STAN_MATH_PRIM_FUN_INTERP1_PCHIP_HPP
+#define STAN_MATH_PRIM_FUN_INTERP1_PCHIP_HPP
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
@@ -33,8 +33,8 @@ inline std::tuple<
     Eigen::Matrix<return_type_t<EigVecX, EigVecY>, Eigen::Dynamic,
                   Eigen::Dynamic>,
     Eigen::Matrix<return_type_t<EigVecX>, Eigen::Dynamic, 1>>
-pchip_setup(const EigVecX& xk, const EigVecY& yk) {
-  static constexpr const char* function = "pchip_setup";
+interp1_pchip_setup(const EigVecX& xk, const EigVecY& yk) {
+  static constexpr const char* function = "interp1_pchip_setup";
   const auto& xk_ref = to_ref(xk);
   const auto& yk_ref = to_ref(yk);
 
@@ -64,14 +64,14 @@ pchip_setup(const EigVecX& xk, const EigVecY& yk) {
  * @tparam Coef type of the coefficient matrix
  * @tparam Knots type of the knot locations
  * @param x Location at which to evaluate the interpolation.
- * @param W Tuple returned by `pchip_setup`.
+ * @param W Tuple returned by `interp1_pchip_setup`.
  * @return `x`
  * @throw std::invalid_argument if `W` does not have the expected dimensions
  */
 template <typename T, typename Coef, typename Knots,
           require_stan_scalar_t<T>* = nullptr>
-inline T pchip_eval(const T& x, const std::tuple<Coef, Knots>& W) {
-  static constexpr const char* function = "pchip_eval";
+inline T interp1_pchip_eval(const T& x, const std::tuple<Coef, Knots>& W) {
+  static constexpr const char* function = "interp1_pchip_eval";
   const auto& coef = std::get<0>(W);
   const auto& xk = std::get<1>(W);
 
