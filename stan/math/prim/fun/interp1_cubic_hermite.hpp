@@ -13,15 +13,17 @@ namespace math {
 /**
  * Precompute storage for cubic Hermite interpolation.
  *
- * This function sets up cubic Hermite interpolation by storing the knot data
- * and user-provided derivatives. It validates the input data and returns
- * a coefficient matrix with shape (K-1) x 4, where each row contains the four
- * coefficients for the cubic polynomial in that interval.
- *
- * See boost/math/interpolators/detail/cubic_hermite_detail.hpp for algorithm
- * details. The cubic Hermite spline uses the representation:
+ * This function sets up cubic Hermite interpolation by computing, for each
+ * interval `[xk(i), xk(i + 1)]`, the coefficients of the cubic polynomial
+ *   y(x) = a0 + a1 * dx + a2 * dx^2 + a3 * dx^3,
+ * where `dx = x - xk(i)`. These coefficients are obtained by rewriting the
+ * cubic Hermite basis representation
  *   y(t) = (1-t)^2 * (y0*(1+2*t) + s0*(x-x0)) + t^2 * (y1*(3-2*t) + dx*s1*(t-1))
- * where t = (x - x0) / (x1 - x0).
+ * (with `t = (x - x0) / (x1 - x0)`, `x0 = xk(i)`, `x1 = xk(i + 1)`,
+ * `y0 = yk(i)`, `y1 = yk(i + 1)`, `s0 = dydxk(i)`, `s1 = dydxk(i + 1)`) as a
+ * polynomial in `dx` rather than in `t`. See
+ * boost/math/interpolators/detail/cubic_hermite_detail.hpp for background on
+ * the cubic Hermite spline.
  *
  * @tparam EigVecX type of the knot locations
  * @tparam EigVecY type of the knot values
@@ -58,8 +60,27 @@ interp1_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
 
   using coef_t = return_type_t<EigVecX, EigVecY>;
   using xk_t = return_type_t<EigVecX>;
-  Eigen::Matrix<coef_t, Eigen::Dynamic, Eigen::Dynamic> coef(xk_ref.size() - 1, 4);
-  coef.setZero();
+  const Eigen::Index K = xk_ref.size();
+  Eigen::Matrix<coef_t, Eigen::Dynamic, Eigen::Dynamic> coef(K - 1, 4);
+
+  for (Eigen::Index i = 0; i < K - 1; ++i) {
+    const coef_t h = xk_ref.coeff(i + 1) - xk_ref.coeff(i);
+    const coef_t y0 = yk_ref.coeff(i);
+    const coef_t y1 = yk_ref.coeff(i + 1);
+    const coef_t s0 = dydxk_ref.coeff(i);
+    const coef_t s1 = dydxk_ref.coeff(i + 1);
+    const coef_t h2 = h * h;
+    const coef_t h3 = h2 * h;
+
+    // Coefficients of y(x) = a0 + a1 * dx + a2 * dx^2 + a3 * dx^3, with
+    // dx = x - xk(i), obtained by expressing the cubic Hermite basis
+    // representation as a polynomial in dx rather than in
+    // t = dx / h.
+    coef(i, 0) = y0;
+    coef(i, 1) = s0;
+    coef(i, 2) = (3 * (y1 - y0) - h * (2 * s0 + s1)) / h2;
+    coef(i, 3) = (2 * (y0 - y1) + h * (s0 + s1)) / h3;
+  }
 
   Eigen::Matrix<xk_t, Eigen::Dynamic, 1> knots = xk_ref;
   return std::make_tuple(std::move(coef), std::move(knots));
