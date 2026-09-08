@@ -241,6 +241,7 @@
 #include <stan/math/prim/fun/Phi.hpp>
 #include <stan/math/prim/fun/Phi_approx.hpp>
 #include <stan/math/prim/fun/interp1_pchip.hpp>
+#include <stan/math/prim/fun/interp1_cubic_hermite.hpp>
 #include <stan/math/prim/fun/plus.hpp>
 #include <stan/math/prim/fun/poisson_binomial_log_probs.hpp>
 #include <stan/math/prim/fun/polar.hpp>
