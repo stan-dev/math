@@ -42,14 +42,14 @@ inline var trace_dot(Mat1&& A, Mat2&& B) {
     auto res_val = arena_A.val().cwiseProduct(arena_B.val().transpose()).sum();
     return make_callback_var(res_val, [arena_A, arena_B](auto&& res) mutable {
       if constexpr (is_var_matrix<Mat1>::value) {
-        arena_A.adj().noalias() += res.adj() * arena_B.val_op().transpose();
+        arena_A.adj().noalias() += res.adj() * arena_B.val().transpose();
       } else {
-        arena_A.adj() += res.adj() * arena_B.val_op().transpose();
+        arena_A.adj() += res.adj() * arena_B.val().transpose();
       }
       if constexpr (is_var_matrix<Mat2>::value) {
-        arena_B.adj().noalias() += res.adj() * arena_A.val_op().transpose();
+        arena_B.adj().noalias() += res.adj() * arena_A.val().transpose();
       } else {
-        arena_B.adj() += res.adj() * arena_A.val_op().transpose();
+        arena_B.adj() += res.adj() * arena_A.val().transpose();
       }
     });
   } else if constexpr (is_autodiff_v<Mat2>) {

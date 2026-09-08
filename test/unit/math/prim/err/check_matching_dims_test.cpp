@@ -27,6 +27,23 @@ TEST(ErrorHandlingMatrix, checkMatchingDimsMatrix) {
       std::invalid_argument);
 }
 
+TEST(ErrorHandlingMatrix, checkMatchingDimsUnnamedArguments) {
+  using stan::math::check_matching_dims;
+
+  Eigen::MatrixXd x1(2, 3);
+  Eigen::MatrixXd x2(2, 3);
+  Eigen::MatrixXd x3(3, 2);
+
+  EXPECT_NO_THROW(check_matching_dims("checkMatchingDims", x1));
+  EXPECT_NO_THROW(check_matching_dims("checkMatchingDims", x1, x2));
+  EXPECT_THROW_MSG_WITH_COUNT(
+      check_matching_dims("checkMatchingDims", x1, x2, x3),
+      std::invalid_argument, "arg1", 1);
+  EXPECT_THROW_MSG_WITH_COUNT(
+      check_matching_dims("checkMatchingDims", x1, x2, x3),
+      std::invalid_argument, "arg3", 1);
+}
+
 TEST(ErrorHandlingMatrix, checkMatchingDimsArray) {
   std::vector<double> y(3);
   std::vector<double> x(3);

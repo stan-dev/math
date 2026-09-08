@@ -82,6 +82,7 @@ struct val_Op{
   double& operator()(double& v) const { return v; }
 };
 
+
 /**
  * Coefficient-wise function applying val_Op struct to a matrix of const var
  * or vari* and returning a view to the const matrix of doubles containing
@@ -94,16 +95,31 @@ val() const { return CwiseUnaryOp<val_Op, const Derived>(derived());
 /**
  * Coefficient-wise function applying val_Op struct to a matrix of var
  * or vari* and returning a view to the values
- */
+ */ 
+template <
+  typename T = Scalar,
+  std::enable_if_t<
+    !std::disjunction_v<
+      std::is_arithmetic<std::decay_t<T>>,
+      is_fvar<std::decay_t<T>>
+    >
+  >* = nullptr>
+inline CwiseUnaryOp<val_Op, Derived>
+val() { return CwiseUnaryOp<val_Op, Derived>(derived());
+}
+ 
+template <
+  typename T = Scalar,
+  std::enable_if_t<
+    std::disjunction_v<
+      std::is_arithmetic<std::decay_t<T>>,
+      is_fvar<std::decay_t<T>>
+    >
+  >* = nullptr>
 inline CwiseUnaryView<val_Op, Derived>
 val() { return CwiseUnaryView<val_Op, Derived>(derived());
 }
 
-/**
- * Coefficient-wise function applying val_Op struct to a matrix of var
- * or vari* and returning a view to the matrix of doubles containing
- * the values
- */
 inline CwiseUnaryOp<val_Op, Derived>
 val_op() { return CwiseUnaryOp<val_Op, Derived>(derived());
 }

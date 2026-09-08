@@ -146,8 +146,8 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
     arena_t<promote_scalar_t<var, Ta>> arena_A = A;
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
 
-    auto arena_BDT = to_arena(arena_B.val_op() * arena_D.val_op().transpose());
-    auto arena_AB = to_arena(arena_A.val_op() * arena_B.val_op());
+    auto arena_BDT = to_arena(arena_B.val() * arena_D.val().transpose());
+    auto arena_AB = to_arena(arena_A.val() * arena_B.val());
 
     var res = (arena_BDT.transpose() * arena_AB).trace();
 
@@ -155,13 +155,13 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
         [arena_A, arena_B, arena_D, arena_BDT, arena_AB, res]() mutable {
           double C_adj = res.adj();
 
-          arena_A.adj() += C_adj * arena_BDT * arena_B.val_op().transpose();
+          arena_A.adj() += C_adj * arena_BDT * arena_B.val().transpose();
 
           arena_B.adj() += C_adj
-                           * (arena_AB * arena_D.val_op()
-                              + arena_A.val_op().transpose() * arena_BDT);
+                           * (arena_AB * arena_D.val()
+                              + arena_A.val().transpose() * arena_BDT);
 
-          arena_D.adj() += C_adj * (arena_AB.transpose() * arena_B.val_op());
+          arena_D.adj() += C_adj * (arena_AB.transpose() * arena_B.val());
         });
 
     return res;
@@ -170,20 +170,20 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
     arena_t<promote_scalar_t<var, Ta>> arena_A = A;
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
 
-    auto arena_BDT = to_arena(arena_B.val_op() * arena_D.transpose());
-    auto arena_AB = to_arena(arena_A.val_op() * arena_B.val_op());
+    auto arena_BDT = to_arena(arena_B.val() * arena_D.transpose());
+    auto arena_AB = to_arena(arena_A.val() * arena_B.val());
 
     var res = (arena_BDT.transpose() * arena_AB).trace();
 
-    reverse_pass_callback([arena_A, arena_B, arena_D, arena_BDT, arena_AB,
-                           res]() mutable {
-      double C_adj = res.adj();
+    reverse_pass_callback(
+        [arena_A, arena_B, arena_D, arena_BDT, arena_AB, res]() mutable {
+          double C_adj = res.adj();
 
-      arena_A.adj() += C_adj * arena_BDT * arena_B.val_op().transpose();
-      arena_B.adj()
-          += C_adj
-             * (arena_AB * arena_D + arena_A.val_op().transpose() * arena_BDT);
-    });
+          arena_A.adj() += C_adj * arena_BDT * arena_B.val().transpose();
+          arena_B.adj()
+              += C_adj
+                 * (arena_AB * arena_D + arena_A.val().transpose() * arena_BDT);
+        });
 
     return res;
   } else if constexpr (is_all_autodiff_v<Ta, Td> && is_constant_v<Tb>) {
@@ -191,10 +191,10 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
     arena_t<promote_scalar_t<var, Ta>> arena_A = A;
     arena_t<promote_scalar_t<double, Tb>> arena_B = value_of(B);
 
-    auto arena_BDT = to_arena(arena_B.val_op() * arena_D.val_op().transpose());
-    auto arena_AB = to_arena(arena_A.val_op() * arena_B.val_op());
+    auto arena_BDT = to_arena(arena_B * arena_D.val().transpose());
+    auto arena_AB = to_arena(arena_A.val() * arena_B);
 
-    var res = (arena_BDT.transpose() * arena_A.val_op() * arena_B).trace();
+    var res = (arena_BDT.transpose() * arena_A.val() * arena_B).trace();
 
     reverse_pass_callback(
         [arena_A, arena_B, arena_D, arena_BDT, arena_AB, res]() mutable {
@@ -212,10 +212,10 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
 
     auto arena_BDT = to_arena(arena_B * arena_D);
 
-    var res = (arena_BDT.transpose() * arena_A.val_op() * arena_B).trace();
+    var res = (arena_BDT.transpose() * arena_A.val() * arena_B).trace();
 
     reverse_pass_callback([arena_A, arena_B, arena_BDT, res]() mutable {
-      arena_A.adj() += res.adj() * arena_BDT * arena_B.val_op().transpose();
+      arena_A.adj() += res.adj() * arena_BDT * arena_B.transpose();
     });
 
     return res;
@@ -224,21 +224,21 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
     arena_t<promote_scalar_t<double, Ta>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
 
-    auto arena_AB = to_arena(arena_A * arena_B.val_op());
-    auto arena_BDT = to_arena(arena_B.val_op() * arena_D.val_op());
+    auto arena_AB = to_arena(arena_A * arena_B.val());
+    auto arena_BDT = to_arena(arena_B.val() * arena_D.val());
 
     var res = (arena_BDT.transpose() * arena_AB).trace();
 
-    reverse_pass_callback([arena_A, arena_B, arena_D, arena_AB, arena_BDT,
-                           res]() mutable {
-      double C_adj = res.adj();
+    reverse_pass_callback(
+        [arena_A, arena_B, arena_D, arena_AB, arena_BDT, res]() mutable {
+          double C_adj = res.adj();
 
-      arena_B.adj()
-          += C_adj
-             * (arena_AB * arena_D.val_op() + arena_A.transpose() * arena_BDT);
+          arena_B.adj()
+              += C_adj
+                 * (arena_AB * arena_D.val() + arena_A.transpose() * arena_BDT);
 
-      arena_D.adj() += C_adj * (arena_AB.transpose() * arena_B.val_op());
-    });
+          arena_D.adj() += C_adj * (arena_AB.transpose() * arena_B.val());
+        });
 
     return res;
   } else if constexpr (is_constant_all_v<Ta, Td> && is_autodiff_v<Tb>) {
@@ -246,17 +246,16 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
     arena_t<promote_scalar_t<double, Ta>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
 
-    auto arena_AB = to_arena(arena_A * arena_B.val_op());
-    auto arena_BDT = to_arena(arena_B.val_op() * arena_D.val_op());
+    auto arena_AB = to_arena(arena_A * arena_B.val());
+    auto arena_BDT = to_arena(arena_B.val() * arena_D);
 
     var res = (arena_BDT.transpose() * arena_AB).trace();
 
-    reverse_pass_callback(
-        [arena_A, arena_B, arena_D, arena_AB, arena_BDT, res]() mutable {
-          arena_B.adj() += res.adj()
-                           * (arena_AB * arena_D.val_op()
-                              + arena_A.val_op().transpose() * arena_BDT);
-        });
+    reverse_pass_callback([arena_A, arena_B, arena_D, arena_AB, arena_BDT,
+                           res]() mutable {
+      arena_B.adj()
+          += res.adj() * (arena_AB * arena_D + arena_A.transpose() * arena_BDT);
+    });
 
     return res;
   } else if constexpr (is_constant_all_v<Ta, Tb> && is_autodiff_v<Td>) {
@@ -266,7 +265,7 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
 
     auto arena_AB = to_arena(arena_A * arena_B);
 
-    var res = (arena_D.val_op() * arena_B.transpose() * arena_AB).trace();
+    var res = (arena_D.val() * arena_B.transpose() * arena_AB).trace();
 
     reverse_pass_callback([arena_AB, arena_B, arena_D, res]() mutable {
       arena_D.adj() += res.adj() * (arena_AB.transpose() * arena_B);

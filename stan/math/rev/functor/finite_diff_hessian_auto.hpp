@@ -3,9 +3,9 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/functor/gradient.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/finite_diff_stepsize.hpp>
-#include <stdexcept>
 
 namespace stan {
 namespace math {

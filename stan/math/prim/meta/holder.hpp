@@ -169,6 +169,13 @@ class Holder
   auto* data() { return m_arg.data(); }
   const auto* data() const { return m_arg.data(); }
 
+  const auto& coeffRef(Eigen::Index row, Eigen::Index col) const {
+    return m_arg.coeffRef(row, col);
+  }
+  const auto& coeffRef(Eigen::Index index) const {
+    return m_arg.coeffRef(index);
+  }
+
   /**
    * Assignment operator assigns expressions.
    * @param other expression to assign  to this

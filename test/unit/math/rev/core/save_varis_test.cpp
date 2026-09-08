@@ -1,6 +1,7 @@
 #include <stan/math.hpp>
 #include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
+#include <tuple>
 #include <vector>
 
 using stan::math::var;
@@ -423,4 +424,35 @@ TEST_F(AgradRev, Rev_save_varis_sum) {
     EXPECT_EQ(storage[i], nullptr);
 
   EXPECT_EQ(ptr, storage.data() + num_vars);
+}
+
+TEST_F(AgradRev, Rev_save_varis_tuple_args) {
+  const std::tuple<> empty;
+  const auto data = std::make_tuple(1, Eigen::VectorXd::Ones(2));
+  std::vector<vari*> data_storage(2, nullptr);
+  vari** data_ptr = stan::math::save_varis(data_storage.data(), empty, data);
+  EXPECT_EQ(data_storage.data(), data_ptr);
+  EXPECT_EQ(nullptr, data_storage[0]);
+  EXPECT_EQ(nullptr, data_storage[1]);
+
+  var before = 1.0;
+  var first = 2.0;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> vars(2);
+  vars << 3.0, 4.0;
+  var last = 5.0;
+  var after = 6.0;
+  auto nested = std::make_tuple(first, std::make_tuple(vars, 7), last);
+  std::vector<vari*> storage(8, nullptr);
+
+  vari** ptr = stan::math::save_varis(storage.data(), before, nested,
+                                      std::make_tuple(after));
+
+  std::vector<vari*> expected{before.vi_,  first.vi_, vars(0).vi_,
+                              vars(1).vi_, last.vi_,  after.vi_};
+  EXPECT_EQ(storage.data() + expected.size(), ptr);
+  for (size_t i = 0; i < expected.size(); ++i) {
+    EXPECT_EQ(expected[i], storage[i]);
+  }
+  EXPECT_EQ(nullptr, storage[expected.size()]);
+  EXPECT_EQ(nullptr, storage[expected.size() + 1]);
 }

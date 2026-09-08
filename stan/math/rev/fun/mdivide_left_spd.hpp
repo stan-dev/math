@@ -276,12 +276,12 @@ inline auto mdivide_left_spd(const T1 &A, const T2 &B) {
     check_symmetric("mdivide_left_spd", "A", arena_A.val());
     check_not_nan("mdivide_left_spd", "A", arena_A.val());
 
-    auto A_llt = arena_A.val_op().llt();
+    auto A_llt = arena_A.val().llt();
 
     check_pos_definite("mdivide_left_spd", "A", A_llt);
 
     arena_t<Eigen::MatrixXd> arena_A_llt = A_llt.matrixL();
-    arena_t<ret_type> res = A_llt.solve(arena_B.val_op());
+    arena_t<ret_type> res = A_llt.solve(arena_B.val());
 
     reverse_pass_callback([arena_A, arena_B, arena_A_llt, res]() mutable {
       promote_scalar_t<double, T2> adjB = res.adj();
@@ -291,7 +291,7 @@ inline auto mdivide_left_spd(const T1 &A, const T2 &B) {
           .transpose()
           .solveInPlace(adjB);
 
-      arena_A.adj() -= adjB * res.val_op().transpose();
+      arena_A.adj() -= adjB * res.val().transpose();
       arena_B.adj() += adjB;
     });
 
@@ -302,7 +302,7 @@ inline auto mdivide_left_spd(const T1 &A, const T2 &B) {
     check_symmetric("mdivide_left_spd", "A", arena_A.val());
     check_not_nan("mdivide_left_spd", "A", arena_A.val());
 
-    auto A_llt = arena_A.val_op().llt();
+    auto A_llt = arena_A.val().llt();
 
     check_pos_definite("mdivide_left_spd", "A", A_llt);
 
@@ -317,7 +317,7 @@ inline auto mdivide_left_spd(const T1 &A, const T2 &B) {
           .transpose()
           .solveInPlace(adjB);
 
-      arena_A.adj() -= adjB * res.val_op().transpose().eval();
+      arena_A.adj() -= adjB * res.val().transpose().eval();
     });
 
     return ret_type(res);
@@ -333,7 +333,7 @@ inline auto mdivide_left_spd(const T1 &A, const T2 &B) {
     check_pos_definite("mdivide_left_spd", "A", A_llt);
 
     arena_t<Eigen::MatrixXd> arena_A_llt = A_llt.matrixL();
-    arena_t<ret_type> res = A_llt.solve(arena_B.val_op());
+    arena_t<ret_type> res = A_llt.solve(arena_B.val());
 
     reverse_pass_callback([arena_B, arena_A_llt, res]() mutable {
       promote_scalar_t<double, T2> adjB = res.adj();

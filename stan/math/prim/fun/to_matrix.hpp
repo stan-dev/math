@@ -41,6 +41,29 @@ inline auto to_matrix(EigVec&& matrix) {
 
 /**
  * Returns a matrix representation of a standard vector of Eigen
+ * column vectors. Each input vector becomes a column in the result.
+ *
+ * @tparam T type of the elements in the vector
+ * @param x standard vector of Eigen column vectors
+ * @return the matrix representation of the input
+ */
+template <typename T>
+inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
+    const std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>>& x) {
+  int cols = x.size();
+  if (cols == 0) {
+    return {};
+  }
+  int rows = x[0].size();
+  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(rows, cols);
+  for (int j = 0; j < cols; ++j) {
+    result.col(j) = x[j];
+  }
+  return result;
+}
+
+/**
+ * Returns a matrix representation of a standard vector of Eigen
  * row vectors with the same dimensions and indexing order.
  *
  * @tparam T type of the elements in the vector

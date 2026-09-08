@@ -64,31 +64,31 @@ inline auto svd(const EigMat& m) {
   reverse_pass_callback([arena_m, arena_U, singular_values, arena_V, arena_Fp,
                          arena_Fm]() mutable {
     // SVD-U reverse mode
-    Eigen::MatrixXd UUadjT = arena_U.val_op().transpose() * arena_U.adj_op();
+    Eigen::MatrixXd UUadjT = arena_U.val().transpose() * arena_U.adj_op();
     auto u_adj
-        = .5 * arena_U.val_op()
+        = .5 * arena_U.val()
               * (arena_Fp.array() * (UUadjT - UUadjT.transpose()).array())
                     .matrix()
-              * arena_V.val_op().transpose()
+              * arena_V.val().transpose()
           + (Eigen::MatrixXd::Identity(arena_m.rows(), arena_m.rows())
-             - arena_U.val_op() * arena_U.val_op().transpose())
+             - arena_U.val() * arena_U.val().transpose())
                 * arena_U.adj_op()
-                * singular_values.val_op().asDiagonal().inverse()
-                * arena_V.val_op().transpose();
+                * singular_values.val().asDiagonal().inverse()
+                * arena_V.val().transpose();
     // Singular values reverse mode
-    auto d_adj = arena_U.val_op() * singular_values.adj().asDiagonal()
-                 * arena_V.val_op().transpose();
+    auto d_adj = arena_U.val() * singular_values.adj().asDiagonal()
+                 * arena_V.val().transpose();
     // SVD-V reverse mode
-    Eigen::MatrixXd VTVadj = arena_V.val_op().transpose() * arena_V.adj_op();
+    Eigen::MatrixXd VTVadj = arena_V.val().transpose() * arena_V.adj_op();
     auto v_adj
-        = 0.5 * arena_U.val_op()
+        = 0.5 * arena_U.val()
               * (arena_Fm.array() * (VTVadj - VTVadj.transpose()).array())
                     .matrix()
-              * arena_V.val_op().transpose()
-          + arena_U.val_op() * singular_values.val_op().asDiagonal().inverse()
+              * arena_V.val().transpose()
+          + arena_U.val() * singular_values.val().asDiagonal().inverse()
                 * arena_V.adj_op().transpose()
                 * (Eigen::MatrixXd::Identity(arena_m.cols(), arena_m.cols())
-                   - arena_V.val_op() * arena_V.val_op().transpose());
+                   - arena_V.val() * arena_V.val().transpose());
 
     arena_m.adj() += u_adj + d_adj + v_adj;
   });

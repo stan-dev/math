@@ -39,9 +39,9 @@ inline var trace_inv_quad_form_ldlt(LDLT_factor<T1>& A, const T2& B) {
   if constexpr (is_autodiff_v<T1> && is_autodiff_v<T2>) {
     arena_t<T1> arena_A = A.matrix();
     arena_t<T2> arena_B = B;
-    auto AsolveB = to_arena(A.ldlt().solve(arena_B.val_op()));
+    auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
 
-    var res = (arena_B.val_op().transpose() * AsolveB).trace();
+    var res = (arena_B.val().transpose() * AsolveB).trace();
 
     reverse_pass_callback([arena_A, AsolveB, arena_B, res]() mutable {
       arena_A.adj() += -res.adj() * AsolveB * AsolveB.transpose();
@@ -64,9 +64,9 @@ inline var trace_inv_quad_form_ldlt(LDLT_factor<T1>& A, const T2& B) {
     return res;
   } else {
     arena_t<T2> arena_B = B;
-    auto AsolveB = to_arena(A.ldlt().solve(arena_B.val_op()));
+    auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
 
-    var res = (arena_B.val_op().transpose() * AsolveB).trace();
+    var res = (arena_B.val().transpose() * AsolveB).trace();
 
     reverse_pass_callback([AsolveB, arena_B, res]() mutable {
       arena_B.adj() += 2 * res.adj() * AsolveB;

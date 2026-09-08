@@ -41,20 +41,19 @@ inline auto eigendecompose_sym(const T& m) {
 
   reverse_pass_callback([eigenvals, arena_m, eigenvecs]() mutable {
     // eigenvalue reverse calculation
-    auto value_adj = eigenvecs.val_op() * eigenvals.adj().asDiagonal()
-                     * eigenvecs.val_op().transpose();
+    auto value_adj = eigenvecs.val() * eigenvals.adj().asDiagonal()
+                     * eigenvecs.val().transpose();
     // eigenvector reverse calculation
     const auto p = arena_m.val().cols();
-    Eigen::MatrixXd f
-        = (1
-           / (eigenvals.val_op().rowwise().replicate(p).transpose()
-              - eigenvals.val_op().rowwise().replicate(p))
-                 .array());
+    Eigen::MatrixXd f = (1
+                         / (eigenvals.val().rowwise().replicate(p).transpose()
+                            - eigenvals.val().rowwise().replicate(p))
+                               .array());
     f.diagonal().setZero();
     auto vector_adj
-        = eigenvecs.val_op()
-          * f.cwiseProduct(eigenvecs.val_op().transpose() * eigenvecs.adj_op())
-          * eigenvecs.val_op().transpose();
+        = eigenvecs.val()
+          * f.cwiseProduct(eigenvecs.val().transpose() * eigenvecs.adj_op())
+          * eigenvecs.val().transpose();
 
     arena_m.adj() += value_adj + vector_adj;
   });
