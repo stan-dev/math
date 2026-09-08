@@ -489,7 +489,7 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_TestUniform) {
 // guard paths: an integral that is exactly zero (shift disabled) and
 // a negative integral (shift active with I < 0).
 
-long n_evals = 0;
+std::int64_t n_evals = 0;
 
 // d f / d theta is analytically zero (cos^2 + sin^2 = 1) but autodiff
 // evaluates it as round-off noise of order 1e-16 * x * f.
