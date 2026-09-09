@@ -91,7 +91,6 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
           Dependencies: { sh "make test-math-dependencies" },
           Documentation: { sh "make doxygen" },
         )
-        /* TODO: recordIsuses? */
       }
     }
 
@@ -183,11 +182,7 @@ LDFLAGS_OPENCL=-L/usr/local/cuda/targets/x86_64-linux/lib
                 runTests(local, "test/unit/multiple_translation_units_test.cpp")
               }
             }
-          }
-      }
-
-      stage('Always-run tests') {
-        parallel failFast: true,
+          },
           mpi: {
             runPod(image: image) {
               stage('MPI Tests') {
@@ -231,31 +226,32 @@ LDFLAGS_OPENCL=-L/usr/local/cuda/targets/x86_64-linux/lib
                 }
               }
             }
-          }
-      }
+          },
+          dist: {
+          def cores_per_test = 6
+          def parallel_tests = 10
+          runPod(image: image, cpus: cores_per_test*parallel_tests, memory: '128Gi') {
+            stage ('Distribution tests') {
+              def local = "CXX=$CLANG_CXX\nO=0\nN_TESTS=100\n"
+              if (params.withRowVector || mainBranch) {
+                local += "CXXFLAGS+= -DSTAN_TEST_ROW_VECTORS -DSTAN_PROB_TEST_ALL\n"
+              }
+              writeFile(file: 'make/local', text: local)
 
-      def cores_per_test = 6
-      def parallel_tests = 10
-      runPod(image: image, cpus: cores_per_test*parallel_tests, memory: '128Gi') {
-        stage ('Distribution tests') {
-          def local = "CXX=$CLANG_CXX\nO=0\nN_TESTS=100\n"
-          if (params.withRowVector || mainBranch) {
-            local += "CXXFLAGS+= -DSTAN_TEST_ROW_VECTORS -DSTAN_PROB_TEST_ALL\n"
+              def cmd = 'python3 test/prob/getDependencies.py'
+              if (params.runAllDistributions || mainBranch) {
+                cmd += ' --pretend-all'
+              }
+              sh """
+              $cmd > changed-tests
+              if [ -s changed-tests ] ; then
+                ./runTests.py -j${cores_per_test*parallel_tests} --make-only `cat changed-tests`
+                unset PARALLEL
+                parallel --halt now,fail=1 -r -j$parallel_tests ./runTests.py --test-only -j$cores_per_test {} < changed-tests
+              fi
+              """
+            }
           }
-          writeFile(file: 'make/local', text: local)
-
-          def cmd = 'python3 test/prob/getDependencies.py'
-          if (params.runAllDistributions || mainBranch) {
-            cmd += ' --pretend-all'
-          }
-          sh """
-            $cmd > changed-tests
-            if [ -s changed-tests ] ; then
-              ./runTests.py -j${cores_per_test*parallel_tests} --make-only `cat changed-tests`
-              unset PARALLEL
-              parallel --halt now,fail=1 -r -j$parallel_tests ./runTests.py --test-only -j$cores_per_test {} < changed-tests
-            fi
-          """
         }
       }
 
