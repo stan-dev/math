@@ -7,6 +7,9 @@
 #include <iostream>
 #include <limits>
 #include <sstream>
+#include <cmath>
+#include <cstdint>
+#include <string>
 
 // Tests for integrate_1d_gauss_kronrod, reverse-mode autodiff. Cloned from
 // integrate_1d_test.cpp; functors that depend on the xc argument have been
@@ -490,6 +493,7 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_TestUniform) {
 // a negative integral (shift active with I < 0).
 
 std::int64_t n_evals = 0;
+std::int64_t n_gradient_evals = 0;
 
 // d f / d theta is analytically zero (cos^2 + sin^2 = 1) but autodiff
 // evaluates it as round-off noise of order 1e-16 * x * f.
@@ -500,6 +504,9 @@ struct f_noisy_gradient_counted {
       const std::vector<T3> &theta, const std::vector<double> &x_r,
       const std::vector<int> &x_i) const {
     ++n_evals;
+    if constexpr (stan::is_var_v<T3>) {
+      ++n_gradient_evals;
+    }
     auto tx = theta[0] * x;
     return exp(-x * x) * (cos(tx) * cos(tx) + sin(tx) * sin(tx));
   }
@@ -510,6 +517,7 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_GradientShift_noisy_gradient) {
   const double I_ref = std::sqrt(stan::math::pi()) * std::erf(1.0);
   std::vector<var> theta = {2.5};
   n_evals = 0;
+  n_gradient_evals = 0;
   var I = stan::math::integrate_1d_gauss_kronrod_tol(
       f_noisy_gradient_counted{}, -1.0, 1.0, 1e-6, 0.0, 15, msgs, theta,
       std::vector<double>{}, std::vector<int>{});
@@ -520,6 +528,116 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_GradientShift_noisy_gradient) {
   // Value + one gradient component.  Without the shift the gradient
   // integral hits max_depth (2^15 * 21 ≈ 6.9e5 evaluations).
   EXPECT_LT(n_evals, 5000L);
+  RecordProperty("value_evaluations",
+                 std::to_string(n_evals - n_gradient_evals));
+  RecordProperty("gradient_evaluations", std::to_string(n_gradient_evals));
+}
+
+// Count double evaluations separately from evaluations that build an AD graph.
+// The latter include the per-parameter quadrature, which this PR changes.
+template <typename F>
+struct counted_gradient_integrand {
+  F f;
+  std::int64_t &value_evaluations;
+  std::int64_t &gradient_evaluations;
+
+  template <typename T>
+  auto operator()(double x, double xc, std::ostream *msgs,
+                  const T &theta) const {
+    if constexpr (stan::is_var_v<T>) {
+      ++gradient_evaluations;
+    } else {
+      ++value_evaluations;
+    }
+    return f(x, xc, msgs, theta);
+  }
+};
+
+template <typename F>
+void check_gradient_regression(const F &f, double theta_value, double a,
+                               double b, double expected_value,
+                               double expected_gradient,
+                               std::int64_t max_gradient_evaluations = 5000) {
+  stan::math::nested_rev_autodiff nested;
+  stan::math::var theta = theta_value;
+  std::int64_t value_evaluations = 0;
+  std::int64_t gradient_evaluations = 0;
+  counted_gradient_integrand<F> counted{f, value_evaluations,
+                                        gradient_evaluations};
+  stan::math::var integral;
+  ASSERT_NO_THROW(integral = stan::math::integrate_1d_gauss_kronrod_tol(
+                      counted, a, b, 1e-6, 0.0, 15, nullptr, theta))
+      << "value evaluations: " << value_evaluations
+      << ", gradient evaluations: " << gradient_evaluations;
+  integral.grad();
+  EXPECT_NEAR(expected_value, integral.val(),
+              1e-6 * std::abs(expected_value) + 1e-12);
+  EXPECT_NEAR(expected_gradient, theta.adj(),
+              1e-6 * std::abs(expected_gradient) + 1e-12);
+  EXPECT_LE(gradient_evaluations, max_gradient_evaluations);
+  testing::Test::RecordProperty("value_evaluations",
+                                std::to_string(value_evaluations));
+  testing::Test::RecordProperty("gradient_evaluations",
+                                std::to_string(gradient_evaluations));
+}
+
+TEST_F(AgradRev,
+       StanMath_integrate_1d_gk_rev_GradientShift_logistic_cancellation) {
+  // f = inv_logit(-theta) exp(-x^2), so df/dtheta = -inv_logit(theta) f.
+  // At theta = logit(c), adding c*f cancels this nonzero derivative and
+  // leaves round-off noise. Nearby points check that this is not limited
+  // to one exactly represented parameter. The failure is compiler-sensitive.
+  auto f = [](double x, double, std::ostream *, const auto &theta) {
+    return stan::math::inv_logit(-theta) * std::exp(-x * x);
+  };
+  const double c = 0.6180339887498949;
+  const double theta_center = std::log(c / (1.0 - c));
+  const double gaussian_integral = std::sqrt(stan::math::pi()) * std::erf(1.0);
+  for (double delta : {0.0, -1e-12, 1e-12, -1e-11, 1e-11}) {
+    SCOPED_TRACE(testing::Message() << "theta offset: " << delta);
+    const double theta = theta_center + delta;
+    const double probability = 1.0 / (1.0 + std::exp(theta));
+    const double value = probability * gaussian_integral;
+    check_gradient_regression(f, theta, -1.0, 1.0, value,
+                              -(1.0 - probability) * value);
+  }
+}
+
+// Integral of q(x) = exp(-((x - 0.3)/0.01)^2) over [0, 1].
+// Use its antiderivative, not another numerical quadrature, as the reference.
+double narrow_bump_integral() {
+  return 0.01 * std::sqrt(stan::math::pi()) / 2.0
+         * (std::erf(70.0) - std::erf(-30.0));
+}
+
+TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_GradientShift_derivative_bump) {
+  // At theta = 0 the value integrand is constant, but df/dtheta = q(x)
+  // still needs adaptive refinement. A value-only mesh is insufficient.
+  auto f = [](double x, double, std::ostream *, const auto &theta) {
+    return 1.0 + theta * std::exp(-std::pow((x - 0.3) / 0.01, 2));
+  };
+  check_gradient_regression(f, 0.0, 0.0, 1.0, 1.0, narrow_bump_integral());
+}
+
+TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_GradientShift_value_bump) {
+  // f = q(x) + theta. The derivative is the constant 1 and needs only one
+  // GK panel. Adding c*f makes the derivative quadrature resolve q again.
+  auto f = [](double x, double, std::ostream *, const auto &theta) {
+    return std::exp(-std::pow((x - 0.3) / 0.01, 2)) + theta;
+  };
+  check_gradient_regression(f, 0.0, 0.0, 1.0, narrow_bump_integral(), 1.0,
+                            stan::math::INTEGRATE_1D_GAUSS_KRONROD_ORDER);
+}
+
+TEST_F(AgradRev,
+       StanMath_integrate_1d_gk_rev_GradientShift_offset_derivative_bump) {
+  // A parameter-independent offset must not hide the derivative's bump.
+  // At theta = 0: I = 1e12, dI/dtheta = integral(q) = 0.0177245385...
+  // The PR can accept a single shifted panel and return about 0.00414.
+  auto f = [](double x, double, std::ostream *, const auto &theta) {
+    return 1e12 + theta * std::exp(-std::pow((x - 0.3) / 0.01, 2));
+  };
+  check_gradient_regression(f, 0.0, 0.0, 1.0, 1e12, narrow_bump_integral());
 }
 
 struct f_odd {
