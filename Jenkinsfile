@@ -23,12 +23,10 @@ def noOptimize = !(params.optimizeUnitTests || mainBranch)
 def jumboFlags = params.disableJumbo ? '' : ' --jumbo --debug'
 
 def runTests(String local, String args) {
-  catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
-    writeFile(file: "make/local", text: local)
-    sh "cat make/local"
-    sh "make print-compiler-flags"
-    sh "python3 runTests.py -j\$PARALLEL $args"
-  }
+  writeFile(file: "make/local", text: local)
+  sh "cat make/local"
+  sh "make print-compiler-flags"
+  sh "python3 runTests.py -j\$PARALLEL $args"
   junit 'test/**/*.xml'
   sh "find test -name *.xml -delete"
 }
