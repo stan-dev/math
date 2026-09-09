@@ -45,7 +45,8 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_tol(
   check_less_or_equal(function, "lower limit", a, b);
   check_nonnegative(function, "max_depth", max_depth);
   check_nonnegative(function, "absolute_tolerance", absolute_tolerance);
-  return internal::integrate_1d_adjoint(
+  // `true`: gradient integrands are shifted by f
+  return internal::integrate_1d_adjoint<true>(
       function, f, a, b,
       [&](auto &&integrand) {
         return integrate_gk(std::forward<decltype(integrand)>(integrand),

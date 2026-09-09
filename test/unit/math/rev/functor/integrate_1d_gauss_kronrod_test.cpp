@@ -481,4 +481,95 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_TestUniform) {
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
 }
 
+// ── gradient-integrand shift (integrate_1d_adjoint<true>) ────────────
+//
+// The wrapper integrates (d f / d theta_i + f) and subtracts the
+// value integral.  These tests pin (a) the evaluation count on such a
+// component, which the accuracy tests above cannot see, and (b) the
+// guard paths: an integral that is exactly zero (shift disabled) and
+// a negative integral (shift active with I < 0).
+
+std::int64_t n_evals = 0;
+
+// d f / d theta is analytically zero (cos^2 + sin^2 = 1) but autodiff
+// evaluates it as round-off noise of order 1e-16 * x * f.
+struct f_noisy_gradient_counted {
+  template <typename T1, typename T2, typename T3>
+  inline stan::return_type_t<T1, T2, T3> operator()(
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta, const std::vector<double> &x_r,
+      const std::vector<int> &x_i) const {
+    ++n_evals;
+    auto tx = theta[0] * x;
+    return exp(-x * x) * (cos(tx) * cos(tx) + sin(tx) * sin(tx));
+  }
+};
+
+TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_GradientShift_noisy_gradient) {
+  using stan::math::var;
+  const double I_ref = std::sqrt(stan::math::pi()) * std::erf(1.0);
+  std::vector<var> theta = {2.5};
+  n_evals = 0;
+  var I = stan::math::integrate_1d_gauss_kronrod_tol(
+      f_noisy_gradient_counted{}, -1.0, 1.0, 1e-6, 0.0, 15, msgs, theta,
+      std::vector<double>{}, std::vector<int>{});
+  std::vector<double> g;
+  I.grad(theta, g);
+  EXPECT_NEAR(I_ref, I.val(), 1e-6);
+  EXPECT_NEAR(0.0, g[0], 1e-6);
+  // Value + one gradient component.  Without the shift the gradient
+  // integral hits max_depth (2^15 * 21 ≈ 6.9e5 evaluations).
+  EXPECT_LT(n_evals, 5000L);
+}
+
+struct f_odd {
+  template <typename T1, typename T2, typename T3>
+  inline stan::return_type_t<T1, T2, T3> operator()(
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta, const std::vector<double> &x_r,
+      const std::vector<int> &x_i) const {
+    return theta[0] * x * exp(-x * x);  // odd: integral over [-1, 1] is 0
+  }
+};
+
+struct f_negative {
+  template <typename T1, typename T2, typename T3>
+  inline stan::return_type_t<T1, T2, T3> operator()(
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta, const std::vector<double> &x_r,
+      const std::vector<int> &x_i) const {
+    return -theta[0] * exp(-x * x);  // negative everywhere, I < 0
+  }
+};
+
+TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_GradientShift_guards) {
+  using stan::math::var;
+  // (a) exactly-zero integral: the shift is disabled and the gradient is
+  //     the (zero) integral of x exp(-x^2).
+  {
+    std::vector<var> theta = {2.5};
+    var I;
+    EXPECT_NO_THROW(I = stan::math::integrate_1d_gauss_kronrod_tol(
+                        f_odd{}, -1.0, 1.0, 1e-6, 0.0, 15, msgs, theta,
+                        std::vector<double>{}, std::vector<int>{}));
+    std::vector<double> g;
+    I.grad(theta, g);
+    EXPECT_NEAR(0.0, I.val(), 1e-8);
+    EXPECT_NEAR(0.0, g[0], 1e-8);
+  }
+  // (b) negative integral: shift active with I < 0; d I / d theta = I / theta.
+  {
+    const double th = 2.5;
+    const double I_ref = -th * std::sqrt(stan::math::pi()) * std::erf(1.0);
+    std::vector<var> theta = {th};
+    var I = stan::math::integrate_1d_gauss_kronrod_tol(
+        f_negative{}, -1.0, 1.0, 1e-8, 0.0, 15, msgs, theta,
+        std::vector<double>{}, std::vector<int>{});
+    std::vector<double> g;
+    I.grad(theta, g);
+    EXPECT_NEAR(I_ref, I.val(), 1e-7);
+    EXPECT_NEAR(I_ref / th, g[0], 1e-7);
+  }
+}
+
 }  // namespace integrate_1d_gk_test
