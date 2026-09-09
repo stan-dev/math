@@ -16,8 +16,12 @@ namespace stan {
 namespace math {
 
 /**
- * Return the integral of f from a to b using adaptive Gauss-Kronrod (G21,K21)
+ * Return the integral of f from a to b using adaptive Gauss-Kronrod (G10,K21)
  * quadrature.
+ *
+ * The value and each parameter derivative use independent quadrature and
+ * error control. A positive absolute tolerance can be needed for derivatives
+ * that are zero up to floating-point round-off; see integrate_gk.
  *
  * @tparam F Type of f
  * @tparam T_a type of first limit
@@ -27,10 +31,9 @@ namespace math {
  * @param f the functor to integrate
  * @param a lower limit of integration
  * @param b upper limit of integration
- * @param relative_tolerance relative tolerance passed to Boost quadrature
+ * @param relative_tolerance target error relative to each integral's L1 estimate
  * @param absolute_tolerance absolute-error floor on the convergence test
- * @param max_depth maximum recursive bisection depth passed to Boost
- *   quadrature
+ * @param max_depth maximum bisection depth of each panel
  * @param[in, out] msgs the print stream for warning messages
  * @param args additional arguments to pass to f
  * @return numeric integral of function f
@@ -45,8 +48,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_tol(
   check_less_or_equal(function, "lower limit", a, b);
   check_nonnegative(function, "max_depth", max_depth);
   check_nonnegative(function, "absolute_tolerance", absolute_tolerance);
-  // `true`: gradient integrands are shifted by f
-  return internal::integrate_1d_adjoint<true>(
+  return internal::integrate_1d_adjoint(
       function, f, a, b,
       [&](auto &&integrand) {
         return integrate_gk(std::forward<decltype(integrand)>(integrand),
@@ -58,7 +60,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_tol(
 
 /**
  * Compute the integral of the single variable function f from a to b using
- * adaptive Gauss-Kronrod (G21,K21) quadrature. a and b can be finite or
+ * adaptive Gauss-Kronrod (G10,K21) quadrature. a and b can be finite or
  * infinite.
  *
  * f should be compatible with reverse mode autodiff and have the signature:

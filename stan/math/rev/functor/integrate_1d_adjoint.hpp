@@ -38,12 +38,6 @@ namespace internal {
  * zero. Any other NaN propagates into the component integral and is reported as
  * a `domain_error` naming the (flattened) parameter index.
  *
- * `shift_gradient_integrand`: when true (and the value integral `I` is finite
- * and non-zero) each component adjoint is computed as
- * `integrator(d f / d arg + c f) - c I` instead of `integrator(d f / d arg)`,
- * which can make the computation better behaving.
- *
- * @tparam shift_gradient_integrand see above
  * @tparam F Type of f
  * @tparam T_a type of first limit
  * @tparam T_b type of second limit
@@ -58,8 +52,8 @@ namespace internal {
  * @param args additional arguments to pass to f
  * @return numeric integral of function f
  */
-template <bool shift_gradient_integrand = false, typename F, typename T_a,
-          typename T_b, typename Integrator, typename... Args>
+template <typename F, typename T_a, typename T_b, typename Integrator,
+          typename... Args>
 inline return_type_t<T_a, T_b, Args...> integrate_1d_adjoint(
     const char* function, const F& f, const T_a& a, const T_b& b,
     Integrator&& integrator, std::ostream* msgs, const Args&... args) {
@@ -100,18 +94,13 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_adjoint(
 
   // Argument adjoints.
   if constexpr (is_any_var_scalar_v<Args...>) {
-    const bool shift = shift_gradient_integrand && integral != 0.0
-                       && !is_inf(integral) && !is_nan(integral);
-    // Shift constant. The inverse golden ratio is unlikely to be a
-    // saturated gradient.
-    constexpr double shift_c = 0.6180339887498949;
     auto args_adj = make_zeroed_arena(std::forward_as_tuple(args...));
     {
       nested_rev_autodiff argument_nest;
       auto args_copy = deep_copy_vargs<var>(std::forward_as_tuple(args...));
       auto args_copy_filter = filter_var_scalar_types(args_copy);
       auto integrate_grad = [&](auto&& target) -> double {
-        const double result = integrator([&](const auto& x, const auto& xc) {
+        return integrator([&](const auto& x, const auto& xc) {
           argument_nest.set_zero_all_adjoints();
           nested_rev_autodiff gradient_nest;
           var fx = stan::math::apply(
@@ -124,9 +113,8 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_adjoint(
           if (is_nan(gradient) && fx.val() == 0) {
             gradient = 0.0;
           }
-          return shift ? gradient + shift_c * fx.val() : gradient;
+          return gradient;
         });
-        return shift ? result - shift_c * integral : result;
       };
       std::size_t param_index = 0;
       auto assign_grad = [&](auto&& adj, auto&& target) {

@@ -486,11 +486,9 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_TestUniform) {
 
 // ── gradient-integrand shift (integrate_1d_adjoint<true>) ────────────
 //
-// The wrapper integrates (d f / d theta_i + f) and subtracts the
-// value integral.  These tests pin (a) the evaluation count on such a
-// component, which the accuracy tests above cannot see, and (b) the
-// guard paths: an integral that is exactly zero (shift disabled) and
-// a negative integral (shift active with I < 0).
+// Regressions for the former gradient-integrand shift. Integrate the
+// derivative directly and use an explicit absolute tolerance when the
+// analytically zero derivative consists of floating-point noise.
 
 std::int64_t n_evals = 0;
 std::int64_t n_gradient_evals = 0;
@@ -519,14 +517,14 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_GradientShift_noisy_gradient) {
   n_evals = 0;
   n_gradient_evals = 0;
   var I = stan::math::integrate_1d_gauss_kronrod_tol(
-      f_noisy_gradient_counted{}, -1.0, 1.0, 1e-6, 0.0, 15, msgs, theta,
+      f_noisy_gradient_counted{}, -1.0, 1.0, 1e-6, 1e-12, 15, msgs, theta,
       std::vector<double>{}, std::vector<int>{});
   std::vector<double> g;
   I.grad(theta, g);
   EXPECT_NEAR(I_ref, I.val(), 1e-6);
-  EXPECT_NEAR(0.0, g[0], 1e-6);
-  // Value + one gradient component.  Without the shift the gradient
-  // integral hits max_depth (2^15 * 21 ≈ 6.9e5 evaluations).
+  EXPECT_NEAR(0.0, g[0], 1e-12);
+  // The absolute tolerance must stop refinement, not just suppress a throw
+  // after the relative-only driver has exhausted its subdivision depth.
   EXPECT_LT(n_evals, 5000L);
   RecordProperty("value_evaluations",
                  std::to_string(n_evals - n_gradient_evals));
@@ -534,7 +532,7 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_GradientShift_noisy_gradient) {
 }
 
 // Count double evaluations separately from evaluations that build an AD graph.
-// The latter include the per-parameter quadrature, which this PR changes.
+// The latter measure the cost of per-parameter quadrature.
 template <typename F>
 struct counted_gradient_integrand {
   F f;
@@ -662,8 +660,7 @@ struct f_negative {
 
 TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_GradientShift_guards) {
   using stan::math::var;
-  // (a) exactly-zero integral: the shift is disabled and the gradient is
-  //     the (zero) integral of x exp(-x^2).
+  // (a) exactly-zero integral: the gradient is the integral of x exp(-x^2).
   {
     std::vector<var> theta = {2.5};
     var I;
@@ -675,7 +672,7 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_GradientShift_guards) {
     EXPECT_NEAR(0.0, I.val(), 1e-8);
     EXPECT_NEAR(0.0, g[0], 1e-8);
   }
-  // (b) negative integral: shift active with I < 0; d I / d theta = I / theta.
+  // (b) negative integral: d I / d theta = I / theta.
   {
     const double th = 2.5;
     const double I_ref = -th * std::sqrt(stan::math::pi()) * std::erf(1.0);

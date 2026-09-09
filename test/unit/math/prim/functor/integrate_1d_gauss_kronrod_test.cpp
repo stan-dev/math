@@ -444,3 +444,82 @@ TEST(StanMath_integrate_1d_gk_prim, abs_tol_argument_smoke) {
   EXPECT_NEAR(Q0, 1.0423499493102901, 1e-8);
   EXPECT_NEAR(Q1, Q0, 1e-12);
 }
+
+TEST(StanMath_integrate_1d_gk_prim, absolute_tolerance_stops_refinement) {
+  int evaluations = 0;
+  auto f = [&](double x, double, std::ostream *) {
+    ++evaluations;
+    return 1e-14 * std::cos(1234.0 * x);
+  };
+  const double value = stan::math::integrate_1d_gauss_kronrod_tol(
+      f, -1.0, 1.0, 1e-6, 1e-12, 15, nullptr);
+  EXPECT_NEAR(2e-14 * std::sin(1234.0) / 1234.0, value, 1e-12);
+  EXPECT_EQ(stan::math::INTEGRATE_1D_GAUSS_KRONROD_ORDER, evaluations);
+}
+
+TEST(StanMath_integrate_1d_gk_prim, panel_error_has_integral_units) {
+  // Both the result and the error must include the interval Jacobian.
+  // The small interval is resolved in one panel at this absolute tolerance.
+  auto f = [](double x, double, std::ostream *) { return std::exp(x / 1e-8); };
+  double value;
+  ASSERT_NO_THROW(value = stan::math::integrate_1d_gauss_kronrod_tol(
+                      f, 0.0, 1e-8, 0.0, 1e-20, 0, nullptr));
+  EXPECT_NEAR(1e-8 * std::expm1(1.0), value, 1e-20);
+}
+
+TEST(StanMath_integrate_1d_gk_prim, refinement_respects_depth_limit) {
+  auto f = [](double x, double, std::ostream *) {
+    return std::exp(-std::pow((x - 0.3) / 0.01, 2));
+  };
+  EXPECT_THROW(stan::math::integrate_1d_gauss_kronrod_tol(f, 0.0, 1.0, 1e-6,
+                                                          0.0, 0, nullptr),
+               std::domain_error);
+  EXPECT_NEAR(0.01 * std::sqrt(stan::math::pi()),
+              stan::math::integrate_1d_gauss_kronrod_tol(f, 0.0, 1.0, 1e-6, 0.0,
+                                                         15, nullptr),
+              1e-8);
+  // A pure absolute tolerance must also drive subdivision to convergence.
+  EXPECT_NEAR(0.01 * std::sqrt(stan::math::pi()),
+              stan::math::integrate_1d_gauss_kronrod_tol(f, 0.0, 1.0, 0.0,
+                                                         1e-10, 15, nullptr),
+              1e-10);
+}
+
+TEST(StanMath_integrate_1d_gk_prim, absolute_tolerance_infinite_intervals) {
+  auto f
+      = [](double x, double, std::ostream *) { return std::exp(-std::abs(x)); };
+  for (bool infinite_lower : {false, true}) {
+    for (bool infinite_upper : {false, true}) {
+      if (!infinite_lower && !infinite_upper) {
+        continue;
+      }
+      const double a = infinite_lower ? -stan::math::INFTY : 0.0;
+      const double b = infinite_upper ? stan::math::INFTY : 0.0;
+      EXPECT_NEAR(infinite_lower + infinite_upper,
+                  stan::math::integrate_1d_gauss_kronrod_tol(
+                      f, a, b, 0.0, 1e-10, 15, nullptr),
+                  1e-10);
+    }
+  }
+}
+
+TEST(StanMath_integrate_1d_gk_prim, roundoff_limit_does_not_relax_tolerance) {
+  int evaluations = 0;
+  auto f = [&](double, double, std::ostream *) {
+    ++evaluations;
+    return 1.0;
+  };
+  EXPECT_THROW(stan::math::integrate_1d_gauss_kronrod_tol(f, 0.0, 1.0, 1e-20,
+                                                          0.0, 15, nullptr),
+               std::domain_error);
+  EXPECT_EQ(stan::math::INTEGRATE_1D_GAUSS_KRONROD_ORDER, evaluations);
+}
+
+TEST(StanMath_integrate_1d_gk_prim, nonfinite_integrands_throw) {
+  for (double invalid : {stan::math::NOT_A_NUMBER, stan::math::INFTY}) {
+    auto f = [invalid](double, double, std::ostream *) { return invalid; };
+    EXPECT_THROW(stan::math::integrate_1d_gauss_kronrod_tol(f, 0.0, 1.0, 1e-6,
+                                                            1.0, 15, nullptr),
+                 std::domain_error);
+  }
+}
