@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -41,6 +42,10 @@ double_exponential_rng(const T_loc& mu, const T_scale& sigma, RNG& rng) {
   static constexpr const char* function = "double_exponential_rng";
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
                          sigma);
+  if (size_zero(mu, sigma)) {
+    return {};
+  }
+
   T_mu_ref mu_ref = mu;
   T_sigma_ref sigma_ref = sigma;
   check_finite(function, "Location parameter", mu_ref);

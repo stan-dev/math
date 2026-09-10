@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -52,6 +53,9 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
   static constexpr const char* function = "von_mises_rng";
   check_consistent_sizes(function, "Location parameter", mu, "Scale parameter",
                          kappa);
+  if (size_zero(mu, kappa)) {
+    return {};
+  }
   T_mu_ref mu_ref = mu;
   T_kappa_ref kappa_ref = kappa;
 

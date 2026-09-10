@@ -23,12 +23,10 @@ def noOptimize = !(params.optimizeUnitTests || mainBranch)
 def jumboFlags = params.disableJumbo ? '' : ' --jumbo --debug'
 
 def runTests(String local, String args) {
-  catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
-    writeFile(file: "make/local", text: local)
-    sh "cat make/local"
-    sh "make print-compiler-flags"
-    sh "python3 runTests.py -j\$PARALLEL $args"
-  }
+  writeFile(file: "make/local", text: local)
+  sh "cat make/local"
+  sh "make print-compiler-flags"
+  sh "python3 runTests.py -j\$PARALLEL $args"
   junit 'test/**/*.xml'
   sh "find test -name *.xml -delete"
 }
@@ -72,7 +70,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
               recipientProviders: [[$class: 'RequesterRecipientProvider']],
               to: env.CHANGE_AUTHOR_EMAIL)
           sh '''
-            git add -u src
+            git add -u stan test
             git commit -m "[Jenkins] auto-formatting by `clang-format --version`"
           '''
           gitPush(gitScm: scmGit(
@@ -93,7 +91,6 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
           Dependencies: { sh "make test-math-dependencies" },
           Documentation: { sh "make doxygen" },
         )
-        /* TODO: recordIsuses? */
       }
     }
 
@@ -132,7 +129,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
             }
           },
           mix: {
-            runPod(image: image, memory: '128Gi') {
+            runPod(image: image, cpus: 8, memory: '192Gi') {
               stage('Mix Unit Tests') {
                 def local = 'CXXFLAGS+= -fsanitize=address\n'
                 if (noOptimize)
@@ -158,9 +155,15 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
             runPod(image: image, memory: '32Gi') {
               stage('Laplace Unit Tests') {
                 def local = 'CXXFLAGS+= -march=native -mtune=native\nO=3\n'
-                if (!noOptimize)
-                  local += 'CXXFLAGS+= -fsanitize=address'
+
                 runTests(local, "test/unit/math/laplace/*_test.cpp")
+
+                if (mainBranch) {
+                  // only run ASAN on a selected test to avoid extremely long CI times
+                  sh 'make clean'
+                  local += 'CXXFLAGS+= -fsanitize=address'
+                  runTests(local, "test/unit/math/laplace/laplace_marginal_lpdf_moto_test.cpp")
+                }
               }
             }
           },
@@ -179,14 +182,10 @@ LDFLAGS_OPENCL=-L/usr/local/cuda/targets/x86_64-linux/lib
                 runTests(local, "test/unit/multiple_translation_units_test.cpp")
               }
             }
-          }
-      }
-
-      stage('Always-run tests') {
-        parallel failFast: true,
+          },
           mpi: {
             runPod(image: image) {
-              stage('Laplace Unit Tests') {
+              stage('MPI Tests') {
                 def local = "CXX=$MPICXX\nCXX_TYPE=gcc\nSTAN_MPI=true\n"
                 runTests(local, "test/unit/math/prim/functor")
                 runTests(local, "test/unit/math/rev/functor")
@@ -213,43 +212,46 @@ LDFLAGS_OPENCL=-L/usr/local/cuda/targets/x86_64-linux/lib
             }
           },
           thread: {
-            runPod(image: image) {
+            runPod(image: image, cpus: 8, memory: '128Gi') {
               stage('Threading tests') {
                 def local = "CXX=$CLANG_CXX -Werror\nSTAN_THREADS=true\n"
-                if (mainBranch) {
-                  runTests(local, "test/unit")
-                } else {
-                  runTests(local, "test/unit -f thread")
-                  runTests(local, "test/unit -f map_rect")
-                  runTests(local, "test/unit -f reduce_sum")
+                withEnv(['STAN_NUM_THREADS=4', 'PARALLEL=8']) { // runTests currently only runs 1 test at a time post-build
+                  if (mainBranch) {
+                    runTests(local, "test/unit")
+                  } else {
+                    runTests(local, "test/unit -f thread")
+                    runTests(local, "test/unit -f map_rect")
+                    runTests(local, "test/unit -f reduce_sum")
+                  }
                 }
               }
             }
-          }
-      }
+          },
+          dist: {
+          def cores_per_test = 6
+          def parallel_tests = 10
+          runPod(image: image, cpus: cores_per_test*parallel_tests, memory: '128Gi') {
+            stage ('Distribution tests') {
+              def local = "CXX=$CLANG_CXX\nO=0\nN_TESTS=100\n"
+              if (params.withRowVector || mainBranch) {
+                local += "CXXFLAGS+= -DSTAN_TEST_ROW_VECTORS -DSTAN_PROB_TEST_ALL\n"
+              }
+              writeFile(file: 'make/local', text: local)
 
-      def cores_per_test = 6
-      def parallel_tests = 10
-      runPod(image: image, cpus: cores_per_test*parallel_tests, memory: '128Gi') {
-        stage ('Distribution tests') {
-          def local = "CXX=$CLANG_CXX\nO=0\nN_TESTS=100\n"
-          if (params.withRowVector || mainBranch) {
-            local += "CXXFLAGS+= -DSTAN_TEST_ROW_VECTORS -DSTAN_PROB_TEST_ALL\n"
+              def cmd = 'python3 test/prob/getDependencies.py'
+              if (params.runAllDistributions || mainBranch) {
+                cmd += ' --pretend-all'
+              }
+              sh """
+              $cmd > changed-tests
+              if [ -s changed-tests ] ; then
+                ./runTests.py -j${cores_per_test*parallel_tests} --make-only `cat changed-tests`
+                unset PARALLEL
+                parallel --halt now,fail=1 -r -j$parallel_tests ./runTests.py --test-only -j$cores_per_test {} < changed-tests
+              fi
+              """
+            }
           }
-          writeFile(file: 'make/local', text: local)
-
-          def cmd = 'python3 test/prob/getDependencies.py'
-          if (params.runAllDistributions || mainBranch) {
-            cmd += ' --pretend-all'
-          }
-          sh """
-            $cmd > changed-tests
-            if [ -s changed-tests ] ; then
-              ./runTests.py -j${cores_per_test*parallel_tests} --make-only `< changed-tests`
-              unset PARALLEL
-              parallel --halt now,fail=1 -r -j$parallel_tests ./runTests.py --test-only -j$cores_per_test {} < changed-tests
-            fi
-          """
         }
       }
 

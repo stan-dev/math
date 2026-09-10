@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -39,6 +40,11 @@ beta_proportion_rng(const T_loc &mu, const T_prec &kappa, RNG &rng) {
   static constexpr const char *function = "beta_proportion_rng";
   check_consistent_sizes(function, "Location parameter", mu,
                          "Precision parameter", kappa);
+
+  if (size_zero(mu, kappa)) {
+    return {};
+  }
+
   T_mu_ref mu_ref = mu;
   T_kappa_ref kappa_ref = kappa;
   check_positive(function, "Location parameter", mu_ref);
