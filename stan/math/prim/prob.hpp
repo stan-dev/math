@@ -179,6 +179,7 @@
 #include <stan/math/prim/prob/multi_student_t_cholesky_rng.hpp>
 #include <stan/math/prim/prob/multi_student_t_lpdf.hpp>
 #include <stan/math/prim/prob/multi_student_t_rng.hpp>
+#include <stan/math/prim/prob/multinomial_logit_glm_lpmf.hpp>
 #include <stan/math/prim/prob/multinomial_logit_lpmf.hpp>
 #include <stan/math/prim/prob/multinomial_logit_rng.hpp>
 #include <stan/math/prim/prob/multinomial_lpmf.hpp>
