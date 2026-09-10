@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -56,6 +57,10 @@ inv_gaussian_rng(const T_loc& mu, const T_shape& lambda, RNG& rng) {
   static constexpr const char* function = "inv_gaussian_rng";
   check_consistent_sizes(function, "Mean parameter", mu, "Shape parameter",
                          lambda);
+  if (size_zero(mu, lambda)) {
+    return {};
+  }
+
   T_mu_ref mu_ref = mu;
   T_lambda_ref lambda_ref = lambda;
   check_positive_finite(function, "Mean parameter", mu_ref);
