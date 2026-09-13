@@ -66,16 +66,12 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_lcdf(
   auto any_y_neg_inf = colwise_max(cast<char>(y_val == NEGATIVE_INFTY));
   auto cond = y_val == INFTY;
   auto inv_sigma = elt_divide(1.0, sigma_val);
-  auto mu_minus_y_div_sigma = elt_multiply(mu_val - y_val, inv_sigma);
-  auto exp_scaled_diff = exp(mu_minus_y_div_sigma);
-  auto Pn = elt_divide(1.0, 1.0 + exp_scaled_diff);
-  auto P_expr = colwise_sum(log(Pn));
+  auto scaled_diff = elt_multiply(y_val - mu_val, inv_sigma);
+  auto P_expr = colwise_sum(log_inv_logit(scaled_diff));
 
-  auto y_deriv = elt_divide(
-      exp(mu_minus_y_div_sigma - log(sigma_val) - 2.0 * log1p(exp_scaled_diff)),
-      Pn);
+  auto y_deriv = elt_multiply(inv_logit(-scaled_diff), inv_sigma);
   auto mu_deriv = -y_deriv;
-  auto sigma_deriv = elt_multiply(y_deriv, mu_minus_y_div_sigma);
+  auto sigma_deriv = elt_multiply(-y_deriv, scaled_diff);
 
   matrix_cl<char> any_y_neg_inf_cl;
   matrix_cl<double> P_cl;
