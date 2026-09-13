@@ -13,6 +13,7 @@
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/tanh.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
@@ -82,11 +83,8 @@ inline return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y,
     }
   }
   if constexpr (is_autodiff_v<T_loc>) {
-    const auto& exp_mu_div_sigma = to_ref(exp(mu_val * inv_sigma));
     edge<1>(ops_partials).partials_
-        = (1
-           - 2 * exp_mu_div_sigma / (exp_mu_div_sigma + exp(y_val * inv_sigma)))
-          * inv_sigma;
+        = tanh(0.5 * y_minus_mu_div_sigma) * inv_sigma;
   }
   return ops_partials.build(logp);
 }
