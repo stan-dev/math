@@ -79,6 +79,16 @@ TEST(ProbDistributionsLogisticLcdf, opencl_matches_cpu_small) {
       sigma.transpose().eval());
 }
 
+TEST(ProbDistributionsLogisticLcdf, opencl_matches_cpu_lower_tail) {
+  Eigen::VectorXd y(2);
+  y << -745, -746;
+  Eigen::VectorXd mu = Eigen::VectorXd::Zero(2);
+  Eigen::VectorXd sigma = Eigen::VectorXd::Ones(2);
+
+  stan::math::test::compare_cpu_opencl_prim_rev(logistic_lcdf_functor, y, mu,
+                                                sigma);
+}
+
 TEST(ProbDistributionsLogisticLcdf, opencl_matches_cpu_small_y_neg_inf) {
   int N = 3;
   int M = 2;
