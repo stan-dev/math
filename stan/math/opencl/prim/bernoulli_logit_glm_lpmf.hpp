@@ -103,7 +103,8 @@ inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
                                   select(low_bound_expr, ytheta_signs_expr,
                                          -log1p(exp_m_ytheta_expr)))));
   auto theta_derivative_expr
-      = select(high_bound_expr, -exp_m_ytheta_expr,
+      = select(high_bound_expr,
+               elt_multiply(signs_expr, exp_m_ytheta_expr),
                select(low_bound_expr, signs_expr,
                       elt_divide(elt_multiply(signs_expr, exp_m_ytheta_expr),
                                  (exp_m_ytheta_expr + 1))));

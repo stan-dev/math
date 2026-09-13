@@ -29,6 +29,42 @@ TEST_F(AgradRev, bernoulli_glm_matches_bernoulli_logit_doubles) {
       (stan::math::bernoulli_logit_glm_lpmf<true>(y, x, alpha, beta)));
 }
 
+TEST_F(AgradRev, bernoulli_logit_glm_upper_tail_gradient) {
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> x(1, 1);
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> beta(1);
+  x << 1.0;
+  beta << 25.0;
+  stan::math::var alpha = 0.0;
+
+  stan::math::var logp
+      = stan::math::bernoulli_logit_glm_lpmf(std::vector<int>{1}, x, alpha,
+                                              beta);
+  logp.grad();
+
+  const double expected_theta_derivative = std::exp(-25.0);
+  EXPECT_DOUBLE_EQ(expected_theta_derivative, alpha.adj());
+  EXPECT_DOUBLE_EQ(expected_theta_derivative, beta.adj()(0));
+  EXPECT_DOUBLE_EQ(25.0 * expected_theta_derivative, x.adj()(0, 0));
+}
+
+TEST_F(AgradRev, bernoulli_logit_glm_upper_tail_gradient_broadcast_x) {
+  Eigen::Matrix<stan::math::var, 1, 1> x;
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> beta(1);
+  x << 1.0;
+  beta << 25.0;
+  stan::math::var alpha = 0.0;
+
+  stan::math::var logp
+      = stan::math::bernoulli_logit_glm_lpmf(std::vector<int>{1, 1}, x, alpha,
+                                              beta);
+  logp.grad();
+
+  const double expected_theta_derivative = std::exp(-25.0);
+  EXPECT_DOUBLE_EQ(2.0 * expected_theta_derivative, alpha.adj());
+  EXPECT_DOUBLE_EQ(2.0 * expected_theta_derivative, beta.adj()(0));
+  EXPECT_DOUBLE_EQ(50.0 * expected_theta_derivative, x.adj()(0, 0));
+}
+
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
 TEST_F(AgradRev, bernoulli_glm_matches_bernoulli_logit_doubles_rand) {
