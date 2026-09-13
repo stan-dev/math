@@ -66,8 +66,7 @@ inline return_type_t<T_y, T_loc, T_scale> logistic_lccdf(const T_y& y,
     const T_partials_return y_dbl = y_vec.val(n);
     const T_partials_return mu_dbl = mu_vec.val(n);
     const T_partials_return sigma_inv_vec = 1.0 / sigma_vec.val(n);
-    const T_partials_return scaled_diff
-        = (y_dbl - mu_dbl) * sigma_inv_vec;
+    const T_partials_return scaled_diff = (y_dbl - mu_dbl) * sigma_inv_vec;
     P += log1m_inv_logit(scaled_diff);
 
     if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
