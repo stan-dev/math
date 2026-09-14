@@ -105,8 +105,7 @@ TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_matches_cpu_small) {
       sigma.transpose().eval(), lambda.transpose().eval());
 }
 
-TEST(ProbDistributionsDoubleExpModNormalLcdf,
-     opencl_matches_cpu_cancellation) {
+TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_matches_cpu_cancellation) {
   Eigen::VectorXd y(1);
   y << 0.093719047083121884;
   Eigen::VectorXd mu = Eigen::VectorXd::Zero(1);
@@ -118,8 +117,7 @@ TEST(ProbDistributionsDoubleExpModNormalLcdf,
                                                 mu, sigma, lambda);
 }
 
-TEST(ProbDistributionsDoubleExpModNormalLcdf,
-     opencl_matches_cpu_small_lambda) {
+TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_matches_cpu_small_lambda) {
   Eigen::VectorXd y(1);
   y << -10;
   Eigen::VectorXd mu = Eigen::VectorXd::Zero(1);

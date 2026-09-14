@@ -91,8 +91,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     const T_partials_return inv_sigma = 1.0 / sigma_dbl;
     const T_partials_return z = (y_dbl - mu_dbl) * inv_sigma;
     const T_partials_return a = lambda_dbl * sigma_dbl;
-    const auto exp_cdf_terms
-        = internal::exp_mod_normal_exp_log_cdf_terms(z, a);
+    const auto exp_cdf_terms = internal::exp_mod_normal_exp_log_cdf_terms(z, a);
 
     logp += exp_cdf_terms.log_term + LOG_TWO;
     if constexpr (include_summand<propto, T_inv_scale>::value) {
@@ -112,8 +111,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
         partials<2>(ops_partials)[n] += (-z * dz + a * da) * inv_sigma;
       }
       if constexpr (is_autodiff_v<T_inv_scale>) {
-        partials<3>(ops_partials)[n]
-            += 1.0 / lambda_dbl + sigma_dbl * da;
+        partials<3>(ops_partials)[n] += 1.0 / lambda_dbl + sigma_dbl * da;
       }
     }
   }

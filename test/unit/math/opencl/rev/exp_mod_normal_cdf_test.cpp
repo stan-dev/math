@@ -106,8 +106,7 @@ TEST(ProbDistributionsDoubleExpModNormalCdf, opencl_matches_cpu_small) {
       sigma.transpose().eval(), lambda.transpose().eval());
 }
 
-TEST(ProbDistributionsDoubleExpModNormalCdf,
-     opencl_matches_cpu_cancellation) {
+TEST(ProbDistributionsDoubleExpModNormalCdf, opencl_matches_cpu_cancellation) {
   Eigen::VectorXd y(1);
   y << 0.093719047083121884;
   Eigen::VectorXd mu = Eigen::VectorXd::Zero(1);

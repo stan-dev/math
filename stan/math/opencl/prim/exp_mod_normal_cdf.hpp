@@ -86,84 +86,68 @@ exp_mod_normal_cdf(const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma,
   auto mills_u = std_normal_lcdf_dscaled_impl(u_scaled) * INV_SQRT_TWO;
   auto q = 0.5 * elt_multiply(a, a) - elt_multiply(a, z);
   auto erfc_arg = (a - z) * INV_SQRT_TWO;
-  auto inv_two_erfc_arg_sq
-      = elt_divide(0.5, elt_multiply(erfc_arg, erfc_arg));
+  auto inv_two_erfc_arg_sq = elt_divide(0.5, elt_multiply(erfc_arg, erfc_arg));
   auto erfcx_series_5 = 105.0 - 945.0 * inv_two_erfc_arg_sq;
   auto erfcx_series_4
       = -15.0 + elt_multiply(inv_two_erfc_arg_sq, erfcx_series_5);
-  auto erfcx_series_3
-      = 3.0 + elt_multiply(inv_two_erfc_arg_sq, erfcx_series_4);
+  auto erfcx_series_3 = 3.0 + elt_multiply(inv_two_erfc_arg_sq, erfcx_series_4);
   auto erfcx_series_2
       = -1.0 + elt_multiply(inv_two_erfc_arg_sq, erfcx_series_3);
-  auto erfcx_series
-      = 1.0 + elt_multiply(inv_two_erfc_arg_sq, erfcx_series_2);
-  auto erfcx_asymptotic
-      = elt_divide(erfcx_series * INV_SQRT_PI, erfc_arg);
+  auto erfcx_series = 1.0 + elt_multiply(inv_two_erfc_arg_sq, erfcx_series_2);
+  auto erfcx_asymptotic = elt_divide(erfcx_series * INV_SQRT_PI, erfc_arg);
   auto erfcx_direct
       = elt_multiply(exp(elt_multiply(erfc_arg, erfc_arg)), erfc(erfc_arg));
   auto erfcx = select(erfc_arg >= 20.0, erfcx_asymptotic, erfcx_direct);
   auto use_erfcx = erfc_arg >= 5.0;
-  auto stable_log_exp_cdf = select(
-      use_erfcx,
-      -0.5 * elt_multiply(z, z) + LOG_HALF + log(erfcx),
-      q + log_cdf_u);
+  auto stable_log_exp_cdf
+      = select(use_erfcx, -0.5 * elt_multiply(z, z) + LOG_HALF + log(erfcx),
+               q + log_cdf_u);
   auto inv_tail = elt_divide(1.0, a - z);
   auto inv_tail_sq = elt_multiply(inv_tail, inv_tail);
   auto mills_series_5 = 706.0 - 8162.0 * inv_tail_sq;
-  auto mills_series_4
-      = -74.0 + elt_multiply(inv_tail_sq, mills_series_5);
-  auto mills_series_3
-      = 10.0 + elt_multiply(inv_tail_sq, mills_series_4);
-  auto mills_series_2
-      = -2.0 + elt_multiply(inv_tail_sq, mills_series_3);
+  auto mills_series_4 = -74.0 + elt_multiply(inv_tail_sq, mills_series_5);
+  auto mills_series_3 = 10.0 + elt_multiply(inv_tail_sq, mills_series_4);
+  auto mills_series_2 = -2.0 + elt_multiply(inv_tail_sq, mills_series_3);
   auto mills_excess_asymptotic
-      = elt_multiply(inv_tail,
-                     1.0 + elt_multiply(inv_tail_sq, mills_series_2));
-  auto mills_excess_erfcx
-      = elt_divide(SQRT_TWO_OVER_SQRT_PI, erfcx) - (a - z);
+      = elt_multiply(inv_tail, 1.0 + elt_multiply(inv_tail_sq, mills_series_2));
+  auto mills_excess_erfcx = elt_divide(SQRT_TWO_OVER_SQRT_PI, erfcx) - (a - z);
   auto mills_excess
       = select(erfc_arg >= 20.0, mills_excess_asymptotic,
                select(use_erfcx, mills_excess_erfcx, mills_u - (a - z)));
   auto log_cdf_n = log_diff_exp(log_cdf_z, stable_log_exp_cdf);
   auto cdf_weight = exp(log_cdf_z - log_cdf_n);
   auto exp_cdf_weight = exp(stable_log_exp_cdf - log_cdf_n);
-  auto dz_log_cdf
-      = elt_multiply(cdf_weight, mills_z)
-        + elt_multiply(exp_cdf_weight, z - mills_excess);
+  auto dz_log_cdf = elt_multiply(cdf_weight, mills_z)
+                    + elt_multiply(exp_cdf_weight, z - mills_excess);
   auto da_log_cdf = elt_multiply(exp_cdf_weight, mills_excess);
 
   auto m0_factor = select(z < -4.0, mills_excess, z + mills_z);
   auto m1_over_m0 = elt_divide(
-      0.5 * (elt_multiply(z, z) + 1.0 + elt_multiply(z, mills_z)),
-      m0_factor);
-  auto use_small_a = a < 1e-8 && m0_factor > 0.0
-                     && fabs(elt_multiply(a, m1_over_m0)) < 1e-8;
+      0.5 * (elt_multiply(z, z) + 1.0 + elt_multiply(z, mills_z)), m0_factor);
+  auto use_small_a
+      = a < 1e-8 && m0_factor > 0.0 && fabs(elt_multiply(a, m1_over_m0)) < 1e-8;
   auto remainder = 1.0 - elt_multiply(a, m1_over_m0);
   auto small_log_cdf
       = log(a) + log_cdf_z + log(m0_factor) + log1p(-a * m1_over_m0);
   auto dm1_over_m0 = 1.0 - elt_divide(m1_over_m0, m0_factor);
-  auto small_dz_log_cdf
-      = elt_divide(1.0, m0_factor)
-        - elt_divide(elt_multiply(a, dm1_over_m0), remainder);
+  auto small_dz_log_cdf = elt_divide(1.0, m0_factor)
+                          - elt_divide(elt_multiply(a, dm1_over_m0), remainder);
   auto small_a_da_log_cdf
       = 1.0 - elt_divide(elt_multiply(a, m1_over_m0), remainder);
   auto stable_log_cdf = select(use_small_a, small_log_cdf, log_cdf_n);
-  auto stable_dz_log_cdf
-      = select(use_small_a, small_dz_log_cdf, dz_log_cdf);
+  auto stable_dz_log_cdf = select(use_small_a, small_dz_log_cdf, dz_log_cdf);
   auto stable_a_da_log_cdf
       = select(use_small_a, small_a_da_log_cdf, elt_multiply(a, da_log_cdf));
 
   auto log_cdf_expr = colwise_sum(select(y_pos_inf, 0.0, stable_log_cdf));
-  auto y_log_deriv = select(
-      y_pos_inf, 0.0, elt_multiply(stable_dz_log_cdf, inv_sigma));
+  auto y_log_deriv
+      = select(y_pos_inf, 0.0, elt_multiply(stable_dz_log_cdf, inv_sigma));
   auto mu_log_deriv = -y_log_deriv;
   auto sigma_log_deriv = select(
       y_pos_inf, 0.0,
-      elt_multiply(-elt_multiply(z, stable_dz_log_cdf)
-                       + stable_a_da_log_cdf,
+      elt_multiply(-elt_multiply(z, stable_dz_log_cdf) + stable_a_da_log_cdf,
                    inv_sigma));
-  auto lambda_log_deriv
-      = select(y_pos_inf, 0.0, stable_a_da_log_cdf);
+  auto lambda_log_deriv = select(y_pos_inf, 0.0, stable_a_da_log_cdf);
 
   matrix_cl<char> any_y_neg_inf_cl;
   matrix_cl<double> cdf_cl;
@@ -175,13 +159,12 @@ exp_mod_normal_cdf(const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma,
   results(check_y_not_nan, check_mu_finite, check_sigma_positive_finite,
           check_lambda_positive_finite, any_y_neg_inf_cl, cdf_cl, y_deriv_cl,
           mu_deriv_cl, sigma_deriv_cl, lambda_deriv_cl)
-      = expressions(
-          y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
-          lambda_positive_finite_expr, any_y_neg_inf, log_cdf_expr,
-          calc_if<is_autodiff_v<T_y_cl>>(y_log_deriv),
-          calc_if<is_autodiff_v<T_loc_cl>>(mu_log_deriv),
-          calc_if<is_autodiff_v<T_scale_cl>>(sigma_log_deriv),
-          calc_if<is_autodiff_v<T_inv_scale_cl>>(lambda_log_deriv));
+      = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
+                    lambda_positive_finite_expr, any_y_neg_inf, log_cdf_expr,
+                    calc_if<is_autodiff_v<T_y_cl>>(y_log_deriv),
+                    calc_if<is_autodiff_v<T_loc_cl>>(mu_log_deriv),
+                    calc_if<is_autodiff_v<T_scale_cl>>(sigma_log_deriv),
+                    calc_if<is_autodiff_v<T_inv_scale_cl>>(lambda_log_deriv));
 
   if (from_matrix_cl(any_y_neg_inf_cl).maxCoeff()) {
     return 0.0;
@@ -200,9 +183,9 @@ exp_mod_normal_cdf(const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma,
             calc_if<is_autodiff_v<T_loc_cl>>(elt_multiply(mu_deriv_cl, cdf)),
             calc_if<is_autodiff_v<T_scale_cl>>(
                 elt_multiply(sigma_deriv_cl, cdf)),
-            calc_if<is_autodiff_v<T_inv_scale_cl>>(elt_multiply(
-                elt_multiply(exp(log_cdf - log(a)), sigma_val),
-                lambda_deriv_cl)));
+            calc_if<is_autodiff_v<T_inv_scale_cl>>(
+                elt_multiply(elt_multiply(exp(log_cdf - log(a)), sigma_val),
+                             lambda_deriv_cl)));
 
     if constexpr (is_autodiff_v<T_y_cl>) {
       partials<0>(ops_partials) = std::move(y_deriv_cl);

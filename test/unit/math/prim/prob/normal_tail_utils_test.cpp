@@ -19,8 +19,7 @@ void expect_normal_tail_terms(double x, double expected_log_cdf,
 }  // namespace
 
 TEST(ProbNormalTailUtils, central_and_lower_tail) {
-  expect_normal_tail_terms(0.0, -0.69314718055994529,
-                           0.79788456080286529);
+  expect_normal_tail_terms(0.0, -0.69314718055994529, 0.79788456080286529);
   expect_normal_tail_terms(-7.0710678118654755, -27.894036726097383,
                            7.2073273273945926);
   expect_normal_tail_terms(-28.284271247461902, -404.26249051466425,

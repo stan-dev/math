@@ -131,8 +131,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
         continue;
       }
       const T_partials_return sigma_dbl = sigma_vec[n];
-      const T_partials_return z
-          = (y_vec[n] - mu_vec[n]) / sigma_dbl;
+      const T_partials_return z = (y_vec[n] - mu_vec[n]) / sigma_dbl;
       const T_partials_return a = lambda_vec[n] * sigma_dbl;
       const auto terms = internal::exp_mod_normal_cdf_terms(z, a);
       partials<3>(ops_partials)[n]

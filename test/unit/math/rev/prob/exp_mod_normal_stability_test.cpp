@@ -14,11 +14,10 @@ void expect_stable_value(double actual, double expected) {
 
 TEST_F(AgradRev, exp_mod_normal_lpdf_infinite_observations) {
   EXPECT_EQ(stan::math::NEGATIVE_INFTY,
-            stan::math::exp_mod_normal_lpdf(
-                stan::math::NEGATIVE_INFTY, 0.0, 1.0, 1.0));
+            stan::math::exp_mod_normal_lpdf(stan::math::NEGATIVE_INFTY, 0.0,
+                                            1.0, 1.0));
   EXPECT_EQ(stan::math::NEGATIVE_INFTY,
-            stan::math::exp_mod_normal_lpdf(stan::math::INFTY, 0.0, 1.0,
-                                            1.0));
+            stan::math::exp_mod_normal_lpdf(stan::math::INFTY, 0.0, 1.0, 1.0));
 }
 
 TEST_F(AgradRev, exp_mod_normal_lpdf_left_tail) {
