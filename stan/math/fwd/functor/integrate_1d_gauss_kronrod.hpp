@@ -12,7 +12,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the integral of f from a to b using adaptive Gauss-Kronrod (G21,K21)
+ * Return the integral of f from a to b using adaptive Gauss-Kronrod (G10,K21)
  * quadrature, with tangents computed via finite differences over the
  * integrand parameters.
  *
@@ -24,10 +24,9 @@ namespace math {
  * @param f the functor to integrate
  * @param a lower limit of integration
  * @param b upper limit of integration
- * @param relative_tolerance relative tolerance passed to Boost quadrature
+ * @param relative_tolerance target relative tolerance for quadrature
  * @param absolute_tolerance absolute-error floor on the convergence test
- * @param max_depth maximum recursive bisection depth passed to Boost
- *   quadrature
+ * @param max_depth maximum recursive bisection depth
  * @param[in, out] msgs the print stream for warning messages
  * @param args additional arguments to pass to f
  * @return numeric integral of function f
@@ -64,7 +63,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_tol(
 }
 
 /**
- * Return the integral of f from a to b using adaptive Gauss-Kronrod (G21,K21)
+ * Return the integral of f from a to b using adaptive Gauss-Kronrod (G10,K21)
  * quadrature, with tangents computed via finite differences over the
  * integrand parameters.
  *

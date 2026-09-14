@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/functor/gauss_kronrod_adaptive.hpp>
 #include <stan/math/prim/functor/integrate_1d_adapter.hpp>
 #include <boost/math/quadrature/gauss_kronrod.hpp>
 #include <algorithm>
@@ -21,6 +22,15 @@ namespace math {
  */
 constexpr unsigned int INTEGRATE_1D_GAUSS_KRONROD_ORDER = 21;
 
+// internal::gauss_kronrod_21_integrate is specialised to the (G10, K21) pair:
+// its abscissa/weight lookups and the parity of its two accumulation loops
+// assume N = 21. Raising the order here alone would silently leave the
+// quadrature at 21, so keep the two in lockstep.
+static_assert(INTEGRATE_1D_GAUSS_KRONROD_ORDER == 21,
+              "integrate_1d_gauss_kronrod's quadrature driver is specialised "
+              "to the (G10, K21) pair; update "
+              "internal::gauss_kronrod_21_integrate to change the order.");
+
 /**
  * Default recursive bisection depth used by integrate_1d_gauss_kronrod
  * when the user does not pass one explicitly. Matches Boost's default.
@@ -28,12 +38,12 @@ constexpr unsigned int INTEGRATE_1D_GAUSS_KRONROD_ORDER = 21;
 constexpr int INTEGRATE_1D_GAUSS_KRONROD_MAX_DEPTH = 15;
 
 /**
- * Integrate a single variable function f from a to b using Boost's adaptive
- * Gauss-Kronrod (G21,K21) quadrature, with QUADPACK-style mixed convergence
- * criterion. The integration succeeds (returns the Boost estimate Q)
+ * Integrate a single variable function f from a to b using adaptive
+ * Gauss-Kronrod (G10,K21) quadrature, with QUADPACK-style mixed convergence
+ * criterion. The integration succeeds (returns the quadrature estimate Q)
  * whenever
  *   error <= max(relative_tolerance * L1, absolute_tolerance)
- * where error and L1 are Boost's quadrature-error and L1-norm estimates.
+ * where error and L1 are the quadrature-error and L1-norm estimates.
  * A larger error throws std::domain_error.
  *
  * Setting absolute_tolerance to a small positive value lets callers escape
@@ -41,9 +51,14 @@ constexpr int INTEGRATE_1D_GAUSS_KRONROD_MAX_DEPTH = 15;
  * checking accumulated floating-point round-off against itself (this
  * happens routinely in nested integrate_1d_gauss_kronrod calls when the
  * outer integration probes the deep tail of the integrand and every
- * inner evaluation sees an essentially-zero integrand). Setting it to
- * zero (the default) reproduces the strict pure-relative-tolerance
- * behaviour of integrate_1d.
+ * inner evaluation sees an essentially-zero integrand).
+ *
+ * absolute_tolerance is applied twice, in the same units: as a floor on
+ * refinement (a panel whose error already sits below the floor is not
+ * bisected, which is what bounds the work in the round-off regime above)
+ * and as the floor on the convergence test below. Setting it to zero (the
+ * default) reproduces the strict pure-relative-tolerance behaviour of
+ * integrate_1d, bit-for-bit identically to Boost's gauss_kronrod::integrate.
  *
  * The signature for f should be:
  *   double f(double x, double xc)
@@ -54,19 +69,17 @@ constexpr int INTEGRATE_1D_GAUSS_KRONROD_MAX_DEPTH = 15;
  * written for integrate_1d that rely on xc must be rewritten without it before
  * being used here.
  *
- * Boost's gauss_kronrod handles infinite limits internally via the usual
- * change of variable; no special handling for integrals crossing zero is
- * required.
+ * Infinite limits use Boost's changes of variable; no special handling for
+ * integrals crossing zero is required.
  *
  * @tparam F Type of f
  * @param f the function to be integrated
  * @param a lower limit of integration (may be -infinity)
  * @param b upper limit of integration (may be +infinity)
- * @param relative_tolerance target relative tolerance passed to Boost
- * quadrature
- * @param absolute_tolerance absolute-error floor on the convergence test
- * @param max_depth maximum recursive bisection depth passed to Boost
- * quadrature
+ * @param relative_tolerance target relative tolerance for quadrature
+ * @param absolute_tolerance absolute-error floor on refinement and on the
+ * convergence test
+ * @param max_depth maximum recursive bisection depth
  * @return numeric integral of function f
  */
 template <typename F>
@@ -82,13 +95,12 @@ inline double integrate_gk(const F& f, double a, double b,
   // xc is unused here.
   auto f_wrap = [&f](double x) { return f(x, NOT_A_NUMBER); };
 
-  using boost::math::quadrature::gauss_kronrod;
   const unsigned int depth
       = max_depth < 0 ? 0u : static_cast<unsigned int>(max_depth);
-  double Q = gauss_kronrod<double, INTEGRATE_1D_GAUSS_KRONROD_ORDER>::integrate(
-      f_wrap, a, b, depth, relative_tolerance, &error, &L1);
+  double Q = internal::gauss_kronrod_21_integrate(
+      f_wrap, a, b, depth, relative_tolerance, absolute_tolerance, &error, &L1);
 
-  // QUADPACK-style mixed convergence: throw only if the Boost error
+  // QUADPACK-style mixed convergence: throw only if the quadrature error
   // exceeds both the relative-tolerance target (rel_tol * L1) and the
   // user-supplied absolute floor. With absolute_tolerance = 0 (default)
   // this reduces to the strict pure-relative test.
@@ -106,7 +118,7 @@ inline double integrate_gk(const F& f, double a, double b,
 
 /**
  * Compute the integral of the single variable function f from a to b to within
- * a specified relative tolerance using adaptive Gauss-Kronrod (G21,K21)
+ * a specified relative tolerance using adaptive Gauss-Kronrod (G10,K21)
  * quadrature. a and b can be finite or infinite.
  *
  * @tparam F type of function to integrate
@@ -115,9 +127,10 @@ inline double integrate_gk(const F& f, double a, double b,
  * @param f the function to be integrated
  * @param a lower limit of integration
  * @param b upper limit of integration
- * @param relative_tolerance relative tolerance passed to Boost quadrature
- * @param absolute_tolerance absolute-error floor on the convergence test
- * @param max_depth maximum recursive bisection depth passed to Boost quadrature
+ * @param relative_tolerance target relative tolerance for quadrature
+ * @param absolute_tolerance absolute-error floor on refinement and on the
+ * convergence test
+ * @param max_depth maximum recursive bisection depth
  * @param[in, out] msgs the print stream for warning messages
  * @param args additional arguments passed to f
  * @return numeric integral of function f
@@ -147,7 +160,7 @@ inline double integrate_1d_gauss_kronrod_tol(const F& f, double a, double b,
 
 /**
  * Compute the integral of the single variable function f from a to b using
- * adaptive Gauss-Kronrod (G21,K21) quadrature. a and b can be finite or
+ * adaptive Gauss-Kronrod (G10,K21) quadrature. a and b can be finite or
  * infinite.
  *
  * The signature for f should be:
@@ -157,13 +170,13 @@ inline double integrate_1d_gauss_kronrod_tol(const F& f, double a, double b,
  * should be printed to the msgs stream. xc is unused (always NaN) here; see
  * integrate_gk above for details.
  *
- * The integration algorithm terminates when the Boost estimate of the
- * quadrature error satisfies
+ * The integration algorithm terminates when the quadrature-error estimate
+ * satisfies
  *   \f[
  *     \text{error} \leq \max(\text{relative\_tolerance} \cdot |I|,
  *                            \text{absolute\_tolerance})
  *   \f]
- * where \f$|I|\f$ is the Boost estimate of the L1 norm of the integral.
+ * where \f$|I|\f$ is the estimate of the L1 norm of the integral.
  *
  *
  * @tparam F type of function to integrate

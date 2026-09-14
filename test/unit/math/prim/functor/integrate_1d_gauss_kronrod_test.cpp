@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <stan/math.hpp>
 #include <test/unit/util.hpp>
+#include <boost/math/quadrature/gauss_kronrod.hpp>
 #include <cmath>
 #include <iostream>
 #include <limits>
@@ -402,8 +403,8 @@ TEST(StanMath_integrate_1d_gk_prim, max_depth_argument) {
 // relative tolerance (covered by endpoint_singularity_throws above).
 // Setting abs_tol large enough that
 //   max(rel_tol * L1, abs_tol) >= reported_error
-// lets the user accept Boost's (possibly imprecise) estimate without
-// an exception, matching the QUADPACK convention of mixed
+// lets the user accept the (possibly imprecise) estimate without an
+// exception, matching the QUADPACK convention of mixed
 // relative/absolute convergence.
 TEST(StanMath_integrate_1d_gk_prim, abs_tol_suppresses_throw) {
   // Sanity: with abs_tol = 0 (default) the call throws (this is the
@@ -416,8 +417,8 @@ TEST(StanMath_integrate_1d_gk_prim, abs_tol_suppresses_throw) {
 
   // With a very generous abs_tol the convergence threshold is
   // satisfied and the integral is returned. The endpoint singularity
-  // x^{-0.9}*(1-x)^{-0.9} makes Boost evaluate the integrand at
-  // values approaching 1e9 near x=0, so the reported error estimate
+  // x^{-0.9}*(1-x)^{-0.9} makes the quadrature evaluate the integrand
+  // at values approaching 1e9 near x=0, so the reported error estimate
   // is also large in absolute terms (~5e4 here); abs_tol = 1e6 is
   // safely above it. The true value of B(0.1, 0.1) is ~19.7, so even
   // an imprecise estimate should be in the right ballpark.
@@ -443,4 +444,283 @@ TEST(StanMath_integrate_1d_gk_prim, abs_tol_argument_smoke) {
       std::vector<double>{}, std::vector<int>{});
   EXPECT_NEAR(Q0, 1.0423499493102901, 1e-8);
   EXPECT_NEAR(Q1, Q0, 1e-12);
+}
+
+// ---------------------------------------------------------------------------
+// absolute_tolerance during refinement
+//
+// absolute_tolerance is applied in two places, in the same units: as a floor
+// on refinement (a panel already below the floor is not bisected) and as the
+// floor on the convergence test. The tests below pin the three properties
+// that make that safe:
+//
+//   1. equivalence  - abs_tol == 0 is bit-for-bit Boost;
+//   2. continuity   - a negligible abs_tol is a no-op, not a mode switch;
+//   3. monotonicity - raising abs_tol can only reduce work.
+//
+// Property 3 is the one that bounds the cost. An implementation that instead
+// refines against a *global* error budget satisfies 1 and 2 but violates 3
+// catastrophically: it drains the whole bisection tree whenever the tolerance
+// is unreachable, which is exactly the regime abs_tol exists to serve.
+// ---------------------------------------------------------------------------
+
+// abs_tol == 0 must reproduce Boost's gauss_kronrod::integrate exactly --
+// not merely to within a tolerance, but bit-for-bit in the estimate, the
+// error, the L1 norm and the number of integrand evaluations. This is what
+// licenses integrate_gk to route every call through the local
+// implementation rather than dispatching to Boost when abs_tol == 0.
+TEST(StanMath_integrate_1d_gk_prim,
+     matches_boost_bit_for_bit_when_abs_tol_zero) {
+  const double inf = std::numeric_limits<double>::infinity();
+
+  auto expect_bit_exact = [](const char *name, auto f, double a, double b,
+                             unsigned int depth, double rel_tol) {
+    double boost_error = 0.0, boost_l1 = 0.0;
+    double stan_error = 0.0, stan_l1 = 0.0;
+    int boost_evaluations = 0, stan_evaluations = 0;
+
+    auto boost_integrand = [&boost_evaluations, &f](double x) {
+      ++boost_evaluations;
+      return f(x);
+    };
+    auto stan_integrand = [&stan_evaluations, &f](double x) {
+      ++stan_evaluations;
+      return f(x);
+    };
+
+    const double boost_result
+        = boost::math::quadrature::gauss_kronrod<double, 21>::integrate(
+            boost_integrand, a, b, depth, rel_tol, &boost_error, &boost_l1);
+    const double stan_result = stan::math::internal::gauss_kronrod_21_integrate(
+        stan_integrand, a, b, depth, rel_tol, 0.0, &stan_error, &stan_l1);
+
+    EXPECT_EQ(boost_result, stan_result) << name << ": estimate";
+    EXPECT_EQ(boost_error, stan_error) << name << ": error";
+    EXPECT_EQ(boost_l1, stan_l1) << name << ": L1";
+    EXPECT_EQ(boost_evaluations, stan_evaluations) << name << ": evaluations";
+  };
+
+  // Finite limits, spanning easy, oscillatory and singular integrands.
+  expect_bit_exact(
+      "smooth", [](double x) { return std::exp(x); }, 0.0, 1.0, 15, 1e-10);
+  expect_bit_exact(
+      "narrow interval", [](double x) { return std::sin(1 / (x + 0.01)); }, 0.2,
+      0.7, 15, 1e-8);
+  expect_bit_exact(
+      "oscillatory", [](double x) { return std::sin(127 * x); }, 0.0, 1.0, 15,
+      1e-12);
+  expect_bit_exact(
+      "negligible amplitude",
+      [](double x) { return 1e-12 * std::sin(127 * x); }, 0.0, 1.0, 5, 1e-12);
+  expect_bit_exact(
+      "endpoint singularity", [](double x) { return std::pow(x, -0.9); },
+      1e-300, 1.0, 15, 1e-12);
+  expect_bit_exact(
+      "peaked", [](double x) { return 1 / (1 + 1e4 * x * x); }, -1.0, 1.0, 15,
+      1e-10);
+  expect_bit_exact(
+      "identically zero", [](double x) { return 0.0; }, 0.0, 1.0, 15, 1e-12);
+  expect_bit_exact(
+      "max_depth zero", [](double x) { return std::exp(x); }, 0.0, 1.0, 0,
+      1e-14);
+
+  // All three infinite-limit changes of variable.
+  expect_bit_exact(
+      "right infinite", [](double x) { return std::exp(-x); }, 0.0, inf, 15,
+      1e-10);
+  expect_bit_exact(
+      "right infinite heavy tail", [](double x) { return 1 / (1 + x * x); },
+      0.0, inf, 15, 1e-12);
+  expect_bit_exact(
+      "left infinite", [](double x) { return std::exp(x); }, -inf, 0.0, 15,
+      1e-10);
+  expect_bit_exact(
+      "doubly infinite", [](double x) { return std::exp(-x * x); }, -inf, inf,
+      15, 1e-10);
+  expect_bit_exact(
+      "doubly infinite heavy tail", [](double x) { return 1 / (1 + x * x); },
+      -inf, inf, 15, 1e-12);
+}
+
+// An absolute tolerance far below the relative target must be a no-op: it
+// cannot change the answer and cannot change the amount of work. Without
+// this, abs_tol == 0 is a sentinel rather than a limit, and "pass a tiny
+// abs_tol to be safe" silently selects different behaviour.
+TEST(StanMath_integrate_1d_gk_prim, abs_tol_is_continuous_at_zero) {
+  auto run = [](double absolute_tolerance, int *evaluations) {
+    auto integrand = [evaluations](double x, double xc, std::ostream *msgs) {
+      ++*evaluations;
+      return std::exp(-x * x) * std::cos(30 * x);
+    };
+    return stan::math::integrate_1d_gauss_kronrod_tol(
+        integrand, 0.0, 3.0, 1e-10, absolute_tolerance, 15,
+        integrate_1d_gk_test::msgs);
+  };
+
+  int zero_evaluations = 0, tiny_evaluations = 0;
+  const double zero_result = run(0.0, &zero_evaluations);
+  const double tiny_result = run(1e-300, &tiny_evaluations);
+
+  EXPECT_EQ(zero_result, tiny_result);
+  EXPECT_EQ(zero_evaluations, tiny_evaluations);
+}
+
+// The motivating case: an integrand whose magnitude is so small that the
+// relative-tolerance test degenerates into comparing accumulated round-off
+// against itself. A positive abs_tol stops the pointless refinement, and the
+// answer is unchanged to well within the tolerance the caller asked for.
+TEST(StanMath_integrate_1d_gk_prim,
+     positive_abs_tol_reduces_work_on_negligible_integrand) {
+  constexpr double scale = 1e-12;
+  constexpr double frequency = 127.0;
+  constexpr double absolute_tolerance = 1e-14;
+  const double expected = scale * (1.0 - std::cos(frequency)) / frequency;
+
+  auto run = [](double abs_tol, int *evaluations) {
+    auto integrand = [evaluations](double x, double xc, std::ostream *msgs) {
+      ++*evaluations;
+      return scale * std::sin(frequency * x);
+    };
+    return stan::math::integrate_1d_gauss_kronrod_tol(
+        integrand, 0.0, 1.0, 1e-12, abs_tol, 5, integrate_1d_gk_test::msgs);
+  };
+
+  int relative_evaluations = 0, absolute_evaluations = 0;
+  const double relative_result = run(0.0, &relative_evaluations);
+  const double absolute_result = run(absolute_tolerance, &absolute_evaluations);
+
+  // The contract: the answer is within the absolute tolerance requested.
+  // Asserting anything tighter would be asserting an accident of how much
+  // more accurate K21 happens to be than the caller asked for.
+  EXPECT_NEAR(absolute_result, expected, absolute_tolerance);
+  EXPECT_NEAR(relative_result, expected, absolute_tolerance);
+  EXPECT_NEAR(absolute_result, relative_result, absolute_tolerance);
+
+  // Both paths also happen to be near machine precision here; check that
+  // relatively rather than against a hard-coded absolute epsilon.
+  EXPECT_LT(std::abs(absolute_result - expected) / std::abs(expected), 1e-10);
+
+  // The point of the exercise: materially less work. Stated as a ratio so
+  // this does not pin the exact recursion counts of the quadrature.
+  EXPECT_LT(absolute_evaluations, relative_evaluations);
+  EXPECT_LT(2 * absolute_evaluations, relative_evaluations);
+}
+
+// Regression guard for unbounded refinement.
+//
+// x^{-0.9} has an endpoint singularity that Gauss-Kronrod cannot resolve, so
+// no attainable tolerance is ever met and every panel looks "not yet good
+// enough". Refinement must still be driven panel-by-panel, so the cost stays
+// at the level of the abs_tol == 0 call (~1.7e3 evaluations at the default
+// max_depth). An implementation that refines against a global budget instead
+// exhausts the entire depth-15 tree here: ~1.4e6 evaluations, three orders of
+// magnitude more, for an identical answer.
+TEST(StanMath_integrate_1d_gk_prim,
+     positive_abs_tol_bounds_work_on_unresolvable_integrand) {
+  auto run = [](double absolute_tolerance, int *evaluations) {
+    auto integrand = [evaluations](double x, double xc, std::ostream *msgs) {
+      ++*evaluations;
+      return std::pow(x, -0.9);
+    };
+    // Not resolvable to this tolerance, so the convergence test fails and
+    // the call throws; the evaluation count is what is under test.
+    EXPECT_THROW(stan::math::integrate_1d_gauss_kronrod_tol(
+                     integrand, 1e-300, 1.0, 1e-12, absolute_tolerance, 15,
+                     integrate_1d_gk_test::msgs),
+                 std::domain_error);
+  };
+
+  int relative_evaluations = 0, absolute_evaluations = 0;
+  run(0.0, &relative_evaluations);
+  run(1e-14, &absolute_evaluations);
+
+  // Monotonicity: a floor on refinement can only remove work, never add it.
+  EXPECT_LE(absolute_evaluations, relative_evaluations);
+
+  // Absolute backstop, three orders of magnitude below the global-budget
+  // failure mode and one order above the actual cost.
+  EXPECT_LT(absolute_evaluations, 50000);
+}
+
+// Raising abs_tol must never increase the work done, on any integrand.
+TEST(StanMath_integrate_1d_gk_prim, work_is_monotone_in_abs_tol) {
+  auto evaluations_for = [](double absolute_tolerance) {
+    int evaluations = 0;
+    auto integrand = [&evaluations](double x, double xc, std::ostream *msgs) {
+      ++evaluations;
+      return std::exp(-x * x) * std::cos(30 * x);
+    };
+    try {
+      stan::math::integrate_1d_gauss_kronrod_tol(integrand, 0.0, 3.0, 1e-12,
+                                                 absolute_tolerance, 12,
+                                                 integrate_1d_gk_test::msgs);
+    } catch (const std::domain_error &) {
+      // Convergence failure is irrelevant here; only the cost is.
+    }
+    return evaluations;
+  };
+
+  int previous = evaluations_for(0.0);
+  for (double absolute_tolerance : {1e-300, 1e-16, 1e-12, 1e-8, 1e-4, 1e-1}) {
+    const int current = evaluations_for(absolute_tolerance);
+    EXPECT_LE(current, previous) << "abs_tol = " << absolute_tolerance;
+    previous = current;
+  }
+}
+
+// A positive abs_tol must not paper over a genuinely unconverged result: if
+// the error estimate still exceeds max(rel_tol * L1, abs_tol), it throws.
+TEST(StanMath_integrate_1d_gk_prim, positive_abs_tol_still_throws_when_needed) {
+  auto integrand = [](double x, double xc, std::ostream *msgs) {
+    return std::pow(x, -0.9);
+  };
+  EXPECT_THROW(
+      stan::math::integrate_1d_gauss_kronrod_tol(
+          integrand, 1e-300, 1.0, 1e-12, 1e-14, 15, integrate_1d_gk_test::msgs),
+      std::domain_error);
+}
+
+// max_depth = 0 means "one panel, no bisection"; a positive abs_tol must not
+// disturb that (the refinement floor is never consulted).
+TEST(StanMath_integrate_1d_gk_prim, positive_abs_tol_with_max_depth_zero) {
+  auto integrand
+      = [](double x, double xc, std::ostream *msgs) { return std::exp(x); };
+  const double Q = stan::math::integrate_1d_gauss_kronrod_tol(
+      integrand, 0.0, 1.0, 1e-10, 1e-12, 0, integrate_1d_gk_test::msgs);
+  EXPECT_NEAR(Q, std::exp(1.0) - 1.0, 1e-12);
+}
+
+// A positive abs_tol must agree with the abs_tol == 0 answer under every
+// change of variable, not just the finite one.
+TEST(StanMath_integrate_1d_gk_prim, positive_abs_tol_domain_transformations) {
+  constexpr double relative_tolerance = 1e-12;
+  constexpr double absolute_tolerance = 1e-10;
+  constexpr int max_depth = 8;
+  const double infinity = std::numeric_limits<double>::infinity();
+
+  auto check_integral = [&](const auto &integrand, double lower, double upper,
+                            double expected) {
+    const double legacy_result = stan::math::integrate_1d_gauss_kronrod_tol(
+        integrand, lower, upper, relative_tolerance, 0.0, max_depth,
+        integrate_1d_gk_test::msgs);
+    const double absolute_result = stan::math::integrate_1d_gauss_kronrod_tol(
+        integrand, lower, upper, relative_tolerance, absolute_tolerance,
+        max_depth, integrate_1d_gk_test::msgs);
+    EXPECT_NEAR(absolute_result, expected, absolute_tolerance);
+    EXPECT_NEAR(absolute_result, legacy_result, absolute_tolerance);
+  };
+
+  auto increasing_exponential
+      = [](double x, double xc, std::ostream *msgs) { return std::exp(x); };
+  auto decreasing_exponential
+      = [](double x, double xc, std::ostream *msgs) { return std::exp(-x); };
+  auto gaussian_kernel = [](double x, double xc, std::ostream *msgs) {
+    return std::exp(-x * x);
+  };
+
+  check_integral(increasing_exponential, 0.0, 1.0, std::exp(1.0) - 1.0);
+  check_integral(decreasing_exponential, 0.0, infinity, 1.0);
+  check_integral(increasing_exponential, -infinity, 0.0, 1.0);
+  check_integral(gaussian_kernel, -infinity, infinity,
+                 std::sqrt(stan::math::pi()));
 }

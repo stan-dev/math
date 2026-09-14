@@ -16,7 +16,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the integral of f from a to b using adaptive Gauss-Kronrod (G21,K21)
+ * Return the integral of f from a to b using adaptive Gauss-Kronrod (G10,K21)
  * quadrature.
  *
  * @tparam F Type of f
@@ -27,10 +27,10 @@ namespace math {
  * @param f the functor to integrate
  * @param a lower limit of integration
  * @param b upper limit of integration
- * @param relative_tolerance relative tolerance passed to Boost quadrature
- * @param absolute_tolerance absolute-error floor on the convergence test
- * @param max_depth maximum recursive bisection depth passed to Boost
- *   quadrature
+ * @param relative_tolerance target relative tolerance for quadrature
+ * @param absolute_tolerance absolute-error floor on refinement and on the
+ *   convergence test
+ * @param max_depth maximum recursive bisection depth
  * @param[in, out] msgs the print stream for warning messages
  * @param args additional arguments to pass to f
  * @return numeric integral of function f
@@ -57,7 +57,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_tol(
 
 /**
  * Compute the integral of the single variable function f from a to b using
- * adaptive Gauss-Kronrod (G21,K21) quadrature. a and b can be finite or
+ * adaptive Gauss-Kronrod (G10,K21) quadrature. a and b can be finite or
  * infinite.
  *
  * f should be compatible with reverse mode autodiff and have the signature:
@@ -66,10 +66,10 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_tol(
  * It should return the value of the function evaluated at x. Any errors
  * should be printed to the msgs stream. xc is unused (always NaN) here.
  *
- * The integration algorithm terminates when the Boost estimate of the
- * quadrature error satisfies
+ * The integration algorithm terminates when the quadrature-error estimate
+ * satisfies
  *   error <= max(relative_tolerance * L1, absolute_tolerance)
- * where L1 is the Boost estimate of the L1 norm of the integral.
+ * where L1 is the estimate of the L1 norm of the integral.
  *
  * Gradients of f that evaluate to NaN when the function evaluates to zero are
  * set to zero themselves. This is due to the autodiff easily overflowing to

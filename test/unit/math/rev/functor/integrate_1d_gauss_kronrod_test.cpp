@@ -481,4 +481,83 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_TestUniform) {
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
 }
 
+// Reverse-mode counterpart of
+// StanMath_integrate_1d_gk_prim.positive_abs_tol_reduces_work_on_negligible_
+// integrand. The gradient is computed by integrating the adjoint, so the
+// refinement floor has to hold for that pass too: both the value and the
+// adjoint must land within the tolerance the caller asked for, at strictly
+// less cost than the pure-relative call.
+TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_positive_abs_tol_reduces_work) {
+  using stan::math::var;
+
+  constexpr double scale = 1e-12;
+  constexpr double frequency = 127.0;
+  constexpr double absolute_tolerance = 1e-14;
+  const double expected_adjoint
+      = scale * (1.0 - std::cos(frequency)) / frequency;
+  const double theta_value = 1.7;
+
+  auto run = [&](double abs_tol, int *evaluations, double *value,
+                 double *adjoint) {
+    stan::math::nested_rev_autodiff nested;
+    auto integrand = [evaluations](double x, double xc, std::ostream *msgs,
+                                   const auto &theta) {
+      ++*evaluations;
+      return theta[0] * scale * stan::math::sin(frequency * x);
+    };
+    std::vector<var> theta{theta_value};
+    var integral = stan::math::integrate_1d_gauss_kronrod_tol(
+        integrand, 0.0, 1.0, 1e-12, abs_tol, 5, msgs, theta);
+    integral.grad();
+    *value = integral.val();
+    *adjoint = theta[0].adj();
+  };
+
+  int relative_evaluations = 0, absolute_evaluations = 0;
+  double relative_value = 0, relative_adjoint = 0;
+  double absolute_value = 0, absolute_adjoint = 0;
+  run(0.0, &relative_evaluations, &relative_value, &relative_adjoint);
+  run(absolute_tolerance, &absolute_evaluations, &absolute_value,
+      &absolute_adjoint);
+
+  // The contract, not an accident of how accurate K21 happens to be.
+  EXPECT_NEAR(absolute_value, theta_value * expected_adjoint,
+              absolute_tolerance);
+  EXPECT_NEAR(absolute_adjoint, expected_adjoint, absolute_tolerance);
+  EXPECT_NEAR(absolute_value, relative_value, absolute_tolerance);
+  EXPECT_NEAR(absolute_adjoint, relative_adjoint, absolute_tolerance);
+
+  // Stated as a ratio so it does not pin either the quadrature's recursion
+  // counts or how many passes integrate_1d_adjoint makes.
+  EXPECT_LT(absolute_evaluations, relative_evaluations);
+}
+
+// abs_tol == 0 must remain the exact pure-relative behaviour through the
+// reverse-mode path as well: a negligible floor changes neither the value
+// nor the gradient.
+TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_abs_tol_continuous_at_zero) {
+  using stan::math::var;
+
+  auto run = [](double abs_tol, double *value, double *adjoint) {
+    stan::math::nested_rev_autodiff nested;
+    auto integrand
+        = [](double x, double xc, std::ostream *msgs, const auto &theta) {
+            return theta[0] * stan::math::exp(-x * x);
+          };
+    std::vector<var> theta{0.8};
+    var integral = stan::math::integrate_1d_gauss_kronrod_tol(
+        integrand, 0.0, 3.0, 1e-10, abs_tol, 15, msgs, theta);
+    integral.grad();
+    *value = integral.val();
+    *adjoint = theta[0].adj();
+  };
+
+  double zero_value = 0, zero_adjoint = 0, tiny_value = 0, tiny_adjoint = 0;
+  run(0.0, &zero_value, &zero_adjoint);
+  run(1e-300, &tiny_value, &tiny_adjoint);
+
+  EXPECT_EQ(zero_value, tiny_value);
+  EXPECT_EQ(zero_adjoint, tiny_adjoint);
+}
+
 }  // namespace integrate_1d_gk_test
