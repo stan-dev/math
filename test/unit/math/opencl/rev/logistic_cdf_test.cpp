@@ -97,6 +97,32 @@ TEST(ProbDistributionsLogisticCdf, opencl_matches_cpu_small_y_neg_inf) {
       sigma.transpose().eval());
 }
 
+TEST(ProbDistributionsLogisticCdf, opencl_matches_cpu_lower_tail) {
+  Eigen::VectorXd y(3);
+  y << -700, -350, -1400;
+  Eigen::VectorXd mu(3);
+  mu << 0, 0, 0;
+  Eigen::VectorXd sigma(3);
+  sigma << 1, 0.5, 2;
+
+  stan::math::test::compare_cpu_opencl_prim_rev(logistic_cdf_functor, y, mu,
+                                                sigma);
+}
+
+// y == INFTY contributes a factor of 1 and zero partials; the scale partial
+// used to be 0 * INFTY = NaN on the device while the CPU skipped the element.
+TEST(ProbDistributionsLogisticCdf, opencl_matches_cpu_y_pos_inf) {
+  Eigen::VectorXd y(3);
+  y << 0.3, INFINITY, 1.0;
+  Eigen::VectorXd mu(3);
+  mu << 0.3, 0.8, 1.0;
+  Eigen::VectorXd sigma(3);
+  sigma << 0.3, 0.8, 1.0;
+
+  stan::math::test::compare_cpu_opencl_prim_rev(logistic_cdf_functor, y, mu,
+                                                sigma);
+}
+
 TEST(ProbDistributionsLogisticCdf, opencl_broadcast_y) {
   int N = 3;
 

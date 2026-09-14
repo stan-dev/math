@@ -66,16 +66,16 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_cdf(
   auto any_y_neg_inf = colwise_max(cast<char>(y_val == NEGATIVE_INFTY));
   auto cond = y_val == INFTY;
   auto inv_sigma = elt_divide(1.0, sigma_val);
-  auto mu_minus_y_div_sigma = elt_multiply(mu_val - y_val, inv_sigma);
-  auto exp_scaled_diff = exp(mu_minus_y_div_sigma);
-  auto Pn = elt_divide(1.0, 1.0 + exp_scaled_diff);
+  auto scaled_diff = elt_multiply(y_val - mu_val, inv_sigma);
+  auto Pn = inv_logit(scaled_diff);
   auto P_expr = colwise_prod(select(cond, 1.0, Pn));
 
-  auto y_deriv_tmp = select(cond, 0.0,
-                            elt_divide(exp(mu_minus_y_div_sigma - log(sigma_val)
-                                           - 2.0 * log1p(exp_scaled_diff)),
-                                       Pn));
-  auto sigma_deriv_tmp = elt_multiply(y_deriv_tmp, mu_minus_y_div_sigma);
+  // These are the log-scale derivatives; they are rescaled by the product P
+  // below. inv_logit(-scaled_diff) avoids the pdf / Pn quotient, which is
+  // 0 / 0 once Pn underflows.
+  auto deriv = elt_multiply(inv_logit(-scaled_diff), inv_sigma);
+  auto y_deriv_tmp = select(cond, 0.0, deriv);
+  auto sigma_deriv_tmp = select(cond, 0.0, elt_multiply(-deriv, scaled_diff));
 
   matrix_cl<char> any_y_neg_inf_cl;
   matrix_cl<double> P_cl;
