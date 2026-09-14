@@ -43,6 +43,7 @@ exp_mod_normal_lpdf(const T_y_cl& y, const T_loc_cl& mu,
   using T_partials_return
       = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>;
   using std::isfinite;
+  using std::isinf;
   using std::isnan;
 
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
@@ -79,35 +80,97 @@ exp_mod_normal_lpdf(const T_y_cl& y, const T_loc_cl& mu,
   auto check_lambda_positive_finite = check_cl(function, "Inv_scale parameter",
                                                lambda_val, "positive finite");
   auto lambda_positive_finite_expr = isfinite(lambda_val) && lambda_val > 0;
+  if constexpr (is_stan_scalar<T_y_cl>::value) {
+    results(check_y_not_nan, check_mu_finite, check_sigma_positive_finite,
+            check_lambda_positive_finite)
+        = expressions(y_not_nan_expr, mu_finite_expr,
+                      sigma_positive_finite_expr, lambda_positive_finite_expr);
+    if (isinf(y_val)) {
+      return NEGATIVE_INFTY;
+    }
+  } else {
+    matrix_cl<char> any_y_inf_cl;
+    results(check_y_not_nan, check_mu_finite, check_sigma_positive_finite,
+            check_lambda_positive_finite, any_y_inf_cl)
+        = expressions(y_not_nan_expr, mu_finite_expr,
+                      sigma_positive_finite_expr, lambda_positive_finite_expr,
+                      colwise_max(cast<char>(isinf(y_val))));
+    if (from_matrix_cl(any_y_inf_cl).maxCoeff()) {
+      return NEGATIVE_INFTY;
+    }
+  }
 
   auto inv_sigma_expr = elt_divide(1.0, sigma_val);
-  auto sigma_sq_expr = elt_multiply(sigma_val, sigma_val);
-  auto lambda_sigma_sq_expr = elt_multiply(lambda_val, sigma_sq_expr);
-  auto mu_minus_y_expr = mu_val - y_val;
-  auto inner_term_expr = elt_multiply(mu_minus_y_expr + lambda_sigma_sq_expr,
-                                      INV_SQRT_TWO * inv_sigma_expr);
-  auto erfc_calc_expr = erfc(inner_term_expr);
-  auto logp1_expr
-      = elt_multiply(lambda_val, mu_minus_y_expr + 0.5 * lambda_sigma_sq_expr)
-        + log(erfc_calc_expr);
+  auto z_expr = elt_multiply(y_val - mu_val, inv_sigma_expr);
+  auto a_expr = elt_multiply(lambda_val, sigma_val);
+  auto u_scaled_expr = (z_expr - a_expr) * INV_SQRT_TWO;
+  auto log_cdf_u_expr = std_normal_lcdf_scaled_impl(u_scaled_expr);
+  auto mills_u_expr
+      = std_normal_lcdf_dscaled_impl(u_scaled_expr) * INV_SQRT_TWO;
+  auto q_expr
+      = 0.5 * elt_multiply(a_expr, a_expr) - elt_multiply(a_expr, z_expr);
+  auto erfc_arg = (a_expr - z_expr) * INV_SQRT_TWO;
+  auto inv_two_erfc_arg_sq = elt_divide(0.5, elt_multiply(erfc_arg, erfc_arg));
+  auto erfcx_series
+      = 1.0
+        + elt_multiply(
+            inv_two_erfc_arg_sq,
+            -1.0
+                + elt_multiply(
+                    inv_two_erfc_arg_sq,
+                    3.0
+                        + elt_multiply(
+                            inv_two_erfc_arg_sq,
+                            -15.0
+                                + elt_multiply(
+                                    inv_two_erfc_arg_sq,
+                                    105.0
+                                        + elt_multiply(inv_two_erfc_arg_sq,
+                                                       -945.0))))));
+  auto erfcx_asymptotic = elt_divide(erfcx_series * INV_SQRT_PI, erfc_arg);
+  auto erfcx_direct
+      = elt_multiply(exp(elt_multiply(erfc_arg, erfc_arg)), erfc(erfc_arg));
+  auto erfcx = select(erfc_arg >= 20.0, erfcx_asymptotic, erfcx_direct);
+  auto use_erfcx = erfc_arg >= 5.0;
+  auto log_exp_cdf_expr = select(
+      use_erfcx, -0.5 * elt_multiply(z_expr, z_expr) + LOG_HALF + log(erfcx),
+      q_expr + log_cdf_u_expr);
+  auto inv_tail = elt_divide(1.0, a_expr - z_expr);
+  auto inv_tail_sq = elt_multiply(inv_tail, inv_tail);
+  auto mills_excess_asymptotic
+      = elt_multiply(
+          inv_tail,
+          1.0
+              + elt_multiply(
+                  inv_tail_sq,
+                  -2.0
+                      + elt_multiply(
+                          inv_tail_sq,
+                          10.0
+                              + elt_multiply(
+                                  inv_tail_sq,
+                                  -74.0
+                                      + elt_multiply(inv_tail_sq,
+                                                     706.0
+                                                         - 8162.0
+                                                               * inv_tail_sq))))));
+  auto mills_excess_erfcx
+      = elt_divide(SQRT_TWO_OVER_SQRT_PI, erfcx) - (a_expr - z_expr);
+  auto mills_excess_expr = select(
+      erfc_arg >= 20.0, mills_excess_asymptotic,
+      select(use_erfcx, mills_excess_erfcx, mills_u_expr - (a_expr - z_expr)));
+  auto logp1_expr = log_exp_cdf_expr + LOG_TWO;
   auto logp_expr = colwise_sum(
       static_select<include_summand<propto, T_inv_scale_cl>::value>(
           logp1_expr + log(lambda_val), logp1_expr));
 
-  auto deriv_logerfc_expr
-      = elt_divide(-SQRT_TWO_OVER_SQRT_PI
-                       * exp(-elt_multiply(inner_term_expr, inner_term_expr)),
-                   erfc_calc_expr);
-  auto deriv_expr
-      = lambda_val + elt_multiply(deriv_logerfc_expr, inv_sigma_expr);
-  auto deriv_sigma_expr
-      = elt_multiply(sigma_val, elt_multiply(lambda_val, lambda_val))
-        + elt_multiply(
-            deriv_logerfc_expr,
-            (lambda_val - elt_divide(mu_minus_y_expr, sigma_sq_expr)));
-  auto deriv_lambda_expr = elt_divide(1.0, lambda_val) + lambda_sigma_sq_expr
-                           + mu_minus_y_expr
-                           + elt_multiply(deriv_logerfc_expr, sigma_val);
+  auto dz_expr = -z_expr + mills_excess_expr;
+  auto da_expr = -mills_excess_expr;
+  auto deriv_sigma_expr = elt_multiply(
+      -elt_multiply(z_expr, dz_expr) + elt_multiply(a_expr, da_expr),
+      inv_sigma_expr);
+  auto deriv_lambda_expr
+      = elt_divide(1.0, lambda_val) + elt_multiply(sigma_val, da_expr);
 
   matrix_cl<double> logp_cl;
   matrix_cl<double> y_deriv_cl;
@@ -115,15 +178,14 @@ exp_mod_normal_lpdf(const T_y_cl& y, const T_loc_cl& mu,
   matrix_cl<double> sigma_deriv_cl;
   matrix_cl<double> lambda_deriv_cl;
 
-  results(check_y_not_nan, check_mu_finite, check_sigma_positive_finite,
-          check_lambda_positive_finite, logp_cl, y_deriv_cl, mu_deriv_cl,
-          sigma_deriv_cl, lambda_deriv_cl)
-      = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
-                    lambda_positive_finite_expr, logp_expr,
-                    calc_if<is_autodiff_v<T_y_cl>>(-deriv_expr),
-                    calc_if<is_autodiff_v<T_loc_cl>>(deriv_expr),
-                    calc_if<is_autodiff_v<T_scale_cl>>(deriv_sigma_expr),
-                    calc_if<is_autodiff_v<T_inv_scale_cl>>(deriv_lambda_expr));
+  results(logp_cl, y_deriv_cl, mu_deriv_cl, sigma_deriv_cl, lambda_deriv_cl)
+      = expressions(
+          logp_expr,
+          calc_if<is_autodiff_v<T_y_cl>>(elt_multiply(dz_expr, inv_sigma_expr)),
+          calc_if<is_autodiff_v<T_loc_cl>>(
+              -elt_multiply(dz_expr, inv_sigma_expr)),
+          calc_if<is_autodiff_v<T_scale_cl>>(deriv_sigma_expr),
+          calc_if<is_autodiff_v<T_inv_scale_cl>>(deriv_lambda_expr));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
   if constexpr (include_summand<propto>::value) {

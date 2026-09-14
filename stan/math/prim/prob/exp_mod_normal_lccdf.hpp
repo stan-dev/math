@@ -19,7 +19,9 @@
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/prim/prob/exp_mod_normal_utils.hpp>
 #include <cmath>
 
 namespace stan {
@@ -64,69 +66,43 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lccdf(
       = make_partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref);
 
   scalar_seq_view<decltype(y_val)> y_vec(y_val);
-  for (size_t n = 0, size_y = stan::math::size(y); n < size_y; n++) {
-    if (is_inf(y_vec[n])) {
-      return ops_partials.build(y_vec[n] > 0 ? negative_infinity() : 0);
+  scalar_seq_view<decltype(mu_val)> mu_vec(mu_val);
+  scalar_seq_view<decltype(sigma_val)> sigma_vec(sigma_val);
+  scalar_seq_view<decltype(lambda_val)> lambda_vec(lambda_val);
+  const size_t N = max_size(y, mu, sigma, lambda);
+
+  for (size_t n = 0, size_y = stan::math::size(y); n < size_y; ++n) {
+    if (value_of_rec(y_vec[n]) == INFTY) {
+      return ops_partials.build(negative_infinity());
     }
   }
 
-  const auto& inv_sigma
-      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(inv(sigma_val));
-  const auto& diff = to_ref(y_val - mu_val);
-  const auto& v = to_ref(lambda_val * sigma_val);
-  const auto& scaled_diff = to_ref(diff * INV_SQRT_TWO * inv_sigma);
-  const auto& scaled_diff_diff
-      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>>(
-          scaled_diff - v * INV_SQRT_TWO);
-  const auto& erf_calc = to_ref(0.5 * (1 + erf(scaled_diff_diff)));
+  T_partials_return ccdf_log(0.0);
+  for (size_t n = 0; n < N; ++n) {
+    if (value_of_rec(y_vec[n]) == NEGATIVE_INFTY) {
+      continue;
+    }
+    const T_partials_return sigma_dbl = sigma_vec[n];
+    const T_partials_return inv_sigma = 1.0 / sigma_dbl;
+    const T_partials_return z = (y_vec[n] - mu_vec[n]) * inv_sigma;
+    const T_partials_return a = lambda_vec[n] * sigma_dbl;
+    const auto terms = internal::exp_mod_normal_cdf_terms(z, a);
+    ccdf_log += terms.log_ccdf;
 
-  const auto& exp_term
-      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>>(
-          exp(0.5 * square(v) - lambda_val * diff));
-  const auto& ccdf_n
-      = to_ref(0.5 - 0.5 * erf(scaled_diff) + exp_term * erf_calc);
-
-  T_partials_return ccdf_log = sum(log(ccdf_n));
-
-  if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>) {
-    const auto& exp_term_2 = to_ref_if<(
-        is_any_autodiff_v<T_y, T_loc, T_scale> && is_autodiff_v<T_inv_scale>)>(
-        exp(-square(scaled_diff_diff)));
-    if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
-      constexpr bool need_deriv_refs
-          = is_any_autodiff_v<T_y, T_loc> && is_autodiff_v<T_scale>;
-      const auto& deriv_1
-          = to_ref_if<need_deriv_refs>(lambda_val * exp_term * erf_calc);
-      const auto& deriv_2 = to_ref_if<need_deriv_refs>(
-          INV_SQRT_TWO_PI * exp_term * exp_term_2 * inv_sigma);
-      const auto& sq_scaled_diff = square(scaled_diff);
-      const auto& exp_m_sq_scaled_diff = exp(-sq_scaled_diff);
-      const auto& deriv_3 = to_ref_if<need_deriv_refs>(
-          INV_SQRT_TWO_PI * exp_m_sq_scaled_diff * inv_sigma);
-      if constexpr (is_any_autodiff_v<T_y, T_loc>) {
-        const auto& deriv
-            = to_ref_if<(is_autodiff_v<T_loc> && is_autodiff_v<T_y>)>(
-                (deriv_1 - deriv_2 + deriv_3) / ccdf_n);
-        if constexpr (is_autodiff_v<T_y>) {
-          partials<0>(ops_partials) = -deriv;
-        }
-        if constexpr (is_autodiff_v<T_loc>) {
-          partials<1>(ops_partials) = deriv;
-        }
+    if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>) {
+      if constexpr (is_autodiff_v<T_y>) {
+        partials<0>(ops_partials)[n] += terms.dz_log_ccdf * inv_sigma;
+      }
+      if constexpr (is_autodiff_v<T_loc>) {
+        partials<1>(ops_partials)[n] -= terms.dz_log_ccdf * inv_sigma;
       }
       if constexpr (is_autodiff_v<T_scale>) {
-        edge<2>(ops_partials).partials_
-            = ((deriv_1 - deriv_2) * v
-               + (deriv_3 - deriv_2) * scaled_diff * SQRT_TWO)
-              / ccdf_n;
+        partials<2>(ops_partials)[n]
+            += (-z * terms.dz_log_ccdf + a * terms.da_log_ccdf) * inv_sigma;
       }
-    }
-    if constexpr (is_autodiff_v<T_inv_scale>) {
-      edge<3>(ops_partials).partials_
-          = exp_term
-            * ((v * sigma_val - diff) * erf_calc
-               - INV_SQRT_TWO_PI * sigma_val * exp_term_2)
-            / ccdf_n;
+      if constexpr (is_autodiff_v<T_inv_scale>) {
+        partials<3>(ops_partials)[n] += sigma_dbl * terms.da_log_ccdf;
+      }
     }
   }
 

@@ -107,6 +107,19 @@ TEST(ProbDistributionsDoubleExpModNormalLccdf, opencl_matches_cpu_small) {
 }
 
 TEST(ProbDistributionsDoubleExpModNormalLccdf,
+     opencl_matches_cpu_cancellation) {
+  Eigen::VectorXd y(1);
+  y << 6.2714221555374134;
+  Eigen::VectorXd mu = Eigen::VectorXd::Zero(1);
+  Eigen::VectorXd sigma = Eigen::VectorXd::Ones(1);
+  Eigen::VectorXd lambda(1);
+  lambda << 17.815654979555671;
+
+  stan::math::test::compare_cpu_opencl_prim_rev(exp_mod_normal_lccdf_functor, y,
+                                                mu, sigma, lambda);
+}
+
+TEST(ProbDistributionsDoubleExpModNormalLccdf,
      opencl_matches_cpu_small_y_pos_inf) {
   int N = 3;
   int M = 2;

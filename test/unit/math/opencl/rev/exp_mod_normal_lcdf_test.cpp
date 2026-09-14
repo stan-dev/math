@@ -105,6 +105,30 @@ TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_matches_cpu_small) {
       sigma.transpose().eval(), lambda.transpose().eval());
 }
 
+TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_matches_cpu_cancellation) {
+  Eigen::VectorXd y(1);
+  y << 0.093719047083121884;
+  Eigen::VectorXd mu = Eigen::VectorXd::Zero(1);
+  Eigen::VectorXd sigma = Eigen::VectorXd::Ones(1);
+  Eigen::VectorXd lambda(1);
+  lambda << 23.515615900485439;
+
+  stan::math::test::compare_cpu_opencl_prim_rev(exp_mod_normal_lcdf_functor, y,
+                                                mu, sigma, lambda);
+}
+
+TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_matches_cpu_small_lambda) {
+  Eigen::VectorXd y(1);
+  y << -10;
+  Eigen::VectorXd mu = Eigen::VectorXd::Zero(1);
+  Eigen::VectorXd sigma = Eigen::VectorXd::Ones(1);
+  Eigen::VectorXd lambda(1);
+  lambda << 1e-16;
+
+  stan::math::test::compare_cpu_opencl_prim_rev(exp_mod_normal_lcdf_functor, y,
+                                                mu, sigma, lambda);
+}
+
 TEST(ProbDistributionsDoubleExpModNormalLcdf,
      opencl_matches_cpu_small_y_pos_inf) {
   int N = 3;
