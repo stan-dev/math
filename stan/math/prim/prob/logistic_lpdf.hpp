@@ -70,21 +70,24 @@ inline return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y,
     logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
 
-  if constexpr (is_any_autodiff_v<T_y, T_scale>) {
-    const auto& exp_y_minus_mu_div_sigma = exp(y_minus_mu_div_sigma);
-    const auto& y_deriv
-        = to_ref_if<(is_autodiff_v<T_scale> && is_autodiff_v<T_y>)>(
-            (2 / (1 + exp_y_minus_mu_div_sigma) - 1) * inv_sigma);
+  // d/dmu = tanh(z / 2) / sigma with z = (y - mu) / sigma. The y and sigma
+  // partials are built from the same expression so that d/dy == -d/dmu
+  // exactly; the equivalent 2 / (1 + exp(z)) - 1 form loses all relative
+  // precision as z -> 0 (it returns 0 for z < eps).
+  if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
+    // to_ref, not to_ref_if: tanh() of an Eigen argument returns a holder that
+    // owns its operand, so the product has to be evaluated inside this
+    // full-expression rather than forwarded on as a lazy expression.
+    const auto& mu_deriv = to_ref(tanh(0.5 * y_minus_mu_div_sigma) * inv_sigma);
     if constexpr (is_autodiff_v<T_y>) {
-      partials<0>(ops_partials) = y_deriv;
+      partials<0>(ops_partials) = -mu_deriv;
+    }
+    if constexpr (is_autodiff_v<T_loc>) {
+      edge<1>(ops_partials).partials_ = mu_deriv;
     }
     if constexpr (is_autodiff_v<T_scale>) {
-      partials<2>(ops_partials) = (-y_deriv * y_minus_mu - 1) * inv_sigma;
+      partials<2>(ops_partials) = (mu_deriv * y_minus_mu - 1) * inv_sigma;
     }
-  }
-  if constexpr (is_autodiff_v<T_loc>) {
-    edge<1>(ops_partials).partials_
-        = tanh(0.5 * y_minus_mu_div_sigma) * inv_sigma;
   }
   return ops_partials.build(logp);
 }
