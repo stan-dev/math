@@ -128,6 +128,17 @@ TEST(ProbDistributionsExpModNormal, opencl_matches_cpu_small) {
       lambda.transpose().eval());
 }
 
+TEST(ProbDistributionsExpModNormal, opencl_matches_cpu_left_tail) {
+  Eigen::VectorXd y(1);
+  y << -37.537319574666846;
+  Eigen::VectorXd mu = Eigen::VectorXd::Zero(1);
+  Eigen::VectorXd sigma = Eigen::VectorXd::Ones(1);
+  Eigen::VectorXd lambda = Eigen::VectorXd::Ones(1);
+
+  stan::math::test::compare_cpu_opencl_prim_rev(exp_mod_normal_lpdf_functor, y,
+                                                mu, sigma, lambda);
+}
+
 TEST(ProbDistributionsExpModNormal, opencl_broadcast_y) {
   int N = 3;
 
