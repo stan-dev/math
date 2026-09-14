@@ -101,12 +101,12 @@ TEST(ProbDistributionsLogistic, opencl_matches_cpu_small) {
 }
 
 TEST(ProbDistributionsLogistic, opencl_matches_cpu_large_location) {
-  Eigen::VectorXd y(1);
-  y << 711;
-  Eigen::VectorXd mu(1);
-  mu << 710;
-  Eigen::VectorXd sigma(1);
-  sigma << 1;
+  Eigen::VectorXd y(3);
+  y << 711, 712, 1e-14;
+  Eigen::VectorXd mu(3);
+  mu << 710, 710, 0;
+  Eigen::VectorXd sigma(3);
+  sigma << 1, 2, 1;
 
   stan::math::test::compare_cpu_opencl_prim_rev(logistic_lpdf_functor, y, mu,
                                                 sigma);

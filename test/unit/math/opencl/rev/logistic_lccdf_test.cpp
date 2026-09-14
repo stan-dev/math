@@ -80,10 +80,26 @@ TEST(ProbDistributionsLogisticLccdf, opencl_matches_cpu_small) {
 }
 
 TEST(ProbDistributionsLogisticLccdf, opencl_matches_cpu_upper_tail) {
-  Eigen::VectorXd y(2);
-  y << 36.5, 40;
-  Eigen::VectorXd mu = Eigen::VectorXd::Zero(2);
-  Eigen::VectorXd sigma = Eigen::VectorXd::Ones(2);
+  Eigen::VectorXd y(4);
+  y << 30, 36.5, 40, 85;
+  Eigen::VectorXd mu(4);
+  mu << 0, 0, 0, 5;
+  Eigen::VectorXd sigma(4);
+  sigma << 1, 1, 1, 2;
+
+  stan::math::test::compare_cpu_opencl_prim_rev(logistic_lccdf_functor, y, mu,
+                                                sigma);
+}
+
+// A single y == INFTY makes the whole result -INFTY with zero partials; the
+// partials of the finite elements preceding it must not survive.
+TEST(ProbDistributionsLogisticLccdf, opencl_matches_cpu_y_pos_inf) {
+  Eigen::VectorXd y(3);
+  y << 1.5, INFINITY, 1.0;
+  Eigen::VectorXd mu(3);
+  mu << 0.3, 0.8, 1.0;
+  Eigen::VectorXd sigma(3);
+  sigma << 0.3, 0.8, 1.0;
 
   stan::math::test::compare_cpu_opencl_prim_rev(logistic_lccdf_functor, y, mu,
                                                 sigma);
