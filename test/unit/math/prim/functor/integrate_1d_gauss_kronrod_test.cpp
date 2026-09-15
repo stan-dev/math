@@ -468,9 +468,9 @@ TEST(StanMath_integrate_1d_gk_prim,
   constexpr double absolute_tolerance = 1e-14;
   const double expected = scale * (1.0 - std::cos(frequency)) / frequency;
 
-  auto run = [](double abs_tol, int *evaluations) {
-    auto integrand = [evaluations](double x, double xc, std::ostream *msgs) {
-      ++*evaluations;
+  auto run = [](double abs_tol, int &evaluations) {
+    auto integrand = [&evaluations](double x, double xc, std::ostream *msgs) {
+      ++evaluations;
       return scale * std::sin(frequency * x);
     };
     return stan::math::integrate_1d_gauss_kronrod_tol(
@@ -478,8 +478,8 @@ TEST(StanMath_integrate_1d_gk_prim,
   };
 
   int relative_evaluations = 0, absolute_evaluations = 0;
-  const double relative_result = run(0.0, &relative_evaluations);
-  const double absolute_result = run(absolute_tolerance, &absolute_evaluations);
+  const double relative_result = run(0.0, relative_evaluations);
+  const double absolute_result = run(absolute_tolerance, absolute_evaluations);
 
   // The contract: within the absolute tolerance requested. Asserting anything
   // tighter would assert an accident of how much more accurate K21 happens to
@@ -501,9 +501,9 @@ TEST(StanMath_integrate_1d_gk_prim,
 // so the cost stays at the level of the abs_tol == 0 call.
 TEST(StanMath_integrate_1d_gk_prim,
      positive_abs_tol_bounds_work_on_unresolvable_integrand) {
-  auto run = [](double absolute_tolerance, int *evaluations) {
-    auto integrand = [evaluations](double x, double xc, std::ostream *msgs) {
-      ++*evaluations;
+  auto run = [](double absolute_tolerance, int &evaluations) {
+    auto integrand = [&evaluations](double x, double xc, std::ostream *msgs) {
+      ++evaluations;
       return std::pow(x, -0.9);
     };
     EXPECT_THROW(stan::math::integrate_1d_gauss_kronrod_tol(
@@ -513,8 +513,8 @@ TEST(StanMath_integrate_1d_gk_prim,
   };
 
   int relative_evaluations = 0, absolute_evaluations = 0;
-  run(0.0, &relative_evaluations);
-  run(1e-14, &absolute_evaluations);
+  run(0.0, relative_evaluations);
+  run(1e-14, absolute_evaluations);
 
   EXPECT_LE(absolute_evaluations, relative_evaluations);
   EXPECT_LT(absolute_evaluations, 50000);
