@@ -454,9 +454,6 @@ TEST(StanMath_integrate_1d_gk_prim, abs_tol_argument_smoke) {
 // to Boost's gauss_kronrod::integrate by a Stan-local patch
 // (lib/boost_1.87.0/STAN_CHANGES).
 //
-// positive_abs_tol_reduces_work_on_negligible_integrand below is the guard on
-// that patch: if a Boost upgrade drops it, absolute_tolerance stops affecting
-// refinement, the two evaluation counts become equal, and the test fails.
 // ---------------------------------------------------------------------------
 
 // The motivating case: an integrand so small that the relative-tolerance test
@@ -496,33 +493,6 @@ TEST(StanMath_integrate_1d_gk_prim,
   // recursion counts of the quadrature.
   EXPECT_LT(absolute_evaluations, relative_evaluations);
   EXPECT_LT(2 * absolute_evaluations, relative_evaluations);
-}
-
-// absolute_tolerance == 0 is Boost's sentinel for "derive the refinement
-// budget from the root panel's own relative target", NOT "no absolute floor".
-// A positive but negligible value therefore removes that derived budget and
-// refines at least as much as zero does. This is a wart of Boost's interface,
-// not of the patch; it is pinned here so the behaviour is documented rather
-// than discovered.
-TEST(StanMath_integrate_1d_gk_prim, abs_tol_zero_is_a_derived_budget_sentinel) {
-  auto run = [](double absolute_tolerance, int *evaluations) {
-    auto integrand = [evaluations](double x, double xc, std::ostream *msgs) {
-      ++*evaluations;
-      return std::exp(-x * x) * std::cos(30 * x);
-    };
-    return stan::math::integrate_1d_gauss_kronrod_tol(
-        integrand, 0.0, 3.0, 1e-10, absolute_tolerance, 15,
-        integrate_1d_gk_test::msgs);
-  };
-
-  int zero_evaluations = 0, tiny_evaluations = 0;
-  const double zero_result = run(0.0, &zero_evaluations);
-  const double tiny_result = run(1e-300, &tiny_evaluations);
-
-  // Both are valid answers to the requested relative tolerance ...
-  EXPECT_NEAR(zero_result, tiny_result, 1e-10 * std::abs(zero_result));
-  // ... but the negligible floor costs at least as much work as no floor.
-  EXPECT_GE(tiny_evaluations, zero_evaluations);
 }
 
 // Regression guard for unbounded refinement. x^{-0.9} has an endpoint

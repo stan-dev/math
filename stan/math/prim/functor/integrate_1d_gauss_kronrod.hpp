@@ -47,9 +47,6 @@ constexpr int INTEGRATE_1D_GAUSS_KRONROD_MAX_DEPTH = 15;
  * refinement inside Boost's adaptive recursion (a panel whose error already
  * sits below the floor is not bisected, which is what bounds the work in the
  * round-off regime above) and as the floor on the convergence test below.
- * Reaching the first of those needs the abs_tol parameter added to Boost's
- * gauss_kronrod::integrate by a Stan-local patch; see
- * lib/boost_1.87.0/STAN_CHANGES.
  *
  * Setting it to zero (the default) reproduces the strict
  * pure-relative-tolerance behaviour of integrate_1d. Note that zero is
