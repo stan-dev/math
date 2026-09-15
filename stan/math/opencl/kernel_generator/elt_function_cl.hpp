@@ -6,6 +6,7 @@
 #include <stan/math/opencl/kernels/device_functions/binomial_coefficient_log.hpp>
 #include <stan/math/opencl/kernels/device_functions/beta.hpp>
 #include <stan/math/opencl/kernels/device_functions/digamma.hpp>
+#include <stan/math/opencl/kernels/device_functions/erfcx.hpp>
 #include <stan/math/opencl/kernels/device_functions/inv_logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/inv_Phi.hpp>
 #include <stan/math/opencl/kernels/device_functions/inv_square.hpp>
@@ -297,6 +298,7 @@ ADD_UNARY_FUNCTION_PASS_ZERO(trunc)
 
 ADD_UNARY_FUNCTION_WITH_INCLUDES(digamma,
                                  opencl_kernels::digamma_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(erfcx, opencl_kernels::erfcx_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(log1m, opencl_kernels::log1m_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(log_inv_logit,
                                  opencl_kernels::log1p_exp_device_function,
