@@ -50,9 +50,9 @@ TEST(ProbDistributionsBernoulliLogit, opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
-  std::vector<int> n{0, 1, 0};
+  std::vector<int> n{0, 1, 1};
   Eigen::VectorXd theta(N);
-  theta << 0.3, 0.8, 1.0;
+  theta << -21, 0.8, 21;
 
   stan::math::test::compare_cpu_opencl_prim_rev(bernoulli_logit_lpmf_functor, n,
                                                 theta);

@@ -82,7 +82,7 @@ inline return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n,
     edge<0>(ops_partials).partials_
         = (ntheta > cutoff)
               .select(
-                  -exp_m_ntheta,
+                  promote_scalar<T_partials_return>(signs * exp_m_ntheta),
                   (ntheta >= -cutoff)
                       .select(promote_scalar<T_partials_return>(
                                   signs * exp_m_ntheta / (exp_m_ntheta + 1)),

@@ -131,7 +131,7 @@ inline return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   if constexpr (is_any_autodiff_v<T_beta, T_x, T_alpha>) {
     Matrix<T_partials_return, Dynamic, 1> theta_derivative
         = (ytheta > cutoff)
-              .select(-exp_m_ytheta,
+              .select(signs * exp_m_ytheta,
                       (ytheta < -cutoff)
                           .select(signs * T_partials_return(1.0),
                                   signs * exp_m_ytheta / (exp_m_ytheta + 1)));
