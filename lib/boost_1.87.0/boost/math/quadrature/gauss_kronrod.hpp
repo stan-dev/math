@@ -1227,7 +1227,7 @@ private:
 
 public:
    template <class F>
-   static auto integrate(F f, Real a, Real b, unsigned max_depth = 15, Real tol = tools::root_epsilon<Real>(), Real* error = nullptr, Real* pL1 = nullptr)->decltype(std::declval<F>()(std::declval<Real>()))
+   static auto integrate(F f, Real a, Real b, unsigned max_depth = 15, Real tol = tools::root_epsilon<Real>(), Real* error = nullptr, Real* pL1 = nullptr, Real abs_tol = Real(0))->decltype(std::declval<F>()(std::declval<Real>()))
    {
       typedef decltype(f(a)) K;
       static_assert(!std::is_integral<K>::value,
@@ -1248,7 +1248,7 @@ public:
                return res;
             };
             recursive_info<decltype(u)> info = { u, tol };
-            K res = recursive_adaptive_integrate(&info, Real(-1), Real(1), max_depth, Real(0), error, pL1);
+            K res = recursive_adaptive_integrate(&info, Real(-1), Real(1), max_depth, abs_tol, error, pL1);
             return res;
          }
 
@@ -1263,7 +1263,7 @@ public:
                return res;
             };
             recursive_info<decltype(u)> info = { u, tol };
-            K Q = Real(2) * recursive_adaptive_integrate(&info, Real(-1), Real(1), max_depth, Real(0), error, pL1);
+            K Q = Real(2) * recursive_adaptive_integrate(&info, Real(-1), Real(1), max_depth, abs_tol, error, pL1);
             if (pL1)
             {
                *pL1 *= 2;
@@ -1280,7 +1280,7 @@ public:
                return f(b - arg) * z * z;
             };
             recursive_info<decltype(v)> info = { v, tol };
-            K Q = Real(2) * recursive_adaptive_integrate(&info, Real(-1), Real(1), max_depth, Real(0), error, pL1);
+            K Q = Real(2) * recursive_adaptive_integrate(&info, Real(-1), Real(1), max_depth, abs_tol, error, pL1);
             if (pL1)
             {
                *pL1 *= 2;
@@ -1297,9 +1297,9 @@ public:
             recursive_info<F> info = { f, tol };
             if (b < a)
             {
-               return -recursive_adaptive_integrate(&info, b, a, max_depth, Real(0), error, pL1);
+               return -recursive_adaptive_integrate(&info, b, a, max_depth, abs_tol, error, pL1);
             }
-            return recursive_adaptive_integrate(&info, a, b, max_depth, Real(0), error, pL1);
+            return recursive_adaptive_integrate(&info, a, b, max_depth, abs_tol, error, pL1);
          }
       }
       return static_cast<K>(policies::raise_domain_error(function, "The domain of integration is not sensible; please check the bounds.", a, Policy()));

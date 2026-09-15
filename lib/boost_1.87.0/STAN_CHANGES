@@ -1,0 +1,21 @@
+This file documents changes done for the stan-math project
+
+- Added an `abs_tol` parameter to
+  `boost/math/quadrature/gauss_kronrod.hpp`'s public
+  `gauss_kronrod<Real, N>::integrate()`, and forwarded it to the five
+  `recursive_adaptive_integrate()` entry points in place of the hard-coded
+  `Real(0)`.
+
+  The recursion already accepts an absolute-error budget and honours it in its
+  leaf criterion; only the public entry point was missing a way to set it.
+  Without this, a panel whose integrand is orders of magnitude below the value
+  being integrated -- e.g. the derivative of a marginal likelihood with respect
+  to a concentration parameter in a saturated tail -- can never satisfy the
+  leaf-relative test and bisects to max_depth, costing ~2^15 * 21 evaluations
+  per panel for mass that is numerically negligible.
+
+  The parameter is trailing and defaults to `Real(0)`, which is the value
+  previously hard-coded, so every existing caller is unaffected and the
+  quadrature is bit-for-bit unchanged for them.
+
+  Used by `stan/math/prim/functor/integrate_1d_gauss_kronrod.hpp`.
