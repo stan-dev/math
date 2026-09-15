@@ -29,7 +29,7 @@ constexpr int INTEGRATE_1D_GAUSS_KRONROD_MAX_DEPTH = 15;
 
 /**
  * Integrate a single variable function f from a to b using Boost's adaptive
- * Gauss-Kronrod (G21,K21) quadrature, with QUADPACK-style mixed convergence
+ * Gauss-Kronrod (G10,K21) quadrature, with QUADPACK-style mixed convergence
  * criterion. The integration succeeds (returns the Boost estimate Q)
  * whenever
  *   error <= max(relative_tolerance * L1, absolute_tolerance)
@@ -106,7 +106,7 @@ inline double integrate_gk(const F& f, double a, double b,
 
 /**
  * Compute the integral of the single variable function f from a to b to within
- * a specified relative tolerance using adaptive Gauss-Kronrod (G21,K21)
+ * a specified relative tolerance using adaptive Gauss-Kronrod (G10,K21)
  * quadrature. a and b can be finite or infinite.
  *
  * @tparam F type of function to integrate
@@ -147,7 +147,7 @@ inline double integrate_1d_gauss_kronrod_tol(const F& f, double a, double b,
 
 /**
  * Compute the integral of the single variable function f from a to b using
- * adaptive Gauss-Kronrod (G21,K21) quadrature. a and b can be finite or
+ * adaptive Gauss-Kronrod (G10,K21) quadrature. a and b can be finite or
  * infinite.
  *
  * The signature for f should be:
