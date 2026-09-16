@@ -9,6 +9,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
+#include <stan/math/prim/fun/softmax.hpp>
 #include <cmath>
 #include <vector>
 
@@ -71,8 +72,7 @@ inline var log_sum_exp(T&& v) {
   auto arena_v_val = to_arena(arena_v.val());
   var res = log_sum_exp(arena_v_val);
   reverse_pass_callback([arena_v, arena_v_val, res]() mutable {
-    arena_v.adj()
-        += res.adj() * (arena_v_val.array().val() - res.val()).exp().matrix();
+    arena_v.adj() += res.adj() * softmax(arena_v_val);
   });
 
   return res;
@@ -87,7 +87,7 @@ inline var log_sum_exp(T&& v) {
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline var log_sum_exp(const T& x) {
   return make_callback_vari(log_sum_exp(x.val()), [x](const auto& res) mutable {
-    x.adj() += res.adj() * (x.val().array().val() - res.val()).exp().matrix();
+    x.adj() += res.adj() * softmax(x.val());
   });
 }
 
