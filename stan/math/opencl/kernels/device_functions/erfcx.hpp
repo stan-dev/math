@@ -22,9 +22,20 @@ static constexpr const char* erfcx_device_function
            *
            * Mirrors stan/math/prim/fun/erfcx.hpp: the Cody (1969) rational
            * approximation above 4, and below it exp(x * x) * erfc(x) with
-           * x * x Dekker-split so that exp() receives an exact argument.
-           * Keep the two in step; the split is what holds the lower branch
-           * to a few ulp instead of x * x * eps.
+           * the rounding of x * x corrected so that exp() effectively
+           * receives an exact argument. Without that correction the error
+           * of x * x is amplified by exp into roughly x * x * eps, which is
+           * 512 ulp at x = -26.
+           *
+           * The correction is written with fma() rather than the Dekker
+           * split used on the host. The split relies on t - (t - x) not
+           * being simplified to x, which is true in floating point but not
+           * over the reals, and the OpenCL compiler simplifies it: measured
+           * on a Tesla V100 (OpenCL 3.0 CUDA), the split form returned
+           * x_lo == 0 at every one of 4096 test points and scored 512.66
+           * ulp, bit-identical to the uncorrected formula. fma() is a
+           * single instruction, so there is nothing to reassociate; it
+           * measures 3.40 ulp on the same device.
            *
            * @param x argument
            * @return scaled complementary error function of the argument
@@ -49,10 +60,8 @@ static constexpr const char* erfcx_device_function
             if (x < -27.0) {
               return INFINITY;
             }
-            double t = 134217729.0 * x;
-            double x_hi = t - (t - x);
-            double x_lo = x - x_hi;
-            return exp(x_hi * x_hi) * exp(x_lo * (x + x_hi)) * erfc(x);
+            double h = x * x;
+            return exp(h) * (1.0 + fma(x, x, -h)) * erfc(x);
           }
           // \cond
           ) "\n#endif\n";  // NOLINT
