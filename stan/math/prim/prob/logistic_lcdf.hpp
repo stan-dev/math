@@ -4,13 +4,17 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log1m_inv_logit.hpp>
 #include <stan/math/prim/fun/log_inv_logit.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
@@ -71,7 +75,10 @@ inline return_type_t<T_y, T_loc, T_scale> logistic_lcdf(const T_y& y,
     P += log_inv_logit(scaled_diff);
 
     if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
-      const T_partials_return deriv = inv_logit(-scaled_diff) * sigma_inv_vec;
+      const T_partials_return deriv
+          = value_of_rec(scaled_diff) > 700.0
+                ? exp(log1m_inv_logit(scaled_diff) - log(sigma_vec.val(n)))
+                : inv_logit(-scaled_diff) * sigma_inv_vec;
       if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials)[n] += deriv;
       }

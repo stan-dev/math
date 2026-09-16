@@ -61,6 +61,24 @@ TEST_F(AgradRev, logistic_lccdf_upper_tail_moderate) {
   EXPECT_NEAR(29.999999999997197, sigma.adj(), 1e-10);
 }
 
+// inv_logit(z) underflows to zero below z = -745, but dividing by a small
+// enough sigma brings the quotient back into range.
+TEST_F(AgradRev, logistic_lccdf_underflow_rescued_by_small_sigma) {
+  stan::math::var y = -8e-298;
+  stan::math::var mu = 0.0;
+  stan::math::var sigma = 1e-300;
+
+  stan::math::var log_ccdf = stan::math::logistic_lccdf(y, mu, sigma);
+  log_ccdf.grad();
+
+  const double deriv = 3.6678745841780173e-48;
+  EXPECT_EQ(0.0, stan::math::inv_logit(-8e-298 / 1e-300));
+  EXPECT_NEAR(-deriv, y.adj(), 1e-10 * deriv);
+  EXPECT_NEAR(deriv, mu.adj(), 1e-10 * deriv);
+  EXPECT_NEAR(-2.9342996673424137e-45, sigma.adj(),
+              1e-10 * 2.9342996673424137e-45);
+}
+
 // An infinite element short-circuits the result; the partials of the finite
 // elements that precede it must not leak into the returned gradient.
 TEST_F(AgradRev, logistic_lccdf_pos_inf_zeroes_partials) {
