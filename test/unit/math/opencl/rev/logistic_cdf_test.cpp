@@ -111,6 +111,18 @@ TEST(ProbDistributionsLogisticCdf, opencl_matches_cpu_lower_tail) {
 
 // y == INFTY contributes a factor of 1 and zero partials; the scale partial
 // used to be 0 * INFTY = NaN on the device while the CPU skipped the element.
+TEST(ProbDistributionsLogisticCdf, opencl_matches_cpu_underflow_small_sigma) {
+  Eigen::VectorXd y(2);
+  y << 8e-298, 1.0;
+  Eigen::VectorXd mu(2);
+  mu << 0, 0;
+  Eigen::VectorXd sigma(2);
+  sigma << 1e-300, 1;
+
+  stan::math::test::compare_cpu_opencl_prim_rev(logistic_cdf_functor, y, mu,
+                                                sigma);
+}
+
 TEST(ProbDistributionsLogisticCdf, opencl_matches_cpu_y_pos_inf) {
   Eigen::VectorXd y(3);
   y << 0.3, INFINITY, 1.0;

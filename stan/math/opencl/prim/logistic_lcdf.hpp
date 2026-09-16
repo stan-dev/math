@@ -72,7 +72,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_lcdf(
   // y == INFTY contributes log(1) = 0 to P and zero to every partial; without
   // the select the scale partial would be 0 * INFTY = NaN, which prim (where
   // the element is skipped outright) never produces.
-  auto deriv = elt_multiply(inv_logit(-scaled_diff), inv_sigma);
+  auto deriv = logistic_tail_deriv(scaled_diff, sigma_val);
   auto y_deriv = select(cond, 0.0, deriv);
   auto mu_deriv = -y_deriv;
   auto sigma_deriv = select(cond, 0.0, elt_multiply(-deriv, scaled_diff));
