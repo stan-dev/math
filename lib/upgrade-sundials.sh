@@ -114,7 +114,7 @@ cd build
 cmake ..
 cd ..
 
-git rm -rf cmake/ doc/ examples/ test/ */cvode */ida */arkode src/sundials/sundials_xbraid.c
+git rm -rf cmake/ doc/ examples/ test/ */cvode */ida src/sundials/sundials_xbraid.c
 find . -name CMakeLists.txt -exec git rm {} \;
 git commit -m "upgrading to sundials v${sundials_version}; pruning files"
 
@@ -158,8 +158,8 @@ cat <<EOF
 
     Done upgrading Sundials from v${sundials_old_version} to v${sundials_version}.
 
-    Please check the upgrade worked by running a test with CVODES linked.
-    Example (from Math home directory):
+    Please check the upgrade worked by running a test with CVODES and ARKODE
+    linked. Example (from Math home directory):
       ./runTests.py test/unit/math/rev/functor/sho_ode_typed_test.cpp
 
 EOF
