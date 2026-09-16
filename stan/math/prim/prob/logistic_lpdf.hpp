@@ -70,14 +70,9 @@ inline return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y,
     logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
 
-  // d/dmu = tanh(z / 2) / sigma with z = (y - mu) / sigma. The y and sigma
-  // partials are built from the same expression so that d/dy == -d/dmu
-  // exactly; the equivalent 2 / (1 + exp(z)) - 1 form loses all relative
-  // precision as z -> 0 (it returns 0 for z < eps).
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
     // to_ref, not to_ref_if: tanh() of an Eigen argument returns a holder that
     // owns its operand, so the product has to be evaluated inside this
-    // full-expression rather than forwarded on as a lazy expression.
     const auto& mu_deriv = to_ref(tanh(0.5 * y_minus_mu_div_sigma) * inv_sigma);
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = -mu_deriv;
