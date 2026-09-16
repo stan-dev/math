@@ -33,11 +33,11 @@ namespace math {
  *   directly with no `exp` and no `erfc` call. Measured at 2.0 to 2.5 ulp
  *   over `[4, 50]` and 5.4 ulp out to 200, and about 2.4 times faster than
  *   forming the product.
- * - `x < 4`: `exp(x * x) * erfc(x)`, with `x * x` split so that the
- *   argument handed to `exp` is exact. Without the split the rounding of
- *   `x * x` is amplified by `exp` into a relative error of about
- *   `x * x * eps`, which reaches 512 ulp at `x = -26`. Splitting holds this
- *   branch to under 5 ulp.
+ * - `x < 4`: `exp(x * x) * erfc(x)`, with the rounding error of `x * x`
+ *   recovered by `fma` and folded back in, so `exp` effectively receives an
+ *   exact argument. Uncorrected, the rounding of `x * x` is amplified by
+ *   `exp` into a relative error of about `x * x * eps`, which reaches
+ *   512 ulp at `x = -26`. The correction holds this branch to under 6 ulp.
  *
  * W. J. Cody, Math. Comp. 23(107):631-638 (1969).
  * https://doi.org/10.1090/S0025-5718-1969-0247736-4
@@ -91,20 +91,18 @@ inline double erfcx(T&& xx) {
     return (INV_SQRT_PI + (p / q) * u) / x;
   }
   // erfcx(x) = 2 * exp(x * x) * (1 + o(1)) as x -> -infinity, which leaves
-  // the binary64 range below -26.63. Returning here also keeps the split
-  // below from forming inf - inf on -infinity.
+  // the binary64 range below -26.63. Returning here also keeps the branch
+  // below from forming inf * 0 on -infinity.
   constexpr double overflow_max = -27.0;
   if (x < overflow_max) {
     return INFTY;
   }
-  // Dekker split: x_hi holds the leading 26 bits of x, so x_hi * x_hi is
-  // exact and exp() is handed an argument carrying no rounding error of
-  // its own. x_lo * (x + x_hi) is the remainder x * x - x_hi * x_hi.
-  constexpr double split = 134217729.0;  // 2^27 + 1
-  const double t = split * x;
-  const double x_hi = t - (t - x);
-  const double x_lo = x - x_hi;
-  return std::exp(x_hi * x_hi) * std::exp(x_lo * (x + x_hi)) * std::erfc(x);
+  // fma(x, x, -h) is the exact rounding error of h = x * x, so the factor
+  // (1 + that) restores what exp(h) would otherwise lose. Same correction
+  // as the OpenCL device function, which cannot use a Dekker split because
+  // the compiler simplifies t - (t - x) to x.
+  const double h = x * x;
+  return std::exp(h) * (1.0 + std::fma(x, x, -h)) * std::erfc(x);
 }
 
 /**
