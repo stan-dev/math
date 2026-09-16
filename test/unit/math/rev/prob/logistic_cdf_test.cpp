@@ -37,6 +37,24 @@ TEST_F(AgradRev, logistic_cdf_lower_tail_underflow) {
   EXPECT_DOUBLE_EQ(0.0, sigma.adj());
 }
 
+// inv_logit(-z) underflows to zero above z = 745; with the cdf itself equal
+// to one there, the gradient is the only thing left to get right.
+TEST_F(AgradRev, logistic_cdf_underflow_rescued_by_small_sigma) {
+  stan::math::var y = 8e-298;
+  stan::math::var mu = 0.0;
+  stan::math::var sigma = 1e-300;
+
+  stan::math::var cdf = stan::math::logistic_cdf(y, mu, sigma);
+  cdf.grad();
+
+  const double deriv = 3.6678745841780173e-48;
+  EXPECT_EQ(1.0, cdf.val());
+  EXPECT_NEAR(deriv, y.adj(), 1e-10 * deriv);
+  EXPECT_NEAR(-deriv, mu.adj(), 1e-10 * deriv);
+  EXPECT_NEAR(-2.9342996673424137e-45, sigma.adj(),
+              1e-10 * 2.9342996673424137e-45);
+}
+
 TEST_F(AgradRev, logistic_cdf_location_scale) {
   const double mu_value = 5.0;
   const double sigma_value = 2.0;
