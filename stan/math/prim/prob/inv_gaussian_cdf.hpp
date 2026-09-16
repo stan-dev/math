@@ -95,9 +95,10 @@ inline return_type_t<T_y, T_loc, T_shape> inv_gaussian_cdf(
   const auto& z2 = to_ref(sqrt_lambda_over_y * (y_over_mu + 1.0));
 
   const auto& log_upper = to_ref(internal::log_scaled_upper_term(z1, z2));
-  const auto& lcdf_elt
-      = to_ref(select(is_inf, T_partials_return(0),
-                      log_sum_exp(internal::log_Phi(z1), log_upper)));
+  const auto& lcdf_elt = to_ref(
+      select(is_inf, T_partials_return(0),
+             log_sum_exp(internal::std_normal_lcdf_value(z1 * INV_SQRT_TWO),
+                         log_upper)));
 
   T_partials_return cdf = exp(sum(lcdf_elt));
 
@@ -109,7 +110,7 @@ inline return_type_t<T_y, T_loc, T_shape> inv_gaussian_cdf(
     // saturated to -inf at an interior y.
     const auto& is_underflow = to_ref(lcdf_elt == NEGATIVE_INFTY);
     const auto& w_dens
-        = to_ref(cdf * exp(internal::log_std_normal_density(z1) - lcdf_elt));
+        = to_ref(cdf * exp(-0.5 * square(z1) - HALF_LOG_TWO_PI - lcdf_elt));
     const auto& w_upper = to_ref(cdf * exp(log_upper - lcdf_elt));
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)

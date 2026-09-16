@@ -137,7 +137,8 @@ inline return_type_t<T_y, T_loc, T_shape> inv_gaussian_lccdf(
   const auto& log_upper = to_ref(internal::log_scaled_upper_term(z1, z2));
   const auto& lccdf_elt = to_ref(select(
       is_inf, T_partials_return(NEGATIVE_INFTY),
-      internal::log_diff_exp_guarded(internal::log_Phi(-z1), log_upper)));
+      internal::log_diff_exp_guarded(
+          internal::std_normal_lcdf_value(-z1 * INV_SQRT_TWO), log_upper)));
 
   T_partials_return lccdf = sum(lccdf_elt);
 
@@ -150,7 +151,7 @@ inline return_type_t<T_y, T_loc, T_shape> inv_gaussian_lccdf(
     // underflowed to -inf.
     const auto& is_underflow = to_ref(lccdf_elt == NEGATIVE_INFTY);
     const auto& w_dens
-        = to_ref(exp(internal::log_std_normal_density(z1) - lccdf_elt));
+        = to_ref(exp(-0.5 * square(z1) - HALF_LOG_TWO_PI - lccdf_elt));
     const auto& w_upper = to_ref(exp(log_upper - lccdf_elt));
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)

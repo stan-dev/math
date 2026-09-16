@@ -282,6 +282,7 @@
 #include <stan/math/prim/prob/std_normal_cdf.hpp>
 #include <stan/math/prim/prob/std_normal_cdf_log.hpp>
 #include <stan/math/prim/prob/std_normal_lcdf.hpp>
+#include <stan/math/prim/prob/std_normal_lcdf_impl.hpp>
 #include <stan/math/prim/prob/std_normal_lccdf.hpp>
 #include <stan/math/prim/prob/std_normal_log_qf.hpp>
 #include <stan/math/prim/prob/std_normal_lpdf.hpp>

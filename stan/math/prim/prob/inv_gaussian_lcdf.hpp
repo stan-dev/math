@@ -7,12 +7,9 @@
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/erfc.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/inv.hpp>
-#include <stan/math/prim/fun/inv_square.hpp>
 #include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/select.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -23,8 +20,8 @@
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
-#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/prim/prob/std_normal_lcdf_impl.hpp>
 #include <cmath>
 #include <utility>
 
@@ -32,88 +29,28 @@ namespace stan {
 namespace math {
 namespace internal {
 
-// erfc underflows to zero below z = -38.5; the two branches agree to a
-// relative 3e-15 at this cutoff.
-static constexpr double LOG_PHI_ASYMPTOTIC_CUTOFF = -30.0;
-
-/**
- * Return the log of the standard normal cumulative distribution function. At
- * or above LOG_PHI_ASYMPTOTIC_CUTOFF this is log(0.5 * erfc(-z / sqrt(2)));
- * below it the asymptotic expansion
- * \f$-z^2/2 - \log(-z) - \log(2\pi)/2
- * + \log(1 - s + 3s^2 - 15s^3 + 105s^4)\f$, \f$s = z^{-2}\f$, carries the
- * lower tail to a relative 1e-15 down to z = -1000.
- */
-template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline return_type_t<T> log_Phi(const T& z) {
-  using std::log;
-  if (value_of_rec(z) >= LOG_PHI_ASYMPTOTIC_CUTOFF) {
-    return LOG_HALF + log(erfc(-z * INV_SQRT_TWO));
-  }
-  const auto s = inv_square(z);
-  return -0.5 * square(z) - log(-z) - HALF_LOG_TWO_PI
-         + log1p(s * (-1.0 + s * (3.0 + s * (-15.0 + s * 105.0))));
-}
-
-struct log_Phi_fun {
-  template <typename T>
-  static inline auto fun(T&& z) {
-    return log_Phi(std::forward<T>(z));
-  }
-};
-
-/**
- * A vectorized version of log_Phi().
- */
-template <typename T, require_container_t<T>* = nullptr>
-inline auto log_Phi(T&& z) {
-  return apply_scalar_unary<log_Phi_fun, T>::apply(std::forward<T>(z));
-}
-
-/**
- * Return the log of the standard normal density at the specified value.
- */
-template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline return_type_t<T> log_std_normal_density(const T& z) {
-  return -0.5 * square(z) - HALF_LOG_TWO_PI;
-}
-
-struct log_std_normal_density_fun {
-  template <typename T>
-  static inline auto fun(T&& z) {
-    return log_std_normal_density(std::forward<T>(z));
-  }
-};
-
-/**
- * A vectorized version of log_std_normal_density().
- */
-template <typename T, require_container_t<T>* = nullptr>
-inline auto log_std_normal_density(T&& z) {
-  return apply_scalar_unary<log_std_normal_density_fun, T>::apply(
-      std::forward<T>(z));
-}
-
 /**
  * Return the log of the second inverse Gaussian CDF term,
- * \f$\log\left(e^{2\lambda/\mu}\,\Phi(-z_2)\right)\f$. Since
- * \f$z_2^2 - z_1^2 = 4\lambda/\mu\f$, the asymptotic expansion of
- * \f$\log\Phi(-z_2)\f$ cancels \f$2\lambda/\mu\f$ against \f$-z_2^2/2\f$ and
- * leaves \f$\log\phi(z_1) - \log z_2 + \log(1 - s + 3s^2 - 15s^3 + 105s^4)\f$
- * with \f$s = z_2^{-2}\f$, in which no two terms are large and opposed. Below
- * the asymptotic regime \f$z_2 \le 30\f$ bounds \f$2\lambda/\mu\f$ by 450 and
- * the direct form is accurate.
+ * \f$\log\left(e^{2\lambda/\mu}\,\Phi(-z_2)\right)\f$.
+ *
+ * Both branches come from the shared standard normal log CDF in
+ * prim/prob/std_normal_lcdf_impl.hpp, evaluated at
+ * \f$\texttt{scaled} = -z_2/\sqrt{2}\f$.
+ *
+ * In the Cody regime the Gaussian exponent is taken separately, because
+ * \f$z_2^2 - z_1^2 = 4\lambda/\mu\f$ makes \f$2\lambda/\mu\f$ cancel it
+ * exactly, leaving \f$-z_1^2/2 + C(z_2)\f$ in which no two terms are large and
+ * opposed. Below that regime \f$z_2 \le 4\sqrt{2}\f$ bounds
+ * \f$2\lambda/\mu\f$ by 16 and the direct form is accurate.
  */
 template <typename T1, typename T2,
           require_all_stan_scalar_t<T1, T2>* = nullptr>
 inline return_type_t<T1, T2> log_scaled_upper_term(const T1& z1, const T2& z2) {
-  using std::log;
-  if (value_of_rec(z2) > -LOG_PHI_ASYMPTOTIC_CUTOFF) {
-    const auto s = inv_square(z2);
-    return log_std_normal_density(z1) - log(z2)
-           + log1p(s * (-1.0 + s * (3.0 + s * (-15.0 + s * 105.0))));
+  const auto scaled = -z2 * INV_SQRT_TWO;
+  if (value_of_rec(scaled) < -4.0) {
+    return -0.5 * square(z1) + std_normal_lcdf_cody_correction(scaled);
   }
-  return 0.5 * (square(z2) - square(z1)) + log_Phi(-z2);
+  return 0.5 * (square(z2) - square(z1)) + std_normal_lcdf_value(scaled);
 }
 
 /**
@@ -205,9 +142,10 @@ inline return_type_t<T_y, T_loc, T_shape> inv_gaussian_lcdf(
   const auto& z2 = to_ref(sqrt_lambda_over_y * (y_over_mu + 1.0));
 
   const auto& log_upper = to_ref(internal::log_scaled_upper_term(z1, z2));
-  const auto& lcdf_elt
-      = to_ref(select(is_inf, T_partials_return(0),
-                      log_sum_exp(internal::log_Phi(z1), log_upper)));
+  const auto& lcdf_elt = to_ref(
+      select(is_inf, T_partials_return(0),
+             log_sum_exp(internal::std_normal_lcdf_value(z1 * INV_SQRT_TWO),
+                         log_upper)));
 
   T_partials_return lcdf = sum(lcdf_elt);
 
@@ -220,7 +158,7 @@ inline return_type_t<T_y, T_loc, T_shape> inv_gaussian_lcdf(
     // saturated to -inf at an interior y.
     const auto& is_underflow = to_ref(lcdf_elt == NEGATIVE_INFTY);
     const auto& w_dens
-        = to_ref(exp(internal::log_std_normal_density(z1) - lcdf_elt));
+        = to_ref(exp(-0.5 * square(z1) - HALF_LOG_TWO_PI - lcdf_elt));
     const auto& w_upper = to_ref(exp(log_upper - lcdf_elt));
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)

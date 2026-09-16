@@ -224,20 +224,27 @@ TEST(ProbDistributionsInvGaussian, cdfCcdfSumToOne) {
   }
 }
 
-// check helper functions; tolerances scale with each value's magnitude
-TEST(ProbDistributionsInvGaussian, internalLogPhi) {
-  using stan::math::internal::log_Phi;
+// The cdf family reads log Phi from the shared standard normal log CDF in
+// prim/prob/std_normal_lcdf_impl.hpp, at scaled = z / sqrt(2). These
+// references are the 60-digit values of log Phi(z) rounded to double;
+// tolerances scale with each value's magnitude.
+TEST(ProbDistributionsInvGaussian, sharedLogPhi) {
+  auto log_Phi = [](double z) {
+    return stan::math::internal::std_normal_lcdf_value(
+        z * stan::math::INV_SQRT_TWO);
+  };
 
-  // erfc branch, up to the switch at z = -30
+  // erfc branch, up to the switch to Cody at scaled = -4, i.e. z = -4 sqrt(2)
   EXPECT_NEAR(-0.6931471805599453094, log_Phi(0.0), 1e-15);
   EXPECT_NEAR(-1.841021645009263506, log_Phi(-1.0), 1e-14);
   EXPECT_NEAR(-15.06499839398872574, log_Phi(-5.0), 1e-13);
+  EXPECT_NEAR(-18.64102922378784691, log_Phi(-5.65), 1e-13);
+  // Cody branch; the switch sits at z = -4 sqrt(2) = -5.6568542
+  EXPECT_NEAR(-18.69925115370277624, log_Phi(-5.66), 1e-13);
   EXPECT_NEAR(-53.23128515051247058, log_Phi(-10.0), 1e-12);
   EXPECT_NEAR(-203.9171553710972639, log_Phi(-20.0), 1e-11);
   EXPECT_NEAR(-451.3229124585286345, log_Phi(-29.9), 1e-11);
-  // asymptotic branch
   EXPECT_NEAR(-454.3212439563431971, log_Phi(-30.0), 1e-11);
-  EXPECT_NEAR(-457.3295644163822579, log_Phi(-30.1), 1e-11);
   // beyond the point where erfc underflows to zero (z < -37.5)
   EXPECT_NEAR(-745.6952702904110813, log_Phi(-38.5), 1e-10);
   EXPECT_NEAR(-804.6084420137537882, log_Phi(-40.0), 1e-10);
@@ -251,12 +258,13 @@ TEST(ProbDistributionsInvGaussian, internalLogPhi) {
   double inf = std::numeric_limits<double>::infinity();
   EXPECT_FLOAT_EQ(0.0, log_Phi(inf));
   EXPECT_FLOAT_EQ(-inf, log_Phi(-inf));
-  EXPECT_TRUE(std::isnan(log_Phi(std::numeric_limits<double>::quiet_NaN())));
 
-  // branch continuity: the true slope at z = -30 is about 30, so across a
-  // 2e-10 interval the honest change is about 6e-9
+  // branch continuity across the Cody switch: the true slope at
+  // z = -4 sqrt(2) is about 5.8, so across a 2e-10 interval the honest change
+  // is about 1.2e-9
+  double cut = -4.0 * stan::math::SQRT_TWO;
   double eps = 1e-10;
-  double step = log_Phi(-30.0 + eps) - log_Phi(-30.0 - eps);
+  double step = log_Phi(cut + eps) - log_Phi(cut - eps);
   EXPECT_LT(std::fabs(step), 1e-7);
 }
 

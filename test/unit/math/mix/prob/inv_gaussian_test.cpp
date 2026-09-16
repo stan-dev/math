@@ -60,7 +60,8 @@ TEST_F(AgradRev, mathMixScalFun_inv_gaussian_lccdf) {
   stan::test::expect_ad(f, 1.0, 0.0, 2.0);
 }
 
-// crosses the internal log_Phi branch at z = -30
+// crosses the erfc/Cody switch of the shared standard normal log CDF at
+// z2 = 4 sqrt(2)
 TEST_F(AgradRev, mathMixScalFun_inv_gaussian_lcdf_tails) {
   auto f = [](const auto& y, const auto& mu, const auto& lambda) {
     return stan::math::inv_gaussian_lcdf(y, mu, lambda);
