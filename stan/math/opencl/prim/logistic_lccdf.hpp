@@ -69,7 +69,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_lccdf(
   auto scaled_diff = elt_multiply(y_val - mu_val, inv_sigma);
   auto P_expr = colwise_sum(log1m_inv_logit(scaled_diff));
 
-  auto mu_deriv = elt_multiply(inv_logit(scaled_diff), inv_sigma);
+  auto mu_deriv = logistic_tail_deriv(-scaled_diff, sigma_val);
   auto y_deriv = -mu_deriv;
   auto sigma_deriv = elt_multiply(mu_deriv, scaled_diff);
 

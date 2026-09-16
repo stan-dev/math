@@ -73,7 +73,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_cdf(
   // These are the log-scale derivatives; they are rescaled by the product P
   // below. inv_logit(-scaled_diff) avoids the pdf / Pn quotient, which is
   // 0 / 0 once Pn underflows.
-  auto deriv = elt_multiply(inv_logit(-scaled_diff), inv_sigma);
+  auto deriv = logistic_tail_deriv(scaled_diff, sigma_val);
   auto y_deriv_tmp = select(cond, 0.0, deriv);
   auto sigma_deriv_tmp = select(cond, 0.0, elt_multiply(-deriv, scaled_diff));
 
