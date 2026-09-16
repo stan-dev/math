@@ -5,16 +5,17 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log1m_inv_logit.hpp>
+#include <stan/math/prim/fun/log_inv_logit.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/prob/logistic_lpdf.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
-#include <cmath>
 
 namespace stan {
 namespace math {
@@ -26,8 +27,6 @@ inline return_type_t<T_y, T_loc, T_scale> logistic_lccdf(const T_y& y,
                                                          const T_loc& mu,
                                                          const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-  using std::exp;
-  using std::log;
   using T_y_ref = ref_type_t<T_y>;
   using T_mu_ref = ref_type_t<T_loc>;
   using T_sigma_ref = ref_type_t<T_scale>;
@@ -54,42 +53,39 @@ inline return_type_t<T_y, T_loc, T_scale> logistic_lccdf(const T_y& y,
   size_t N = max_size(y, mu, sigma);
 
   // Explicit return for extreme values
-  // The gradients are technically ill-defined, but treated as zero
+  // The gradients are technically ill-defined, but treated as zero.
   for (size_t i = 0; i < stan::math::size(y); i++) {
     if (y_vec.val(i) == NEGATIVE_INFTY) {
       return ops_partials.build(0.0);
     }
   }
-
-  for (size_t n = 0; n < N; n++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
-    if (y_vec.val(n) == INFTY) {
+  for (size_t i = 0; i < stan::math::size(y); i++) {
+    if (y_vec.val(i) == INFTY) {
       return ops_partials.build(negative_infinity());
     }
+  }
 
+  for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = y_vec.val(n);
     const T_partials_return mu_dbl = mu_vec.val(n);
-    const T_partials_return sigma_dbl = sigma_vec.val(n);
     const T_partials_return sigma_inv_vec = 1.0 / sigma_vec.val(n);
+    const T_partials_return scaled_diff = (y_dbl - mu_dbl) * sigma_inv_vec;
+    P += log1m_inv_logit(scaled_diff);
 
-    // TODO(Andrew) Further simplify derivatives and log-scale below
-    const T_partials_return Pn
-        = 1.0 - inv_logit((y_dbl - mu_dbl) * sigma_inv_vec);
-    P += log(Pn);
-
-    if constexpr (is_autodiff_v<T_y>) {
-      partials<0>(ops_partials)[n]
-          -= exp(logistic_lpdf(y_dbl, mu_dbl, sigma_dbl)) / Pn;
-    }
-    if constexpr (is_autodiff_v<T_loc>) {
-      partials<1>(ops_partials)[n]
-          -= -exp(logistic_lpdf(y_dbl, mu_dbl, sigma_dbl)) / Pn;
-    }
-    if constexpr (is_autodiff_v<T_scale>) {
-      partials<2>(ops_partials)[n]
-          -= -(y_dbl - mu_dbl) * sigma_inv_vec
-             * exp(logistic_lpdf(y_dbl, mu_dbl, sigma_dbl)) / Pn;
+    if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
+      const T_partials_return deriv
+          = value_of_rec(scaled_diff) < -700.0
+                ? exp(log_inv_logit(scaled_diff) - log(sigma_vec.val(n)))
+                : inv_logit(scaled_diff) * sigma_inv_vec;
+      if constexpr (is_autodiff_v<T_y>) {
+        partials<0>(ops_partials)[n] -= deriv;
+      }
+      if constexpr (is_autodiff_v<T_loc>) {
+        partials<1>(ops_partials)[n] += deriv;
+      }
+      if constexpr (is_autodiff_v<T_scale>) {
+        partials<2>(ops_partials)[n] += scaled_diff * deriv;
+      }
     }
   }
   return ops_partials.build(P);
