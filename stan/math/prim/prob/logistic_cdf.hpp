@@ -71,9 +71,6 @@ inline return_type_t<T_y, T_loc, T_scale> logistic_cdf(const T_y& y,
 
     P *= Pn;
 
-    // The partials accumulate d/d. log(Pn); they are rescaled by the product
-    // P below. Writing the log-scale derivative as inv_logit(-scaled_diff)
-    // avoids the pdf / Pn quotient, which is 0 / 0 once Pn underflows.
     if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
       const T_partials_return deriv = inv_logit(-scaled_diff) * sigma_inv_vec;
       if constexpr (is_autodiff_v<T_y>) {
