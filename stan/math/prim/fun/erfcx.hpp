@@ -9,6 +9,69 @@
 namespace stan {
 namespace math {
 
+namespace internal {
+
+/**
+ * Cody (1969) third-interval rational, valid for `x >= 4`.
+ *
+ * Gives `erfcx` directly. `x * x` is infinite for `x` large enough, which
+ * correctly collapses this to the leading term `INV_SQRT_PI / x` and, at
+ * infinity, to zero.
+ *
+ * @param x argument, `x >= 4`
+ * @return scaled complementary error function
+ */
+inline double erfcx_cody_tail(double x) {
+  const double u = 1.0 / (x * x);
+  double p = 0.0163153871373020978498;
+  p = 0.305326634961232344035 + u * p;
+  p = 0.360344899949804439429 + u * p;
+  p = 0.125781726111229246204 + u * p;
+  p = 0.0160837851487422766278 + u * p;
+  p = 0.000658749161529837803157 + u * p;
+  double q = -1.0;
+  q = -2.56852019228982242072 + u * q;
+  q = -1.87295284992346047209 + u * q;
+  q = -0.527905102951428412248 + u * q;
+  q = -0.0605183413124413191178 + u * q;
+  q = -0.00233520497626869185443 + u * q;
+  return (INV_SQRT_PI + (p / q) * u) / x;
+}
+
+/**
+ * Cody (1969) second-interval rational, valid for `0.46875 <= x <= 4`.
+ *
+ * Cody writes this interval as `erfc(x) = exp(-x*x) * R(x)`, so `erfcx`
+ * is `R(x)` with the exponential cancelled analytically: no `exp` and no
+ * `erfc` call. Measured at 3.7 to 7.0 ulp, of which only 0.28 ulp is
+ * approximation error; the rest is rounding in the two degree-8 Horner
+ * chains and the final division.
+ *
+ * @param y argument, `0.46875 <= y <= 4`
+ * @return scaled complementary error function
+ */
+inline double erfcx_cody_middle(double y) {
+  double p = 2.15311535474403846e-8 * y;
+  p = (p + 5.64188496988670089e-1) * y;
+  p = (p + 8.88314979438837594) * y;
+  p = (p + 66.1191906371416295) * y;
+  p = (p + 298.635138197400131) * y;
+  p = (p + 881.952221241769090) * y;
+  p = (p + 1712.04761263407058) * y;
+  p = (p + 2051.07837782607147) * y;
+  double q = y;
+  q = (q + 15.7449261107098347) * y;
+  q = (q + 117.693950891312499) * y;
+  q = (q + 537.181101862009858) * y;
+  q = (q + 1621.38957456669019) * y;
+  q = (q + 3290.79923573345963) * y;
+  q = (q + 4362.61909014324716) * y;
+  q = (q + 3439.36767414372164) * y;
+  return (p + 1230.33935479799725) / (q + 1230.33935480374942);
+}
+
+}  // namespace internal
+
 /**
  * Return the scaled complementary error function of the argument.
  *
@@ -25,19 +88,19 @@ namespace math {
  * Mills ratio is `SQRT_TWO_OVER_SQRT_PI / erfcx(-x * INV_SQRT_TWO)`, both
  * without cancellation.
  *
- * Two branches, with the crossover and the accuracy below established by
- * measurement against a `long double` reference over 40000 points per
- * interval:
+ * Three branches. `erfc` dominates the cost of forming
+ * `exp(x*x) * erfc(x)`, so each interval that can be served by a direct
+ * approximation of `erfcx` instead is much faster.
  *
- * - `x >= 4`: the Cody (1969) rational approximation, which gives `erfcx`
- *   directly with no `exp` and no `erfc` call. Measured at 2.0 to 2.5 ulp
- *   over `[4, 50]` and 5.4 ulp out to 200, and about 2.4 times faster than
- *   forming the product.
- * - `x < 4`: `exp(x * x) * erfc(x)`, with the rounding error of `x * x`
- *   recovered by `fma` and folded back in, so `exp` effectively receives an
- *   exact argument. Uncorrected, the rounding of `x * x` is amplified by
- *   `exp` into a relative error of about `x * x * eps`, which reaches
- *   512 ulp at `x = -26`. The correction holds this branch to under 6 ulp.
+ * - `x >= 4`: Cody (1969) third-interval rational.
+ * - `0.46875 <= x < 4`: Cody (1969) second-interval rational. Cody writes
+ *   this interval as `erfc(x) = exp(-x*x) * R(x)`, so `erfcx` is `R(x)`
+ *   and the exponential is cancelled analytically rather than computed and
+ *   divided out. No `exp` and no `erfc` call.
+ * - `x < 0.46875`: `exp(x * x) * erfc(x)`, with the rounding error of
+ *   `x * x` recovered by `fma` and folded back in, because `exp`
+ *   amplifies it into roughly `x * x * eps` -- 512 ulp at `x = -26` if
+ *   left alone.
  *
  * W. J. Cody, Math. Comp. 23(107):631-638 (1969).
  * https://doi.org/10.1090/S0025-5718-1969-0247736-4
@@ -49,7 +112,7 @@ namespace math {
  * relative down to 4 and degrades past about 3.5, so 4 sits just inside its
  * range.
  *
- * Measured worst case over the whole range is 5.4 ulp.
+ * Measured worst case over the whole range is 7.0 ulp.
  *
  * The derivative is
  * \f$\frac{d}{dx}\mbox{erfcx}(x) = 2x\,\mbox{erfcx}(x) -
@@ -70,25 +133,13 @@ namespace math {
 template <typename T, require_arithmetic_t<T>* = nullptr>
 inline double erfcx(T&& xx) {
   const double x = static_cast<double>(xx);
-  // Cody (1969). x * x is infinite for x large enough, which correctly
-  // collapses this to the leading term INV_SQRT_PI / x and, at infinity,
-  // to zero.
   constexpr double cody_min = 4.0;
+  constexpr double middle_min = 0.46875;
   if (x >= cody_min) {
-    const double u = 1.0 / (x * x);
-    double p = 0.0163153871373020978498;
-    p = 0.305326634961232344035 + u * p;
-    p = 0.360344899949804439429 + u * p;
-    p = 0.125781726111229246204 + u * p;
-    p = 0.0160837851487422766278 + u * p;
-    p = 0.000658749161529837803157 + u * p;
-    double q = -1.0;
-    q = -2.56852019228982242072 + u * q;
-    q = -1.87295284992346047209 + u * q;
-    q = -0.527905102951428412248 + u * q;
-    q = -0.0605183413124413191178 + u * q;
-    q = -0.00233520497626869185443 + u * q;
-    return (INV_SQRT_PI + (p / q) * u) / x;
+    return internal::erfcx_cody_tail(x);
+  }
+  if (x >= middle_min) {
+    return internal::erfcx_cody_middle(x);
   }
   // erfcx(x) = 2 * exp(x * x) * (1 + o(1)) as x -> -infinity, which leaves
   // the binary64 range below -26.63. Returning here also keeps the branch
@@ -98,9 +149,9 @@ inline double erfcx(T&& xx) {
     return INFTY;
   }
   // fma(x, x, -h) is the exact rounding error of h = x * x, so the factor
-  // (1 + that) restores what exp(h) would otherwise lose. Same correction
-  // as the OpenCL device function, which cannot use a Dekker split because
-  // the compiler simplifies t - (t - x) to x.
+  // (1 + that) restores what exp(h) would otherwise lose. The OpenCL
+  // device function uses the same form; it cannot use a Dekker split
+  // because the compiler simplifies t - (t - x) to x.
   const double h = x * x;
   return std::exp(h) * (1.0 + std::fma(x, x, -h)) * std::erfc(x);
 }
