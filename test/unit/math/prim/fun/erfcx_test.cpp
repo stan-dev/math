@@ -46,21 +46,44 @@ TEST(MathFunctions, erfcxLowerTail) {
   EXPECT_GT(erfcx(-27.0), 0.0);
 }
 
-// The internal crossover between exp(x * x) * erfc(x) and the Cody rational
-// approximation must not be visible in the output.
+// None of the internal crossovers may be visible in the output. There are
+// three: the small expansion to the Cody second interval at 0.46875, the
+// second to the third interval at 4, and the small expansion to the
+// negative-side reflection at -0.46875.
 TEST(MathFunctions, erfcxBranchContinuity) {
   using stan::math::erfcx;
-  const double cut = 4.0;
-  for (double delta : {1e-15, 1e-12, 1e-9, 1e-6}) {
-    const double below = erfcx(cut - cut * delta);
-    const double above = erfcx(cut + cut * delta);
-    // the function is smooth and decreasing, so the two sides differ only by
-    // the slope over 2 * cut * delta
-    const double slope = 2.0 * cut * erfcx(cut) - stan::math::TWO_OVER_SQRT_PI;
-    EXPECT_NEAR(below - above, -slope * 2.0 * cut * delta,
-                1e-9 * delta + 1e-15);
+  for (double cut : {4.0, 0.46875, -0.46875}) {
+    for (double delta : {1e-15, 1e-12, 1e-9, 1e-6}) {
+      const double step = std::fabs(cut) * delta;
+      const double below = erfcx(cut - step);
+      const double above = erfcx(cut + step);
+      // the function is smooth, so the two sides differ only by the slope
+      // over 2 * step
+      const double slope
+          = 2.0 * cut * erfcx(cut) - stan::math::TWO_OVER_SQRT_PI;
+      EXPECT_NEAR(below - above, -slope * 2.0 * step,
+                  1e-9 * delta + 1e-14 * std::fabs(erfcx(cut)));
+    }
+    const double inward = (cut > 0.0) ? 0.0 : -1.0;
+    EXPECT_NEAR(erfcx(std::nextafter(cut, inward)), erfcx(cut),
+                1e-15 * std::fabs(erfcx(cut)));
   }
-  EXPECT_NEAR(erfcx(std::nextafter(cut, 0.0)), erfcx(cut), 1e-16);
+}
+
+// Below -6.1 the reflection skips subtracting erfcx(-x). That is only
+// legitimate if the skipped term really is below half an ulp of
+// 2*exp(x*x), which is what this asserts directly. A continuity sweep is
+// not usable here: erfcx has slope about -3.5e17 at -6.1, so the
+// function's own variation swamps any fixed relative tolerance.
+TEST(MathFunctions, erfcxReflectionSkippedTerm) {
+  const double cut = -6.1;
+  const double leading = 2.0 * std::exp(cut * cut);
+  const double skipped = stan::math::erfcx(-cut);
+  EXPECT_LT(skipped / leading, 0.5 * 1.1102230246251565e-16);
+  // adjacent representable arguments still agree to the steepness limit
+  const double below = stan::math::erfcx(std::nextafter(cut, -1.0));
+  const double above = stan::math::erfcx(std::nextafter(cut, 0.0));
+  EXPECT_NEAR(below / above, 1.0, 1e-13);
 }
 
 TEST(MathFunctions, erfcxEdgeCases) {
