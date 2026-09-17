@@ -204,8 +204,9 @@ inline double erfcx(T&& xx) {
     return two_exp_x2;
   }
   const double y = -x;
-  return two_exp_x2 - (y >= cody_min ? internal::erfcx_cody_tail(y)
-                                     : internal::erfcx_cody_middle(y));
+  return two_exp_x2
+         - (y >= cody_min ? internal::erfcx_cody_tail(y)
+                          : internal::erfcx_cody_middle(y));
 }
 
 /**
