@@ -27,7 +27,7 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale, T_shape>* = nullptr>
 inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
+    T_y&& y, T_loc&& mu, T_scale&& sigma, T_shape&& alpha) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
@@ -37,10 +37,10 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma, "Shape parameter",
                          alpha);
-  T_y_ref y_ref = y;
-  T_mu_ref mu_ref = mu;
-  T_sigma_ref sigma_ref = sigma;
-  T_alpha_ref alpha_ref = alpha;
+  T_y_ref y_ref = std::forward<T_y>(y);
+  T_mu_ref mu_ref = std::forward<T_loc>(mu);
+  T_sigma_ref sigma_ref = std::forward<T_scale>(sigma);
+  T_alpha_ref alpha_ref = std::forward<T_shape>(alpha);
 
   decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
   decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
@@ -52,7 +52,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
   check_finite(function, "Shape parameter", alpha_val);
   check_positive(function, "Scale parameter", sigma_val);
 
-  if (size_zero(y, mu, sigma, alpha)) {
+  if (size_zero(y_ref, mu_ref, sigma_ref, alpha_ref)) {
     return 0.0;
   }
   if constexpr (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
@@ -69,19 +69,21 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
   const auto [values, slopes] = internal::std_normal_lcdf_value_grad<
       is_any_autodiff_v<T_y, T_loc, T_scale, T_shape>>(az);
 
-  size_t N = max_size(y, mu, sigma, alpha);
+  size_t N = max_size(y_ref, mu_ref, sigma_ref, alpha_ref);
   T_partials_return logp = N * LOG_TWO + sum(values);
   if constexpr (include_summand<propto>::value) {
     logp -= HALF_LOG_TWO_PI * N;
   }
   if constexpr (include_summand<propto, T_scale>::value) {
-    logp -= sum(log(sigma_val)) * N / math::size(sigma);
+    logp -= sum(log(sigma_val)) * N / math::size(sigma_ref);
   }
   if constexpr (include_summand<propto, T_y, T_loc, T_scale>::value) {
-    logp -= sum(square(z)) * 0.5 * N / max_size(y, mu, sigma);
+    logp -= sum(square(z)) * 0.5 * N / max_size(y_ref, mu_ref, sigma_ref);
   }
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
-    const auto& score = to_ref((slopes * alpha_val - z) * inv_sigma);
+    const auto& score = to_ref_if<(is_autodiff_v<T_y> + is_autodiff_v<T_loc>
+                                   + is_autodiff_v<T_scale>)
+                                  >= 2>((slopes * alpha_val - z) * inv_sigma);
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = score;
     }
@@ -100,8 +102,10 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
 inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
-  return skew_normal_lpdf<false>(y, mu, sigma, alpha);
+    T_y&& y, T_loc&& mu, T_scale&& sigma, T_shape&& alpha) {
+  return skew_normal_lpdf<false>(std::forward<T_y>(y), std::forward<T_loc>(mu),
+                                 std::forward<T_scale>(sigma),
+                                 std::forward<T_shape>(alpha));
 }
 
 }  // namespace math

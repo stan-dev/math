@@ -80,7 +80,10 @@ inline T std_normal_erfcx(const T& x) {
 
 /** Scalar log Phi(z) and its slope phi(z) / Phi(z).
  * For z < 0 both come from erfcx with no exp; z > 0 needs one exp for the
- * complement. The Cody crossover |z| = sqrt(32) matches R's pnorm.
+ * complement. Infinite z gives -inf/0 values and inf/0 slopes.
+ * The lower tail keeps log1p, r = 2 (1/a)^2 and a / (1 + r c) so nested
+ * autodiff neither overflows nor loses the 2 / a^3 third derivative; the
+ * z > 40 return keeps derivatives finite when x^2 overflows.
  */
 template <bool calc_grad, typename T, require_stan_scalar_t<T>* = nullptr>
 inline std::pair<return_type_t<T>, return_type_t<T>> std_normal_lcdf_value_grad(
@@ -92,15 +95,11 @@ inline std::pair<return_type_t<T>, return_type_t<T>> std_normal_lcdf_value_grad(
   }
   if (z <= -4 * SQRT_TWO) {
     const R a = -z;
-    const R log_a = log(a);
-    const R inv_a = 1 / a;
-    const R r = 2 * square(inv_a);
-    const R correction = std_normal_tail_correction(r);
-    const R value
-        = -(0.5 * z) * z - HALF_LOG_TWO_PI - log_a + log1p(r * correction);
+    const R r = 2 * square(1 / a);
+    const R rc = r * std_normal_tail_correction(r);
+    const R value = -(0.5 * z) * z - HALF_LOG_TWO_PI - log(a) + log1p(rc);
     if constexpr (calc_grad) {
-      // Separate the leading a to preserve the 2/a^3 third derivative.
-      return {value, a - (2 * correction * inv_a) / (1 + r * correction)};
+      return {value, a / (1 + rc)};
     } else {
       return {value, 0};
     }

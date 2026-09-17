@@ -13,31 +13,12 @@
 namespace stan {
 namespace math {
 namespace internal {
-constexpr char normal_lcdf_opencl_func[] = "normal_lcdf(OpenCL)";
-}  // namespace internal
 
-/** \ingroup opencl
- * Returns the normal log cumulative distribution function for the given
- * location and scale. If given containers of matching sizes, returns the
- * sum of log probabilities.
- *
- * @tparam T_y_cl type of scalar outcome
- * @tparam T_loc_cl type of location
- * @tparam T_scale_cl type of scale
- * @param y (Sequence of) scalar(s).
- * @param mu (Sequence of) location(s).
- * @param sigma (Sequence of) scale(s).
- * @return The log of the product of cumulative probabilities.
- */
-template <
-    const char* func = internal::normal_lcdf_opencl_func, typename T_y_cl,
-    typename T_loc_cl, typename T_scale_cl,
-    require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_loc_cl,
-                                                T_scale_cl>* = nullptr,
-    require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_lcdf(
-    const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma) {
-  static constexpr const char* function = func;
+template <bool reflect, typename T_y_cl, typename T_loc_cl, typename T_scale_cl>
+inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_lcdf_opencl_impl(
+    const char* function, const T_y_cl& y, const T_loc_cl& mu,
+    const T_scale_cl& sigma) {
+  constexpr double sign = reflect ? -1.0 : 1.0;
   using std::isfinite;
   using std::isnan;
 
@@ -66,12 +47,13 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_lcdf(
       = check_cl(function, "Scale parameter", sigma_val, "positive");
   auto sigma_positive_expr = 0 < sigma_val;
 
-  auto z = elt_divide(y_val - mu_val, sigma_val);
-  auto lcdf_expr = colwise_sum(std_normal_lcdf_impl(z));
+  auto z = sign * elt_divide(y_val - mu_val, sigma_val);
+  auto lcdf_expr = colwise_sum(math::std_normal_lcdf_impl(z));
   auto slope = std_normal_lcdf_derivative(z);
-  auto y_deriv = elt_divide(slope, sigma_val);
+  auto scaled_slope = elt_divide(slope, sigma_val);
+  auto y_deriv = sign * scaled_slope;
   auto mu_deriv = -y_deriv;
-  auto sigma_deriv = select(slope == 0, 0.0, -elt_multiply(y_deriv, z));
+  auto sigma_deriv = select(slope == 0, 0.0, -elt_multiply(scaled_slope, z));
 
   matrix_cl<double> lcdf_cl;
   matrix_cl<double> y_deriv_cl;
@@ -99,6 +81,32 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_lcdf(
     partials<2>(ops_partials) = std::move(sigma_deriv_cl);
   }
   return ops_partials.build(lcdf);
+}
+
+}  // namespace internal
+
+/** \ingroup opencl
+ * Returns the normal log cumulative distribution function for the given
+ * location and scale. If given containers of matching sizes, returns the
+ * sum of log probabilities.
+ *
+ * @tparam T_y_cl type of scalar outcome
+ * @tparam T_loc_cl type of location
+ * @tparam T_scale_cl type of scale
+ * @param y (Sequence of) scalar(s).
+ * @param mu (Sequence of) location(s).
+ * @param sigma (Sequence of) scale(s).
+ * @return The log of the product of cumulative probabilities.
+ */
+template <
+    typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
+    require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_loc_cl,
+                                                T_scale_cl>* = nullptr,
+    require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl>* = nullptr>
+inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_lcdf(
+    const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma) {
+  return internal::normal_lcdf_opencl_impl<false>("normal_lcdf(OpenCL)", y, mu,
+                                                  sigma);
 }
 
 }  // namespace math

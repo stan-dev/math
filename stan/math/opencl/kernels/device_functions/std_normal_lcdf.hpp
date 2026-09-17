@@ -77,8 +77,7 @@ static constexpr const char* std_normal_lcdf_device_function
           /** Log Phi(x), with the original, unscaled argument. */
           inline double std_normal_lcdf_impl(double x) {
             if (x <= -4.0 * M_SQRT2) {
-              const double inv_a = -1.0 / x;
-              const double r = 2 * inv_a * inv_a;
+              const double r = 2.0 / (x * x);
               return -(0.5 * x) * x - log(-x) - 0.91893853320467274178
                      + log1p(r * std_normal_lcdf_tail_correction(r));
             }
@@ -97,10 +96,8 @@ static constexpr const char* std_normal_lcdf_device_function
           /** Slope phi(x) / Phi(x) in the original units. */
           inline double std_normal_lcdf_derivative(double x) {
             if (x <= -4.0 * M_SQRT2) {
-              const double inv_a = -1.0 / x;
-              const double r = 2 * inv_a * inv_a;
-              const double correction = std_normal_lcdf_tail_correction(r);
-              return -x - 2 * correction * inv_a / (1 + r * correction);
+              const double r = 2.0 / (x * x);
+              return -x / (1.0 + r * std_normal_lcdf_tail_correction(r));
             }
             const double s = fabs(x) * M_SQRT1_2;
             if (s < 0.46875) {
