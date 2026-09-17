@@ -84,20 +84,17 @@ exp_mod_normal_lpdf(const T_y_cl& y, const T_loc_cl& mu,
   auto sigma_sq_expr = elt_multiply(sigma_val, sigma_val);
   auto lambda_sigma_sq_expr = elt_multiply(lambda_val, sigma_sq_expr);
   auto mu_minus_y_expr = mu_val - y_val;
-  auto inner_term_expr = elt_multiply(mu_minus_y_expr + lambda_sigma_sq_expr,
-                                      INV_SQRT_TWO * inv_sigma_expr);
-  auto erfc_calc_expr = erfc(inner_term_expr);
+  // log(erfc(t) / 2) = log Phi(-sqrt(2) t) cancels the log(1/2) constant.
+  auto z_expr
+      = -elt_multiply(mu_minus_y_expr + lambda_sigma_sq_expr, inv_sigma_expr);
   auto logp1_expr
       = elt_multiply(lambda_val, mu_minus_y_expr + 0.5 * lambda_sigma_sq_expr)
-        + log(erfc_calc_expr);
+        + math::std_normal_lcdf_impl(z_expr);
   auto logp_expr = colwise_sum(
       static_select<include_summand<propto, T_inv_scale_cl>::value>(
           logp1_expr + log(lambda_val), logp1_expr));
 
-  auto deriv_logerfc_expr
-      = elt_divide(-SQRT_TWO_OVER_SQRT_PI
-                       * exp(-elt_multiply(inner_term_expr, inner_term_expr)),
-                   erfc_calc_expr);
+  auto deriv_logerfc_expr = -std_normal_lcdf_derivative(z_expr);
   auto deriv_expr
       = lambda_val + elt_multiply(deriv_logerfc_expr, inv_sigma_expr);
   auto deriv_sigma_expr
@@ -126,9 +123,6 @@ exp_mod_normal_lpdf(const T_y_cl& y, const T_loc_cl& mu,
                     calc_if<is_autodiff_v<T_inv_scale_cl>>(deriv_lambda_expr));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
-  if constexpr (include_summand<propto>::value) {
-    logp -= LOG_TWO * N;
-  }
 
   auto ops_partials
       = make_partials_propagator(y_col, mu_col, sigma_col, lambda_col);

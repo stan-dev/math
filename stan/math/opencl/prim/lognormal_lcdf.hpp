@@ -12,29 +12,13 @@
 
 namespace stan {
 namespace math {
+namespace internal {
 
-/** \ingroup opencl
- * Returns the lognormal log cumulative distribution function
- * for the given location, and scale. If given containers of matching sizes
- * returns the log sum of probabilities.
- *
- * @tparam T_y_cl type of scalar outcome
- * @tparam T_loc_cl type of location
- * @tparam T_scale_cl type of scale
- * @param y (Sequence of) scalar(s).
- * @param mu (Sequence of) location(s).
- * @param sigma (Sequence of) scale(s).
- * @return The log of the product of densities.
- */
-template <
-    typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
-    require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_loc_cl,
-                                                T_scale_cl>* = nullptr,
-    require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> lognormal_lcdf(
-    const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma) {
-  static constexpr const char* function = "lognormal_lcdf(OpenCL)";
-  using T_partials_return = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
+template <bool reflect, typename T_y_cl, typename T_loc_cl, typename T_scale_cl>
+inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> lognormal_lcdf_opencl_impl(
+    const char* function, const T_y_cl& y, const T_loc_cl& mu,
+    const T_scale_cl& sigma) {
+  constexpr double sign = reflect ? -1.0 : 1.0;
   using std::isfinite;
   using std::isnan;
 
@@ -64,13 +48,13 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> lognormal_lcdf(
   auto sigma_positive_finite_expr = 0 < sigma_val && isfinite(sigma_val);
 
   auto any_y_zero = colwise_max(cast<char>(y_val == 0.0));
-  auto log_y = log(y_val);
-  auto z = elt_divide(log_y - mu_val, sigma_val);
-  auto lcdf_expr = colwise_sum(std_normal_lcdf_impl(z));
+  auto z = sign * elt_divide(log(y_val) - mu_val, sigma_val);
+  auto lcdf_expr = colwise_sum(math::std_normal_lcdf_impl(z));
   auto slope = std_normal_lcdf_derivative(z);
-  auto mu_deriv = -elt_divide(slope, sigma_val);
-  auto y_deriv = elt_divide(mu_deriv, -y_val);
-  auto sigma_deriv = select(slope == 0, 0.0, elt_multiply(mu_deriv, z));
+  auto scaled_slope = elt_divide(slope, sigma_val);
+  auto y_deriv = sign * elt_divide(scaled_slope, y_val);
+  auto mu_deriv = -sign * scaled_slope;
+  auto sigma_deriv = select(slope == 0, 0.0, -elt_multiply(scaled_slope, z));
 
   matrix_cl<char> any_y_zero_cl;
   matrix_cl<double> lcdf_cl;
@@ -87,10 +71,10 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> lognormal_lcdf(
                     calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv));
 
   if (from_matrix_cl(any_y_zero_cl).maxCoeff()) {
-    return NEGATIVE_INFTY;
+    return reflect ? 0.0 : NEGATIVE_INFTY;
   }
 
-  T_partials_return lcdf = sum(from_matrix_cl(lcdf_cl));
+  double lcdf = sum(from_matrix_cl(lcdf_cl));
 
   auto ops_partials = make_partials_propagator(y_col, mu_col, sigma_col);
 
@@ -104,6 +88,19 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> lognormal_lcdf(
     partials<2>(ops_partials) = std::move(sigma_deriv_cl);
   }
   return ops_partials.build(lcdf);
+}
+
+}  // namespace internal
+
+template <
+    typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
+    require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_loc_cl,
+                                                T_scale_cl>* = nullptr,
+    require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl>* = nullptr>
+inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> lognormal_lcdf(
+    const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma) {
+  return internal::lognormal_lcdf_opencl_impl<false>("lognormal_lcdf(OpenCL)",
+                                                     y, mu, sigma);
 }
 
 }  // namespace math

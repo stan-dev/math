@@ -3,133 +3,125 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/any.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/erf.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/inv.hpp>
-#include <stan/math/prim/fun/is_inf.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/fun/scalar_seq_view.hpp>
-#include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/log_diff_exp.hpp>
+#include <stan/math/prim/fun/log_sum_exp.hpp>
+#include <stan/math/prim/fun/select.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
-#include <cmath>
+#include <stan/math/prim/prob/std_normal_lcdf_impl.hpp>
 
 namespace stan {
 namespace math {
+namespace internal {
 
-template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale,
-          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              T_y, T_loc, T_scale, T_inv_scale>* = nullptr>
-inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma,
-    const T_inv_scale& lambda) {
+/** log F = log_diff_exp(a, b) with a = log Phi(z), b = v^2/2 - lambda (y - mu)
+ * + log Phi(z - v), v = lambda sigma; log (1 - F) = log_sum_exp(log Phi(-z),
+ * b).
+ */
+template <bool upper, typename T_y, typename T_loc, typename T_scale,
+          typename T_inv_scale>
+inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
+    const char* function, T_y&& y, T_loc&& mu, T_scale&& sigma,
+    T_inv_scale&& lambda) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
   using T_lambda_ref = ref_type_if_not_constant_t<T_inv_scale>;
-  static constexpr const char* function = "exp_mod_normal_lcdf";
+  constexpr bool any_autodiff
+      = is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>;
+  constexpr double sign = upper ? -1.0 : 1.0;
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma, "Inv_scale parameter",
                          lambda);
-  T_y_ref y_ref = y;
-  T_mu_ref mu_ref = mu;
-  T_sigma_ref sigma_ref = sigma;
-  T_lambda_ref lambda_ref = lambda;
-
+  T_y_ref y_ref = std::forward<T_y>(y);
+  T_mu_ref mu_ref = std::forward<T_loc>(mu);
+  T_sigma_ref sigma_ref = std::forward<T_scale>(sigma);
+  T_lambda_ref lambda_ref = std::forward<T_inv_scale>(lambda);
   decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
   decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
   decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
   decltype(auto) lambda_val
       = to_ref(as_value_column_array_or_scalar(lambda_ref));
-
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
   check_positive_finite(function, "Scale parameter", sigma_val);
   check_positive_finite(function, "Inv_scale parameter", lambda_val);
 
-  if (size_zero(y, mu, sigma, lambda)) {
+  if (size_zero(y_ref, mu_ref, sigma_ref, lambda_ref)) {
     return 0;
   }
 
   auto ops_partials
       = make_partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref);
-
-  scalar_seq_view<decltype(y_val)> y_vec(y_val);
-  for (size_t n = 0, size_y = stan::math::size(y); n < size_y; n++) {
-    if (is_inf(y_vec[n])) {
-      return ops_partials.build(y_vec[n] < 0 ? negative_infinity() : 0);
-    }
+  if (any(y_val == NEGATIVE_INFTY)) {
+    return ops_partials.build(upper ? 0.0 : NEGATIVE_INFTY);
+  }
+  if (any(y_val == INFTY)) {
+    return ops_partials.build(upper ? NEGATIVE_INFTY : 0.0);
   }
 
-  const auto& inv_sigma
-      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(inv(sigma_val));
   const auto& diff = to_ref(y_val - mu_val);
+  const auto& z = to_ref(diff / sigma_val);
   const auto& v = to_ref(lambda_val * sigma_val);
-  const auto& scaled_diff = to_ref(diff * INV_SQRT_TWO * inv_sigma);
-  const auto& scaled_diff_diff
-      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>>(
-          scaled_diff - v * INV_SQRT_TWO);
-  const auto& erf_calc = to_ref(0.5 * (1 + erf(scaled_diff_diff)));
+  const auto [log_a, slope_a]
+      = internal::std_normal_lcdf_value_grad<any_autodiff>(sign * z);
+  const auto [log_phi_b, slope_b]
+      = internal::std_normal_lcdf_value_grad<any_autodiff>(z - v);
+  const auto& log_b = to_ref_if<any_autodiff>(0.5 * square(v)
+                                              - lambda_val * diff + log_phi_b);
+  const auto& lp = to_ref_if<any_autodiff>([&]() {
+    if constexpr (upper) {
+      return log_sum_exp(log_a, log_b);
+    } else {
+      return log_diff_exp(log_a, log_b);
+    }
+  }());
+  const T_partials_return cdf_log = sum(lp);
 
-  const auto& exp_term
-      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>>(
-          exp(0.5 * square(v) - lambda_val * diff));
-  const auto& cdf_n
-      = to_ref(0.5 + 0.5 * erf(scaled_diff) - exp_term * erf_calc);
-
-  T_partials_return cdf_log = sum(log(cdf_n));
-
-  if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>) {
-    const auto& exp_term_2 = to_ref_if<(
-        is_any_autodiff_v<T_y, T_loc, T_scale> && is_autodiff_v<T_inv_scale>)>(
-        exp(-square(scaled_diff_diff)));
-    if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
-      constexpr bool need_deriv_refs
-          = is_any_autodiff_v<T_y, T_loc> && is_autodiff_v<T_scale>;
-      const auto& deriv_1
-          = to_ref_if<need_deriv_refs>(lambda_val * exp_term * erf_calc);
-      const auto& deriv_2 = to_ref_if<need_deriv_refs>(
-          INV_SQRT_TWO_PI * exp_term * exp_term_2 * inv_sigma);
-      const auto& sq_scaled_diff = square(scaled_diff);
-      const auto& exp_m_sq_scaled_diff = exp(-sq_scaled_diff);
-      const auto& deriv_3 = to_ref_if<need_deriv_refs>(
-          INV_SQRT_TWO_PI * exp_m_sq_scaled_diff * inv_sigma);
-      if constexpr (is_any_autodiff_v<T_y, T_loc>) {
-        const auto& deriv
-            = to_ref_if<(is_autodiff_v<T_loc> && is_autodiff_v<T_y>)>(
-                (deriv_1 - deriv_2 + deriv_3) / cdf_n);
-        if constexpr (is_autodiff_v<T_y>) {
-          partials<0>(ops_partials) = deriv;
-        }
-        if constexpr (is_autodiff_v<T_loc>) {
-          partials<1>(ops_partials) = -deriv;
-        }
-      }
-      if constexpr (is_autodiff_v<T_scale>) {
-        edge<2>(ops_partials).partials_
-            = -((deriv_1 - deriv_2) * v
-                + (deriv_3 - deriv_2) * scaled_diff * SQRT_TWO)
-              / cdf_n;
-      }
+  if constexpr (any_autodiff) {
+    // Weights of the two terms in the total; the second is signed.
+    const auto& w_b = to_ref((upper ? 1.0 : -1.0) * exp(log_b - lp));
+    const auto& s_b = to_ref(w_b * slope_b);
+    const auto& s
+        = to_ref_if<(is_autodiff_v<T_y> + is_autodiff_v<T_loc>
+                     + is_autodiff_v<T_scale>)
+                    >= 2>((sign * exp(log_a - lp) * slope_a + s_b) / sigma_val);
+    const auto& q
+        = to_ref_if<is_all_autodiff_v<T_scale, T_inv_scale>>(w_b * v - s_b);
+    if constexpr (is_autodiff_v<T_y>) {
+      partials<0>(ops_partials) = s - w_b * lambda_val;
+    }
+    if constexpr (is_autodiff_v<T_loc>) {
+      partials<1>(ops_partials) = w_b * lambda_val - s;
+    }
+    if constexpr (is_autodiff_v<T_scale>) {
+      partials<2>(ops_partials) = select(s == 0, 0.0, -s * z) + lambda_val * q;
     }
     if constexpr (is_autodiff_v<T_inv_scale>) {
-      edge<3>(ops_partials).partials_
-          = exp_term
-            * (INV_SQRT_TWO_PI * sigma_val * exp_term_2
-               - (v * sigma_val - diff) * erf_calc)
-            / cdf_n;
+      partials<3>(ops_partials) = sigma_val * q - w_b * diff;
     }
   }
   return ops_partials.build(cdf_log);
+}
+
+}  // namespace internal
+
+template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale, T_inv_scale>* = nullptr>
+inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
+    T_y&& y, T_loc&& mu, T_scale&& sigma, T_inv_scale&& lambda) {
+  return internal::exp_mod_normal_lcdf_impl<false>(
+      "exp_mod_normal_lcdf", std::forward<T_y>(y), std::forward<T_loc>(mu),
+      std::forward<T_scale>(sigma), std::forward<T_inv_scale>(lambda));
 }
 
 }  // namespace math

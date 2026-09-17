@@ -112,13 +112,6 @@ static constexpr const char* std_normal_lcdf_device_function
             const double density = exp(-(0.5 * x) * x);
             return (0.5 * M_SQRT1_2 * M_2_SQRTPI) * density
                    / (1.0 - 0.5 * density * erfcx);
-          }
-
-          // Compatibility for callers parameterized in units of sqrt(2).
-          inline double std_normal_lcdf_scaled_impl(double x) {
-            return std_normal_lcdf_impl(x * M_SQRT2);
-          } inline double std_normal_lcdf_dscaled_impl(double x) {
-            return M_SQRT2 * std_normal_lcdf_derivative(x * M_SQRT2);
           }) "\n#endif\n";  // NOLINT
 // \endcond
 
