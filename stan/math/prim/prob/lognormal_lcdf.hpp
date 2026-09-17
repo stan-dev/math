@@ -7,8 +7,6 @@
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/erfc.hpp>
-#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/promote_scalar.hpp>
@@ -17,6 +15,8 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/prim/prob/normal_standardize.hpp>
+#include <stan/math/prim/prob/std_normal_lcdf_impl.hpp>
 #include <cmath>
 
 namespace stan {
@@ -34,6 +34,8 @@ inline return_type_t<T_y, T_loc, T_scale> lognormal_lcdf(const T_y& y,
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
   static constexpr const char* function = "lognormal_lcdf";
 
+  check_consistent_sizes(function, "Random variable", y, "Location parameter",
+                         mu, "Scale parameter", sigma);
   T_y_ref y_ref = y;
   T_mu_ref mu_ref = mu;
   T_sigma_ref sigma_ref = sigma;
@@ -56,28 +58,28 @@ inline return_type_t<T_y, T_loc, T_scale> lognormal_lcdf(const T_y& y,
     return ops_partials.build(NEGATIVE_INFTY);
   }
 
-  const auto& log_y = log(y_val);
-  const auto& scaled_diff = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(
-      (log_y - mu_val) / (sigma_val * SQRT_TWO));
-  const auto& erfc_calc
-      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(erfc(-scaled_diff));
-  size_t N = max_size(y, mu, sigma);
-  T_partials_return cdf_log = N * LOG_HALF + sum(log(erfc_calc));
+  const auto& log_y = to_ref(log(y_val));
+  const auto& z
+      = to_ref(internal::normal_standardize(log_y, mu_val, sigma_val));
+  const auto [values, slopes] = internal::std_normal_lcdf_value_grad<
+      is_any_autodiff_v<T_y, T_loc, T_scale>>(z);
+  T_partials_return cdf_log = sum(values);
 
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
-    const auto& exp_m_sq_diff = exp(-scaled_diff * scaled_diff);
-    const auto& rep_deriv = to_ref_if<
-        is_autodiff_v<
-            T_y> + is_autodiff_v<T_scale> + is_autodiff_v<T_loc> >= 2>(
-        -SQRT_TWO_OVER_SQRT_PI * exp_m_sq_diff / (sigma_val * erfc_calc));
+    const auto& scaled_slope = to_ref(slopes / sigma_val);
     if constexpr (is_autodiff_v<T_y>) {
-      partials<0>(ops_partials) = -rep_deriv / y_val;
+      partials<0>(ops_partials) = scaled_slope / y_val;
     }
     if constexpr (is_autodiff_v<T_loc>) {
-      partials<1>(ops_partials) = rep_deriv;
+      partials<1>(ops_partials) = -scaled_slope;
     }
     if constexpr (is_autodiff_v<T_scale>) {
-      partials<2>(ops_partials) = rep_deriv * scaled_diff * SQRT_TWO;
+      partials<2>(ops_partials) = apply_scalar_binary(
+          [](const auto& slope, const auto& zi) {
+            using R = return_type_t<decltype(slope), decltype(zi)>;
+            return slope == 0 ? R(0) : R(-slope * zi);
+          },
+          scaled_slope, z);
     }
   }
   return ops_partials.build(cdf_log);

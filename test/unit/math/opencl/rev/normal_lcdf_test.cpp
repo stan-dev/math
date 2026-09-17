@@ -79,6 +79,20 @@ TEST(ProbDistributionsNormalLcdf, opencl_matches_cpu_small) {
       sigma.transpose().eval());
 }
 
+TEST(ProbDistributionsNormalLcdf, opencl_matches_cpu_tail_branches) {
+  Eigen::VectorXd y(12);
+  y << -1e100, -40, -6, -4 * stan::math::SQRT_TWO, -1, 0, 0.3, 1, 4, 8, 40,
+      1e100;
+  stan::math::test::compare_cpu_opencl_prim_rev(normal_lcdf_functor, y, 0.0,
+                                                1.0);
+  // Check each value separately so the extreme tail cannot dominate the sum.
+  for (Eigen::Index i = 0; i < y.size(); ++i) {
+    SCOPED_TRACE(y[i]);
+    stan::math::test::compare_cpu_opencl_prim_rev(
+        normal_lcdf_functor, y.segment(i, 1).eval(), 0.0, 1.0);
+  }
+}
+
 TEST(ProbDistributionsNormalLcdf, opencl_broadcast_y) {
   int N = 3;
 
@@ -139,5 +153,11 @@ TEST(ProbDistributionsNormalLcdf, opencl_matches_cpu_big) {
   stan::math::test::compare_cpu_opencl_prim_rev(
       normal_lcdf_functor, y.transpose().eval(), mu.transpose().eval(),
       sigma.transpose().eval());
+}
+
+TEST(ProbDistributionsNormalLcdf, standardization_overflow) {
+  const Eigen::VectorXd y = Eigen::VectorXd::Constant(1, -1e308);
+  stan::math::test::compare_cpu_opencl_prim_rev(normal_lcdf_functor, y, 1e308,
+                                                1e308);
 }
 #endif

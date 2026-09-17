@@ -29,9 +29,10 @@ namespace math {
  */
 template <typename T, require_var_t<T>* = nullptr>
 inline auto inv(T&& a) {
-  auto denom = to_arena(as_array_or_scalar(square(a.val())));
-  return make_callback_var(inv(a.val()), [a, denom](auto& vi) mutable {
-    as_array_or_scalar(a.adj()) -= as_array_or_scalar(vi.adj()) / denom;
+  return make_callback_var(inv(a.val()), [a](auto& vi) mutable {
+    as_array_or_scalar(a.adj())
+        -= (as_array_or_scalar(vi.adj()) / as_array_or_scalar(a.val()))
+           / as_array_or_scalar(a.val());
   });
 }
 

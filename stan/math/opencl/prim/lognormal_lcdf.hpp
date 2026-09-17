@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
+#include <stan/math/opencl/prim/normal_standardize.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
@@ -65,13 +66,12 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> lognormal_lcdf(
 
   auto any_y_zero = colwise_max(cast<char>(y_val == 0.0));
   auto log_y = log(y_val);
-  auto scaled_diff = elt_divide(log_y - mu_val, sigma_val * SQRT_TWO);
-  auto erfc_calc = erfc(-scaled_diff);
-  auto lcdf_expr = colwise_sum(log(erfc_calc));
-  auto mu_deriv = elt_divide(-SQRT_TWO_OVER_SQRT_PI * exp(-square(scaled_diff)),
-                             elt_multiply(sigma_val, erfc_calc));
+  auto z = internal::normal_standardize_cl(log_y, mu_val, sigma_val);
+  auto lcdf_expr = colwise_sum(std_normal_lcdf_impl(z));
+  auto slope = std_normal_lcdf_derivative(z);
+  auto mu_deriv = -elt_divide(slope, sigma_val);
   auto y_deriv = elt_divide(mu_deriv, -y_val);
-  auto sigma_deriv = elt_multiply(mu_deriv, scaled_diff * SQRT_TWO);
+  auto sigma_deriv = select(slope == 0, 0.0, elt_multiply(mu_deriv, z));
 
   matrix_cl<char> any_y_zero_cl;
   matrix_cl<double> lcdf_cl;
@@ -91,7 +91,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> lognormal_lcdf(
     return NEGATIVE_INFTY;
   }
 
-  T_partials_return lcdf = N * LOG_HALF + sum(from_matrix_cl(lcdf_cl));
+  T_partials_return lcdf = sum(from_matrix_cl(lcdf_cl));
 
   auto ops_partials = make_partials_propagator(y_col, mu_col, sigma_col);
 

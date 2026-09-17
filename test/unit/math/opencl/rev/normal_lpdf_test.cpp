@@ -166,4 +166,15 @@ TEST(ProbDistributionsNormal, opencl_matches_cpu_big) {
       sigma.transpose().eval());
 }
 
+TEST(ProbDistributionsNormal, standardization_overflow) {
+  const Eigen::VectorXd y = Eigen::VectorXd::Constant(1, -1e308);
+  stan::math::test::compare_cpu_opencl_prim_rev(normal_lpdf_functor, y, 1e308,
+                                                1e308);
+  const Eigen::VectorXd large = Eigen::VectorXd::Constant(1, -1.5e154);
+  stan::math::test::compare_cpu_opencl_prim_rev(normal_lpdf_functor, large, 0.0,
+                                                1.0);
+  const Eigen::VectorXd large_scaled = Eigen::VectorXd::Constant(1, 1.5e308);
+  stan::math::test::compare_cpu_opencl_prim_rev(normal_lpdf_functor,
+                                                large_scaled, 0.0, 1e154);
+}
 #endif

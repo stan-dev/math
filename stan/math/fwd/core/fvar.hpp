@@ -179,8 +179,7 @@ struct fvar {
    * @return reference to this variable after division
    */
   inline fvar<T>& operator/=(const fvar<T>& x2) {
-    d_ = (d_ * x2.val_ - val_ * x2.d_) / (x2.val_ * x2.val_);
-    val_ /= x2.val_;
+    *this = *this / x2;
     return *this;
   }
 

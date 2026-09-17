@@ -11,7 +11,7 @@ namespace math {
 
 template <typename T, require_arithmetic_t<T>* = nullptr>
 inline auto inv_square(T&& x) {
-  return inv(square(x));
+  return (1.0 / x) / x;
 }
 
 /**
@@ -28,7 +28,7 @@ template <typename Container,
           require_container_t<Container>* = nullptr>
 inline auto inv_square(Container&& x) {
   return make_holder(
-      [](auto&& v) { return inv(square(std::forward<decltype(v)>(v))); },
+      [](auto&& v) { return square(inv(std::forward<decltype(v)>(v))); },
       std::forward<Container>(x));
 }
 
@@ -45,7 +45,7 @@ template <typename Container,
 inline auto inv_square(Container&& x) {
   return apply_vector_unary<Container>::apply(
       std::forward<Container>(x),
-      [](auto&& v) { return v.array().square().inverse(); });
+      [](auto&& v) { return v.array().inverse().square(); });
 }
 
 }  // namespace math

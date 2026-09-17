@@ -230,4 +230,12 @@ TEST(ProbDistributionsSkewNormal, opencl_matches_cpu_big) {
       sigma.transpose().eval(), alpha.transpose().eval());
 }
 
+TEST(ProbDistributionsSkewNormal, normal_tail) {
+  for (double y0 : {-50.0, -6.0, 0.0, 50.0}) {
+    SCOPED_TRACE(y0);
+    const Eigen::VectorXd y = Eigen::VectorXd::Constant(1, y0);
+    stan::math::test::compare_cpu_opencl_prim_rev(skew_normal_lpdf_functor, y,
+                                                  0.0, 1.0, 1.0);
+  }
+}
 #endif

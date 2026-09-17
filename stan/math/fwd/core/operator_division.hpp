@@ -3,6 +3,7 @@
 
 #include <stan/math/fwd/core/fvar.hpp>
 #include <stan/math/prim/core/operator_division.hpp>
+#include <stan/math/fwd/fun/value_of_rec.hpp>
 #include <complex>
 #include <type_traits>
 
@@ -19,8 +20,33 @@ namespace math {
  */
 template <typename T>
 inline fvar<T> operator/(const fvar<T>& x1, const fvar<T>& x2) {
-  return fvar<T>(x1.val_ / x2.val_,
-                 (x1.d_ * x2.val_ - x1.val_ * x2.d_) / (x2.val_ * x2.val_));
+  const T value = x1.val_ / x2.val_;
+  const double q = value_of_rec(value);
+  const double a = value_of_rec(x1.val_);
+  const double b = value_of_rec(x2.val_);
+  const double da = value_of_rec(x1.d_);
+  const double db = value_of_rec(x2.d_);
+  const double product = q * db;
+  if (std::isnormal(q) && (std::isnormal(product) || db == 0)
+      && std::isfinite(da - product)) {
+    return fvar<T>(value, (x1.d_ - value * x2.d_) / x2.val_);
+  }
+  // A quotient can underflow before multiplication by a large tangent.
+  // Dividing the tangent first also covers an overflowing quotient.
+  const double tangent_ratio = db / b;
+  const double alternate_product = a * tangent_ratio;
+  if (std::isnormal(tangent_ratio) && std::isnormal(alternate_product)
+      && std::isfinite(da - alternate_product)) {
+    return fvar<T>(value, (x1.d_ - x1.val_ * (x2.d_ / x2.val_)) / x2.val_);
+  }
+  if (std::isnormal(da * b) && std::isnormal(a * db)
+      && std::isfinite(da * b - a * db)) {
+    return fvar<T>(value,
+                   ((x1.d_ * x2.val_ - x1.val_ * x2.d_) / x2.val_) / x2.val_);
+  }
+  return fvar<T>(
+      value,
+      x1.d_ / x2.val_ - internal::multiply_inv_square(x1.val_, x2.d_, x2.val_));
 }
 
 /**
@@ -47,8 +73,9 @@ inline fvar<T> operator/(const fvar<T>& x1, U x2) {
  */
 template <typename T, typename U, require_arithmetic_t<U>* = nullptr>
 inline fvar<T> operator/(U x1, const fvar<T>& x2) {
-  return fvar<T>(static_cast<double>(x1) / x2.val_,
-                 -static_cast<double>(x1) * x2.d_ / (x2.val_ * x2.val_));
+  return fvar<T>(
+      static_cast<double>(x1) / x2.val_,
+      -internal::multiply_inv_square(static_cast<double>(x1), x2.d_, x2.val_));
 }
 
 template <typename T>

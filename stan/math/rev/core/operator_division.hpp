@@ -59,12 +59,12 @@ namespace math {
  * second.
  */
 inline var operator/(const var& dividend, const var& divisor) {
-  return make_callback_var(
-      dividend.val() / divisor.val(), [dividend, divisor](auto&& vi) {
-        dividend.adj() += vi.adj() / divisor.val();
-        divisor.adj()
-            -= vi.adj() * dividend.val() / (divisor.val() * divisor.val());
-      });
+  return make_callback_var(dividend.val() / divisor.val(),
+                           [dividend, divisor](auto&& vi) {
+                             dividend.adj() += vi.adj() / divisor.val();
+                             divisor.adj() -= internal::multiply_inv_square(
+                                 vi.adj(), dividend.val(), divisor.val());
+                           });
 }
 
 /**
@@ -106,7 +106,8 @@ template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator/(Arith dividend, const var& divisor) {
   return make_callback_var(
       dividend / divisor.val(), [dividend, divisor](auto&& vi) {
-        divisor.adj() -= vi.adj() * dividend / (divisor.val() * divisor.val());
+        divisor.adj()
+            -= internal::multiply_inv_square(vi.adj(), dividend, divisor.val());
       });
 }
 

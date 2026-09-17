@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
+#include <stan/math/opencl/prim/normal_standardize.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
@@ -84,9 +85,10 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
   auto alpha_finite = isfinite(alpha_val);
 
   auto inv_sigma = elt_divide(1., sigma_val);
-  auto y_minus_mu_over_sigma = elt_multiply((y_val - mu_val), inv_sigma);
-  auto log_erfc_alpha_z = log(
-      erfc(elt_multiply(alpha_val, y_minus_mu_over_sigma) * -INV_SQRT_TWO));
+  auto y_minus_mu_over_sigma
+      = internal::normal_standardize_cl(y_val, mu_val, sigma_val);
+  auto alpha_z = elt_multiply(alpha_val, y_minus_mu_over_sigma);
+  auto log_erfc_alpha_z = LOG_TWO + std_normal_lcdf_impl(alpha_z);
 
   auto logp1 = log_erfc_alpha_z;
   auto logp2 = static_select<include_summand<propto, T_scale_cl>::value>(
@@ -95,13 +97,11 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
       static_select<
           include_summand<propto, T_y_cl, T_loc_cl, T_scale_cl>::value>(
           logp2
-              - elt_multiply(y_minus_mu_over_sigma, y_minus_mu_over_sigma)
-                    * 0.5,
+              - elt_multiply(0.5 * y_minus_mu_over_sigma,
+                             y_minus_mu_over_sigma),
           logp2));
 
-  auto scaled = elt_multiply(alpha_val, y_minus_mu_over_sigma) * INV_SQRT_TWO;
-  auto deriv_logerf = SQRT_TWO_OVER_SQRT_PI
-                      * exp(-elt_multiply(scaled, scaled) - log_erfc_alpha_z);
+  auto deriv_logerf = std_normal_lcdf_derivative(alpha_z);
   auto y_loc_deriv = elt_multiply(
       y_minus_mu_over_sigma - elt_multiply(deriv_logerf, alpha_val), inv_sigma);
   auto sigma_deriv
