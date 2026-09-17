@@ -14,7 +14,6 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
-#include <stan/math/prim/prob/normal_standardize.hpp>
 #include <cmath>
 
 namespace stan {
@@ -74,11 +73,12 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
 
   const auto& inv_sigma
       = to_ref_if<is_any_autodiff_v<T_y, T_scale, T_loc>>(inv(sigma_val));
-  const auto& y_scaled
-      = to_ref(internal::normal_standardize(y_val, mu_val, sigma_val));
+  const auto& y_scaled = to_ref((y_val - mu_val) * inv_sigma);
+  const auto& y_scaled_sq
+      = to_ref_if<is_autodiff_v<T_scale>>(y_scaled * y_scaled);
 
   size_t N = max_size(y_ref, mu_ref, sigma_ref);
-  T_partials_return logp = -sum((0.5 * y_scaled) * y_scaled);
+  T_partials_return logp = -0.5 * sum(y_scaled_sq);
   if constexpr (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * N;
   }
@@ -89,12 +89,12 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
   if constexpr (is_any_autodiff_v<T_y, T_scale, T_loc>) {
     auto scaled_diff = to_ref_if<is_autodiff_v<T_y> + is_autodiff_v<T_scale>
                                      + is_autodiff_v<T_loc>
-                                 >= 2>(y_scaled / sigma_val);
+                                 >= 2>(inv_sigma * y_scaled);
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = -scaled_diff;
     }
     if constexpr (is_autodiff_v<T_scale>) {
-      partials<2>(ops_partials) = scaled_diff * y_scaled - inv_sigma;
+      partials<2>(ops_partials) = inv_sigma * y_scaled_sq - inv_sigma;
     }
     if constexpr (is_autodiff_v<T_loc>) {
       partials<1>(ops_partials) = std::move(scaled_diff);

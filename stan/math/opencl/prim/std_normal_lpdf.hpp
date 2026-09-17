@@ -50,7 +50,7 @@ inline return_type_t<T_y_cl> std_normal_lpdf(const T_y_cl& y) {
       = check_cl(function, "Random variable", y_val, "not NaN");
   auto y_not_nan = !isnan(y_val);
 
-  auto logp_expr = colwise_sum(elt_multiply(0.5 * y_val, y_val));
+  auto logp_expr = colwise_sum(elt_multiply(y_val, y_val));
 
   auto y_deriv = -y_val;
 
@@ -60,7 +60,7 @@ inline return_type_t<T_y_cl> std_normal_lpdf(const T_y_cl& y) {
   results(check_y_not_nan, logp_cl, y_deriv_cl) = expressions(
       y_not_nan, logp_expr, calc_if<is_autodiff_v<T_y_cl>>(y_deriv));
 
-  T_partials_return logp = -sum(from_matrix_cl(logp_cl));
+  T_partials_return logp = sum(from_matrix_cl(logp_cl)) * -0.5;
 
   if constexpr (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * N;

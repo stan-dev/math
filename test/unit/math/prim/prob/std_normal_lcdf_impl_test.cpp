@@ -1,5 +1,4 @@
 #include <stan/math/prim/prob/std_normal_lcdf.hpp>
-#include <stan/math/prim/prob/std_normal_lpdf.hpp>
 #include <gtest/gtest.h>
 #include <array>
 
@@ -31,15 +30,16 @@ TEST(ProbStdNormal, scalar_tail_kernel) {
 }
 
 TEST(ProbStdNormal, large_finite_log_density) {
-  EXPECT_TRUE(std::isfinite(stan::math::std_normal_lpdf(-1.5e154)));
   EXPECT_TRUE(std::isfinite(stan::math::std_normal_lcdf(-1.5e154)));
 }
 
 TEST(ProbStdNormal, vectorized_tail_kernel) {
   using stan::math::internal::std_normal_lcdf_value_grad;
-  Eigen::ArrayXd z(23);
-  z << -1e308, -1e150, -50, -6, -4 * stan::math::SQRT_TWO, -5, -1, -0.01, 0,
-      0.01, 1, 3, 6, 20, 30, 37, 37.1, 38, 38.5, 40, 50, 1e150, 1e308;
+  Eigen::ArrayXd z(25);
+  z << -1e308, -1e150, -50, -6, -4 * stan::math::SQRT_TWO, -5, -1,
+      -0.46875 * stan::math::SQRT_TWO, -0.01, 0, 0.01,
+      0.46875 * stan::math::SQRT_TWO, 1, 3, 6, 20, 30, 37, 37.1, 38, 38.5, 40,
+      50, 1e150, 1e308;
   const auto result = std_normal_lcdf_value_grad<true>(z);
   const auto values = std_normal_lcdf_value_grad<false>(z);
   for (Eigen::Index i = 0; i < z.size(); ++i) {

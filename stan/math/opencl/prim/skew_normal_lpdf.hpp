@@ -8,7 +8,6 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/opencl/prim/normal_standardize.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
@@ -85,8 +84,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
   auto alpha_finite = isfinite(alpha_val);
 
   auto inv_sigma = elt_divide(1., sigma_val);
-  auto y_minus_mu_over_sigma
-      = internal::normal_standardize_cl(y_val, mu_val, sigma_val);
+  auto y_minus_mu_over_sigma = elt_multiply((y_val - mu_val), inv_sigma);
   auto alpha_z = elt_multiply(alpha_val, y_minus_mu_over_sigma);
   auto log_erfc_alpha_z = LOG_TWO + std_normal_lcdf_impl(alpha_z);
 

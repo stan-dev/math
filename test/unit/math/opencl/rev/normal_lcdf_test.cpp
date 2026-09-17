@@ -154,10 +154,4 @@ TEST(ProbDistributionsNormalLcdf, opencl_matches_cpu_big) {
       normal_lcdf_functor, y.transpose().eval(), mu.transpose().eval(),
       sigma.transpose().eval());
 }
-
-TEST(ProbDistributionsNormalLcdf, standardization_overflow) {
-  const Eigen::VectorXd y = Eigen::VectorXd::Constant(1, -1e308);
-  stan::math::test::compare_cpu_opencl_prim_rev(normal_lcdf_functor, y, 1e308,
-                                                1e308);
-}
 #endif

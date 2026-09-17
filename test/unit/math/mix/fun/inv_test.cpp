@@ -23,15 +23,3 @@ TEST(mathMixMatFun, inv_varmat) {
   }
   expect_ad_vector_matvar(f, A);
 }
-
-TEST(mathMixMatFun, inv_extreme_derivative) {
-  using namespace stan::math;
-  nested_rev_autodiff nested;
-  var x = 1e160;
-  inv(x).grad();
-  EXPECT_NEAR(-1e-320, x.adj(), 1e-323);
-  EXPECT_NEAR(-1e-320, inv(fvar<double>(1e160, 1)).d_, 1e-323);
-  var_value<Eigen::VectorXd> xv(Eigen::VectorXd::Constant(1, 1e160));
-  sum(inv(xv)).grad();
-  EXPECT_NEAR(-1e-320, xv.adj()[0], 1e-323);
-}

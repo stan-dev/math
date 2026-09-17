@@ -7,14 +7,15 @@
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
-#include <stan/math/prim/prob/normal_standardize.hpp>
 #include <stan/math/prim/prob/std_normal_lcdf_impl.hpp>
 #include <cmath>
 
@@ -61,8 +62,9 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
   auto ops_partials
       = make_partials_propagator(y_ref, mu_ref, sigma_ref, alpha_ref);
 
-  const auto& z
-      = to_ref(internal::normal_standardize(y_val, mu_val, sigma_val));
+  const auto& inv_sigma
+      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(inv(sigma_val));
+  const auto& z = to_ref((y_val - mu_val) * inv_sigma);
   const auto& az = to_ref(alpha_val * z);
   const auto [values, slopes] = internal::std_normal_lcdf_value_grad<
       is_any_autodiff_v<T_y, T_loc, T_scale, T_shape>>(az);
@@ -76,10 +78,10 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
   if constexpr (include_summand<propto, T_y, T_loc, T_scale>::value) {
-    logp -= sum((0.5 * z) * z) * N / max_size(y, mu, sigma);
+    logp -= sum(square(z)) * 0.5 * N / max_size(y, mu, sigma);
   }
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
-    const auto& score = to_ref((slopes * alpha_val - z) / sigma_val);
+    const auto& score = to_ref((slopes * alpha_val - z) * inv_sigma);
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = score;
     }
@@ -87,7 +89,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
       partials<1>(ops_partials) = -score;
     }
     if constexpr (is_autodiff_v<T_scale>) {
-      partials<2>(ops_partials) = -score * z - inv(sigma_val);
+      partials<2>(ops_partials) = -score * z - inv_sigma;
     }
   }
   if constexpr (is_autodiff_v<T_shape>) {

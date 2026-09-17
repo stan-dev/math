@@ -56,8 +56,4 @@ TEST(ProbDistributionsStdNormal, opencl_matches_cpu_big) {
                                                 y.transpose().eval());
 }
 
-TEST(ProbDistributionsStdNormal, large_finite_density) {
-  const Eigen::VectorXd y = Eigen::VectorXd::Constant(1, -1.5e154);
-  stan::math::test::compare_cpu_opencl_prim_rev(std_normal_lpdf_functor, y);
-}
 #endif

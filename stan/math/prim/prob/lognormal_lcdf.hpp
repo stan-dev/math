@@ -14,8 +14,8 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
-#include <stan/math/prim/prob/normal_standardize.hpp>
 #include <stan/math/prim/prob/std_normal_lcdf_impl.hpp>
 #include <cmath>
 
@@ -58,9 +58,7 @@ inline return_type_t<T_y, T_loc, T_scale> lognormal_lcdf(const T_y& y,
     return ops_partials.build(NEGATIVE_INFTY);
   }
 
-  const auto& log_y = to_ref(log(y_val));
-  const auto& z
-      = to_ref(internal::normal_standardize(log_y, mu_val, sigma_val));
+  const auto& z = to_ref((log(y_val) - mu_val) / sigma_val);
   const auto [values, slopes] = internal::std_normal_lcdf_value_grad<
       is_any_autodiff_v<T_y, T_loc, T_scale>>(z);
   T_partials_return cdf_log = sum(values);

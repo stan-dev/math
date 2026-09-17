@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
@@ -11,7 +10,6 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/prob/std_normal_lcdf_impl.hpp>
-#include <stan/math/prim/prob/normal_standardize.hpp>
 
 namespace stan {
 namespace math {
@@ -66,8 +64,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
   const auto& y_val = to_ref(as_value_column_array_or_scalar(y_ref));
   const auto& mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
   const auto& sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
-  const auto& z
-      = to_ref(internal::normal_standardize(y_val, mu_val, sigma_val));
+  const auto& z = to_ref((y_val - mu_val) / sigma_val);
   const auto [values, slopes] = internal::std_normal_lcdf_value_grad<
       is_any_autodiff_v<T_y, T_loc, T_scale>>(z);
   const T_partials_return cdf_log = sum(values);

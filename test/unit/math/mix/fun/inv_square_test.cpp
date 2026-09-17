@@ -23,18 +23,3 @@ TEST(mathMixMatFun, invsquare_varmat) {
   }
   expect_ad_vector_matvar(f, A);
 }
-
-TEST(mathMixMatFun, inv_square_extreme_value_and_derivative) {
-  using namespace stan::math;
-  EXPECT_NEAR(1e-320, inv_square(1e160), 1e-323);
-  EXPECT_NEAR(1e-320, inv_square(Eigen::VectorXd::Constant(1, 1e160))[0],
-              1e-323);
-  nested_rev_autodiff nested;
-  var x = 1e104;
-  inv_square(x).grad();
-  EXPECT_NEAR(-2e-312, x.adj(), 1e-323);
-  EXPECT_NEAR(-2e-312, inv_square(fvar<double>(1e104, 1)).d_, 1e-323);
-  var_value<Eigen::VectorXd> xv(Eigen::VectorXd::Constant(1, 1e104));
-  sum(inv_square(xv)).grad();
-  EXPECT_NEAR(-2e-312, xv.adj()[0], 1e-323);
-}

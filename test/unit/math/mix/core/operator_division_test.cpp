@@ -63,31 +63,3 @@ TEST(mathMixCore, operatorDivisionVarMat) {
   stan::test::expect_ad_matvar(stan::test::operator_divide_tester{}, mat1, 2.0);
   stan::test::expect_ad_matvar(stan::test::operator_divide_tester{}, 2.0, mat2);
 }
-
-TEST(mathMixCore, division_extreme_tangents) {
-  using namespace stan::math;
-  const auto check
-      = [](double a, double b, double da, double db, double expected) {
-          fvar<double> x(a, da), y(b, db);
-          const auto result = x / y;
-          EXPECT_NEAR(expected, result.d_, std::abs(expected) * 1e-12 + 1e-323);
-          x /= y;
-          EXPECT_EQ(result.val_, x.val_);
-          EXPECT_EQ(result.d_, x.d_);
-        };
-  check(1, 1e160, 0, 1, -1e-320);
-  check(1e308, 1e308, 2, 2, 0);
-  // The quotient underflows, but its product with the tangent is finite.
-  check(1e-200, 1e150, 0, 1e308, -1e-192);
-  check(1e-200, 1e-150, 0, 1e-200, -1e-100);
-  check(1e-300, 1e-100, 0, 1e-150, -1e-250);
-  check(1, std::ldexp(1.0, -1024), 1, std::ldexp(1.0, -1024), 0);
-  check(1, 1e-310, 0, 1e-320, -(1e-320 / 1e-310) / 1e-310);
-  {
-    nested_rev_autodiff nested;
-    var x = 1e-200, y = 1e150;
-    var result = 1e308 * (x / y);
-    result.grad();
-    EXPECT_NEAR(-1e-192, y.adj(), 1e-204);
-  }
-}

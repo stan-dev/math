@@ -8,7 +8,6 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/opencl/prim/normal_standardize.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
@@ -74,15 +73,16 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_lpdf(
   auto sigma_positive = 0 < sigma_val;
 
   auto inv_sigma = elt_divide(1., sigma_val);
-  auto y_scaled = internal::normal_standardize_cl(y_val, mu_val, sigma_val);
+  auto y_scaled = elt_multiply((y_val - mu_val), inv_sigma);
+  auto y_scaled_sq = elt_multiply(y_scaled, y_scaled);
 
-  auto logp1 = -elt_multiply(0.5 * y_scaled, y_scaled);
+  auto logp1 = -0.5 * y_scaled_sq;
   auto logp_expr
       = colwise_sum(static_select<include_summand<propto, T_scale_cl>::value>(
           logp1 - log(sigma_val), logp1));
 
-  auto scaled_diff = elt_divide(y_scaled, sigma_val);
-  auto sigma_deriv = elt_multiply(scaled_diff, y_scaled) - inv_sigma;
+  auto scaled_diff = elt_multiply(inv_sigma, y_scaled);
+  auto sigma_deriv = elt_multiply(inv_sigma, y_scaled_sq) - inv_sigma;
 
   matrix_cl<double> logp_cl;
   matrix_cl<double> mu_deriv_cl;

@@ -13,7 +13,6 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
-#include <stan/math/prim/prob/normal_standardize.hpp>
 #include <cmath>
 
 namespace stan {
@@ -71,7 +70,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_cdf(const T_y& y,
     const T_partials_return mu_dbl = mu_vec.val(n);
     const T_partials_return sigma_dbl = sigma_vec.val(n);
     const T_partials_return scaled_diff
-        = internal::normal_standardize(y_dbl, mu_dbl, sigma_dbl) * INV_SQRT_TWO;
+        = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_TWO);
     T_partials_return cdf_n;
     if (scaled_diff < -37.5 * INV_SQRT_TWO) {
       cdf_n = 0.0;

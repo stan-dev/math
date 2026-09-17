@@ -6,8 +6,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
-#include <stan/math/prim/fun/as_array_or_scalar.hpp>
-#include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/dot_self.hpp>
 #include <stan/math/prim/fun/as_value_column_vector_or_scalar.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 
@@ -34,10 +33,10 @@ inline return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   using T_partials_return = partials_return_t<T_y>;
   using T_y_ref = ref_type_t<T_y>;
   static constexpr const char* function = "std_normal_lpdf";
-  const T_y_ref y_ref = y;
+  T_y_ref y_ref = y;
   check_not_nan(function, "Random variable", y_ref);
 
-  if (size_zero(y_ref)) {
+  if (size_zero(y)) {
     return 0.0;
   }
   if constexpr (!include_summand<propto, T_y>::value) {
@@ -45,8 +44,7 @@ inline return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   }
 
   const auto& y_val = as_value_column_vector_or_scalar(y_ref);
-  T_partials_return logp
-      = -sum(as_array_or_scalar(0.5 * y_val) * as_array_or_scalar(y_val));
+  T_partials_return logp = -dot_self(y_val) / 2.0;
   auto ops_partials = make_partials_propagator(y_ref);
 
   if constexpr (is_autodiff_v<T_y>) {
@@ -54,7 +52,7 @@ inline return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   }
 
   if constexpr (include_summand<propto>::value) {
-    logp += NEG_LOG_SQRT_TWO_PI * math::size(y_ref);
+    logp += NEG_LOG_SQRT_TWO_PI * math::size(y);
   }
 
   return ops_partials.build(logp);

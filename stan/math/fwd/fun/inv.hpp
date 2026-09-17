@@ -11,7 +11,7 @@ namespace math {
 
 template <typename T>
 inline fvar<T> inv(const fvar<T>& x) {
-  return 1.0 / x;
+  return fvar<T>(1 / x.val_, -x.d_ / square(x.val_));
 }
 }  // namespace math
 }  // namespace stan

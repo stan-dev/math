@@ -8,7 +8,6 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/opencl/prim/normal_standardize.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
@@ -64,8 +63,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_cdf(
       = check_cl(function, "Scale parameter", sigma_val, "positive");
   auto sigma_positive_expr = 0 < sigma_val;
 
-  auto scaled_diff = internal::normal_standardize_cl(y_val, mu_val, sigma_val)
-                     * INV_SQRT_TWO;
+  auto scaled_diff = elt_divide(y_val - mu_val, sigma_val * SQRT_TWO);
   auto cdf_n = select(
       scaled_diff < -37.5 * INV_SQRT_TWO, 0.0,
       select(scaled_diff < -5.0 * INV_SQRT_TWO, 0.5 * erfc(-scaled_diff),

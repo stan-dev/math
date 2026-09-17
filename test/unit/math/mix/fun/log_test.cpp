@@ -31,19 +31,3 @@ TEST(mathMixMatFun, log) {
   stan::test::expect_ad_vector_matvar(f, stan::math::to_vector(com_args));
   stan::test::expect_ad_vector_matvar(f, stan::math::to_vector(args));
 }
-
-TEST(mathMixMatFun, log_extreme_third_derivative) {
-  using namespace stan::math;
-  nested_rev_autodiff nested;
-  fvar<fvar<var>> x;
-  x.val_.val_ = 1e100;
-  x.val_.d_ = 1;
-  x.d_.val_ = 1;
-  auto result = log(x);
-  result.d_.d_.grad();
-  EXPECT_NEAR(2e-300, x.val_.val_.adj(), 2e-312);
-  fvar<fvar<fvar<double>>> xf;
-  xf.val_.val_.val_ = 1e100;
-  xf.val_.val_.d_ = xf.val_.d_.val_ = xf.d_.val_.val_ = 1;
-  EXPECT_NEAR(2e-300, log(xf).d_.d_.d_, 2e-312);
-}

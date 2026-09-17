@@ -8,7 +8,6 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/opencl/prim/normal_standardize.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
@@ -67,7 +66,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_lcdf(
       = check_cl(function, "Scale parameter", sigma_val, "positive");
   auto sigma_positive_expr = 0 < sigma_val;
 
-  auto z = internal::normal_standardize_cl(y_val, mu_val, sigma_val);
+  auto z = elt_divide(y_val - mu_val, sigma_val);
   auto lcdf_expr = colwise_sum(std_normal_lcdf_impl(z));
   auto slope = std_normal_lcdf_derivative(z);
   auto y_deriv = elt_divide(slope, sigma_val);

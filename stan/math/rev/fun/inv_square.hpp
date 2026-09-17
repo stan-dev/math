@@ -27,15 +27,16 @@ namespace math {
    \f]
  *
  */
-template <typename T, require_var_t<T>* = nullptr>
-inline auto inv_square(T&& a) {
-  return make_callback_var(inv_square(a.val()), [a](auto& vi) mutable {
-    as_array_or_scalar(a.adj())
-        -= 2
-           * ((as_array_or_scalar(vi.adj()) / as_array_or_scalar(a.val()))
-              / as_array_or_scalar(a.val()))
-           / as_array_or_scalar(a.val());
+inline var inv_square(const var& a) {
+  auto a_cube = a.val() * a.val() * a.val();
+  return make_callback_var(inv_square(a.val()), [a, a_cube](auto& vi) mutable {
+    a.adj() -= 2 * vi.adj() / a_cube;
   });
+}
+
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline auto inv_square(T&& a) {
+  return inv(square(std::forward<T>(a)));
 }
 
 }  // namespace math
