@@ -43,9 +43,7 @@ inline double erfcx_cody_tail(double x) {
  *
  * Cody writes this interval as `erfc(x) = exp(-x*x) * R(x)`, so `erfcx`
  * is `R(x)` with the exponential cancelled analytically: no `exp` and no
- * `erfc` call. Measured at 3.7 to 7.0 ulp, of which only 0.28 ulp is
- * approximation error; the rest is rounding in the two degree-8 Horner
- * chains and the final division.
+ * `erfc` call. Measured at 3.7 to 7.0 ulp.
  *
  * @param y argument, `0.46875 <= y <= 4`
  * @return scaled complementary error function
@@ -70,6 +68,44 @@ inline double erfcx_cody_middle(double y) {
   return (p + 1230.33935479799725) / (q + 1230.33935480374942);
 }
 
+/**
+ * Degree-18 polynomial for `|x| < 0.46875`.
+ *
+ * A Chebyshev-economized expansion of `erfcx` about zero, so it needs no
+ * library call and no branch on the sign of `x`. Its low-order coefficients
+ * reproduce the Maclaurin series of `erfcx` exactly (`1`, `-2/sqrt(pi)`,
+ * `1`, ...), which is a useful check that the fit is right. Measured at
+ * 2.2 ulp over the whole interval.
+ *
+ * The plain Maclaurin series is only usable to about `|x| = 0.125`; four
+ * further economized terms extend it to 0.46875 at no measurable cost,
+ * which is what removes the last `exp` call from the positive axis.
+ *
+ * @param x argument, `|x| < 0.46875`
+ * @return scaled complementary error function
+ */
+inline double erfcx_small(double x) {
+  double p = 3.05977060678449757e-06;
+  p = -9.35890030086883823e-06 + x * p;
+  p = 2.46655529768908249e-05 + x * p;
+  p = -7.08163358203131886e-05 + x * p;
+  p = 1.98445679338826757e-04 + x * p;
+  p = -5.34506929034156810e-04 + x * p;
+  p = 1.38888415444527033e-03 + x * p;
+  p = -3.47359067853470795e-03 + x * p;
+  p = 8.33333374332981443e-03 + x * p;
+  p = -1.91048337772546720e-02 + x * p;
+  p = 4.16666666458337179e-02 + x * p;
+  p = -8.59717459974174147e-02 + x * p;
+  p = 1.66666666667239644e-01 + x * p;
+  p = -3.00901111227312890e-01 + x * p;
+  p = 4.99999999999992839e-01 + x * p;
+  p = -7.52252778063651983e-01 + x * p;
+  p = 1.0 + x * p;
+  p = -1.12837916709551256 + x * p;
+  return 1.0 + x * p;
+}
+
 }  // namespace internal
 
 /**
@@ -88,19 +124,25 @@ inline double erfcx_cody_middle(double y) {
  * Mills ratio is `SQRT_TWO_OVER_SQRT_PI / erfcx(-x * INV_SQRT_TWO)`, both
  * without cancellation.
  *
- * Three branches. `erfc` dominates the cost of forming
- * `exp(x*x) * erfc(x)`, so each interval that can be served by a direct
- * approximation of `erfcx` instead is much faster.
+ * Four branches. The whole positive axis is covered without calling any
+ * library function, which is what makes this fast: a direct approximation
+ * of `erfcx` avoids `erfc`, and `erfc` dominates the cost of forming
+ * `exp(x*x) * erfc(x)`.
  *
  * - `x >= 4`: Cody (1969) third-interval rational.
  * - `0.46875 <= x < 4`: Cody (1969) second-interval rational. Cody writes
  *   this interval as `erfc(x) = exp(-x*x) * R(x)`, so `erfcx` is `R(x)`
  *   and the exponential is cancelled analytically rather than computed and
- *   divided out. No `exp` and no `erfc` call.
- * - `x < 0.46875`: `exp(x * x) * erfc(x)`, with the rounding error of
- *   `x * x` recovered by `fma` and folded back in, because `exp`
- *   amplifies it into roughly `x * x * eps` -- 512 ulp at `x = -26` if
- *   left alone.
+ *   divided out.
+ * - `|x| < 0.46875`: a degree-18 Chebyshev-economized expansion about
+ *   zero, covering both signs with no branch and no library call.
+ * - `x <= -0.46875`: the reflection `2*exp(x*x) - erfcx(-x)`, which is the
+ *   one place a library call is unavoidable, since `erfcx` grows like
+ *   `2*exp(x*x)` as `x -> -infinity`. The rounding error of `x * x` is
+ *   recovered with `fma` and folded back in, because `exp` amplifies it
+ *   into roughly `x * x * eps` -- 512 ulp at `x = -26` if left alone.
+ *   Below `x = -6.1`, `erfcx(-x)` is under `eps/2` of `2*exp(x*x)`, so
+ *   the subtraction is skipped.
  *
  * W. J. Cody, Math. Comp. 23(107):631-638 (1969).
  * https://doi.org/10.1090/S0025-5718-1969-0247736-4
@@ -141,9 +183,12 @@ inline double erfcx(T&& xx) {
   if (x >= middle_min) {
     return internal::erfcx_cody_middle(x);
   }
+  if (x > -middle_min) {
+    return internal::erfcx_small(x);
+  }
   // erfcx(x) = 2 * exp(x * x) * (1 + o(1)) as x -> -infinity, which leaves
-  // the binary64 range below -26.63. Returning here also keeps the branch
-  // below from forming inf * 0 on -infinity.
+  // the binary64 range below -26.63. Returning here also keeps the
+  // reflection below from forming inf * 0 on -infinity.
   constexpr double overflow_max = -27.0;
   if (x < overflow_max) {
     return INFTY;
@@ -153,7 +198,14 @@ inline double erfcx(T&& xx) {
   // device function uses the same form; it cannot use a Dekker split
   // because the compiler simplifies t - (t - x) to x.
   const double h = x * x;
-  return std::exp(h) * (1.0 + std::fma(x, x, -h)) * std::erfc(x);
+  const double two_exp_x2 = 2.0 * std::exp(h) * (1.0 + std::fma(x, x, -h));
+  constexpr double reflect_min = -6.1;
+  if (x < reflect_min) {
+    return two_exp_x2;
+  }
+  const double y = -x;
+  return two_exp_x2 - (y >= cody_min ? internal::erfcx_cody_tail(y)
+                                     : internal::erfcx_cody_middle(y));
 }
 
 /**
