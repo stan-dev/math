@@ -17,13 +17,16 @@ static constexpr const char* erfcx_device_function
           // \endcond
           /** \ingroup opencl_kernels
            *
-           * Cody (1969) third-interval rational, for x >= 4.
+           * Correction factor of the Cody (1969) third-interval rational:
+           * erfcx(x) = (INV_SQRT_PI + u * correction(u)) / x, u = 1 / x^2.
            *
-           * @param x argument
-           * @return scaled complementary error function
+           * Split out so the derivative can reuse it. See
+           * erfcx_tail_derivative.
+           *
+           * @param u inverse square of the argument, 0 <= u <= 1/16
+           * @return P(u) / Q(u)
            */
-          double erfcx_cody_tail(double x) {
-            double u = 1.0 / (x * x);
+          double erfcx_tail_correction(double u) {
             double p = 0.0163153871373020978498;
             p = 0.305326634961232344035 + u * p;
             p = 0.360344899949804439429 + u * p;
@@ -36,7 +39,44 @@ static constexpr const char* erfcx_device_function
             q = -0.527905102951428412248 + u * q;
             q = -0.0605183413124413191178 + u * q;
             q = -0.00233520497626869185443 + u * q;
-            return (M_2_SQRTPI * 0.5 + (p / q) * u) / x;
+            return p / q;
+          }
+
+          /** \ingroup opencl_kernels
+           *
+           * Cody (1969) third-interval rational, for x >= 4.
+           *
+           * @param x argument
+           * @return scaled complementary error function
+           */
+          double erfcx_cody_tail(double x) {
+            double u = 1.0 / (x * x);
+            return (M_2_SQRTPI * 0.5 + u * erfcx_tail_correction(u)) / x;
+          }
+
+          /** \ingroup opencl_kernels
+           *
+           * Derivative of erfcx, 2 * x * erfcx(x) - 2 / sqrt(pi).
+           *
+           * That difference cancels for large x: both terms approach
+           * 2 / sqrt(pi) while the result decays like 1 / (sqrt(pi) * x^2).
+           * The difference form reaches 2.55e+11 ulp at x = 1e6. For
+           * x >= 4 the constant cancels analytically against the leading
+           * term of the tail rational, leaving 2 * u * C(u).
+           *
+           * Takes the value as an argument so the reverse pass does not
+           * evaluate erfcx twice.
+           *
+           * @param x argument
+           * @param value erfcx(x)
+           * @return derivative of erfcx at x
+           */
+          double erfcx_derivative(double x, double value) {
+            if (x >= 4.0) {
+              double u = 1.0 / (x * x);
+              return 2.0 * u * erfcx_tail_correction(u);
+            }
+            return 2.0 * x * value - M_2_SQRTPI;
           }
 
           /** \ingroup opencl_kernels
