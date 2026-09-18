@@ -21,6 +21,15 @@ namespace stan {
 namespace math {
 namespace internal {
 
+template <bool upper, typename T_a, typename T_b>
+inline auto exp_mod_normal_log_combine(const T_a& a, const T_b& b) {
+  if constexpr (upper) {
+    return log_sum_exp(a, b);
+  } else {
+    return log_diff_exp(a, b);
+  }
+}
+
 /** log F = log_diff_exp(a, b) with a = log Phi(z), b = v^2/2 - lambda (y - mu)
  * + log Phi(z - v), v = lambda sigma; log (1 - F) = log_sum_exp(log Phi(-z),
  * b).
@@ -77,13 +86,8 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
       = internal::std_normal_lcdf_value_grad<any_autodiff>(z - v);
   const auto& log_b = to_ref_if<any_autodiff>(0.5 * square(v)
                                               - lambda_val * diff + log_phi_b);
-  const auto& lp = to_ref_if<any_autodiff>([&]() {
-    if constexpr (upper) {
-      return log_sum_exp(log_a, log_b);
-    } else {
-      return log_diff_exp(log_a, log_b);
-    }
-  }());
+  const auto& lp = to_ref_if<any_autodiff>(
+      exp_mod_normal_log_combine<upper>(log_a, log_b));
   const T_partials_return cdf_log = sum(lp);
 
   if constexpr (any_autodiff) {
