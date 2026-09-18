@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 
+#include <stan/math/rev/fun/Eigen_SpecialFunctions.hpp>
 #include <stan/math/rev/fun/LDLT_factor.hpp>
 #include <stan/math/rev/fun/Phi.hpp>
 #include <stan/math/rev/fun/Phi_approx.hpp>

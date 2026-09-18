@@ -8,7 +8,14 @@ TEST(ProbInternalMath, gradRegIncGamma_typical) {
   double g = 1.77245;
   double dig = -1.96351;
 
-  EXPECT_FLOAT_EQ(0.38984156, stan::math::grad_reg_inc_gamma(a, b, g, dig));
+  // The expected value was 0.38984156, which is 1.1e-5 away from the true
+  // d/da Q(0.5, 1.0). That constant encoded two errors of the old
+  // implementation: the rounded support values that this test passes in
+  // (g = 1.77245 is 2.2e-6 away from tgamma(0.5)), and the 1e-6 series
+  // truncation. The arithmetic path no longer uses g or dig, so the result
+  // is now the true value, from mpmath at 80 digits.
+  EXPECT_FLOAT_EQ(0.38983726432851057,
+                  stan::math::grad_reg_inc_gamma(a, b, g, dig));
 }
 
 TEST(ProbInternalMath, gradRegIncGamma_infLoopInVersion2_0_1) {
@@ -30,6 +37,8 @@ TEST(ProbInternalMath, gradRegIncGamma_largeZ) {
                   stan::math::grad_reg_inc_gamma(a, z, g, dig));
 }
 
+// Every scalar type now uses the same algorithm, so the fvar cases expect
+// the same value as the arithmetic case.
 TEST(ProbInternalMath, gradRegIncGamma_fd) {
   using stan::math::fvar;
 
@@ -38,7 +47,7 @@ TEST(ProbInternalMath, gradRegIncGamma_fd) {
   fvar<double> g = 1.77245;
   fvar<double> dig = -1.96351;
 
-  EXPECT_FLOAT_EQ(0.38984156,
+  EXPECT_FLOAT_EQ(0.38983726432851057,
                   stan::math::grad_reg_inc_gamma(a, b, g, dig).val());
 }
 TEST(ProbInternalMath, gradRegIncGamma_ffd) {
@@ -49,7 +58,7 @@ TEST(ProbInternalMath, gradRegIncGamma_ffd) {
   fvar<fvar<double> > g = 1.77245;
   fvar<fvar<double> > dig = -1.96351;
 
-  EXPECT_FLOAT_EQ(0.38984156,
+  EXPECT_FLOAT_EQ(0.38983726432851057,
                   stan::math::grad_reg_inc_gamma(a, b, g, dig).val_.val_);
 }
 
@@ -63,7 +72,7 @@ TEST(ProbInternalMath, gradRegIncGamma_fv) {
   fvar<var> g = 1.77245;
   fvar<var> dig = digamma(a);
 
-  EXPECT_FLOAT_EQ(0.38984156,
+  EXPECT_FLOAT_EQ(0.38983726432851057,
                   stan::math::grad_reg_inc_gamma(a, b, g, dig).val_.val());
 }
 
@@ -107,4 +116,54 @@ TEST(ProbInternalMath, gradRegIncGamma_fv_2ndderiv) {
   std::vector<double> grad1;
   z.d_.grad(y1, grad1);
   EXPECT_NEAR(-0.546236927878295422, grad1[0], 1e-6);
+}
+
+namespace {
+struct gamma_cdf_shape_functor {
+  double y_;
+  explicit gamma_cdf_shape_functor(double y) : y_(y) {}
+  template <typename T>
+  T operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
+    return stan::math::gamma_cdf(y_, x(0), 1.0);
+  }
+};
+}  // namespace
+
+/**
+ * The first derivative must not depend on how it is obtained.
+ *
+ * Reverse mode reaches the gradient root with `double` partials; `hessian`
+ * reaches it with `fvar<var>`. While those were two different algorithms,
+ * the two routes disagreed by 4.4e-02 at alpha = 20, 5.8e-01 at alpha = 100
+ * and 7.2e-01 at alpha = 171, and `hessian` returned NaN at alpha = 180,
+ * all with `z = alpha`. This test locks that down. It asserts agreement
+ * between the two routes, so it needs no external reference value.
+ */
+TEST(ProbInternalMath, gradRegIncGamma_gradient_matches_hessian) {
+  using stan::math::var;
+
+  for (double alpha : {5.0, 20.0, 100.0, 171.0, 180.0, 300.0}) {
+    const double y = alpha;
+
+    double rev_grad;
+    {
+      stan::math::nested_rev_autodiff nested;
+      var a = alpha;
+      var p = stan::math::gamma_cdf(y, a, 1.0);
+      p.grad();
+      rev_grad = a.adj();
+    }
+
+    Eigen::Matrix<double, Eigen::Dynamic, 1> x(1);
+    x(0) = alpha;
+    double fx;
+    Eigen::Matrix<double, Eigen::Dynamic, 1> grad(1);
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> hess(1, 1);
+    stan::math::hessian(gamma_cdf_shape_functor(y), x, fx, grad, hess);
+
+    ASSERT_TRUE(std::isfinite(rev_grad)) << "reverse mode, alpha = " << alpha;
+    ASSERT_TRUE(std::isfinite(grad(0))) << "hessian(), alpha = " << alpha;
+    EXPECT_NEAR(rev_grad, grad(0), 1e-12 * std::fabs(rev_grad))
+        << "alpha = " << alpha;
+  }
 }
