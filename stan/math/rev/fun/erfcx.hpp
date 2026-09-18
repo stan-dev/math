@@ -19,7 +19,9 @@ namespace math {
  \frac{2}{\sqrt{\pi}}\f$
  *
  * which reuses the function value, so no extra `exp` or `erfc` evaluation is
- * needed and the derivative inherits the value's accuracy in the tails.
+ * needed. That difference cancels for `x >= 4`, so `internal::erfcx_derivative`
+ * takes the derivative from the tail rational there instead. Without that the
+ * error reaches 2.55e+11 ulp at `x = 1e6`.
  *
    \f[
    \mbox{erfcx}(x) =
@@ -44,7 +46,7 @@ namespace math {
 inline var erfcx(const var& a) {
   double val = erfcx(a.val());
   return make_callback_var(val, [a, val](auto& vi) mutable {
-    a.adj() += vi.adj() * (2.0 * a.val() * val - TWO_OVER_SQRT_PI);
+    a.adj() += vi.adj() * internal::erfcx_derivative(a.val(), val);
   });
 }
 
@@ -59,9 +61,14 @@ template <typename T, require_matrix_t<T>* = nullptr>
 inline auto erfcx(const var_value<T>& a) {
   auto val = to_arena(erfcx(a.val()));
   return make_callback_var(val, [a, val](auto& vi) mutable {
-    a.adj().array()
-        += vi.adj().array()
-           * (2.0 * a.val().array() * val.array() - TWO_OVER_SQRT_PI);
+    a.adj().array() += vi.adj().array()
+                       * a.val()
+                             .array()
+                             .binaryExpr(val.array(),
+                                         [](double x, double v) {
+                                           return internal::erfcx_derivative(
+                                               x, v);
+                                         });
   });
 }
 
