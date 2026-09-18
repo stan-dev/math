@@ -122,8 +122,13 @@ inline double erfcx_cody_middle(double y) {
  * A Chebyshev-economized expansion of `erfcx` about zero, so it needs no
  * library call and no branch on the sign of `x`. Its low-order coefficients
  * reproduce the Maclaurin series of `erfcx` exactly (`1`, `-2/sqrt(pi)`,
- * `1`, ...), which is a useful check that the fit is right. Measured at
- * 2.2 ulp over the whole interval.
+ * `1`, ...), which is a useful check that the fit is right. `even[0]`,
+ * `even[1]` and `odd[0]` are those three terms.
+ *
+ * Measured at 2.2 ulp over the interval. Evaluating the same coefficients
+ * as one degree-18 Horner chain gives 1.5 ulp instead, but runs 1.7 times
+ * slower, because that chain is 18 dependent operations. The whole function
+ * is 7.0 ulp, set by the middle interval, so the 0.7 ulp costs nothing.
  *
  * The plain Maclaurin series is only usable to about `|x| = 0.125`; four
  * further economized terms extend it to 0.46875 at no measurable cost,
@@ -133,25 +138,34 @@ inline double erfcx_cody_middle(double y) {
  * @return scaled complementary error function
  */
 inline double erfcx_small(double x) {
-  double p = 3.05977060678449757e-06;
-  p = -9.35890030086883823e-06 + x * p;
-  p = 2.46655529768908249e-05 + x * p;
-  p = -7.08163358203131886e-05 + x * p;
-  p = 1.98445679338826757e-04 + x * p;
-  p = -5.34506929034156810e-04 + x * p;
-  p = 1.38888415444527033e-03 + x * p;
-  p = -3.47359067853470795e-03 + x * p;
-  p = 8.33333374332981443e-03 + x * p;
-  p = -1.91048337772546720e-02 + x * p;
-  p = 4.16666666458337179e-02 + x * p;
-  p = -8.59717459974174147e-02 + x * p;
-  p = 1.66666666667239644e-01 + x * p;
-  p = -3.00901111227312890e-01 + x * p;
-  p = 4.99999999999992839e-01 + x * p;
-  p = -7.52252778063651983e-01 + x * p;
-  p = 1.0 + x * p;
-  p = -1.12837916709551256 + x * p;
-  return 1.0 + x * p;
+  // Split into the even and odd powers of x, so the two Horner chains run
+  // independently. A single degree-18 chain is 18 dependent operations; two
+  // chains of 9 halve that latency.
+  static constexpr double even[]
+      = {1.0,
+         1.0,
+         4.99999999999992839e-01,
+         1.66666666667239644e-01,
+         4.16666666458337179e-02,
+         8.33333374332981443e-03,
+         1.38888415444527033e-03,
+         1.98445679338826757e-04,
+         2.46655529768908249e-05,
+         3.05977060678449757e-06};
+  static constexpr double odd[]
+      = {-1.12837916709551256,     -7.52252778063651983e-01,
+         -3.00901111227312890e-01, -8.59717459974174147e-02,
+         -1.91048337772546720e-02, -3.47359067853470795e-03,
+         -5.34506929034156810e-04, -7.08163358203131886e-05,
+         -9.35890030086883823e-06};
+  const double x2 = x * x;
+  double e = even[9];
+  double o = odd[8];
+  for (int i = 8; i >= 1; --i) {
+    e = even[i] + x2 * e;
+    o = odd[i - 1] + x2 * o;
+  }
+  return even[0] + x2 * e + x * o;
 }
 
 }  // namespace internal

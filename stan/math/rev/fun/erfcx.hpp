@@ -3,8 +3,10 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/erfcx.hpp>
+#include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -40,35 +42,28 @@ namespace math {
    \end{cases}
    \f]
  *
- * @param a The variable.
- * @return Scaled complementary error function applied to the variable.
- */
-inline var erfcx(const var& a) {
-  double val = erfcx(a.val());
-  return make_callback_var(val, [a, val](auto& vi) mutable {
-    a.adj() += vi.adj() * internal::erfcx_derivative(a.val(), val);
-  });
-}
-
-/**
- * The scaled complementary error function for matrix variables.
+ * One overload covers `var` and `var_value<Matrix>`. For a matrix the
+ * derivative stays a lazy `binaryExpr`, so the reverse pass allocates
+ * nothing.
  *
- * @tparam T a matrix type
+ * @tparam T a `var` or a `var_value` of a matrix type
  * @param a The variable.
- * @return Scaled complementary error function applied elementwise.
+ * @return Scaled complementary error function applied to the variable,
+ *   elementwise for a matrix.
  */
-template <typename T, require_matrix_t<T>* = nullptr>
-inline auto erfcx(const var_value<T>& a) {
+template <
+    typename T, require_var_t<T>* = nullptr,
+    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
+inline auto erfcx(T&& a) {
   auto val = to_arena(erfcx(a.val()));
   return make_callback_var(val, [a, val](auto& vi) mutable {
-    a.adj().array() += vi.adj().array()
-                       * a.val()
-                             .array()
-                             .binaryExpr(val.array(),
-                                         [](double x, double v) {
-                                           return internal::erfcx_derivative(
-                                               x, v);
-                                         });
+    // apply_scalar_binary returns a lazy binaryExpr for Eigen inputs, so
+    // this allocates nothing, and calls the functor directly for scalars.
+    const auto& deriv = apply_scalar_binary(
+        [](double x, double v) { return internal::erfcx_derivative(x, v); },
+        a.val(), val);
+    as_array_or_scalar(a.adj())
+        += as_array_or_scalar(vi.adj()) * as_array_or_scalar(deriv);
   });
 }
 
