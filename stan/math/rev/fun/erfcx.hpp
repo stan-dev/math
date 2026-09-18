@@ -59,7 +59,7 @@ inline auto erfcx(T&& a) {
   return make_callback_var(val, [a, val](auto& vi) mutable {
     // apply_scalar_binary returns a lazy binaryExpr for Eigen inputs, so
     // this allocates nothing, and calls the functor directly for scalars.
-    const auto& deriv = apply_scalar_binary(
+    auto deriv = apply_scalar_binary(
         [](double x, double v) { return internal::erfcx_derivative(x, v); },
         a.val(), val);
     as_array_or_scalar(a.adj())

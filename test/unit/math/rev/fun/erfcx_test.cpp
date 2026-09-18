@@ -1,8 +1,10 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
+#include <array>
 #include <cmath>
 #include <limits>
+#include <utility>
 
 namespace {
 // d/dx erfcx(x) = 2 * x * erfcx(x) - 2 / sqrt(pi)
@@ -25,17 +27,18 @@ TEST_F(AgradRev, erfcx_value_and_gradient) {
 // Reference derivatives from 2 * x * erfcx(x) - 2 / sqrt(pi) evaluated in
 // long double.
 TEST_F(AgradRev, erfcx_gradient_reference) {
-  struct {
-    double x;
-    double d;
-  } cases[] = {{-2.0, -436.89199672700738},  {-1.0, -11.14633932862008},
-               {0.0, -1.1283791670955126},   {1.0, -0.27321201478389856},
-               {5.0, -0.021332789764826311}, {10.0, -0.0055593122190608565}};
-  for (auto c : cases) {
-    stan::math::var x = c.x;
+  constexpr std::array<std::pair<double, double>, 6> cases{
+      {{-2.0, -436.89199672700738},
+       {-1.0, -11.14633932862008},
+       {0.0, -1.1283791670955126},
+       {1.0, -0.27321201478389856},
+       {5.0, -0.021332789764826311},
+       {10.0, -0.0055593122190608565}}};
+  for (auto [x_val, d_ref] : cases) {
+    stan::math::var x = x_val;
     stan::math::var y = stan::math::erfcx(x);
     y.grad();
-    EXPECT_NEAR(c.d, x.adj(), 1e-12 * std::fabs(c.d));
+    EXPECT_NEAR(d_ref, x.adj(), 1e-12 * std::fabs(d_ref));
     stan::math::recover_memory();
   }
 }

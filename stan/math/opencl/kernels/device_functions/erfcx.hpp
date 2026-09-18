@@ -165,14 +165,11 @@ static constexpr const char* erfcx_device_function
           double erfcx(double x) {
             if (x >= 4.0) {
               return erfcx_cody_tail(x);
-            }
-            if (x >= 0.46875) {
+            } else if (x >= 0.46875) {
               return erfcx_cody_middle(x);
-            }
-            if (x > -0.46875) {
+            } else if (x > -0.46875) {
               return erfcx_small(x);
-            }
-            if (x < -27.0) {
+            } else if (x < -27.0) {
               return INFINITY;
             }
             double h = x * x;
