@@ -141,17 +141,16 @@ inline double erfcx_small(double x) {
   // Split into the even and odd powers of x, so the two Horner chains run
   // independently. A single degree-18 chain is 18 dependent operations; two
   // chains of 9 halve that latency.
-  static constexpr double even[]
-      = {1.0,
-         1.0,
-         4.99999999999992839e-01,
-         1.66666666667239644e-01,
-         4.16666666458337179e-02,
-         8.33333374332981443e-03,
-         1.38888415444527033e-03,
-         1.98445679338826757e-04,
-         2.46655529768908249e-05,
-         3.05977060678449757e-06};
+  static constexpr double even[] = {1.0,
+                                    1.0,
+                                    4.99999999999992839e-01,
+                                    1.66666666667239644e-01,
+                                    4.16666666458337179e-02,
+                                    8.33333374332981443e-03,
+                                    1.38888415444527033e-03,
+                                    1.98445679338826757e-04,
+                                    2.46655529768908249e-05,
+                                    3.05977060678449757e-06};
   static constexpr double odd[]
       = {-1.12837916709551256,     -7.52252778063651983e-01,
          -3.00901111227312890e-01, -8.59717459974174147e-02,
