@@ -5,3 +5,7 @@
 *.tex text diff=tex
 lib/** binary
 lib/eigen_5.0.1/STAN_CHANGES.md -binary text diff=markdown
+lib/boost_1.87.0/STAN_CHANGES -binary text
+# Stan-patched vendored source: keep it diffable so the patch stays reviewable
+# and so a future Boost upgrade that drops it is visible rather than silent.
+lib/boost_1.87.0/boost/math/quadrature/gauss_kronrod.hpp -binary text diff=cpp
