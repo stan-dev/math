@@ -36,16 +36,14 @@ struct deriv_ref {
 // The suggested form measures 0.1 to 31 ulp across these points. 1e-13
 // relative leaves room for that and still rejects the difference form, which
 // is wrong by 6.8e+03 ulp at x = 100 and more beyond.
-const deriv_ref TAIL[] = {{4.0, -0.032383506095021455},
-                          {6.0, -0.015060353489052321},
-                          {10.0, -0.0055593122190608565},
-                          {100.0, -5.6410497625993184e-05},
-                          {1000.0, -5.641887372654967e-07},
-                          {10000.0, -5.641895750849127e-09}};
+const deriv_ref TAIL[]
+    = {{4.0, -0.032383506095021455},     {6.0, -0.015060353489052321},
+       {10.0, -0.0055593122190608565},   {100.0, -5.6410497625993184e-05},
+       {1000.0, -5.641887372654967e-07}, {10000.0, -5.641895750849127e-09}};
 
 // Below 4 the difference form has no cancellation and stays in use.
-const deriv_ref INTERIOR[] = {{-1.0, -11.14633932862008},
-                              {-5.0, -1440097986747.7388}};
+const deriv_ref INTERIOR[]
+    = {{-1.0, -11.14633932862008}, {-5.0, -1440097986747.7388}};
 
 constexpr double TOL = 1e-13;
 
