@@ -24,19 +24,17 @@ namespace internal {
  */
 template <typename T>
 inline T erfcx_tail_correction(const T& u) {
-  static constexpr double p[]
-      = {0.000658749161529837803157, 0.0160837851487422766278,
+  static constexpr std::array p{0.000658749161529837803157, 0.0160837851487422766278,
          0.125781726111229246204,    0.360344899949804439429,
-         0.305326634961232344035,    0.0163153871373020978498};
-  static constexpr double q[]
-      = {-0.00233520497626869185443, -0.0605183413124413191178,
+         0.305326634961232344035};
+  static constexpr std::array q{-0.00233520497626869185443, -0.0605183413124413191178,
          -0.527905102951428412248,   -1.87295284992346047209,
-         -2.56852019228982242072,    -1.0};
-  T numerator = p[5];
-  T denominator = q[5];
+         -2.56852019228982242072};
+  T numerator = 0.0163153871373020978498;
+  T denominator = -1.0;
   for (int i = 4; i >= 0; --i) {
-    numerator = p[i] + u * numerator;
-    denominator = q[i] + u * denominator;
+    numerator = numerator * u + p[i];
+    denominator = denominator * u + q[i];
   }
   return numerator / denominator;
 }
@@ -141,30 +139,27 @@ inline double erfcx_small(double x) {
   // Split into the even and odd powers of x, so the two Horner chains run
   // independently. A single degree-18 chain is 18 dependent operations; two
   // chains of 9 halve that latency.
-  static constexpr double even[] = {1.0,
-                                    1.0,
+  static constexpr std::array even = {1.0,
                                     4.99999999999992839e-01,
                                     1.66666666667239644e-01,
                                     4.16666666458337179e-02,
                                     8.33333374332981443e-03,
                                     1.38888415444527033e-03,
                                     1.98445679338826757e-04,
-                                    2.46655529768908249e-05,
-                                    3.05977060678449757e-06};
-  static constexpr double odd[]
+                                    2.46655529768908249e-05};
+  static constexpr std::array odd
       = {-1.12837916709551256,     -7.52252778063651983e-01,
          -3.00901111227312890e-01, -8.59717459974174147e-02,
          -1.91048337772546720e-02, -3.47359067853470795e-03,
-         -5.34506929034156810e-04, -7.08163358203131886e-05,
-         -9.35890030086883823e-06};
+         -5.34506929034156810e-04, -7.08163358203131886e-05};
   const double x2 = x * x;
-  double e = even[9];
-  double o = odd[8];
-  for (int i = 8; i >= 1; --i) {
+  double e = 3.05977060678449757e-06;
+  double o = -9.35890030086883823e-06;
+  for (int i = 8; i > 0; --i) {
     e = even[i] + x2 * e;
-    o = odd[i - 1] + x2 * o;
+    o = odd[i] + x2 * o;
   }
-  return even[0] + x2 * e + x * o;
+  return 1.0+ x2 * e + x * o;
 }
 
 }  // namespace internal
@@ -238,26 +233,16 @@ inline double erfcx(T&& xx) {
   const double x = static_cast<double>(xx);
   constexpr double cody_min = 4.0;
   constexpr double middle_min = 0.46875;
+  constexpr double overflow_max = -27.0;
   if (x >= cody_min) {
     return internal::erfcx_cody_tail(x);
-  }
-  if (x >= middle_min) {
+  } else if (x >= middle_min) {
     return internal::erfcx_cody_middle(x);
-  }
-  if (x > -middle_min) {
+  } else if (x > -middle_min) {
     return internal::erfcx_small(x);
-  }
-  // erfcx(x) = 2 * exp(x * x) * (1 + o(1)) as x -> -infinity, which leaves
-  // the binary64 range below -26.63. Returning here also keeps the
-  // reflection below from forming inf * 0 on -infinity.
-  constexpr double overflow_max = -27.0;
-  if (x < overflow_max) {
+  } else if (x < overflow_max) {
     return INFTY;
   }
-  // fma(x, x, -h) is the exact rounding error of h = x * x, so the factor
-  // (1 + that) restores what exp(h) would otherwise lose. The OpenCL
-  // device function uses the same form; it cannot use a Dekker split
-  // because the compiler simplifies t - (t - x) to x.
   const double h = x * x;
   const double two_exp_x2 = 2.0 * std::exp(h) * (1.0 + std::fma(x, x, -h));
   constexpr double reflect_min = -6.1;
