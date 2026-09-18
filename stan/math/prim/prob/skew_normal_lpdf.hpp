@@ -81,9 +81,9 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     logp -= sum(square(z)) * 0.5 * N / max_size(y_ref, mu_ref, sigma_ref);
   }
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
-    const auto& score = to_ref_if<(is_autodiff_v<T_y> + is_autodiff_v<T_loc>
-                                   + is_autodiff_v<T_scale>)
-                                  >= 2>((slopes * alpha_val - z) * inv_sigma);
+    const auto& score = to_ref_if<
+        (is_autodiff_v<T_y> + is_autodiff_v<T_loc> + is_autodiff_v<T_scale>)
+        >= 2>((slopes * alpha_val - z) * inv_sigma);
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = score;
     }

@@ -49,10 +49,9 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf_impl(const char* function,
   const T_partials_return cdf_log = sum(values);
   auto ops_partials = make_partials_propagator(y_ref, mu_ref, sigma_ref);
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
-    const auto& scaled_slope
-        = to_ref_if<(is_autodiff_v<T_y> + is_autodiff_v<T_loc>
-                     + is_autodiff_v<T_scale>)
-                    >= 2>(slopes / sigma_val);
+    const auto& scaled_slope = to_ref_if<
+        (is_autodiff_v<T_y> + is_autodiff_v<T_loc> + is_autodiff_v<T_scale>)
+        >= 2>(slopes / sigma_val);
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = sign * scaled_slope;
     }

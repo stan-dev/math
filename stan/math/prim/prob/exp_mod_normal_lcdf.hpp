@@ -90,10 +90,9 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
     // Weights of the two terms in the total; the second is signed.
     const auto& w_b = to_ref(-sign * exp(log_b - lp));
     const auto& s_b = to_ref(w_b * slope_b);
-    const auto& s
-        = to_ref_if<(is_autodiff_v<T_y> + is_autodiff_v<T_loc>
-                     + is_autodiff_v<T_scale>)
-                    >= 2>((sign * exp(log_a - lp) * slope_a + s_b) / sigma_val);
+    const auto& s = to_ref_if<
+        (is_autodiff_v<T_y> + is_autodiff_v<T_loc> + is_autodiff_v<T_scale>)
+        >= 2>((sign * exp(log_a - lp) * slope_a + s_b) / sigma_val);
     const auto& q
         = to_ref_if<is_all_autodiff_v<T_scale, T_inv_scale>>(w_b * v - s_b);
     if constexpr (is_autodiff_v<T_y>) {
