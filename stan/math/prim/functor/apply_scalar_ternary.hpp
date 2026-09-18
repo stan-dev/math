@@ -64,9 +64,11 @@ inline auto apply_scalar_ternary(F&& f, T1&& x, T2&& y, T3&& z) {
   return make_holder(
       [](auto&& f_inner, auto&& x_inner, auto&& y_inner, auto&& z_inner) {
         return Eigen::CwiseTernaryOp<
-            std::decay_t<decltype(f_inner)>, std::decay_t<decltype(x_inner)>,
-            std::decay_t<decltype(y_inner)>, std::decay_t<decltype(z_inner)>>(
-            x_inner, y_inner, z_inner, f_inner);
+            std::decay_t<decltype(f_inner)>,
+            std::decay_t<decltype(x_inner.derived())>,
+            std::decay_t<decltype(y_inner.derived())>,
+            std::decay_t<decltype(z_inner.derived())>>(
+            x_inner.derived(), y_inner.derived(), z_inner.derived(), f_inner);
       },
       std::forward<F>(f), std::forward<T1>(x), std::forward<T2>(y),
       std::forward<T3>(z));
