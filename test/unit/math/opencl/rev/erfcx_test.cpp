@@ -44,8 +44,8 @@ TEST(OpenCLerfcx, rev_tail_derivative_against_references) {
   x << 4.0, 6.0, 10.0, 100.0, 1000.0, 10000.0;
   Eigen::VectorXd expected(N);
   expected << -0.032383506095021455, -0.015060353489052321,
-      -0.0055593122190608565, -5.6410497625993184e-05,
-      -5.641887372654967e-07, -5.641895750849127e-09;
+      -0.0055593122190608565, -5.6410497625993184e-05, -5.641887372654967e-07,
+      -5.641895750849127e-09;
 
   stan::math::var_value<stan::math::matrix_cl<double>> x_cl(
       stan::math::to_matrix_cl(x));

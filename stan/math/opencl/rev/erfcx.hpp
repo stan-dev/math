@@ -28,8 +28,8 @@ template <typename T,
 inline var_value<matrix_cl<double>> erfcx(const var_value<T>& A) {
   return make_callback_var(
       erfcx(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
-        A.adj() += elt_multiply(res.adj(),
-                                erfcx_derivative(A.val(), res.val()));
+        A.adj()
+            += elt_multiply(res.adj(), erfcx_derivative(A.val(), res.val()));
       });
 }
 
