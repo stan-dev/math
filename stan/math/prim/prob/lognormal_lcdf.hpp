@@ -12,7 +12,7 @@
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
-#include <stan/math/prim/prob/std_normal_lcdf_impl.hpp>
+#include <stan/math/prim/fun/std_normal_lcdf_impl.hpp>
 
 namespace stan {
 namespace math {

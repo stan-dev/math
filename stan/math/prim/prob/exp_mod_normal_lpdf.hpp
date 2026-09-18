@@ -16,7 +16,7 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
-#include <stan/math/prim/prob/std_normal_lcdf_impl.hpp>
+#include <stan/math/prim/fun/std_normal_lcdf_impl.hpp>
 #include <cmath>
 
 namespace stan {
@@ -82,10 +82,9 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
       = make_partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref);
 
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>) {
-    const auto& deriv_logerfc = -slopes;
     if constexpr (is_any_autodiff_v<T_y, T_loc>) {
       const auto& deriv = to_ref_if<is_all_autodiff_v<T_y, T_loc>>(
-          lambda_val + deriv_logerfc * inv_sigma);
+          lambda_val - slopes * inv_sigma);
       if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials) = -deriv;
       }
@@ -96,11 +95,11 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     if constexpr (is_autodiff_v<T_scale>) {
       edge<2>(ops_partials).partials_
           = sigma_val * square(lambda_val)
-            + deriv_logerfc * (lambda_val - mu_minus_y / sigma_sq);
+            - slopes * (lambda_val - mu_minus_y * square(inv_sigma));
     }
     if constexpr (is_autodiff_v<T_inv_scale>) {
-      partials<3>(ops_partials) = inv(lambda_val) + lambda_sigma_sq + mu_minus_y
-                                  + deriv_logerfc * sigma_val;
+      partials<3>(ops_partials)
+          = inv(lambda_val) + lambda_sigma_sq + mu_minus_y - slopes * sigma_val;
     }
   }
 

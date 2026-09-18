@@ -75,7 +75,7 @@ exp_mod_normal_lcdf_opencl_impl(const char* function, const T_y_cl& y,
   }();
   auto cdf_log_expr = colwise_sum(lp);
 
-  auto w_b = (upper ? 1.0 : -1.0) * exp(log_b - lp);
+  auto w_b = -sign * exp(log_b - lp);
   auto s_b = elt_multiply(w_b, std_normal_lcdf_derivative(z_b));
   auto s = elt_divide(
       sign * elt_multiply(exp(log_a - lp), std_normal_lcdf_derivative(z_a))

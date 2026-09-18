@@ -94,10 +94,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
   auto logp_expr = colwise_sum(
       static_select<
           include_summand<propto, T_y_cl, T_loc_cl, T_scale_cl>::value>(
-          logp2
-              - elt_multiply(0.5 * y_minus_mu_over_sigma,
-                             y_minus_mu_over_sigma),
-          logp2));
+          logp2 - 0.5 * square(y_minus_mu_over_sigma), logp2));
 
   auto deriv_logerf = std_normal_lcdf_derivative(alpha_z);
   auto y_loc_deriv = elt_multiply(

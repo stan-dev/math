@@ -81,7 +81,7 @@ exp_mod_normal_lpdf(const T_y_cl& y, const T_loc_cl& mu,
   auto lambda_positive_finite_expr = isfinite(lambda_val) && lambda_val > 0;
 
   auto inv_sigma_expr = elt_divide(1.0, sigma_val);
-  auto sigma_sq_expr = elt_multiply(sigma_val, sigma_val);
+  auto sigma_sq_expr = square(sigma_val);
   auto lambda_sigma_sq_expr = elt_multiply(lambda_val, sigma_sq_expr);
   auto mu_minus_y_expr = mu_val - y_val;
   // log(erfc(t) / 2) = log Phi(-sqrt(2) t) cancels the log(1/2) constant.
@@ -94,17 +94,16 @@ exp_mod_normal_lpdf(const T_y_cl& y, const T_loc_cl& mu,
       static_select<include_summand<propto, T_inv_scale_cl>::value>(
           logp1_expr + log(lambda_val), logp1_expr));
 
-  auto deriv_logerfc_expr = -std_normal_lcdf_derivative(z_expr);
-  auto deriv_expr
-      = lambda_val + elt_multiply(deriv_logerfc_expr, inv_sigma_expr);
+  auto slope_expr = std_normal_lcdf_derivative(z_expr);
+  auto deriv_expr = lambda_val - elt_multiply(slope_expr, inv_sigma_expr);
   auto deriv_sigma_expr
-      = elt_multiply(sigma_val, elt_multiply(lambda_val, lambda_val))
-        + elt_multiply(
-            deriv_logerfc_expr,
-            (lambda_val - elt_divide(mu_minus_y_expr, sigma_sq_expr)));
+      = elt_multiply(sigma_val, square(lambda_val))
+        - elt_multiply(
+            slope_expr,
+            lambda_val - elt_multiply(mu_minus_y_expr, square(inv_sigma_expr)));
   auto deriv_lambda_expr = elt_divide(1.0, lambda_val) + lambda_sigma_sq_expr
                            + mu_minus_y_expr
-                           + elt_multiply(deriv_logerfc_expr, sigma_val);
+                           - elt_multiply(slope_expr, sigma_val);
 
   matrix_cl<double> logp_cl;
   matrix_cl<double> y_deriv_cl;

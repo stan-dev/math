@@ -1,12 +1,15 @@
-#ifndef STAN_MATH_PRIM_PROB_STD_NORMAL_LCDF_IMPL_HPP
-#define STAN_MATH_PRIM_PROB_STD_NORMAL_LCDF_IMPL_HPP
+#ifndef STAN_MATH_PRIM_FUN_STD_NORMAL_LCDF_IMPL_HPP
+#define STAN_MATH_PRIM_FUN_STD_NORMAL_LCDF_IMPL_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/fun/inv_square.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <utility>
 
 namespace stan {
@@ -58,7 +61,7 @@ inline T std_normal_tail_correction(const T& r) {
 template <typename T>
 inline T std_normal_erfcx(const T& x) {
   if (x > 4) {
-    const T r = 1 / square(x);
+    const T r = inv_square(x);
     return (1 + r * std_normal_tail_correction(r)) * INV_SQRT_PI / x;
   }
   static constexpr double c[]
@@ -95,7 +98,7 @@ inline std::pair<return_type_t<T>, return_type_t<T>> std_normal_lcdf_value_grad(
   }
   if (z <= -4 * SQRT_TWO) {
     const R a = -z;
-    const R r = 2 * square(1 / a);
+    const R r = 2 * square(inv(a));
     const R rc = r * std_normal_tail_correction(r);
     const R value = -(0.5 * z) * z - HALF_LOG_TWO_PI - log(a) + log1p(rc);
     if constexpr (calc_grad) {
@@ -104,6 +107,7 @@ inline std::pair<return_type_t<T>, return_type_t<T>> std_normal_lcdf_value_grad(
       return {value, 0};
     }
   }
+  // Not abs(z): its autodiff tangent is 0 at z == 0, which the slope needs.
   const R x = (z < 0 ? R(-z) : z) * INV_SQRT_TWO;
   if (x < 0.46875) {
     const R e = std_normal_erf_small(x);
@@ -126,6 +130,7 @@ inline std::pair<return_type_t<T>, return_type_t<T>> std_normal_lcdf_value_grad(
   }
   const R density = exp(-(0.5 * z) * z);
   const R tail = 0.5 * density * erfcx;
+  // Not log1m(tail): its domain check costs ~3 ns per element here.
   const R value = log1p(-tail);
   if constexpr (calc_grad) {
     return {value, INV_SQRT_TWO_PI * density / (1 - tail)};
@@ -139,10 +144,12 @@ template <bool calc_grad, typename T, require_eigen_t<T>* = nullptr>
 inline auto std_normal_lcdf_value_grad(const T& z) {
   using R = return_type_t<scalar_type_t<T>>;
   using Array = Eigen::Array<R, Eigen::Dynamic, 1>;
-  Array values(z.size());
-  Array slopes(calc_grad ? z.size() : 0);
-  for (Eigen::Index i = 0; i < z.size(); ++i) {
-    const auto result = std_normal_lcdf_value_grad<calc_grad>(R(z.coeff(i)));
+  const auto& z_ref = to_ref(z);
+  Array values(z_ref.size());
+  Array slopes(calc_grad ? z_ref.size() : 0);
+  for (Eigen::Index i = 0; i < z_ref.size(); ++i) {
+    const auto result
+        = std_normal_lcdf_value_grad<calc_grad>(R(z_ref.coeff(i)));
     values[i] = result.first;
     if constexpr (calc_grad) {
       slopes[i] = result.second;

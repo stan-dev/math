@@ -11,7 +11,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
-#include <stan/math/prim/prob/std_normal_lcdf_impl.hpp>
+#include <stan/math/prim/fun/std_normal_lcdf_impl.hpp>
 
 namespace stan {
 namespace math {
@@ -32,6 +32,7 @@ inline return_type_t<T_y> std_normal_lcdf_impl(const char* function, T_y&& y) {
     return 0;
   }
 
+  // Branching avoids materialising sign * y_val when not reflecting.
   const auto [values, slopes] = [&]() {
     if constexpr (reflect) {
       return std_normal_lcdf_value_grad<is_autodiff_v<T_y>>(-y_val);

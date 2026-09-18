@@ -15,7 +15,7 @@
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
-#include <stan/math/prim/prob/std_normal_lcdf_impl.hpp>
+#include <stan/math/prim/fun/std_normal_lcdf_impl.hpp>
 
 namespace stan {
 namespace math {
@@ -88,7 +88,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
 
   if constexpr (any_autodiff) {
     // Weights of the two terms in the total; the second is signed.
-    const auto& w_b = to_ref((upper ? 1.0 : -1.0) * exp(log_b - lp));
+    const auto& w_b = to_ref(-sign * exp(log_b - lp));
     const auto& s_b = to_ref(w_b * slope_b);
     const auto& s
         = to_ref_if<(is_autodiff_v<T_y> + is_autodiff_v<T_loc>
