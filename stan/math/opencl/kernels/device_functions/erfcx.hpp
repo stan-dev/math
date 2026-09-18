@@ -89,12 +89,12 @@ static constexpr const char* erfcx_device_function
            * @return scaled complementary error function
            */
           inline double erfcx_cody_middle(double y) {
-            constexpr std::array p{1230.33935479799725, 2051.07837782607147,
-                                   1712.04761263407058, 881.952221241769090,
-                                   298.635138197400131, 66.1191906371416295,
-                                   8.88314979438837594, 5.64188496988670089e-1};
+            const double p[] = {1230.33935479799725, 2051.07837782607147,
+                                1712.04761263407058, 881.952221241769090,
+                                298.635138197400131, 66.1191906371416295,
+                                8.88314979438837594, 5.64188496988670089e-1};
 
-            constexpr std::array q{
+            const double q[] = {
                 1230.33935480374942, 3439.36767414372164, 4362.61909014324716,
                 3290.79923573345963, 1621.38957456669019, 537.181101862009858,
                 117.693950891312499, 15.7449261107098347,
@@ -102,25 +102,25 @@ static constexpr const char* erfcx_device_function
 
             const double y2 = y * y;
 
-            const double p01 = std::fma(p[1], y, p[0]);
-            const double p23 = std::fma(p[3], y, p[2]);
-            const double p45 = std::fma(p[5], y, p[4]);
-            const double p67 = std::fma(p[7], y, p[6]);
+            const double p01 = fma(p[1], y, p[0]);
+            const double p23 = fma(p[3], y, p[2]);
+            const double p45 = fma(p[5], y, p[4]);
+            const double p67 = fma(p[7], y, p[6]);
 
-            const double q01 = std::fma(q[1], y, q[0]);
-            const double q23 = std::fma(q[3], y, q[2]);
-            const double q45 = std::fma(q[5], y, q[4]);
-            const double q67 = std::fma(q[7], y, q[6]);
+            const double q01 = fma(q[1], y, q[0]);
+            const double q23 = fma(q[3], y, q[2]);
+            const double q45 = fma(q[5], y, q[4]);
+            const double q67 = fma(q[7], y, q[6]);
 
-            double num = std::fma(2.15311535474403846e-8, y2, p67);
-            num = std::fma(num, y2, p45);
-            num = std::fma(num, y2, p23);
-            num = std::fma(num, y2, p01);
+            double num = fma(2.15311535474403846e-8, y2, p67);
+            num = fma(num, y2, p45);
+            num = fma(num, y2, p23);
+            num = fma(num, y2, p01);
 
             double den = y2 + q67;
-            den = std::fma(den, y2, q45);
-            den = std::fma(den, y2, q23);
-            den = std::fma(den, y2, q01);
+            den = fma(den, y2, q45);
+            den = fma(den, y2, q23);
+            den = fma(den, y2, q01);
 
             return num / den;
           }
@@ -135,48 +135,48 @@ static constexpr const char* erfcx_device_function
            * @return scaled complementary error function
            */
           inline double erfcx_small(double x) {
-            constexpr std::array p{1.0,
-                                   -1.12837916709551256,
-                                   1.0,
-                                   -7.52252778063651983e-01,
-                                   4.99999999999992839e-01,
-                                   -3.00901111227312890e-01,
-                                   1.66666666667239644e-01,
-                                   -8.59717459974174147e-02,
-                                   4.16666666458337179e-02,
-                                   -1.91048337772546720e-02,
-                                   8.33333374332981443e-03,
-                                   -3.47359067853470795e-03,
-                                   1.38888415444527033e-03,
-                                   -5.34506929034156810e-04,
-                                   1.98445679338826757e-04,
-                                   -7.08163358203131886e-05,
-                                   2.46655529768908249e-05,
-                                   -9.35890030086883823e-06};
+            const double p[] = {1.0,
+                                -1.12837916709551256,
+                                1.0,
+                                -7.52252778063651983e-01,
+                                4.99999999999992839e-01,
+                                -3.00901111227312890e-01,
+                                1.66666666667239644e-01,
+                                -8.59717459974174147e-02,
+                                4.16666666458337179e-02,
+                                -1.91048337772546720e-02,
+                                8.33333374332981443e-03,
+                                -3.47359067853470795e-03,
+                                1.38888415444527033e-03,
+                                -5.34506929034156810e-04,
+                                1.98445679338826757e-04,
+                                -7.08163358203131886e-05,
+                                2.46655529768908249e-05,
+                                -9.35890030086883823e-06};
 
             const double x2 = x * x;
 
             // Independent linear terms.
-            const double p01 = std::fma(p[1], x, p[0]);
-            const double p23 = std::fma(p[3], x, p[2]);
-            const double p45 = std::fma(p[5], x, p[4]);
-            const double p67 = std::fma(p[7], x, p[6]);
-            const double p89 = std::fma(p[9], x, p[8]);
-            const double p1011 = std::fma(p[11], x, p[10]);
-            const double p1213 = std::fma(p[13], x, p[12]);
-            const double p1415 = std::fma(p[15], x, p[14]);
-            const double p1617 = std::fma(p[17], x, p[16]);
+            const double p01 = fma(p[1], x, p[0]);
+            const double p23 = fma(p[3], x, p[2]);
+            const double p45 = fma(p[5], x, p[4]);
+            const double p67 = fma(p[7], x, p[6]);
+            const double p89 = fma(p[9], x, p[8]);
+            const double p1011 = fma(p[11], x, p[10]);
+            const double p1213 = fma(p[13], x, p[12]);
+            const double p1415 = fma(p[15], x, p[14]);
+            const double p1617 = fma(p[17], x, p[16]);
 
             // Combine using Horner's method in x².
-            double result = std::fma(3.05977060678449757e-06, x2, p1617);
-            result = std::fma(result, x2, p1415);
-            result = std::fma(result, x2, p1213);
-            result = std::fma(result, x2, p1011);
-            result = std::fma(result, x2, p89);
-            result = std::fma(result, x2, p67);
-            result = std::fma(result, x2, p45);
-            result = std::fma(result, x2, p23);
-            return std::fma(result, x2, p01);
+            double result = fma(3.05977060678449757e-06, x2, p1617);
+            result = fma(result, x2, p1415);
+            result = fma(result, x2, p1213);
+            result = fma(result, x2, p1011);
+            result = fma(result, x2, p89);
+            result = fma(result, x2, p67);
+            result = fma(result, x2, p45);
+            result = fma(result, x2, p23);
+            return fma(result, x2, p01);
           }
 
           /** \ingroup opencl_kernels

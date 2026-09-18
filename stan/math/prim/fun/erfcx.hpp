@@ -154,10 +154,16 @@ inline double erfcx_small(double x) {
          -3.00901111227312890e-01, -8.59717459974174147e-02,
          -1.91048337772546720e-02, -3.47359067853470795e-03,
          -5.34506929034156810e-04, -7.08163358203131886e-05};
+  static_assert(even.size() == odd.size(),
+                "the two chains are stepped by one loop");
+  // The leading coefficient of each chain seeds the accumulator, and the
+  // trailing 1.0 is added at the end, so both arrays hold the interior
+  // coefficients only. Derive the bound from the array rather than writing
+  // it out, so shortening an array cannot leave the loop reading past it.
   const double x2 = x * x;
   double e = 3.05977060678449757e-06;
   double o = -9.35890030086883823e-06;
-  for (int i = 8; i > 0; --i) {
+  for (int i = static_cast<int>(even.size()) - 1; i >= 0; --i) {
     e = even[i] + x2 * e;
     o = odd[i] + x2 * o;
   }
