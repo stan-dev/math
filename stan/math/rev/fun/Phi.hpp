@@ -23,9 +23,7 @@ namespace math {
    \f[
    \mbox{Phi}(x) =
    \begin{cases}
-     0 & \mbox{if } x < -37.5 \\
-     \Phi(x) & \mbox{if } -37.5 \leq x \leq 8.25 \\
-     1 & \mbox{if } x > 8.25 \\[6pt]
+     \Phi(x) & \mbox{if } -\infty \leq x \leq \infty \\[6pt]
      \textrm{error} & \mbox{if } x = \textrm{NaN}
    \end{cases}
    \f]

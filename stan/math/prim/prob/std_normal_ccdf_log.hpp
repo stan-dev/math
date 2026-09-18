@@ -12,7 +12,7 @@ namespace math {
  */
 template <typename T_y>
 inline return_type_t<T_y> std_normal_ccdf_log(const T_y& y) {
-  return std_normal_lccdf<T_y>(y);
+  return std_normal_lccdf(y);
 }
 
 }  // namespace math
