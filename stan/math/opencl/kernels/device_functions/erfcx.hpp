@@ -60,9 +60,11 @@ static constexpr const char* erfcx_device_function
            *
            * That difference cancels for large x: both terms approach
            * 2 / sqrt(pi) while the result decays like 1 / (sqrt(pi) * x^2).
-           * The difference form reaches 2.55e+11 ulp at x = 1e6. For
-           * x >= 4 the constant cancels analytically against the leading
-           * term of the tail rational, leaving 2 * u * C(u).
+           * For x >= 4 the constant cancels analytically against the
+           * leading term of the tail rational, leaving 2 * u * C(u).
+           * Above 30 it comes from the asymptotic expansion of
+           * -sqrt(pi) * x^2 * erfcx'(x) in u, whose coefficients satisfy
+           * c_{n+1} = -(n + 3/2) * c_n.
            *
            * Takes the value as an argument so the reverse pass does not
            * evaluate erfcx twice.
@@ -72,11 +74,22 @@ static constexpr const char* erfcx_device_function
            * @return derivative of erfcx at x
            */
           double erfcx_derivative(double x, double value) {
-            if (x >= 4.0) {
-              double u = 1.0 / (x * x);
+            if (x < 4.0) {
+              return 2.0 * x * value - M_2_SQRTPI;
+            }
+            double u = 1.0 / (x * x);
+            if (x < 30.0) {
               return 2.0 * u * erfcx_tail_correction(u);
             }
-            return 2.0 * x * value - M_2_SQRTPI;
+            // -sqrt(pi) * x^2 * erfcx'(x), asymptotic, ascending in u
+            const double s[8]
+                = {1.0,     -1.5,       3.75,        -13.125,
+                   59.0625, -324.84375, 2111.484375, -15836.1328125};
+            double series = s[7];
+            for (int i = 6; i >= 0; --i) {
+              series = series * u + s[i];
+            }
+            return -(0.5 * M_2_SQRTPI) * u * series;
           }
 
           /** \ingroup opencl_kernels
@@ -146,11 +159,10 @@ static constexpr const char* erfcx_device_function
            *
            * Mirrors stan/math/prim/fun/erfcx.hpp branch for branch and
            * formula for formula; the two must be kept in step. The whole
-           * positive axis is covered without a library call, which is
-           * what makes this fast. On the negative side exp is
-           * unavoidable, since erfcx grows like 2*exp(x*x); its argument
-           * is corrected with fma, because exp amplifies the rounding of
-           * x * x into roughly x * x * eps, which is 512 ulp at x = -26.
+           * positive axis is covered without a library call. On the
+           * negative side exp is unavoidable, since erfcx grows like
+           * 2*exp(x*x); its argument is corrected with fma, because exp
+           * amplifies the rounding of x * x into roughly x * x * eps.
            *
            * The correction must be written with fma and not with a Dekker
            * split. The split relies on t - (t - x) not being simplified
