@@ -250,3 +250,42 @@ TEST_F(AgradRev, RevArenaMat_arena_matrix_move_test) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 1);
   stan::math::recover_memory();
 }
+
+TEST_F(AgradRev, arena_matrix_expression_operand) {
+  using stan::math::arena_matrix;
+  using stan::math::var;
+  auto fma = [](const auto& x, const auto& y, const auto& z) {
+    return x * y + z;
+  };
+  Eigen::MatrixXd x_val = Eigen::MatrixXd::Random(3, 2);
+  arena_matrix<Eigen::MatrixXd> x = x_val;
+  arena_matrix<Eigen::MatrixXd> y = 2 * x_val;
+  arena_matrix<Eigen::Matrix<var, -1, -1>> z = 3 * x_val;
+
+  Eigen::MatrixXd res
+      = Eigen::CwiseTernaryOp<decltype(fma), arena_matrix<Eigen::MatrixXd>,
+                              arena_matrix<Eigen::MatrixXd>,
+                              arena_matrix<Eigen::MatrixXd>>(x, y, x, fma);
+  EXPECT_MATRIX_EQ(res, (x_val.array() * 2 * x_val.array() + x_val.array()));
+
+  Eigen::Matrix<var, -1, -1> res_v
+      = Eigen::CwiseTernaryOp<decltype(fma), arena_matrix<Eigen::MatrixXd>,
+                              arena_matrix<Eigen::MatrixXd>,
+                              arena_matrix<Eigen::Matrix<var, -1, -1>>>(
+          x, y, z, fma);
+  EXPECT_MATRIX_EQ(res_v.val(),
+                   (x_val.array() * 2 * x_val.array() + 3 * x_val.array()));
+}
+
+TEST_F(AgradRev, arena_sparse_matrix_expression_operand) {
+  using eig_mat = Eigen::SparseMatrix<double>;
+  using arena_mat = stan::math::arena_matrix<eig_mat>;
+  eig_mat A = stan::test::make_sparse_matrix_random(10, 10);
+  arena_mat x = A;
+  arena_mat y = A;
+
+  eig_mat res
+      = Eigen::CwiseBinaryOp<Eigen::internal::scalar_sum_op<double, double>,
+                             const arena_mat, const arena_mat>(x, y);
+  EXPECT_MATRIX_EQ(Eigen::MatrixXd(res), Eigen::MatrixXd(2 * A));
+}
