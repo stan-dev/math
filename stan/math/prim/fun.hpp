@@ -133,6 +133,9 @@
 #include <stan/math/prim/fun/if_else.hpp>
 #include <stan/math/prim/fun/imag.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
+#include <stan/math/prim/fun/inc_beta_dda.hpp>
+#include <stan/math/prim/fun/inc_beta_ddb.hpp>
+#include <stan/math/prim/fun/inc_beta_ddz.hpp>
 #include <stan/math/prim/fun/initialize.hpp>
 #include <stan/math/prim/fun/initialize_fill.hpp>
 #include <stan/math/prim/fun/int_step.hpp>
