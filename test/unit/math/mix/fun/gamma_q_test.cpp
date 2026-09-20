@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <cmath>
 #include <limits>
 
 TEST(mathMixScalFun, gammaQ) {
@@ -16,6 +17,61 @@ TEST(mathMixScalFun, gammaQ) {
 
   // this still fails forward mode; left regression test in rev/fun
   // stan::test::expect_value(f, 8.01006, 2.47579e+215);
+}
+
+/**
+ * Forward-mode shape derivative at large z, fixed references from mpmath
+ * at 80 digits.
+ *
+ * The previous forward-mode gamma_q carried its own copy of the series in
+ * grad_reg_inc_gamma, without an iteration cap. For z above about 700 the
+ * alternating terms overflow before they decay and the loop never
+ * terminates; that is the failure the commented-out expect_value above
+ * ran into. Below that, the series terminates and returns garbage: at
+ * (a, z) = (1.5, 300) it gave 1.2e+112 where the derivative is 5.7e-129.
+ *
+ * These points are chosen so that the old code fails rather than hangs,
+ * which keeps the test usable in CI. The derivative now comes from
+ * grad_reg_inc_gamma, so forward mode and reverse mode share one algorithm.
+ */
+TEST(mathMixScalFun, gammaQ_fwd_shape_derivative_large_z) {
+  using stan::math::fvar;
+  struct Case {
+    double a;
+    double z;
+    double dqda;
+  };
+  const Case cases[] = {
+      {1.5, 300.0, 5.71509832058708679e-129},
+      {3.0, 650.0, 6.01811954875449219e-277},
+  };
+  for (const auto& c : cases) {
+    fvar<double> a = c.a;
+    a.d_ = 1.0;
+    fvar<double> z = c.z;
+    const fvar<double> r = stan::math::gamma_q(a, z);
+    ASSERT_TRUE(std::isfinite(r.d_)) << "a=" << c.a << " z=" << c.z;
+    EXPECT_NEAR(c.dqda, r.d_, 1e-10 * std::fabs(c.dqda))
+        << "a=" << c.a << " z=" << c.z;
+  }
+}
+
+/**
+ * Forward-mode derivative with respect to the second argument, above the
+ * tgamma overflow limit. The previous form, -exp(-z) * pow(z, a-1) /
+ * tgamma(a), had both pow and tgamma overflow at (200, 150) and returned
+ * NaN. It is now evaluated in log space. Reference from mpmath, closed
+ * form -z^(a-1) e^(-z) / Gamma(a).
+ */
+TEST(mathMixScalFun, gammaQ_fwd_z_derivative_large_a) {
+  using stan::math::fvar;
+  fvar<double> a = 200.0;
+  fvar<double> z = 150.0;
+  z.d_ = 1.0;
+  const fvar<double> r = stan::math::gamma_q(a, z);
+  const double expected = -2.00507038377120400e-05;
+  ASSERT_TRUE(std::isfinite(r.d_));
+  EXPECT_NEAR(expected, r.d_, 1e-12 * std::fabs(expected));
 }
 
 TEST(MathFunctions, gammaQ_vec) {
