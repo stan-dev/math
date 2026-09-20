@@ -20,19 +20,8 @@ TEST(mathMixScalFun, gammaQ) {
 }
 
 /**
- * Forward-mode shape derivative at large z, fixed references from mpmath
- * at 80 digits.
- *
- * The previous forward-mode gamma_q carried its own copy of the series in
- * grad_reg_inc_gamma, without an iteration cap. For z above about 700 the
- * alternating terms overflow before they decay and the loop never
- * terminates; that is the failure the commented-out expect_value above
- * ran into. Below that, the series terminates and returns garbage: at
- * (a, z) = (1.5, 300) it gave 1.2e+112 where the derivative is 5.7e-129.
- *
- * These points are chosen so that the old code fails rather than hangs,
- * which keeps the test usable in CI. The derivative now comes from
- * grad_reg_inc_gamma, so forward mode and reverse mode share one algorithm.
+ * Forward-mode derivative with respect to the first argument at large z.
+ * References are d/da Q(a, z) from mpmath at 80 digits.
  */
 TEST(mathMixScalFun, gammaQ_fwd_shape_derivative_large_z) {
   using stan::math::fvar;
@@ -57,10 +46,8 @@ TEST(mathMixScalFun, gammaQ_fwd_shape_derivative_large_z) {
 }
 
 /**
- * Forward-mode derivative with respect to the second argument, above the
- * tgamma overflow limit. The previous form, -exp(-z) * pow(z, a-1) /
- * tgamma(a), had both pow and tgamma overflow at (200, 150) and returned
- * NaN. It is now evaluated in log space. Reference from mpmath, closed
+ * Forward-mode derivative with respect to the second argument, at an a
+ * above the range where tgamma(a) is finite. Reference from mpmath, closed
  * form -z^(a-1) e^(-z) / Gamma(a).
  */
 TEST(mathMixScalFun, gammaQ_fwd_z_derivative_large_a) {

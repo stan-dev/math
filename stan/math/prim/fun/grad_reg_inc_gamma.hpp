@@ -15,30 +15,23 @@ namespace math {
  * respect to the shape parameter, d/da Q(a, z), where Q is the upper
  * regularized incomplete gamma function.
  *
- * The work is done by `Eigen::numext::igamma_der_a`, which differentiates
- * the Cephes power series and the Cephes continued fraction term by term
- * and stops at machine epsilon. It returns d/da of the lower P(a, z), so
- * the sign is flipped here.
- *
- * Eigen's implementation is generic in the scalar type. Stan supplies the
- * three Cephes helpers it needs for autodiff scalars in
+ * Delegates to `Eigen::numext::igamma_der_a`, which returns d/da of the
+ * lower P(a, z); the sign is flipped here. For autodiff scalar types the
+ * Cephes helpers that Eigen needs are specialized in
  * `stan/math/fwd/fun/Eigen_SpecialFunctions.hpp` and
- * `stan/math/rev/core/Eigen_SpecialFunctions.hpp`, so every autodiff order
- * uses this same algorithm.
+ * `stan/math/rev/fun/Eigen_SpecialFunctions.hpp`.
  *
- * `g`, `dig`, `precision` and `max_steps` are accepted and ignored. They
- * belonged to the previous hand-written series. The signature is unchanged
- * so that the 27 call sites do not change; removing the arguments is
- * proposed separately.
+ * `g`, `dig`, `precision` and `max_steps` are accepted for signature
+ * compatibility and are not used.
  *
  * @tparam T1 type of the shape parameter
  * @tparam T2 type of the location parameter
  * @param a shape parameter, a > 0
  * @param z location z >= 0
- * @param g ignored; previously stan::math::tgamma(a)
- * @param dig ignored; previously stan::math::digamma(a)
- * @param precision ignored; previously the series tolerance
- * @param max_steps ignored; previously the series iteration limit
+ * @param g unused
+ * @param dig unused
+ * @param precision unused
+ * @param max_steps unused
  * @return d/da of the upper regularized incomplete gamma function
  */
 template <typename T1, typename T2>

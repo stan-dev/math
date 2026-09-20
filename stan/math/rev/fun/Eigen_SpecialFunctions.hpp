@@ -11,19 +11,14 @@ namespace Eigen {
 namespace internal {
 
 /**
- * Support for Eigen's incomplete gamma routines with Stan's reverse-mode
- * scalar. See `stan/math/fwd/fun/Eigen_SpecialFunctions.hpp` for the
- * reasoning; this is the same three helpers for `var`.
+ * The same three `Eigen::internal` helper specializations as
+ * `stan/math/fwd/fun/Eigen_SpecialFunctions.hpp`, for `var`, so that
+ * `Eigen::numext::igamma_der_a` accepts `var` arguments.
  *
- * No function inside Stan Math reaches `igamma_der_a` with `var`. Every
- * distribution calls the gradient roots with `T_partials_return`, which is
- * `double` for reverse mode. These specializations exist so that a direct
- * call such as `grad_reg_inc_gamma(var, var, var, var)` keeps working after
- * the hand-written series was removed.
- *
- * A `var` call builds one autodiff node per operation inside the series, so
- * it is far more expensive than the `double` call. That was equally true of
- * the previous implementation.
+ * Inside Stan Math the gradient roots are called with `double` partials in
+ * reverse mode; this path serves direct calls with `var`. Such a call
+ * records one autodiff node per operation of the series, so it is far more
+ * expensive than the `double` call.
  */
 template <>
 struct lgamma_impl<stan::math::var> {

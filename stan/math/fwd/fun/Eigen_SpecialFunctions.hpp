@@ -11,20 +11,13 @@ namespace Eigen {
 namespace internal {
 
 /**
- * Support for Eigen's incomplete gamma routines with Stan's forward-mode
- * scalars.
+ * Specializations of the three `Eigen::internal` helpers that
+ * `Eigen::internal::igamma_generic_impl` restricts to `float` and
+ * `double`: `lgamma_impl`, `digamma_impl` and `cephes_helper`. With these,
+ * `Eigen::numext::igamma_der_a` accepts `fvar<T>` at any autodiff order.
  *
- * `Eigen::internal::igamma_generic_impl` is written for a general scalar
- * type and propagates the derivative through the Cephes power series and
- * the Cephes continued fraction. Only three of its helpers are restricted
- * to `float` and `double`. Supplying those three here lets
- * `Eigen::numext::igamma_der_a` serve `fvar<T>` at every autodiff order,
- * so `grad_reg_inc_gamma` and `grad_reg_lower_inc_gamma` can use one
- * algorithm for every scalar type.
- *
- * This depends on the names `lgamma_impl`, `digamma_impl` and
- * `cephes_helper` in `Eigen::internal`. An Eigen upgrade that renames them
- * fails at compile time, not silently.
+ * These names are Eigen internals. An Eigen upgrade that renames them
+ * fails here at compile time.
  */
 template <typename T>
 struct lgamma_impl<stan::math::fvar<T>> {

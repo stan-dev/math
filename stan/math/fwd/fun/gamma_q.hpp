@@ -16,26 +16,10 @@ namespace stan {
 namespace math {
 
 /*
- * Two changes from the previous version of this file.
- *
- * The derivative with respect to the shape parameter used to be an inlined
- * copy of the series in `grad_reg_inc_gamma`, with the same hard-coded 1e-6
- * tolerance and without that function's second branch. The copy is now
- * replaced by a call to the root itself.
- *
- * Keeping the copy hid the defect it shared with the root. In
- * `test/prob/chi_square`, the generated `ffv` case compares the
- * distribution's analytic partials against autodiff through
- * `log(gamma_q(nu * 0.5, y * 0.5))`. Both routes used the same inaccurate
- * series, so their errors cancelled and the comparison passed. Once the
- * root became accurate and the copy did not, the same comparison failed by
- * 2.4e-03 at third order.
- *
- * The derivative with respect to the second argument used to be
- * `-exp(-x2) * pow(x2, x1 - 1) / tgamma(x1)`. Both `pow` and `tgamma`
- * overflow for moderate arguments, and the quotient then silently returns
- * -0 rather than a small negative number. It is now evaluated in log space,
- * which is the form `gamma_p` already uses for the same quantity.
+ * The derivative with respect to the first argument is grad_reg_inc_gamma.
+ * The derivative with respect to the second argument is minus the gamma
+ * density, evaluated in log space so that neither pow nor tgamma can
+ * overflow; this is the same form that gamma_p uses.
  */
 
 template <typename T>

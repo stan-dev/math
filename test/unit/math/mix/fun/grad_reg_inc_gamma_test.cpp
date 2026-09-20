@@ -8,12 +8,8 @@ TEST(ProbInternalMath, gradRegIncGamma_typical) {
   double g = 1.77245;
   double dig = -1.96351;
 
-  // The expected value was 0.38984156, which is 1.1e-5 away from the true
-  // d/da Q(0.5, 1.0). That constant encoded two errors of the old
-  // implementation: the rounded support values that this test passes in
-  // (g = 1.77245 is 2.2e-6 away from tgamma(0.5)), and the 1e-6 series
-  // truncation. The arithmetic path no longer uses g or dig, so the result
-  // is now the true value, from mpmath at 80 digits.
+  // d/da Q(0.5, 1.0) from mpmath at 80 digits. The g and dig arguments are
+  // accepted for signature compatibility and do not affect the result.
   EXPECT_FLOAT_EQ(0.38983726432851057,
                   stan::math::grad_reg_inc_gamma(a, b, g, dig));
 }
@@ -37,8 +33,6 @@ TEST(ProbInternalMath, gradRegIncGamma_largeZ) {
                   stan::math::grad_reg_inc_gamma(a, z, g, dig));
 }
 
-// Every scalar type now uses the same algorithm, so the fvar cases expect
-// the same value as the arithmetic case.
 TEST(ProbInternalMath, gradRegIncGamma_fd) {
   using stan::math::fvar;
 
@@ -130,14 +124,10 @@ struct gamma_cdf_shape_functor {
 }  // namespace
 
 /**
- * The first derivative must not depend on how it is obtained.
- *
- * Reverse mode reaches the gradient root with `double` partials; `hessian`
- * reaches it with `fvar<var>`. While those were two different algorithms,
- * the two routes disagreed by 4.4e-02 at alpha = 20, 5.8e-01 at alpha = 100
- * and 7.2e-01 at alpha = 171, and `hessian` returned NaN at alpha = 180,
- * all with `z = alpha`. This test locks that down. It asserts agreement
- * between the two routes, so it needs no external reference value.
+ * The first derivative must not depend on how it is obtained. Reverse mode
+ * reaches the gradient root with `double` partials and `hessian` reaches
+ * it with `fvar<var>`; the two must agree. This needs no external
+ * reference value.
  */
 TEST(ProbInternalMath, gradRegIncGamma_gradient_matches_hessian) {
   using stan::math::var;

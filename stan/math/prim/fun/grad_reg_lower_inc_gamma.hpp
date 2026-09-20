@@ -15,31 +15,23 @@ namespace math {
  * Computes the gradient of the lower regularized incomplete gamma
  * function, d/da P(a, z).
  *
- * The work is done by `Eigen::numext::igamma_der_a`, which returns exactly
- * this quantity. It differentiates the Cephes power series and the Cephes
- * continued fraction term by term and stops at machine epsilon. Eigen's
- * implementation is generic in the scalar type; Stan supplies the three
- * Cephes helpers it needs for autodiff scalars in
- * `stan/math/fwd/fun/Eigen_SpecialFunctions.hpp` and
- * `stan/math/rev/core/Eigen_SpecialFunctions.hpp`.
+ * Delegates to `Eigen::numext::igamma_der_a`, which returns exactly this
+ * quantity. For autodiff scalar types the Cephes helpers that Eigen needs
+ * are specialized in `stan/math/fwd/fun/Eigen_SpecialFunctions.hpp` and
+ * `stan/math/rev/fun/Eigen_SpecialFunctions.hpp`.
  *
- * The previous implementation used a Gautschi series whose two sums cancel
- * completely for z well above a. It returned about 1e-14 of rounding noise,
- * with arbitrary sign, where the true value can be 1e-148.
+ * `precision` and `max_steps` are accepted for signature compatibility and
+ * are not used.
  *
- * `precision` and `max_steps` are accepted and ignored. They belonged to
- * the previous series. The signature is unchanged so that the call sites do
- * not change; removing the arguments is proposed separately.
- *
- * Infinite z still throws, to match the behaviour of, for example,
+ * Infinite z throws, to match the behaviour of, for example,
  * boost::math::gamma_p.
  *
  * @tparam T1 type of a
  * @tparam T2 type of z
  * @param[in] a shared with complete Gamma, a > 0
  * @param[in] z value to integrate up to, z >= 0
- * @param[in] precision ignored; previously the series tolerance
- * @param[in] max_steps ignored; previously the series iteration limit
+ * @param[in] precision unused
+ * @param[in] max_steps unused
  * @return d/da of the lower regularized incomplete gamma function
  */
 template <typename T1, typename T2>
