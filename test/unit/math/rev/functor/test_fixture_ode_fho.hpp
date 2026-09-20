@@ -3,7 +3,6 @@
 
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
-#include <boost/numeric/odeint.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/functor/test_fixture_ode.hpp>
 #include <test/unit/util.hpp>
