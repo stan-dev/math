@@ -114,7 +114,7 @@ cd build
 cmake ..
 cd ..
 
-git rm -rf cmake/ doc/ examples/ test/ */cvode */ida src/sundials/sundials_xbraid.c
+git rm -rf cmake/ doc/ examples/ test/ */cvode */ida src/arkode/xbraid src/sundials/sundials_xbraid.c
 find . -name CMakeLists.txt -exec git rm {} \;
 git commit -m "upgrading to sundials v${sundials_version}; pruning files"
 

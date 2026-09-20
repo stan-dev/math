@@ -371,9 +371,7 @@ inline void idas_check(int flag, const char* func_name) {
 }
 
 /**
- * Map ARKODE error flag to an error msg. Mirrors cvodes_flag_msg above;
- * ARKODE reuses the same numbering scheme as CVODES for the codes that are
- * shared between the two solvers.
+ * Map ARKODE error flag to an error msg.
  *
  * @param flag
  *
@@ -442,6 +440,17 @@ inline std::array<std::string, 2> arkode_flag_msg(int flag) {
     case -27:
       msg = {"ARK_TOO_CLOSE",
              "The output and initial times are too close to each other"};
+      break;  // NOLINT
+    case -28:
+      msg = {"ARK_VECTOROP_ERR", "A vector operation failed"};
+      break;  // NOLINT
+    case -40:
+      msg = {"ARK_INTERP_FAIL",
+             "The interpolation module failed to compute the solution at "
+             "the output time"};
+      break;  // NOLINT
+    case -41:
+      msg = {"ARK_INVALID_TABLE", "The Butcher table is invalid"};
       break;  // NOLINT
     default:
       msg = {"ARK_UNKNOWN_ERROR", "Unrecognized ARKODE error flag"};

@@ -3,7 +3,6 @@
 
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
-#include <boost/numeric/odeint.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/prim/functor/harmonic_oscillator.hpp>
 #include <test/unit/math/rev/functor/coupled_mm.hpp>

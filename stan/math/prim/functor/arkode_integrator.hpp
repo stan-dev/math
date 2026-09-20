@@ -13,8 +13,10 @@
 #include <nvector/nvector_serial.h>
 #include <algorithm>
 #include <cmath>
-#include <limits>
+#include <memory>
 #include <ostream>
+#include <stdexcept>
+#include <tuple>
 #include <vector>
 
 namespace stan {
@@ -24,16 +26,21 @@ namespace math {
  * Integrator interface for ARKODE's ERKStep explicit adaptive Runge-Kutta
  * solver, using one of ERKStep's built-in embedded Butcher tables.
  *
+ * Step size control is configured to match Boost odeint's
+ * <code>controlled_runge_kutta</code>, which this integrator replaced.
+ *
  * @tparam Table ID of the built-in ERKStep Butcher table to use, e.g.
  *   <code>ARKODE_CASH_KARP_6_4_5</code> or
  *   <code>ARKODE_DORMAND_PRINCE_7_4_5</code>
+ * @tparam DenseOutput if true output times are interpolated between steps,
+ *   otherwise steps are truncated to end on each output time
  * @tparam F Type of ODE right hand side
  * @tparam T_y0 Type of initial state
  * @tparam T_t0 Type of scalar of initial time point
  * @tparam T_ts Type of time-points where ODE solution is returned
  */
-template <ARKODE_ERKTableID Table, typename F, typename T_y0, typename T_t0,
-          typename T_ts, typename... Args>
+template <ARKODE_ERKTableID Table, bool DenseOutput, typename F, typename T_y0,
+          typename T_t0, typename T_ts, typename... Args>
 class arkode_integrator {
   using T_Return = return_type_t<T_y0, T_t0, T_ts, Args...>;
   using T_y0_t0 = return_type_t<T_y0, T_t0>;
@@ -52,7 +59,16 @@ class arkode_integrator {
 
   coupled_ode_system<F, T_y0_t0, Args...> coupled_system_;
   std::vector<double> coupled_state_;
+  std::vector<double> z_;
+  std::vector<double> dz_dt_;
   N_Vector nv_state_;
+
+  // odeint controls the max of the weighted errors, not their RMS
+  static realtype max_norm(N_Vector x, N_Vector w) {
+    Eigen::Map<const Eigen::ArrayXd> x_map(NV_DATA_S(x), NV_LENGTH_S(x));
+    Eigen::Map<const Eigen::ArrayXd> w_map(NV_DATA_S(w), NV_LENGTH_S(w));
+    return (x_map * w_map).abs().maxCoeff();
+  }
 
   static int erk_rhs(realtype t, N_Vector y, N_Vector ydot, void* user_data) {
     arkode_integrator* integrator = static_cast<arkode_integrator*>(user_data);
@@ -61,10 +77,9 @@ class arkode_integrator {
   }
 
   inline void rhs(double t, const double y[], double dy_dt[]) {
-    std::vector<double> z(y, y + coupled_state_.size());
-    std::vector<double> dz_dt;
-    coupled_system_(z, dz_dt, t);
-    std::copy(dz_dt.begin(), dz_dt.end(), dy_dt);
+    z_.assign(y, y + coupled_state_.size());
+    coupled_system_(z_, dz_dt_, t);
+    std::copy(dz_dt_.begin(), dz_dt_.end(), dy_dt);
   }
 
  public:
@@ -127,6 +142,7 @@ class arkode_integrator {
 
     nv_state_ = N_VMake_Serial(coupled_state_.size(), coupled_state_.data(),
                                sundials_context_);
+    nv_state_->ops->nvwrmsnorm = &arkode_integrator::max_norm;
   }
 
   ~arkode_integrator() { N_VDestroy_Serial(nv_state_); }
@@ -143,65 +159,68 @@ class arkode_integrator {
     std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y;
     y.reserve(ts_.size());
 
-    void* arkode_mem = ERKStepCreate(&arkode_integrator::erk_rhs, value_of(t0_),
-                                     nv_state_, sundials_context_);
+    auto free_mem = [](void* mem) { ERKStepFree(&mem); };
+    std::unique_ptr<void, decltype(free_mem)> mem_ptr(
+        ERKStepCreate(&arkode_integrator::erk_rhs, value_of(t0_), nv_state_,
+                      sundials_context_),
+        free_mem);
+    void* arkode_mem = mem_ptr.get();
     if (arkode_mem == nullptr) {
       throw std::runtime_error("ERKStepCreate failed to allocate memory");
     }
 
-    try {
+    CHECK_ARKODE_CALL(
+        ERKStepSetUserData(arkode_mem, reinterpret_cast<void*>(this)));
+    CHECK_ARKODE_CALL(ERKStepSetTableNum(arkode_mem, Table));
+    CHECK_ARKODE_CALL(ERKStepSStolerances(arkode_mem, relative_tolerance_,
+                                          absolute_tolerance_));
+    CHECK_ARKODE_CALL(ERKStepSetMaxNumSteps(arkode_mem, max_num_steps_));
+
+    // odeint: h *= 0.9 * err^(-1/5) limited to [0.2, 4.5], h kept if err >= 0.5
+    realtype adapt_params[3] = {1.0, 0.0, 0.0};
+    CHECK_ARKODE_CALL(ERKStepSetInitStep(arkode_mem, 0.1));
+    CHECK_ARKODE_CALL(ERKStepSetAdaptivityMethod(arkode_mem, ARK_ADAPT_I, 0, 1,
+                                                 adapt_params));
+    CHECK_ARKODE_CALL(ERKStepSetSafetyFactor(arkode_mem, 0.9));
+    CHECK_ARKODE_CALL(ERKStepSetErrorBias(arkode_mem, 1.0));
+    CHECK_ARKODE_CALL(ERKStepSetMaxGrowth(arkode_mem, 4.5));
+    CHECK_ARKODE_CALL(ERKStepSetMaxFirstGrowth(arkode_mem, 4.5));
+    CHECK_ARKODE_CALL(ERKStepSetMinReduction(arkode_mem, 0.2));
+    CHECK_ARKODE_CALL(
+        ERKStepSetFixedStepBounds(arkode_mem, 0.9, 0.9 * std::pow(0.5, -0.2)));
+    if (!DenseOutput) {
+      // never evaluated, but avoids the Hermite interpolant's extra RHS calls
       CHECK_ARKODE_CALL(
-          ERKStepSetUserData(arkode_mem, reinterpret_cast<void*>(this)));
-      CHECK_ARKODE_CALL(ERKStepSetTableNum(arkode_mem, Table));
-      CHECK_ARKODE_CALL(ERKStepSStolerances(arkode_mem, relative_tolerance_,
-                                            absolute_tolerance_));
-      CHECK_ARKODE_CALL(ERKStepSetMaxNumSteps(arkode_mem, max_num_steps_));
-
-      // Cap the internal step size at the smallest gap between requested
-      // output times, so that ARK_NORMAL never has to interpolate far past
-      // an output time to reach it -- this keeps the Hermite interpolation
-      // error at each output time small relative to local step error.
-      double min_gap = std::numeric_limits<double>::infinity();
-      double t_prev = value_of(t0_);
-      for (size_t n = 0; n < ts_.size(); ++n) {
-        double t_n = value_of(ts_[n]);
-        min_gap = std::min(min_gap, t_n - t_prev);
-        t_prev = t_n;
-      }
-      if (std::isfinite(min_gap) && min_gap > 0) {
-        CHECK_ARKODE_CALL(ERKStepSetMaxStep(arkode_mem, min_gap));
-      }
-
-      double t_init = value_of(t0_);
-      for (size_t n = 0; n < ts_.size(); ++n) {
-        double t_final = value_of(ts_[n]);
-
-        if (t_final != t_init) {
-          int flag = ERKStepEvolve(arkode_mem, t_final, nv_state_, &t_init,
-                                   ARK_NORMAL);
-          if (flag == ARK_TOO_MUCH_WORK) {
-            throw_domain_error(function_name_, "", t_final,
-                               "Failed to integrate to next output time (",
-                               ") in less than max_num_steps steps");
-          }
-          CHECK_ARKODE_CALL(flag);
-        }
-
-        y.emplace_back(math::apply(
-            [&](const auto&... args_ref) {
-              return ode_store_sensitivities(f_, coupled_state_, y0_, t0_,
-                                             ts_[n], msgs_, args_ref...);
-            },
-            args_tuple_));
-
-        t_init = t_final;
-      }
-    } catch (const std::exception& e) {
-      ERKStepFree(&arkode_mem);
-      throw;
+          ERKStepSetInterpolantType(arkode_mem, ARK_INTERP_LAGRANGE));
     }
 
-    ERKStepFree(&arkode_mem);
+    double t_init = value_of(t0_);
+    for (size_t n = 0; n < ts_.size(); ++n) {
+      double t_final = value_of(ts_[n]);
+
+      if (t_final != t_init) {
+        if (!DenseOutput) {
+          CHECK_ARKODE_CALL(ERKStepSetStopTime(arkode_mem, t_final));
+        }
+        int flag = ERKStepEvolve(arkode_mem, t_final, nv_state_, &t_init,
+                                 ARK_NORMAL);
+        if (flag == ARK_TOO_MUCH_WORK) {
+          throw_domain_error(function_name_, "", t_final,
+                             "Failed to integrate to next output time (",
+                             ") in less than max_num_steps steps");
+        }
+        arkode_check(flag, "ERKStepEvolve");
+      }
+
+      y.emplace_back(math::apply(
+          [&](const auto&... args_ref) {
+            return ode_store_sensitivities(f_, coupled_state_, y0_, t0_, ts_[n],
+                                           msgs_, args_ref...);
+          },
+          args_tuple_));
+
+      t_init = t_final;
+    }
 
     return y;
   }
