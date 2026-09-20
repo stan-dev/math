@@ -168,7 +168,7 @@ INSTANTIATE_TYPED_TEST_SUITE_P(StanShoOde, harmonic_oscillator_analytical_test,
                                harmonic_oscillator_test_types);
 
 // step size must not be tied to the smallest gap between output times
-TEST(StanShoOde, uneven_output_times) {
+TEST_F(AgradRev, uneven_output_times) {
   harm_osc_ode_fun_eigen f;
   Eigen::VectorXd y0(2);
   y0 << 1.0, 0.0;
