@@ -13,6 +13,7 @@
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/tanh.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
@@ -69,24 +70,19 @@ inline return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y,
     logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
 
-  if constexpr (is_any_autodiff_v<T_y, T_scale>) {
-    const auto& exp_y_minus_mu_div_sigma = exp(y_minus_mu_div_sigma);
-    const auto& y_deriv
-        = to_ref_if<(is_autodiff_v<T_scale> && is_autodiff_v<T_y>)>(
-            (2 / (1 + exp_y_minus_mu_div_sigma) - 1) * inv_sigma);
+  if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
+    // to_ref, not to_ref_if: tanh() of an Eigen argument returns a holder that
+    // owns its operand, so the product has to be evaluated inside this
+    const auto& mu_deriv = to_ref(tanh(0.5 * y_minus_mu_div_sigma) * inv_sigma);
     if constexpr (is_autodiff_v<T_y>) {
-      partials<0>(ops_partials) = y_deriv;
+      partials<0>(ops_partials) = -mu_deriv;
+    }
+    if constexpr (is_autodiff_v<T_loc>) {
+      edge<1>(ops_partials).partials_ = mu_deriv;
     }
     if constexpr (is_autodiff_v<T_scale>) {
-      partials<2>(ops_partials) = (-y_deriv * y_minus_mu - 1) * inv_sigma;
+      partials<2>(ops_partials) = (mu_deriv * y_minus_mu - 1) * inv_sigma;
     }
-  }
-  if constexpr (is_autodiff_v<T_loc>) {
-    const auto& exp_mu_div_sigma = to_ref(exp(mu_val * inv_sigma));
-    edge<1>(ops_partials).partials_
-        = (1
-           - 2 * exp_mu_div_sigma / (exp_mu_div_sigma + exp(y_val * inv_sigma)))
-          * inv_sigma;
   }
   return ops_partials.build(logp);
 }
