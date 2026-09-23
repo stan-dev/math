@@ -30,8 +30,7 @@ template <typename EigMat, typename IdxRows, typename IdxCols,
           require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
           require_all_std_vector_t<IdxRows, IdxCols>* = nullptr>
 inline var_value<Eigen::VectorXd> zip(const var_value<EigMat>& x,
-                                      IdxRows&& idx_row,
-                                      IdxCols&& idx_col) {
+                                      IdxRows&& idx_row, IdxCols&& idx_col) {
   check_size_match("zip", "size of idx_row", idx_row.size(), "size of idx_col",
                    idx_col.size());
   if (idx_row.empty()) {
@@ -39,9 +38,10 @@ inline var_value<Eigen::VectorXd> zip(const var_value<EigMat>& x,
   }
   auto rows = to_arena(std::forward<IdxRows>(idx_row));
   auto cols = to_arena(std::forward<IdxCols>(idx_col));
-  return make_callback_var(zip(x.val(), rows, cols), [x, rows, cols](auto& vi) mutable {
-    zip(x.adj(), rows, cols) += vi.adj();
-  });
+  return make_callback_var(zip(x.val(), rows, cols),
+                           [x, rows, cols](auto& vi) mutable {
+                             zip(x.adj(), rows, cols) += vi.adj();
+                           });
 }
 
 }  // namespace stan::math
