@@ -22,26 +22,28 @@ namespace math {
  * @throw std::invalid_argument if the index vectors are of different lengths
  * @throw std::out_of_range if any index is out of the valid range of the matrix
  */
-template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
-inline auto zip(const EigMat& x, const std::vector<int>& idx_row,
-                const std::vector<int>& idx_col) {
+template <typename EigMat,
+  typename IdxRows, typename IdxCols,
+  require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
+  require_all_vector_t<IdxRows, IdxCols>* = nullptr>
+inline auto zip(EigMat&& x, IdxRows&& idx_row, IdxCols&& idx_col) {
   check_size_match("zip", "size of idx_row", idx_row.size(), "size of idx_col",
                    idx_col.size());
-
-  using map_t = Eigen::Map<const Eigen::Array<int, Eigen::Dynamic, 1>>;
-
-  const map_t rows(idx_row.data(), idx_row.size());
-  const map_t cols(idx_col.data(), idx_col.size());
-
-  check_range("zip", "minimum row index", x.rows(), rows.minCoeff());
-  check_range("zip", "maximum row index", x.rows(), rows.maxCoeff());
-  check_range("zip", "minimum column index", x.cols(), cols.minCoeff());
-  check_range("zip", "maximum column index", x.cols(), cols.maxCoeff());
-
-  const auto linear_idx = (rows.cast<Eigen::Index>() - 1)
-                          + (cols.cast<Eigen::Index>() - 1) * x.rows();
-
-  return x.reshaped()(linear_idx);
+  return make_holder([](auto&& x_, auto&& idx_row_, auto&& idx_col_) {
+    using map_t = Eigen::Map<const Eigen::Array<int, Eigen::Dynamic, 1>>;
+    const map_t rows(idx_row_.data(), idx_row_.size());
+    const map_t cols(idx_col_.data(), idx_col_.size());
+    // If the user turns of range checks do not pay for min and max sweeps
+#ifndef STAN_NO_RANGE_CHECKS
+    check_range("zip", "minimum row index", x_.rows(), rows.minCoeff());
+    check_range("zip", "maximum row index", x_.rows(), rows.maxCoeff());
+    check_range("zip", "minimum column index", x_.cols(), cols.minCoeff());
+    check_range("zip", "maximum column index", x_.cols(), cols.maxCoeff());
+#endif
+    const auto linear_idx = (rows.cast<Eigen::Index>() - 1)
+                            + (cols.cast<Eigen::Index>() - 1) * x_.rows();
+    return x_.reshaped()(linear_idx);
+  }, std::forward<EigMat>(x), std::forward<IdxRows>(idx_row), std::forward<IdxCols>(idx_col));
 }
 
 }  // namespace math
