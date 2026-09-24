@@ -6,6 +6,7 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/opencl/scalar_cl_functions.hpp>
 
 namespace stan {
 namespace math {
@@ -21,13 +22,21 @@ namespace math {
  *
  * @return dot product covariance matrix that is positive semi-definite
  */
-template <typename T_x, typename T_sigma,
-          require_all_prim_or_rev_kernel_expression_t<T_x>* = nullptr,
-          require_stan_scalar_t<T_sigma>* = nullptr>
-inline auto gp_dot_prod_cov(const T_x& x, const T_sigma sigma) {
+template <
+    typename T_x, typename T_sigma,
+    require_all_prim_or_rev_kernel_expression_t<T_x>* = nullptr,
+    require_t<opencl::internal::is_host_or_device_scalar<T_sigma>>* = nullptr>
+inline auto gp_dot_prod_cov(const T_x& x, const T_sigma& sigma) {
   const char* fun = "gp_dot_prod_cov(OpenCL)";
-  check_nonnegative(fun, "sigma", sigma);
-  check_finite(fun, "sigma", sigma);
+  if constexpr (is_scalar_cl<T_sigma>::value) {
+    // the checks need the value on the host
+    const double sigma_host = opencl::to_host(value_of(sigma));
+    check_nonnegative(fun, "sigma", sigma_host);
+    check_finite(fun, "sigma", sigma_host);
+  } else {
+    check_nonnegative(fun, "sigma", sigma);
+    check_finite(fun, "sigma", sigma);
+  }
   const auto& x_val = value_of(x);
   check_cl(fun, "x", x_val, "not NaN") = !isnan(x_val);
   return add(square(sigma), transpose(x) * x);
@@ -45,13 +54,21 @@ inline auto gp_dot_prod_cov(const T_x& x, const T_sigma sigma) {
  *
  * @return dot product covariance matrix
  */
-template <typename T_x, typename T_y, typename T_sigma,
-          require_all_prim_or_rev_kernel_expression_t<T_x, T_y>* = nullptr,
-          require_stan_scalar_t<T_sigma>* = nullptr>
-inline auto gp_dot_prod_cov(const T_x& x, const T_y& y, const T_sigma sigma) {
+template <
+    typename T_x, typename T_y, typename T_sigma,
+    require_all_prim_or_rev_kernel_expression_t<T_x, T_y>* = nullptr,
+    require_t<opencl::internal::is_host_or_device_scalar<T_sigma>>* = nullptr>
+inline auto gp_dot_prod_cov(const T_x& x, const T_y& y, const T_sigma& sigma) {
   const char* fun = "gp_dot_prod_cov(OpenCL)";
-  check_nonnegative(fun, "sigma", sigma);
-  check_finite(fun, "sigma", sigma);
+  if constexpr (is_scalar_cl<T_sigma>::value) {
+    // the checks need the value on the host
+    const double sigma_host = opencl::to_host(value_of(sigma));
+    check_nonnegative(fun, "sigma", sigma_host);
+    check_finite(fun, "sigma", sigma_host);
+  } else {
+    check_nonnegative(fun, "sigma", sigma);
+    check_finite(fun, "sigma", sigma);
+  }
   const auto& x_val = value_of(x);
   const auto& y_val = value_of(y);
   check_cl(fun, "x", x_val, "not NaN") = !isnan(x_val);

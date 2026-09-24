@@ -11,6 +11,7 @@
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/meta/is_kernel_expression.hpp>
+#include <stan/math/opencl/rev/scalar_cl.hpp>
 
 namespace stan {
 namespace math {
@@ -26,9 +27,10 @@ namespace math {
  * @return Elementwise division of the input kernel generator
  *  expression with a scalar
  */
-template <typename T_a, typename T_b, require_stan_scalar_t<T_b>* = nullptr,
+template <typename T_a, typename T_b,
+          require_t<opencl::internal::is_host_or_device_scalar<T_b>>* = nullptr,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T_a>* = nullptr,
-          require_any_var_t<T_a, T_b>* = nullptr>
+          require_any_st_var<T_a, T_b>* = nullptr>
 inline var_value<matrix_cl<double>> divide(T_a&& a, T_b&& b) {
   arena_t<T_a> a_arena = std::forward<T_a>(a);
   arena_t<T_b> b_arena = std::forward<T_b>(b);

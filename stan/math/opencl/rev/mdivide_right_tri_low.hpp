@@ -26,7 +26,7 @@ namespace math {
 template <
     typename T1, typename T2,
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T1, T2>* = nullptr,
-    require_any_var_t<T1, T2>* = nullptr>
+    require_any_st_var<T1, T2>* = nullptr>
 inline var_value<matrix_cl<double>> mdivide_right_tri_low(T2&& b, T1&& A) {
   check_square("mdivide_right_tri_low", "A", A);
   check_multiplicable("mdivide_right_tri_low", "b", b, "A", A);

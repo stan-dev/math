@@ -20,6 +20,44 @@ namespace math {
 namespace opencl {
 
 /** \ingroup opencl
+ * A read-only device scalar whose buffer is owned by the autodiff arena, so it
+ * can be captured by reverse-pass callbacks, whose destructors are not run.
+ * The buffer is freed by `recover_memory()`. This is `arena_t` of the
+ * primitive device scalars; constructing it copies the value on the device.
+ */
+template <>
+class ScalarCl<arena_matrix_cl<double>>
+    : public internal::scalar_cl_access<ScalarCl<arena_matrix_cl<double>>> {
+ private:
+  arena_matrix_cl<double> buf_;
+
+ public:
+  using value_type = double;
+
+  /**
+   * Copies the value of a primitive device scalar into the arena on the
+   * device.
+   * @tparam T type of the device scalar
+   * @param x device scalar
+   */
+  template <typename T, require_prim_scalar_cl_t<T>* = nullptr,
+            require_not_same_t<std::decay_t<T>,
+                               ScalarCl<arena_matrix_cl<double>>>* = nullptr>
+  ScalarCl(const T& x)  // NOLINT(runtime/explicit)
+      : buf_(x.matrix()) {}
+
+  ScalarCl(const ScalarCl& other) = default;
+  ScalarCl& operator=(const ScalarCl& other) = default;
+
+  /**
+   * @return the backing 1x1 `matrix_cl`
+   */
+  inline const matrix_cl<double>& matrix() const noexcept {
+    return static_cast<const matrix_cl<double>&>(buf_);
+  }
+};
+
+/** \ingroup opencl
  * A var whose value and adjoint live on the OpenCL device.
  *
  * The autodiff node is a 1x1 `var_value<matrix_cl<double>>`, so the node and
@@ -211,16 +249,22 @@ namespace internal {
  * arithmetic value, a CPU var or a device scalar.
  */
 template <typename T>
+struct is_scalar_var
+    : math::conjunction<is_var<std::decay_t<T>>,
+                        std::is_floating_point<value_type_t<std::decay_t<T>>>> {
+};
+
+template <typename T>
 struct is_scalar_cl_rev_operand
-    : math::disjunction<std::is_arithmetic<std::decay_t<T>>,
-                        is_var<std::decay_t<T>>, is_scalar_cl<T>> {};
+    : math::disjunction<std::is_arithmetic<std::decay_t<T>>, is_scalar_var<T>,
+                        is_scalar_cl<T>> {};
 
 /**
  * Checks if a type is a CPU var or a device var.
  */
 template <typename T>
 struct is_autodiff_scalar_cl_operand
-    : math::disjunction<is_rev_scalar_cl<T>, is_var<std::decay_t<T>>> {};
+    : math::disjunction<is_rev_scalar_cl<T>, is_scalar_var<T>> {};
 
 /**
  * Enables a template if all types are host arithmetic values, CPU vars or
@@ -454,6 +498,66 @@ inline ScalarCl<var> square(const ScalarCl<var>& a) {
       [](const auto& g, const auto&, const auto& x) {
         return 2.0 * elt_multiply(as_operation_cl(g), as_operation_cl(x));
       });
+}
+
+namespace internal {
+/**
+ * Enables a template if one type is a device scalar, the other is a matrix
+ * expression, and at least one of them is autodiff.
+ */
+template <typename T_a, typename T_b>
+using require_scalar_cl_and_matrix_rev_t = require_t<math::conjunction<
+    math::disjunction<
+        math::conjunction<is_scalar_cl<T_a>,
+                          is_nonscalar_prim_or_rev_kernel_expression<T_b>>,
+        math::conjunction<is_nonscalar_prim_or_rev_kernel_expression<T_a>,
+                          is_scalar_cl<T_b>>>,
+    math::disjunction<is_var<scalar_type_t<T_a>>, is_var<scalar_type_t<T_b>>>>>;
+}  // namespace internal
+
+/** \ingroup opencl
+ * Adds a device scalar and a matrix, at least one of which is autodiff.
+ * @return var matrix holding the sum
+ */
+template <typename T_a, typename T_b,
+          internal::require_scalar_cl_and_matrix_rev_t<T_a, T_b>* = nullptr>
+inline auto operator+(const T_a& a, const T_b& b) {
+  return add(a, b);
+}
+
+/** \ingroup opencl
+ * Subtracts a device scalar and a matrix, at least one of which is autodiff.
+ * @return var matrix holding the difference
+ */
+template <typename T_a, typename T_b,
+          internal::require_scalar_cl_and_matrix_rev_t<T_a, T_b>* = nullptr>
+inline auto operator-(const T_a& a, const T_b& b) {
+  return subtract(a, b);
+}
+
+/** \ingroup opencl
+ * Multiplies a device scalar and a matrix, at least one of which is autodiff.
+ * @return var matrix holding the product
+ */
+template <typename T_a, typename T_b,
+          internal::require_scalar_cl_and_matrix_rev_t<T_a, T_b>* = nullptr>
+inline auto operator*(const T_a& a, const T_b& b) {
+  return multiply(a, b);
+}
+
+/** \ingroup opencl
+ * Divides a device scalar and a matrix element-wise, at least one of which is
+ * autodiff.
+ * @return var matrix holding the quotient
+ */
+template <typename T_a, typename T_b,
+          internal::require_scalar_cl_and_matrix_rev_t<T_a, T_b>* = nullptr>
+inline auto operator/(const T_a& a, const T_b& b) {
+  if constexpr (is_scalar_cl<T_b>::value) {
+    return divide(a, b);
+  } else {
+    return elt_divide(a, b);
+  }
 }
 
 template <typename T>

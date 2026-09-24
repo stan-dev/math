@@ -29,7 +29,7 @@ namespace math {
  */
 template <typename T_x, typename T_y,
           require_all_prim_or_rev_kernel_expression_t<T_x, T_y>* = nullptr,
-          require_any_var_t<T_x, T_y>* = nullptr,
+          require_any_st_var<T_x, T_y>* = nullptr,
           require_any_not_stan_scalar_t<T_x, T_y>* = nullptr>
 inline var_value<matrix_cl<double>> log_inv_logit_diff(T_x&& x, T_y&& y) {
   arena_t<T_x> x_arena = std::forward<T_x>(x);

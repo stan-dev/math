@@ -18,7 +18,7 @@ namespace math {
  */
 template <typename T,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
-          require_any_var_t<T>* = nullptr>
+          require_any_st_var<T>* = nullptr>
 inline auto as_column_vector_or_scalar(const T& m) {
   return m.as_column_vector_or_scalar();
 }

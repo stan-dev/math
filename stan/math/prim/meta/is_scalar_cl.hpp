@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_META_IS_SCALAR_CL_HPP
 #define STAN_MATH_PRIM_META_IS_SCALAR_CL_HPP
 
+#include <stan/math/prim/meta/is_matrix_cl.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
@@ -25,6 +26,13 @@ template <typename T>
 struct is_scalar_cl_impl<math::opencl::ScalarCl<T>> : std::true_type {
   using type = std::decay_t<T>;
 };
+
+// arena-owned device scalar, `opencl::ScalarCl<arena_matrix_cl<T>>`
+template <typename T>
+struct is_scalar_cl_impl<math::opencl::ScalarCl<math::arena_matrix_cl<T>>>
+    : std::true_type {
+  using type = T;
+};
 }  // namespace internal
 
 /** \ingroup type_traits
@@ -43,6 +51,10 @@ struct is_prim_scalar_cl_impl<math::opencl::ScalarCl<T>>
     : std::is_arithmetic<std::decay_t<T>> {};
 
 template <typename T>
+struct is_prim_scalar_cl_impl<math::opencl::ScalarCl<math::arena_matrix_cl<T>>>
+    : std::is_arithmetic<T> {};
+
+template <typename T>
 struct is_rev_scalar_cl_impl : std::false_type {};
 
 template <typename T>
@@ -51,8 +63,9 @@ struct is_rev_scalar_cl_impl<math::opencl::ScalarCl<T>> : is_var<T> {};
 
 /** \ingroup type_traits
  * Checks if the decayed type of T is an `opencl::ScalarCl` holding an
- * arithmetic value: `opencl::ScalarCl<double>` or one of the views
- * `opencl::ScalarCl<double&>` and `opencl::ScalarCl<const double&>`.
+ * arithmetic value: `opencl::ScalarCl<double>`, one of the views
+ * `opencl::ScalarCl<double&>` and `opencl::ScalarCl<const double&>`, or the
+ * arena-owned `opencl::ScalarCl<arena_matrix_cl<double>>`.
  */
 template <typename T>
 struct is_prim_scalar_cl : internal::is_prim_scalar_cl_impl<std::decay_t<T>> {};

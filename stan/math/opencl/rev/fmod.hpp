@@ -12,6 +12,7 @@
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/meta/is_kernel_expression.hpp>
+#include <stan/math/opencl/rev/scalar_cl.hpp>
 
 namespace stan {
 namespace math {
@@ -61,25 +62,33 @@ namespace math {
  */
 template <typename T_a, typename T_b,
           require_all_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
-          require_any_var_t<T_a, T_b>* = nullptr,
+          require_any_st_var<T_a, T_b>* = nullptr,
           require_any_not_stan_scalar_t<T_a, T_b>* = nullptr>
 inline var_value<matrix_cl<double>> fmod(T_a&& a, T_b&& b) {
   using std::isnan;
   const arena_t<T_a>& a_arena = std::forward<T_a>(a);
   const arena_t<T_b>& b_arena = std::forward<T_b>(b);
 
-  matrix_cl<double> res_val = fmod(value_of(a_arena), value_of(b_arena));
+  matrix_cl<double> res_val
+      = fmod(opencl::internal::as_operand(value_of(a_arena)),
+             opencl::internal::as_operand(value_of(b_arena)));
 
   return make_callback_var(
       res_val,
       [a_arena, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
-        auto any_nan = isnan(value_of(a_arena)) || isnan(value_of(b_arena));
-        auto a_is_max = value_of(a_arena) > value_of(b_arena);
+        auto any_nan
+            = isnan(opencl::internal::as_operand(value_of(a_arena)))
+              || isnan(opencl::internal::as_operand(value_of(b_arena)));
+        auto a_is_max = opencl::internal::as_operand(value_of(a_arena))
+                        > opencl::internal::as_operand(value_of(b_arena));
         auto a_deriv = select(any_nan, NOT_A_NUMBER, res.adj());
         auto b_deriv = select(
             any_nan, NOT_A_NUMBER,
-            elt_multiply(-res.adj(), trunc(elt_divide(value_of(a_arena),
-                                                      value_of(b_arena)))));
+            elt_multiply(
+                -res.adj(),
+                trunc(elt_divide(
+                    opencl::internal::as_operand(value_of(a_arena)),
+                    opencl::internal::as_operand(value_of(b_arena))))));
 
         adjoint_results(a_arena, b_arena) += expressions(a_deriv, b_deriv);
       });

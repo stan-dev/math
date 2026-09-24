@@ -1,7 +1,5 @@
 #ifdef STAN_OPENCL
 #include <stan/math.hpp>
-// TODO(ScalarCl): remove once this function accepts opencl::ScalarCl
-#define STAN_TEST_OPENCL_NO_SCALAR_CL
 #include <test/unit/math/opencl/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>

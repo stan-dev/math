@@ -5,6 +5,7 @@
 #include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
+#include <stan/math/opencl/scalar_cl_reduce.hpp>
 
 namespace stan {
 namespace math {
@@ -35,11 +36,13 @@ namespace math {
 template <typename T, typename M, typename S,
           require_all_kernel_expressions_t<T, M, S>* = nullptr,
           require_any_not_stan_scalar_t<T, M, S>* = nullptr>
-inline auto offset_multiplier_constrain(const T& x, const M& mu,
-                                        const S& sigma) {
+inline auto offset_multiplier_constrain(const T& x, const M& mu_in,
+                                        const S& sigma_in) {
   using std::isfinite;
+  const auto& mu = opencl::internal::as_operand(mu_in);
+  const auto& sigma = opencl::internal::as_operand(sigma_in);
   const char* function = "offset_multiplier_constrain(OpenCL)";
-  check_consistent_sizes(function, "offset", mu, "multiplier", sigma,
+  check_consistent_sizes(function, "offset", mu_in, "multiplier", sigma_in,
                          "parameter", x);
   auto check_mu = check_cl(function, "offset", mu, "finite");
   auto check_sigma = check_cl(function, "multiplier", sigma, "positive finite");
@@ -73,14 +76,18 @@ inline auto offset_multiplier_constrain(const T& x, const M& mu,
  * @throw std::domain_error if sigma <= 0
  * @throw std::domain_error if mu is not finite
  */
-template <typename T, typename M, typename S,
+template <typename T, typename M, typename S, typename T_lp,
           require_all_kernel_expressions_t<T, M, S>* = nullptr,
-          require_any_not_stan_scalar_t<T, M, S>* = nullptr>
-inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma,
-                                        double& lp) {
+          require_any_not_stan_scalar_t<T, M, S>* = nullptr,
+          require_t<math::disjunction<std::is_same<T_lp, double>,
+                                      is_prim_scalar_cl<T_lp>>>* = nullptr>
+inline auto offset_multiplier_constrain(const T& x, const M& mu_in,
+                                        const S& sigma_in, T_lp& lp) {
   using std::isfinite;
+  const auto& mu = opencl::internal::as_operand(mu_in);
+  const auto& sigma = opencl::internal::as_operand(sigma_in);
   const char* function = "offset_multiplier_constrain(OpenCL)";
-  check_consistent_sizes(function, "offset", mu, "multiplier", sigma,
+  check_consistent_sizes(function, "offset", mu_in, "multiplier", sigma_in,
                          "parameter", x);
   auto check_mu = check_cl(function, "offset", mu, "finite");
   auto check_sigma = check_cl(function, "multiplier", sigma, "positive finite");
@@ -89,7 +96,7 @@ inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma,
   results(check_mu, check_sigma, res, lp_inc)
       = expressions(isfinite(mu), isfinite(sigma) && sigma > 0,
                     elt_multiply(x, sigma) + mu, sum_2d(log(sigma)));
-  lp += sum(from_matrix_cl(lp_inc));
+  opencl::internal::add_sum(lp, lp_inc);
   return res;
 }
 

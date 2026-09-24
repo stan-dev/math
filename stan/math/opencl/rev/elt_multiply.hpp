@@ -27,7 +27,7 @@ namespace math {
 template <
     typename T_a, typename T_b,
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
-    require_any_var_t<T_a, T_b>* = nullptr>
+    require_any_st_var<T_a, T_b>* = nullptr>
 inline var_value<matrix_cl<double>> elt_multiply(T_a&& a, T_b&& b) {
   arena_t<T_a> a_arena = std::forward<T_a>(a);
   arena_t<T_b> b_arena = std::forward<T_b>(b);

@@ -1,9 +1,15 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/prim.hpp>
 #include <stan/math/opencl/kernels/scalar_reduce.hpp>
+#include <stan/math/opencl/kernels/scalar_params.hpp>
+#include <stan/math/opencl/kernels/gp_exp_quad_cov.hpp>
+#include <stan/math/opencl/kernels/gp_exponential_cov.hpp>
+#include <stan/math/opencl/kernels/gp_matern32_cov.hpp>
+#include <stan/math/opencl/kernels/gp_matern52_cov.hpp>
 #include <test/unit/util.hpp>
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
+#include <algorithm>
 #include <cmath>
 #include <limits>
 #include <string>
@@ -48,6 +54,22 @@ TEST(ScalarClKernels, scalar_reduce_builds_as_opencl_1_2) {
       {stan::math::opencl_kernels::scalar_prod_op, scalar_reduce_kernel_code});
 }
 
+TEST(ScalarClKernels, scalar_param_kernels_build_as_opencl_1_2) {
+  namespace k = stan::math::opencl_kernels;
+  for (const char* prefix :
+       {k::scalar_params_by_value, k::scalar_params_buffer}) {
+    for (const char* code :
+         {k::gp_exp_quad_cov_kernel_code, k::gp_exp_quad_cov_cross_kernel_code,
+          k::gp_exponential_cov_kernel_code,
+          k::gp_exponential_cov_cross_kernel_code,
+          k::gp_matern32_cov_kernel_code, k::gp_matern32_cov_cross_kernel_code,
+          k::gp_matern52_cov_kernel_code,
+          k::gp_matern52_cov_cross_kernel_code}) {
+      build_cl12({prefix, code});
+    }
+  }
+}
+
 TEST(ScalarClKernels, scalar_expression_builds_as_opencl_1_2) {
   matrix_cl<double> m_cl(MatrixXd::Ones(3, 2));
   matrix_cl<double> res_cl(3, 2);
@@ -89,7 +111,9 @@ TEST(ScalarClKernels, sum_into_sizes) {
     matrix_cl<double> m_cl(m);
     ScalarCl<double> res(-7.0);
     sum_into(res, m_cl, false);
-    EXPECT_NEAR(to_host(res), m.sum(), 1e-9)
+    // summation order differs from Eigen, so the tolerance is relative
+    EXPECT_NEAR(to_host(res), m.sum(),
+                1e-12 * std::max(1.0, m.size() + std::abs(m.sum())))
         << dims.first << "x" << dims.second;
   }
 }

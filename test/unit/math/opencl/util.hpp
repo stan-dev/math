@@ -266,14 +266,12 @@ auto scalar_cl_opencl_argument(const T& x) {
 template <typename Functor, typename... Args>
 inline void scalar_cl_argument_combinations(const Functor& f,
                                             const Args&... args) {
-#ifndef STAN_TEST_OPENCL_NO_SCALAR_CL
   if constexpr ((std::is_floating_point<Args>::value || ...)) {
     f(std::make_tuple(scalar_cl_cpu_argument<false>(args)...),
       std::make_tuple(scalar_cl_opencl_argument<false>(args)...));
     f(std::make_tuple(scalar_cl_cpu_argument<true>(args)...),
       std::make_tuple(scalar_cl_opencl_argument<true>(args)...));
   }
-#endif
 }
 
 template <typename Functor, std::size_t... Is, typename... Args>

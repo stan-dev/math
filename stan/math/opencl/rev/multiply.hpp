@@ -11,6 +11,7 @@
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/meta/is_kernel_expression.hpp>
+#include <stan/math/opencl/rev/scalar_cl.hpp>
 
 namespace stan {
 namespace math {
@@ -27,7 +28,7 @@ namespace math {
 template <
     typename T_a, typename T_b,
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
-    require_any_var_t<T_a, T_b>* = nullptr>
+    require_any_st_var<T_a, T_b>* = nullptr>
 inline auto multiply(T_a&& A, T_b&& B) {
   check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
@@ -58,7 +59,7 @@ inline auto multiply(T_a&& A, T_b&& B) {
 template <
     typename T_a, typename T_b,
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
-    require_any_var_t<T_a, T_b>* = nullptr>
+    require_any_st_var<T_a, T_b>* = nullptr>
 inline auto operator*(const T_a& A, const T_b& B) {
   return multiply(A, B);
 }
@@ -73,9 +74,10 @@ inline auto operator*(const T_a& A, const T_b& B) {
  * @param B matrix
  * @return product of matrix and scalar
  */
-template <typename T1, typename T2, require_stan_scalar_t<T1>* = nullptr,
+template <typename T1, typename T2,
+          require_t<opencl::internal::is_host_or_device_scalar<T1>>* = nullptr,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T2>* = nullptr,
-          require_any_var_t<T1, T2>* = nullptr>
+          require_any_st_var<T1, T2>* = nullptr>
 inline auto multiply(const T1& A, T2&& B) {
   arena_t<T2> b_arena = std::forward<T2>(B);
 
@@ -98,9 +100,10 @@ inline auto multiply(const T1& A, T2&& B) {
  * @param B scalar
  * @return product of matrix and scalar
  */
-template <typename T1, typename T2, require_stan_scalar_t<T2>* = nullptr,
+template <typename T1, typename T2,
+          require_t<opencl::internal::is_host_or_device_scalar<T2>>* = nullptr,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T1>* = nullptr,
-          require_any_var_t<T1, T2>* = nullptr>
+          require_any_st_var<T1, T2>* = nullptr>
 inline auto multiply(const T1& A, const T2& B) {
   return multiply(B, A);
 }

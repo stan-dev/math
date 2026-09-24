@@ -6,6 +6,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/opencl/scalar_cl_reduce.hpp>
 
 namespace stan {
 namespace math {
@@ -32,7 +33,10 @@ namespace math {
 template <typename T, typename L, typename U,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr,
           require_all_kernel_expressions_t<L, U>* = nullptr>
-inline matrix_cl<double> lub_constrain(const T& x, const L& lb, const U& ub) {
+inline matrix_cl<double> lub_constrain(const T& x, const L& lb_in,
+                                       const U& ub_in) {
+  const auto& lb = opencl::internal::as_operand(lb_in);
+  const auto& ub = opencl::internal::as_operand(ub_in);
   auto diff = ub - lb;
   auto lb_inf = lb == NEGATIVE_INFTY;
   auto ub_inf = ub == INFTY;
@@ -68,11 +72,15 @@ inline matrix_cl<double> lub_constrain(const T& x, const L& lb, const U& ub) {
  *   the free matrix.
  * @throw std::domain_error if ub <= lb
  */
-template <typename T, typename L, typename U,
+template <typename T, typename L, typename U, typename T_lp,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr,
-          require_all_kernel_expressions_t<L, U>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub,
-                          return_type_t<T, L, U>& lp) {
+          require_all_kernel_expressions_t<L, U>* = nullptr,
+          require_t<math::disjunction<std::is_same<T_lp, double>,
+                                      is_prim_scalar_cl<T_lp>>>* = nullptr>
+inline auto lub_constrain(const T& x, const L& lb_in, const U& ub_in,
+                          T_lp& lp) {
+  const auto& lb = opencl::internal::as_operand(lb_in);
+  const auto& ub = opencl::internal::as_operand(ub_in);
   auto diff = ub - lb;
   auto lb_inf = lb == NEGATIVE_INFTY;
   auto ub_inf = ub == INFTY;
@@ -92,7 +100,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
 
   results(check, res, lp_inc) = expressions(diff > 0.0, res_expr, lp_inc_expr);
 
-  lp += sum(from_matrix_cl(lp_inc));
+  opencl::internal::add_sum(lp, lp_inc);
 
   return res;
 }

@@ -1,6 +1,6 @@
 # GPU-resident `stan::math::opencl::ScalarCl<T>`
 
-Status: active (branch `feature/opencl-scalar`)
+Status: implemented on `feature/opencl-scalar`; see Implementation notes
 
 ## Goal
 
@@ -137,3 +137,77 @@ distributions migrate.
 - Stanc changes.
 - `ScalarCl<var>` GP hyperparameters (new derivative kernels).
 - Transfer-count tracing.
+
+## Implementation notes
+
+### Types added during implementation
+
+- Views `ScalarCl<const double&>` (read-only) and `ScalarCl<double&>`
+  (writable) are what `ScalarCl<var>::val()` / `.adj()` return. They share
+  the backing buffer and events and count as primitive device scalars
+  (`is_prim_scalar_cl`), so they broadcast in expressions and can be passed
+  to kernels.
+- `ScalarCl<arena_matrix_cl<double>>` is `arena_t` of primitive device
+  scalars. Reverse-pass callbacks created with `reverse_pass_callback` are
+  never destroyed, so captured device scalars must live in the arena.
+
+### Mechanisms
+
+- `opencl::internal::as_operand(x)` turns a device scalar into its
+  broadcasting `scalar_buf_` operation (other values pass through). Code that
+  applies comparisons, checks or arithmetic to parameters that may be device
+  scalars uses it so those pieces fuse into the surrounding kernel. Do not
+  bind its result to a local that outlives a returned expression.
+- `opencl::internal::as_kernel_buffer(x)` passes a device scalar's own buffer
+  to a handwritten kernel and uploads host values.
+- `opencl::make_partials_propagator` (explicitly qualified) builds the device
+  propagator; `stan::math::make_partials_propagator` rejects OpenCL
+  operands.
+- `adjoint_results` reduces matrix-sized derivatives into `ScalarCl<var>`
+  adjoints on the device.
+- Handwritten kernels with scalar parameters are written once with
+  `SCALAR_PARAM(name)` / `SCALAR_VALUE(name)` and compiled with the
+  `scalar_params_by_value` or `scalar_params_buffer` prefix (GP kernels).
+- Mixed operators `+ - * /` between device scalars and matrices, when an
+  operand is autodiff, live in `stan::math::opencl` and forward to `add`,
+  `subtract`, `multiply`, `divide`, `elt_divide`.
+
+### Fixes to existing code found on the way
+
+- Element-wise kernel generator operations on scalar-only operands reported
+  impossible diagonals (`{-rows() + 1, cols() - 1}` with dynamic size), which
+  marked results as diagonal-only (`dense_extreme_diagonals()`).
+- `results() = expressions()` took the thread count from the first expression
+  even if its size was dynamic.
+- Sums of expressions containing reductions are evaluated first.
+- `add_diag`'s reverse pass doubled the existing adjoint of a scalar `var`.
+- OpenCL distributions returned the normalizing constant instead of 0 for an
+  empty random variable with scalar parameters (`N == 0` vs the CPU's
+  `size_zero`); GLMs keep `N == 0` (instances).
+- `promote_scalar_t<double, matrix_cl<double>>` was `double`, so the
+  `rep_*` OpenCL tests never ran on OpenCL.
+
+### Remaining explicit host crossings
+
+All are explicit (`opencl::to_host`, `from_matrix_cl` or an explicit
+`ScalarCl<double>(x)` upload):
+
+- CPU `var` operands: `ScalarCl<var>(var)` and CPU `var` edges of the
+  partials propagator read one adjoint back in the reverse pass.
+- Data-dependent early returns in ~27 distributions
+  (`if (from_matrix_cl(flag).any()) return ...`) and the lazy argument checks
+  in the GLMs (`if (!isfinite(to_host(logp)))`).
+- Host-scalar branches of `bernoulli_lpmf` / `binomial_lpmf` compute on the
+  host and upload the result.
+- Norm check in prim `unit_vector_constrain`, probability sum check in
+  `dirichlet_lpdf`, `sigma` checks in `gp_dot_prod_cov` with device scalars.
+- `var& lp` / `double& lp` constraint overloads and `accumulator::add`.
+- Every `check_cl` reads its flag back (pre-existing).
+
+### Not done
+
+- `ScalarCl<var>` GP hyperparameters (new derivative kernels, separate PR).
+- Scalar-only calls of distributions (all arguments device scalars) are not
+  supported; at least one argument must be an OpenCL matrix.
+- Stanc-generated code using OpenCL distributions or reductions must convert
+  results explicitly until the compiler is updated.

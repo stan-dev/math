@@ -27,7 +27,7 @@ namespace math {
  */
 template <typename T_a, typename T_b,
           require_all_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
-          require_any_var_t<T_a, T_b>* = nullptr,
+          require_any_st_var<T_a, T_b>* = nullptr,
           require_any_not_stan_scalar_t<T_a, T_b>* = nullptr>
 inline auto lbeta(T_a&& a, T_b&& b) {
   arena_t<T_a> a_arena = std::forward<T_a>(a);

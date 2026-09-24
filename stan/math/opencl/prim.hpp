@@ -95,6 +95,7 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/pinned_matrix.hpp>
 #include <stan/math/opencl/plain_type.hpp>
+#include <stan/math/opencl/promote_scalar_type.hpp>
 #include <stan/math/opencl/ref_type_for_opencl.hpp>
 #include <stan/math/opencl/ref_type.hpp>
 #include <stan/math/opencl/to_ref_for_opencl.hpp>

@@ -23,7 +23,7 @@ namespace math {
  */
 template <typename T,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
-          require_any_var_t<T>* = nullptr>
+          require_any_st_var<T>* = nullptr>
 inline auto block(const T& m, size_t i, size_t j, size_t nrows, size_t ncols) {
   return m.block(i - 1, j - 1, nrows, ncols);
 }

@@ -32,6 +32,20 @@ inline auto rep_vector(const scalar_type_t<T>& x, int n) {
   return rep_matrix<T>(x, n, 1);
 }
 
+/** \ingroup opencl
+ * Creates a matrix_cl by replicating a device scalar.
+ *
+ * @tparam T type of the result
+ * @tparam S type of the device scalar
+ * @param x device scalar
+ * @param n number of elements in the result
+ * @return matrix_cl with replicated value from the input
+ */
+template <typename T, typename S, require_scalar_cl_t<S>* = nullptr>
+inline auto rep_vector(const S& x, int n) {
+  return rep_matrix<T>(x, n, 1);
+}
+
 }  // namespace math
 }  // namespace stan
 

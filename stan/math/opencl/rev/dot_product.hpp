@@ -24,7 +24,7 @@ namespace math {
  * @throw std::domain_error if sizes of v1 and v2 do not match.
  */
 template <
-    typename T1, typename T2, require_any_var_t<T1, T2>* = nullptr,
+    typename T1, typename T2, require_any_st_var<T1, T2>* = nullptr,
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T1, T2>* = nullptr>
 inline opencl::ScalarCl<var> dot_product(T1&& v1, T2&& v2) {
   arena_t<T1> v1_arena = std::forward<T1>(v1);

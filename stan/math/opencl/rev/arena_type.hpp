@@ -24,6 +24,15 @@ struct arena_type_impl<
       typename arena_type_impl<stan::math::matrix_cl<value_type_t<T>>>::type;
 };
 
+/**
+ * Primitive device scalars are copied into the arena.
+ */
+template <typename T>
+struct arena_type_impl<T, require_t<is_prim_scalar_cl<T>>> {
+  using type
+      = stan::math::opencl::ScalarCl<stan::math::arena_matrix_cl<double>>;
+};
+
 }  // namespace internal
 }  // namespace stan
 #endif

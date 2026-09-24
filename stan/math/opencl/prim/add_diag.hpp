@@ -5,6 +5,7 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/opencl/scalar_cl.hpp>
 
 namespace stan {
 namespace math {
@@ -25,7 +26,7 @@ template <typename T_m, typename T_a,
           require_all_kernel_expressions_and_none_scalar_t<T_m>* = nullptr,
           require_all_kernel_expressions_t<T_a>* = nullptr>
 inline auto add_diag(T_m&& mat, T_a&& to_add) {  // NOLINT
-  if constexpr (!is_stan_scalar<T_a>::value) {
+  if constexpr (!opencl::internal::is_host_or_device_scalar<T_a>::value) {
     const size_t length_diag = std::min(mat.rows(), mat.cols());
     check_consistent_sizes("add_diag (OpenCL)", "number of elements of to_add",
                            to_add, "diagonal", length_diag);

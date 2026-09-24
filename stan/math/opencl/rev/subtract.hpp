@@ -26,7 +26,7 @@ namespace math {
  */
 template <typename T_a, typename T_b,
           require_all_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
-          require_any_var_t<T_a, T_b>* = nullptr,
+          require_any_st_var<T_a, T_b>* = nullptr,
           require_any_not_stan_scalar_t<T_a, T_b>* = nullptr>
 inline auto subtract(T_a&& a, T_b&& b) {
   arena_t<T_a> a_arena = a;
@@ -51,7 +51,7 @@ inline auto subtract(T_a&& a, T_b&& b) {
 template <
     typename T_a, typename T_b,
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
-    require_any_var_t<T_a, T_b>* = nullptr>
+    require_any_st_var<T_a, T_b>* = nullptr>
 inline auto operator-(const T_a& a, const T_b& b) {
   return subtract(a, b);
 }

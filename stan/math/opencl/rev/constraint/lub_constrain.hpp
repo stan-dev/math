@@ -12,6 +12,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/meta/is_kernel_expression.hpp>
+#include <stan/math/opencl/rev/scalar_cl.hpp>
 
 namespace stan {
 namespace math {
@@ -37,7 +38,7 @@ namespace math {
 template <
     typename T_x, typename T_lb, typename T_ub,
     require_all_prim_or_rev_kernel_expression_t<T_x, T_lb, T_ub>* = nullptr,
-    require_any_var_t<T_x, T_lb, T_ub>* = nullptr,
+    require_any_st_var<T_x, T_lb, T_ub>* = nullptr,
     require_any_not_stan_scalar_t<T_x, T_lb, T_ub>* = nullptr>
 inline var_value<matrix_cl<double>> lub_constrain(T_x&& x, T_lb&& lb,
                                                   T_ub&& ub) {
@@ -46,21 +47,28 @@ inline var_value<matrix_cl<double>> lub_constrain(T_x&& x, T_lb&& lb,
   arena_t<T_ub> ub_arena = std::forward<T_ub>(ub);
 
   return make_callback_var(
-      lub_constrain(value_of(x_arena), value_of(lb_arena), value_of(ub_arena)),
+      lub_constrain(opencl::internal::as_operand(value_of(x_arena)),
+                    opencl::internal::as_operand(value_of(lb_arena)),
+                    opencl::internal::as_operand(value_of(ub_arena))),
       [x_arena, lb_arena,
        ub_arena](vari_value<matrix_cl<double>>& res) mutable {
-        auto lb_inf = value_of(lb_arena) == NEGATIVE_INFTY;
-        auto ub_inf = value_of(ub_arena) == INFTY;
-        auto inv_logit_x = inv_logit(value_of(x_arena));
+        auto lb_inf = opencl::internal::as_operand(value_of(lb_arena))
+                      == NEGATIVE_INFTY;
+        auto ub_inf = opencl::internal::as_operand(value_of(ub_arena)) == INFTY;
+        auto inv_logit_x
+            = inv_logit(opencl::internal::as_operand(value_of(x_arena)));
         auto one_m_inv_logit_x = 1.0 - inv_logit_x;
-        auto exp_x = exp(value_of(x_arena));
+        auto exp_x = exp(opencl::internal::as_operand(value_of(x_arena)));
         auto res_adj_exp_x = elt_multiply(res.adj(), exp_x);
         adjoint_results(x_arena, lb_arena, ub_arena) += expressions(
             select(lb_inf, select(ub_inf, res.adj(), -res_adj_exp_x),
                    select(ub_inf, res_adj_exp_x,
                           elt_multiply(
-                              elt_multiply(res.adj(), (value_of(ub_arena)
-                                                       - value_of(lb_arena))),
+                              elt_multiply(res.adj(),
+                                           (opencl::internal::as_operand(
+                                                value_of(ub_arena))
+                                            - opencl::internal::as_operand(
+                                                value_of(lb_arena)))),
                               elt_multiply(inv_logit_x, one_m_inv_logit_x)))),
             select(lb_inf, 0,
                    select(ub_inf, res.adj(),
@@ -91,31 +99,40 @@ inline var_value<matrix_cl<double>> lub_constrain(T_x&& x, T_lb&& lb,
  * @return constrained matrix
  */
 template <
-    typename T_x, typename T_lb, typename T_ub,
+    typename T_x, typename T_lb, typename T_ub, typename T_lp,
     require_all_prim_or_rev_kernel_expression_t<T_x, T_lb, T_ub>* = nullptr,
-    require_any_var_t<T_x, T_lb, T_ub>* = nullptr,
-    require_any_not_stan_scalar_t<T_x, T_lb, T_ub>* = nullptr>
+    require_any_st_var<T_x, T_lb, T_ub>* = nullptr,
+    require_any_not_stan_scalar_t<T_x, T_lb, T_ub>* = nullptr,
+    require_t<
+        math::disjunction<is_var<T_lp>, is_rev_scalar_cl<T_lp>>>* = nullptr>
 inline var_value<matrix_cl<double>> lub_constrain(T_x&& x, T_lb&& lb, T_ub&& ub,
-                                                  var& lp) {
+                                                  T_lp& lp) {
   arena_t<T_x> x_arena = std::forward<T_x>(x);
   arena_t<T_lb> lb_arena = std::forward<T_lb>(lb);
   arena_t<T_ub> ub_arena = std::forward<T_ub>(ub);
 
-  double lp_inc = 0;
-  matrix_cl<double> res = lub_constrain(value_of(x_arena), value_of(lb_arena),
-                                        value_of(ub_arena), lp_inc);
+  std::conditional_t<is_rev_scalar_cl<T_lp>::value, opencl::ScalarCl<double>,
+                     double>
+      lp_inc{};
+  matrix_cl<double> res
+      = lub_constrain(opencl::internal::as_operand(value_of(x_arena)),
+                      opencl::internal::as_operand(value_of(lb_arena)),
+                      opencl::internal::as_operand(value_of(ub_arena)), lp_inc);
   lp += lp_inc;
 
   return make_callback_var(
       std::move(res), [x_arena, lb_arena, ub_arena,
                        lp](vari_value<matrix_cl<double>>& res) mutable {
-        auto lb_inf = value_of(lb_arena) == NEGATIVE_INFTY;
-        auto ub_inf = value_of(ub_arena) == INFTY;
-        auto inv_logit_x = inv_logit(value_of(x_arena));
+        auto lb_inf = opencl::internal::as_operand(value_of(lb_arena))
+                      == NEGATIVE_INFTY;
+        auto ub_inf = opencl::internal::as_operand(value_of(ub_arena)) == INFTY;
+        auto inv_logit_x
+            = inv_logit(opencl::internal::as_operand(value_of(x_arena)));
         auto one_m_inv_logit_x = 1.0 - inv_logit_x;
-        auto diff = value_of(ub_arena) - value_of(lb_arena);
+        auto diff = opencl::internal::as_operand(value_of(ub_arena))
+                    - opencl::internal::as_operand(value_of(lb_arena));
         auto one_over_diff = elt_divide(1.0, diff);
-        auto exp_x = exp(value_of(x_arena));
+        auto exp_x = exp(opencl::internal::as_operand(value_of(x_arena)));
         auto res_adj_exp_x = elt_multiply(res.adj(), exp_x);
         adjoint_results(x_arena, lb_arena, ub_arena) += expressions(
             select(lb_inf, select(ub_inf, res.adj(), lp.adj() - res_adj_exp_x),

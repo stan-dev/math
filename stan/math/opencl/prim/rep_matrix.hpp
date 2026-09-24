@@ -7,6 +7,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/err.hpp>
+#include <stan/math/opencl/scalar_cl.hpp>
 
 namespace stan {
 namespace math {
@@ -29,6 +30,26 @@ inline auto rep_matrix(const value_type_t<T>& x, int n, int m) {
   check_nonnegative("rep_matrix (OpenCL)", "rows", n);
   check_nonnegative("rep_matrix (OpenCL)", "cols", m);
   return constant(x, n, m);
+}
+
+/** \ingroup opencl
+ * Creates a matrix_cl by replicating a device scalar. No data is transferred
+ * to or from the host.
+ *
+ * @tparam T type of the result matrix
+ * @tparam S type of the device scalar
+ * @param x device scalar
+ * @param n number of rows in the result matrix
+ * @param m number of columns in the result matrix
+ * @return matrix_cl with replicated value from the input
+ * @throw <code>domain_error</code> if the requested dimensions are negative
+ */
+template <typename T, typename S, require_matrix_cl_t<T>* = nullptr,
+          require_prim_scalar_cl_t<S>* = nullptr>
+inline matrix_cl<double> rep_matrix(const S& x, int n, int m) {
+  check_nonnegative("rep_matrix (OpenCL)", "rows", n);
+  check_nonnegative("rep_matrix (OpenCL)", "cols", m);
+  return constant(0.0, n, m) + x;
 }
 
 /** \ingroup opencl

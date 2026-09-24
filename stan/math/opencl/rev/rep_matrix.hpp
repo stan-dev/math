@@ -9,6 +9,7 @@
 #include <stan/math/opencl/prim/rep_matrix.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/opencl/rev/scalar_cl.hpp>
+#include <stan/math/opencl/scalar_cl_reduce.hpp>
 
 namespace stan {
 namespace math {
@@ -51,6 +52,27 @@ inline var_value<matrix_cl<double>> rep_matrix(const var& A, int n, int m) {
  * requested dimensions are negative
  *
  */
+/**
+ * Creates a matrix by replicating a device var. The reverse pass sums the
+ * result adjoints into the device adjoint of the scalar without reading them
+ * back.
+ *
+ * @tparam T_ret type of the result
+ * @param A device var
+ * @param n number of rows in the result matrix
+ * @param m number of columns in the result matrix
+ * @return var with replicated value from the input
+ */
+template <typename T_ret, require_var_vt<is_matrix_cl, T_ret>* = nullptr>
+inline var_value<matrix_cl<double>> rep_matrix(const opencl::ScalarCl<var>& A,
+                                               int n, int m) {
+  return make_callback_var(rep_matrix<matrix_cl<double>>(A.val(), n, m),
+                           [A](vari_value<matrix_cl<double>>& res) mutable {
+                             opencl::internal::sum_into(A.adj(), res.adj(),
+                                                        true);
+                           });
+}
+
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline var_value<matrix_cl<double>> rep_matrix(const var_value<T>& A, int m) {

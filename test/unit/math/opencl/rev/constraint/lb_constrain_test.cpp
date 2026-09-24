@@ -2,8 +2,6 @@
 #include <stan/math/opencl/rev.hpp>
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
-// TODO(ScalarCl): remove once this function accepts opencl::ScalarCl
-#define STAN_TEST_OPENCL_NO_SCALAR_CL
 #include <test/unit/math/opencl/util.hpp>
 
 auto lb_constrain_functor = [](const auto& a, const auto& b) {

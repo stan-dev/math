@@ -6,6 +6,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/opencl/rev/scalar_cl.hpp>
 
 namespace stan {
 namespace math {
@@ -36,7 +37,7 @@ namespace math {
 template <typename T, typename M, typename S,
           require_all_prim_or_rev_kernel_expression_t<T, M, S>* = nullptr,
           require_any_not_stan_scalar_t<T, M, S>* = nullptr,
-          require_any_var_t<T, M, S>* = nullptr>
+          require_any_st_var<T, M, S>* = nullptr>
 inline var_value<matrix_cl<double>> offset_multiplier_constrain(T&& A, M&& mu,
                                                                 S&& sigma) {
   if (A.size() == 0) {
@@ -46,13 +47,18 @@ inline var_value<matrix_cl<double>> offset_multiplier_constrain(T&& A, M&& mu,
   arena_t<M> mu_arena = std::forward<M>(mu);
   arena_t<S> sigma_arena = std::forward<S>(sigma);
   return make_callback_var(
-      offset_multiplier_constrain(value_of(A_arena), value_of(mu_arena),
-                                  value_of(sigma_arena)),
+      offset_multiplier_constrain(
+          opencl::internal::as_operand(value_of(A_arena)),
+          opencl::internal::as_operand(value_of(mu_arena)),
+          opencl::internal::as_operand(value_of(sigma_arena))),
       [A_arena, mu_arena,
        sigma_arena](vari_value<matrix_cl<double>>& res) mutable {
         adjoint_results(A_arena, mu_arena, sigma_arena) += expressions(
-            elt_multiply(res.adj(), value_of(sigma_arena)), res.adj(),
-            elt_multiply(res.adj(), value_of(A_arena)));
+            elt_multiply(res.adj(),
+                         opencl::internal::as_operand(value_of(sigma_arena))),
+            res.adj(),
+            elt_multiply(res.adj(),
+                         opencl::internal::as_operand(value_of(A_arena))));
       });
 }
 
@@ -80,13 +86,15 @@ inline var_value<matrix_cl<double>> offset_multiplier_constrain(T&& A, M&& mu,
  * @throw std::domain_error if sigma <= 0
  * @throw std::domain_error if mu is not finite
  */
-template <typename T, typename M, typename S,
+template <typename T, typename M, typename S, typename T_lp,
           require_all_prim_or_rev_kernel_expression_t<T, M, S>* = nullptr,
           require_any_not_stan_scalar_t<T, M, S>* = nullptr,
-          require_any_var_t<T, M, S>* = nullptr>
+          require_any_st_var<T, M, S>* = nullptr,
+          require_t<math::disjunction<is_var<T_lp>,
+                                      is_rev_scalar_cl<T_lp>>>* = nullptr>
 inline var_value<matrix_cl<double>> offset_multiplier_constrain(T&& A, M&& mu,
                                                                 S&& sigma,
-                                                                var& lp) {
+                                                                T_lp& lp) {
   if (A.size() == 0) {
     return A;
   }
@@ -94,17 +102,25 @@ inline var_value<matrix_cl<double>> offset_multiplier_constrain(T&& A, M&& mu,
   arena_t<M> mu_arena = std::forward<M>(mu);
   arena_t<S> sigma_arena = std::forward<S>(sigma);
 
-  double lp_inc = 0;
-  auto res = offset_multiplier_constrain(value_of(A_arena), value_of(mu_arena),
-                                         value_of(sigma_arena), lp_inc);
+  std::conditional_t<is_rev_scalar_cl<T_lp>::value, opencl::ScalarCl<double>,
+                     double>
+      lp_inc{};
+  auto res = offset_multiplier_constrain(
+      opencl::internal::as_operand(value_of(A_arena)),
+      opencl::internal::as_operand(value_of(mu_arena)),
+      opencl::internal::as_operand(value_of(sigma_arena)), lp_inc);
   lp += lp_inc;
   return make_callback_var(
       std::move(res), [A_arena, mu_arena, sigma_arena,
                        lp](vari_value<matrix_cl<double>>& res) mutable {
         adjoint_results(A_arena, mu_arena, sigma_arena) += expressions(
-            elt_multiply(res.adj(), value_of(sigma_arena)), res.adj(),
-            elt_multiply(res.adj(), value_of(A_arena))
-                + elt_divide(lp.adj(), value_of(sigma_arena)));
+            elt_multiply(res.adj(),
+                         opencl::internal::as_operand(value_of(sigma_arena))),
+            res.adj(),
+            elt_multiply(res.adj(),
+                         opencl::internal::as_operand(value_of(A_arena)))
+                + elt_divide(lp.adj(), opencl::internal::as_operand(
+                                           value_of(sigma_arena))));
       });
 }
 

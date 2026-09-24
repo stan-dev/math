@@ -7,6 +7,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/gp_exp_quad_cov.hpp>
 #include <stan/math/opencl/err.hpp>
+#include <stan/math/opencl/scalar_cl_functions.hpp>
 #include <CL/opencl.hpp>
 
 namespace stan {
@@ -24,14 +25,26 @@ namespace math {
  * @return Squared distance between elements of x.
  */
 template <typename T1, typename T2, typename T3,
-          typename = require_all_arithmetic_t<T1, T2, T3>>
+          typename
+          = require_all_t<std::is_arithmetic<T1>,
+                          opencl::internal::is_prim_host_or_device_scalar<T2>,
+                          opencl::internal::is_prim_host_or_device_scalar<T3>>>
 inline matrix_cl<return_type_t<T1, T2, T3>> gp_exp_quad_cov(
-    const matrix_cl<T1>& x, const T2 sigma, const T3 length_scale) {
+    const matrix_cl<T1>& x, const T2& sigma, const T3& length_scale) {
   matrix_cl<return_type_t<T1, T2, T3>> res(x.cols(), x.cols());
   try {
-    opencl_kernels::gp_exp_quad_cov(cl::NDRange(x.cols(), x.cols()), x, res,
-                                    sigma * sigma, -0.5 / square(length_scale),
-                                    x.cols(), x.rows());
+    if constexpr (math::disjunction<is_scalar_cl<T2>,
+                                    is_scalar_cl<T3>>::value) {
+      opencl_kernels::gp_exp_quad_cov_scalar_cl(
+          cl::NDRange(x.cols(), x.cols()), x, res,
+          opencl::internal::to_device_scalar(sigma * sigma),
+          opencl::internal::to_device_scalar(-0.5 / square(length_scale)),
+          x.cols(), x.rows());
+    } else {
+      opencl_kernels::gp_exp_quad_cov(
+          cl::NDRange(x.cols(), x.cols()), x, res, sigma * sigma,
+          -0.5 / square(length_scale), x.cols(), x.rows());
+    }
   } catch (const cl::Error& e) {
     check_opencl_error("gp_exp_quad_cov", e);
   }
@@ -56,16 +69,28 @@ inline matrix_cl<return_type_t<T1, T2, T3>> gp_exp_quad_cov(
  * @return Squared distance between elements of x and y.
  */
 template <typename T1, typename T2, typename T3, typename T4,
-          typename = require_all_arithmetic_t<T1, T2, T3, T4>>
+          typename
+          = require_all_t<std::is_arithmetic<T1>, std::is_arithmetic<T2>,
+                          opencl::internal::is_prim_host_or_device_scalar<T3>,
+                          opencl::internal::is_prim_host_or_device_scalar<T4>>>
 inline matrix_cl<return_type_t<T1, T2, T3, T4>> gp_exp_quad_cov(
-    const matrix_cl<T1>& x, const matrix_cl<T2>& y, const T3 sigma,
-    const T4 length_scale) {
+    const matrix_cl<T1>& x, const matrix_cl<T2>& y, const T3& sigma,
+    const T4& length_scale) {
   check_size_match("gp_exp_quad_cov_cross", "x", x.rows(), "y", y.rows());
   matrix_cl<return_type_t<T1, T2, T3, T4>> res(x.cols(), y.cols());
   try {
-    opencl_kernels::gp_exp_quad_cov_cross(
-        cl::NDRange(x.cols(), y.cols()), x, y, res, sigma * sigma,
-        -0.5 / square(length_scale), x.cols(), y.cols(), x.rows());
+    if constexpr (math::disjunction<is_scalar_cl<T3>,
+                                    is_scalar_cl<T4>>::value) {
+      opencl_kernels::gp_exp_quad_cov_cross_scalar_cl(
+          cl::NDRange(x.cols(), y.cols()), x, y, res,
+          opencl::internal::to_device_scalar(sigma * sigma),
+          opencl::internal::to_device_scalar(-0.5 / square(length_scale)),
+          x.cols(), y.cols(), x.rows());
+    } else {
+      opencl_kernels::gp_exp_quad_cov_cross(
+          cl::NDRange(x.cols(), y.cols()), x, y, res, sigma * sigma,
+          -0.5 / square(length_scale), x.cols(), y.cols(), x.rows());
+    }
   } catch (const cl::Error& e) {
     check_opencl_error("gp_exp_quad_cov_cross", e);
   }

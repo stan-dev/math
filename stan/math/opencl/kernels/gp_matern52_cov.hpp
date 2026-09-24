@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/kernels/scalar_params.hpp>
 #include <string>
 
 namespace stan {
@@ -23,8 +24,8 @@ static constexpr const char* gp_matern52_cov_kernel_code = STRINGIFY(
      * @param element_size the number of doubles that make one element of x
      */
     __kernel void gp_matern52_cov(
-        const __global double* x, __global double* res, const double sigma_sq,
-        const double root_5_inv_l, const double inv_l_sq_5_3, const int size,
+        const __global double* x, __global double* res, SCALAR_PARAM(sigma_sq),
+        SCALAR_PARAM(root_5_inv_l), SCALAR_PARAM(inv_l_sq_5_3), const int size,
         const int element_size) {
       const int i = get_global_id(0);
       const int j = get_global_id(1);
@@ -36,12 +37,14 @@ static constexpr const char* gp_matern52_cov_kernel_code = STRINGIFY(
             sum += d * d;
           }
           double dist = sqrt(sum);
-          double a = sigma_sq * (1.0 + root_5_inv_l * dist + inv_l_sq_5_3 * sum)
-                     * exp(-root_5_inv_l * dist);
+          double a = SCALAR_VALUE(sigma_sq)
+                     * (1.0 + SCALAR_VALUE(root_5_inv_l) * dist
+                        + SCALAR_VALUE(inv_l_sq_5_3) * sum)
+                     * exp(-SCALAR_VALUE(root_5_inv_l) * dist);
           res[j * size + i] = a;
           res[i * size + j] = a;
         } else if (i == j) {
-          res[j * size + i] = sigma_sq;
+          res[j * size + i] = SCALAR_VALUE(sigma_sq);
         }
       }
     }
@@ -53,7 +56,16 @@ static constexpr const char* gp_matern52_cov_kernel_code = STRINGIFY(
  * See the docs for \link kernels/gp_matern52_cov.hpp gp_matern52_cov() \endlink
  */
 const kernel_cl<in_buffer, out_buffer, double, double, double, int, int>
-    gp_matern52_cov("gp_matern52_cov", {gp_matern52_cov_kernel_code});
+    gp_matern52_cov("gp_matern52_cov",
+                    {scalar_params_by_value, gp_matern52_cov_kernel_code});
+
+/** \ingroup opencl_kernels
+ * gp_matern52_cov with its scalar parameters passed as device scalars.
+ */
+const kernel_cl<in_buffer, out_buffer, in_buffer, in_buffer, in_buffer, int,
+                int>
+    gp_matern52_cov_scalar_cl("gp_matern52_cov", {scalar_params_buffer,
+                                                  gp_matern52_cov_kernel_code});
 
 // \cond
 static constexpr const char* gp_matern52_cov_cross_kernel_code = STRINGIFY(
@@ -77,9 +89,9 @@ static constexpr const char* gp_matern52_cov_cross_kernel_code = STRINGIFY(
      */
     __kernel void gp_matern52_cov_cross(
         const __global double* x1, const __global double* x2,
-        __global double* res, const double sigma_sq, const double root_5_inv_l,
-        const double inv_l_sq_5_3, const int size1, const int size2,
-        const int element_size) {
+        __global double* res, SCALAR_PARAM(sigma_sq),
+        SCALAR_PARAM(root_5_inv_l), SCALAR_PARAM(inv_l_sq_5_3), const int size1,
+        const int size2, const int element_size) {
       const int i = get_global_id(0);
       const int j = get_global_id(1);
       if (i < size1 && j < size2) {
@@ -89,9 +101,10 @@ static constexpr const char* gp_matern52_cov_cross_kernel_code = STRINGIFY(
           sum += d * d;
         }
         double dist = sqrt(sum);
-        res[j * size1 + i] = sigma_sq
-                             * (1.0 + root_5_inv_l * dist + inv_l_sq_5_3 * sum)
-                             * exp(-root_5_inv_l * dist);
+        res[j * size1 + i] = SCALAR_VALUE(sigma_sq)
+                             * (1.0 + SCALAR_VALUE(root_5_inv_l) * dist
+                                + SCALAR_VALUE(inv_l_sq_5_3) * sum)
+                             * exp(-SCALAR_VALUE(root_5_inv_l) * dist);
       }
     }
     // \cond
@@ -105,7 +118,17 @@ static constexpr const char* gp_matern52_cov_cross_kernel_code = STRINGIFY(
 const kernel_cl<in_buffer, in_buffer, out_buffer, double, double, double, int,
                 int, int>
     gp_matern52_cov_cross("gp_matern52_cov_cross",
-                          {gp_matern52_cov_cross_kernel_code});
+                          {scalar_params_by_value,
+                           gp_matern52_cov_cross_kernel_code});
+
+/** \ingroup opencl_kernels
+ * gp_matern52_cov_cross with its scalar parameters passed as device scalars.
+ */
+const kernel_cl<in_buffer, in_buffer, out_buffer, in_buffer, in_buffer,
+                in_buffer, int, int, int>
+    gp_matern52_cov_cross_scalar_cl("gp_matern52_cov_cross",
+                                    {scalar_params_buffer,
+                                     gp_matern52_cov_cross_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

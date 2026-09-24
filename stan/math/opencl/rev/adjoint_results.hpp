@@ -3,6 +3,8 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_generator/multi_result_kernel.hpp>
+#include <stan/math/opencl/rev/scalar_cl.hpp>
+#include <stan/math/opencl/scalar_cl_reduce.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <tuple>
@@ -27,10 +29,11 @@ class adjoint_results_cl : protected results_cl<T_results...> {
 
   /**
    * Incrementing \c adjoint_results_cl object by \c expressions_cl object
-   * executes one or two kernels that evaluate expressions and increments
-   * results' adjoints by those expressions. Non-var results are ignored.
-   * Scalar results's adjoints get incremented by the sum of respective
-   * expressions.
+   * executes kernels that evaluate expressions and increment results'
+   * adjoints by those expressions. Non-var results are ignored. Scalar
+   * results' adjoints get incremented by the sum of respective expressions:
+   * CPU `var` adjoints are finished on the host, `opencl::ScalarCl<var>`
+   * adjoints stay on the device.
    * @tparam T_expressions types of expressions
    * @param exprs expressions
    */
@@ -41,35 +44,50 @@ class adjoint_results_cl : protected results_cl<T_results...> {
     index_apply<sizeof...(T_expressions)>([&](auto... Is) {
       auto scalars = std::tuple_cat(select_scalar_assignments(
           std::get<Is>(this->results_), std::get<Is>(exprs.expressions_))...);
+      auto device_scalars = std::tuple_cat(select_device_scalar_assignments(
+          std::get<Is>(this->results_), std::get<Is>(exprs.expressions_))...);
       auto nonscalars_tmp = std::tuple_cat(
           select_nonscalar_assignments<assign_op_cl::plus_equals>(
               std::get<Is>(this->results_),
               std::get<Is>(exprs.expressions_))...);
 
-      index_apply<std::tuple_size<decltype(nonscalars_tmp)>::value>(
-          [&](auto... Is_nonscal) {
-            auto nonscalars = std::make_tuple(
-                std::make_pair(std::get<Is_nonscal>(nonscalars_tmp).first,
-                               std::get<Is_nonscal>(nonscalars_tmp).second)...);
+      index_apply<std::tuple_size<decltype(
+          nonscalars_tmp)>::value>([&](auto... Is_nonscal) {
+        auto nonscalars = std::make_tuple(
+            std::make_pair(std::get<Is_nonscal>(nonscalars_tmp).first,
+                           std::get<Is_nonscal>(nonscalars_tmp).second)...);
 
-            index_apply<std::tuple_size<decltype(scalars)>::value>(
-                [&](auto... Is_scal) {
-                  // evaluate all expressions
-                  this->assignment_impl(std::tuple_cat(
-                      nonscalars,
-                      this->template make_assignment_pair<
-                          assign_op_cl::plus_equals>(
-                          std::get<2>(std::get<Is_scal>(scalars)),
-                          sum_2d(std::get<1>(std::get<Is_scal>(scalars))))...));
+        index_apply<
+            std::tuple_size<decltype(scalars)>::value>([&](auto... Is_scal) {
+          index_apply<std::tuple_size<decltype(
+              device_scalars)>::value>([&](auto... Is_dev) {
+            // evaluate all expressions; scalar results get partial
+            // sums
+            this->assignment_impl(std::tuple_cat(
+                nonscalars,
+                this->template make_assignment_pair<assign_op_cl::plus_equals>(
+                    std::get<2>(std::get<Is_scal>(scalars)),
+                    sum_2d(std::get<1>(std::get<Is_scal>(scalars))))...,
+                this->template make_assignment_pair<assign_op_cl::plus_equals>(
+                    std::get<2>(std::get<Is_dev>(device_scalars)),
+                    sum_2d(std::get<1>(std::get<Is_dev>(device_scalars))))...));
 
-                  // copy results from the OpenCL device and increment the
-                  // adjoints
-                  std::tie(std::get<0>(std::get<Is_scal>(scalars))...)
-                      = std::make_tuple(std::get<0>(std::get<Is_scal>(scalars))
-                                        + sum(from_matrix_cl(std::get<2>(
-                                            std::get<Is_scal>(scalars))))...);
-                });
+            // CPU var results: copy the partial sums from the
+            // OpenCL device and increment the adjoints
+            std::tie(std::get<0>(std::get<Is_scal>(scalars))...)
+                = std::make_tuple(std::get<0>(std::get<Is_scal>(scalars))
+                                  + sum(from_matrix_cl(std::get<2>(
+                                      std::get<Is_scal>(scalars))))...);
+
+            // device var results: finish the sums on the device
+            static_cast<void>(std::initializer_list<int>{
+                (opencl::internal::sum_into(
+                     std::get<0>(std::get<Is_dev>(device_scalars)),
+                     std::get<2>(std::get<Is_dev>(device_scalars)), true),
+                 0)...});
           });
+        });
+      });
     });
   }
 
@@ -103,6 +121,38 @@ class adjoint_results_cl : protected results_cl<T_results...> {
   }
 
   /**
+   * Selects assignments that have device var (`opencl::ScalarCl<var>`)
+   * results.
+   * @tparam T_expression type of expression
+   * @param result result
+   * @param expression expression
+   * @return triplet of a view of the device adjoint, expression and temporary
+   * `matrix_cl`
+   */
+  template <typename T_expression>
+  auto select_device_scalar_assignments(const opencl::ScalarCl<var>& result,
+                                        T_expression&& expression) {
+    return std::make_tuple(
+        std::tuple<opencl::ScalarCl<double&>, T_expression, matrix_cl<double>>(
+            result.adj(), std::forward<T_expression>(expression), {}));
+  }
+  /**
+   * Selects assignments that have device var results.
+   * @tparam T_result type of result. This overload is used for results that
+   * are not device vars.
+   * @tparam T_expression type of expression
+   * @param result result
+   * @param expression expression
+   * @return empty tuple
+   */
+  template <typename T_result, typename T_expression,
+            require_not_rev_scalar_cl_t<T_result>* = nullptr>
+  auto select_device_scalar_assignments(T_result&& result,
+                                        T_expression&& expression) {
+    return std::make_tuple();
+  }
+
+  /**
    * Selects assignments that have non-scalar var results.
    * @tparam AssignOp an optional `assign_op_cl` that dictates whether the
    * object is assigned using standard or compound assign.
@@ -115,6 +165,7 @@ class adjoint_results_cl : protected results_cl<T_results...> {
    */
   template <assign_op_cl AssignOp, typename T_result, typename T_expression,
             require_not_stan_scalar_t<T_result>* = nullptr,
+            require_not_rev_scalar_cl_t<T_result>* = nullptr,
             require_st_var<T_result>* = nullptr>
   auto select_nonscalar_assignments(T_result&& result,
                                     T_expression&& expression) {
@@ -135,6 +186,7 @@ class adjoint_results_cl : protected results_cl<T_results...> {
   template <
       assign_op_cl AssignOp, typename T_result, typename T_expression,
       std::enable_if_t<is_stan_scalar<T_result>::value
+                       || is_rev_scalar_cl<T_result>::value
                        || !is_var<scalar_type_t<T_result>>::value>* = nullptr>
   auto select_nonscalar_assignments(T_result&& result,
                                     T_expression&& expression) {

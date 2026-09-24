@@ -4,6 +4,7 @@
 #include <test/unit/math/rev/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
+#include <algorithm>
 #include <cmath>
 #include <limits>
 #include <type_traits>
@@ -81,10 +82,14 @@ TEST(ScalarClReductions, sum_sizes) {
            {0, 0}, {1, 1}, {5, 1}, {1, 5}, {3, 2000}, {2000, 3}, {700, 700}}) {
     MatrixXd m = MatrixXd::Random(dims.first, dims.second);
     matrix_cl<double> m_cl(m);
-    EXPECT_NEAR(to_host(stan::math::sum(m_cl)), m.sum(), 1e-9)
+    // summation order differs from Eigen, so the tolerance is relative
+    const double expected = m.sum();
+    const double expected2 = (m.array() * 2.0 - 1.0).sum();
+    EXPECT_NEAR(to_host(stan::math::sum(m_cl)), expected,
+                1e-12 * std::max(1.0, m.size() + std::abs(expected)))
         << dims.first << "x" << dims.second;
-    EXPECT_NEAR(to_host(stan::math::sum(m_cl * 2.0 - 1.0)),
-                (m.array() * 2.0 - 1.0).sum(), 1e-9)
+    EXPECT_NEAR(to_host(stan::math::sum(m_cl * 2.0 - 1.0)), expected2,
+                1e-12 * std::max(1.0, m.size() + std::abs(expected2)))
         << dims.first << "x" << dims.second;
   }
 }
@@ -135,4 +140,60 @@ TEST_F(AgradRev, ScalarClReductions_resident_chain_gradient) {
   res.grad();
   EXPECT_MATRIX_NEAR(stan::math::from_matrix_cl(x.adj()), cpu_grad, 1e-10);
 }
+TEST_F(AgradRev, ScalarClReductions_plan_example) {
+  // The example from the design doc: a CPU var moved to the device, a
+  // device-resident sum feeding matrix expressions, and a CPU objective.
+  VectorXd x_val = VectorXd::Random(30);
+  const double scale_val = 1.7;
+
+  var scale_cpu = scale_val;
+  stan::math::vector_v x_cpu = x_val;
+  stan::math::vector_v y_cpu = scale_cpu * x_cpu;
+  var total_cpu = stan::math::sum(y_cpu);
+  stan::math::vector_v z_cpu = total_cpu * y_cpu;
+  var objective_cpu = stan::math::sum(z_cpu);
+  objective_cpu.grad();
+  double scale_grad = scale_cpu.adj();
+  VectorXd x_grad = x_cpu.adj();
+  double objective_val = objective_cpu.val();
+  stan::math::recover_memory();
+
+  var scale_host = scale_val;
+  var_value<matrix_cl<double>> x_gpu{matrix_cl<double>(x_val)};
+  ScalarCl<var> scale(scale_host);
+  auto y = scale * x_gpu;
+  auto total = stan::math::sum(y);  // resident device scalar
+  auto z = total * y;
+  var objective = to_host(stan::math::sum(z));
+  EXPECT_NEAR(objective.val(), objective_val, 1e-9);
+  objective.grad();  // CPU and GPU reverse propagation
+  EXPECT_NEAR(scale_host.adj(), scale_grad, 1e-9);
+  EXPECT_MATRIX_NEAR(stan::math::from_matrix_cl(x_gpu.adj()), x_grad, 1e-9);
+}
+
+TEST_F(AgradRev, ScalarClReductions_mixed_operators) {
+  VectorXd x_val = VectorXd::Random(10);
+  stan::math::vector_v x_cpu = x_val;
+  var s_cpu = 0.8;
+  var f_cpu = stan::math::sum((x_cpu.array() + s_cpu).matrix())
+              + stan::math::sum((s_cpu - x_cpu.array()).matrix())
+              + stan::math::sum((x_cpu / s_cpu))
+              + stan::math::sum((s_cpu / x_cpu.array()).matrix());
+  f_cpu.grad();
+  double s_grad = s_cpu.adj();
+  VectorXd x_grad = x_cpu.adj();
+  double f_val = f_cpu.val();
+  stan::math::recover_memory();
+
+  var_value<matrix_cl<double>> x{matrix_cl<double>(x_val)};
+  ScalarCl<var> s(0.8);
+  ScalarCl<var> f = stan::math::sum(x + s) + stan::math::sum(s - x)
+                    + stan::math::sum(x / s) + stan::math::sum(s / x);
+  var f_host = to_host(f);
+  EXPECT_NEAR(f_host.val(), f_val, 1e-10);
+  f_host.grad();
+  EXPECT_NEAR(to_host(s.adj()), s_grad, 1e-10);
+  EXPECT_MATRIX_NEAR(stan::math::from_matrix_cl(x.adj()), x_grad, 1e-10);
+}
+
 #endif

@@ -4,6 +4,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/kernels/scalar_reduce.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -148,6 +149,23 @@ inline ScalarCl<double> prod_scalar_cl(const T& m) {
       res, m, [](const auto& x) { return prod_2d(x); },
       opencl_kernels::scalar_prod, false, 0.0);
   return res;
+}
+
+/**
+ * Adds the sum of partial results computed on the device to a log density
+ * accumulator. A device accumulator is updated on the device; a host
+ * accumulator reads the partial results back.
+ * @tparam T_lp type of the accumulator, `double` or a device scalar
+ * @param[in,out] lp accumulator
+ * @param partials partial results to sum
+ */
+template <typename T_lp>
+inline void add_sum(T_lp& lp, const matrix_cl<double>& partials) {
+  if constexpr (is_prim_scalar_cl<T_lp>::value) {
+    sum_into(lp, partials, true);
+  } else {
+    lp += from_matrix_cl(partials).sum();
+  }
 }
 
 }  // namespace internal

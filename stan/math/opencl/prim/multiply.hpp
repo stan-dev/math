@@ -10,6 +10,7 @@
 #include <stan/math/opencl/scalar_type.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/opencl/scalar_cl_functions.hpp>
 #include <algorithm>
 
 namespace stan {
@@ -117,9 +118,10 @@ inline matrix_cl<return_type_t<T_a, T_b>> operator*(const T_a& a,
  * @param b expression
  * @return Matrix product of given arguments
  */
-template <typename T_a, typename T_b, require_stan_scalar_t<T_a>* = nullptr,
+template <typename T_a, typename T_b,
+          require_t<opencl::internal::is_host_or_device_scalar<T_a>>* = nullptr,
           require_all_kernel_expressions_and_none_scalar_t<T_b>* = nullptr,
-          require_all_not_var_t<T_a, T_b>* = nullptr>
+          require_all_not_st_var<T_a, T_b>* = nullptr>
 inline matrix_cl<return_type_t<T_a, T_b>> multiply(const T_a& a, const T_b& b) {
   return a * b;
 }
@@ -132,9 +134,10 @@ inline matrix_cl<return_type_t<T_a, T_b>> multiply(const T_a& a, const T_b& b) {
  * @param b scalar
  * @return Matrix product of given arguments
  */
-template <typename T_a, typename T_b, require_stan_scalar_t<T_b>* = nullptr,
+template <typename T_a, typename T_b,
+          require_t<opencl::internal::is_host_or_device_scalar<T_b>>* = nullptr,
           require_all_kernel_expressions_and_none_scalar_t<T_a>* = nullptr,
-          require_all_not_var_t<T_a, T_b>* = nullptr>
+          require_all_not_st_var<T_a, T_b>* = nullptr>
 inline matrix_cl<return_type_t<T_a, T_b>> multiply(const T_a& a, const T_b& b) {
   return a * b;
 }

@@ -379,6 +379,30 @@ inline decltype(auto) as_kernel_buffer(const T& x) {
 }
 
 /**
+ * Checks if a type is a host arithmetic value or a primitive device scalar.
+ */
+template <typename T>
+struct is_prim_host_or_device_scalar
+    : math::disjunction<std::is_arithmetic<std::decay_t<T>>,
+                        is_prim_scalar_cl<T>> {};
+
+/**
+ * Returns a device scalar holding a value: device scalars are returned as they
+ * are and host values are copied to the device.
+ * @tparam T type of the value
+ * @param x value
+ * @return device scalar
+ */
+template <typename T>
+inline decltype(auto) to_device_scalar(T&& x) {
+  if constexpr (is_prim_scalar_cl<T>::value) {
+    return std::forward<T>(x);
+  } else {
+    return ScalarCl<double>(static_cast<double>(x));
+  }
+}
+
+/**
  * Checks if a type is a scalar on the host or on the device, as opposed to a
  * container of values.
  */

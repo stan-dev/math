@@ -12,6 +12,7 @@
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/meta/is_kernel_expression.hpp>
+#include <stan/math/opencl/rev/scalar_cl.hpp>
 
 namespace stan {
 namespace math {
@@ -56,22 +57,26 @@ namespace math {
  */
 template <typename T_a, typename T_b,
           require_all_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
-          require_any_var_t<T_a, T_b>* = nullptr,
+          require_any_st_var<T_a, T_b>* = nullptr,
           require_any_not_stan_scalar_t<T_a, T_b>* = nullptr>
 inline var_value<matrix_cl<double>> fdim(T_a&& a, T_b&& b) {
   using std::isnan;
   const arena_t<T_a>& a_arena = std::forward<T_a>(a);
   const arena_t<T_b>& b_arena = std::forward<T_b>(b);
 
-  matrix_cl<double> res_val = fdim(value_of(a_arena), value_of(b_arena));
+  matrix_cl<double> res_val
+      = fdim(opencl::internal::as_operand(value_of(a_arena)),
+             opencl::internal::as_operand(value_of(b_arena)));
 
   return make_callback_var(
       res_val,
       [a_arena, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
-        auto nan_check
-            = select(isnan(value_of(a_arena)) || isnan(value_of(b_arena)),
-                     NOT_A_NUMBER, 0.0);
-        auto a_is_max = value_of(a_arena) > value_of(b_arena);
+        auto nan_check = select(
+            isnan(opencl::internal::as_operand(value_of(a_arena)))
+                || isnan(opencl::internal::as_operand(value_of(b_arena))),
+            NOT_A_NUMBER, 0.0);
+        auto a_is_max = opencl::internal::as_operand(value_of(a_arena))
+                        > opencl::internal::as_operand(value_of(b_arena));
         auto a_deriv = select(a_is_max, res.adj(), nan_check);
         auto b_deriv = select(a_is_max, -res.adj(), nan_check);
 

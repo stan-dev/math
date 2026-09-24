@@ -6,6 +6,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/opencl/scalar_cl_reduce.hpp>
 
 namespace stan {
 namespace math {
@@ -32,7 +33,10 @@ template <typename T, typename L,
 inline auto lb_constrain(T&& x, L&& lb) {
   return make_holder_cl(
       [](auto&& x_, auto& lb_) {
-        return select(lb_ == NEGATIVE_INFTY, x_, lb_ + exp(x_));
+        // the operands are moved into the returned expression, so device
+        // scalars must not be referenced through locals of this lambda
+        return select(opencl::internal::as_operand(lb_) == NEGATIVE_INFTY, x_,
+                      opencl::internal::as_operand(lb_) + exp(x_));
       },
       std::forward<T>(x), std::forward<L>(lb));
 }
@@ -54,17 +58,20 @@ inline auto lb_constrain(T&& x, L&& lb) {
  * @param[in,out] lp reference to log probability to increment
  * @return constrained matrix
  */
-template <typename T, typename L,
+template <typename T, typename L, typename T_lp,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr,
-          require_all_kernel_expressions_t<L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
+          require_all_kernel_expressions_t<L>* = nullptr,
+          require_t<math::disjunction<std::is_same<T_lp, double>,
+                                      is_prim_scalar_cl<T_lp>>>* = nullptr>
+inline auto lb_constrain(const T& x, const L& lb_in, T_lp& lp) {
+  const auto& lb = opencl::internal::as_operand(lb_in);
   matrix_cl<double> lp_inc;
   matrix_cl<double> res;
   auto lb_inf = lb == NEGATIVE_INFTY;
   auto lp_inc_expr = sum_2d(select(lb_inf, 0.0, x));
   auto res_expr = select(lb_inf, x, lb + exp(x));
   results(lp_inc, res) = expressions(lp_inc_expr, res_expr);
-  lp += sum(from_matrix_cl(lp_inc));
+  opencl::internal::add_sum(lp, lp_inc);
   return res;
 }
 

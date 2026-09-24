@@ -25,7 +25,7 @@ namespace math {
  * size
  */
 template <
-    typename T1, typename T2, require_any_var_t<T1, T2>* = nullptr,
+    typename T1, typename T2, require_any_st_var<T1, T2>* = nullptr,
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T1, T2>* = nullptr>
 inline var_value<matrix_cl<double>> rows_dot_product(T1&& v1, T2&& v2) {
   check_matching_dims("rows_dot_product(OpenCL)", "v1", v1, "v2", v2);

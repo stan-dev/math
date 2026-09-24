@@ -28,7 +28,7 @@ namespace math {
 template <typename T_m, typename T_a,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T_m>* = nullptr,
           require_all_prim_or_rev_kernel_expression_t<T_a>* = nullptr,
-          require_any_var_t<T_m, T_a>* = nullptr>
+          require_any_st_var<T_m, T_a>* = nullptr>
 inline auto add_diag(const T_m& mat, const T_a& to_add) {
   const arena_t<T_m>& mat_arena = mat;
   const arena_t<T_a>& to_add_arena = to_add;
@@ -40,7 +40,10 @@ inline auto add_diag(const T_m& mat, const T_a& to_add) {
       adjoint_of(mat_arena) += res.adj();
     }
     if constexpr (is_autodiff_v<T_a>) {
-      if constexpr (!is_stan_scalar<T_a>::value) {
+      if constexpr (is_rev_scalar_cl<T_a>::value) {
+        opencl::internal::sum_into(to_add_arena.adj(), diagonal(res.adj()),
+                                   true);
+      } else if constexpr (!is_stan_scalar<T_a>::value) {
         auto& to_add_adj = to_add_arena.adj();
         to_add_adj += diagonal(res.adj());
       } else {
