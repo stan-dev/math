@@ -183,6 +183,7 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/fun/variance.hpp>
+#include <stan/math/rev/fun/zip.hpp>
 
 #include <stan/math/prim/constraint.hpp>
 #include <stan/math/prim/err.hpp>

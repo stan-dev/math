@@ -353,5 +353,6 @@
 #include <stan/math/prim/fun/zeros_int_array.hpp>
 #include <stan/math/prim/fun/zeros_row_vector.hpp>
 #include <stan/math/prim/fun/zeros_vector.hpp>
+#include <stan/math/prim/fun/zip.hpp>
 
 #endif
