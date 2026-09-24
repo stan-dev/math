@@ -17,12 +17,15 @@ TEST(ProbDistributionsCategoricalLogit, error_check) {
   beta << -1e3, 1.1e3, 1e5;
   EXPECT_NO_THROW(categorical_logit_rng(beta, rng));
 
+  // +inf allowed
   beta(1) = std::numeric_limits<double>::infinity();
   EXPECT_NO_THROW(categorical_logit_rng(beta, rng));
 
+  // NaN throws
   beta(1) = std::numeric_limits<double>::quiet_NaN();
   EXPECT_THROW(categorical_logit_rng(beta, rng), std::domain_error);
 
+  // all -inf throws
   beta << -std::numeric_limits<double>::infinity(),
       -std::numeric_limits<double>::infinity(),
       -std::numeric_limits<double>::infinity();
@@ -66,6 +69,7 @@ TEST(ProbDistributionsCategoricalLogit, multiplePosInfinityIsUniform) {
   using stan::math::categorical_logit_rng;
   boost::random::mt19937 rng;
 
+  // multiple +inf case: uniform over the +inf entries
   VectorXd beta(4);
   beta << -std::numeric_limits<double>::infinity(),
       std::numeric_limits<double>::infinity(), 2.0,

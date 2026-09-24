@@ -36,13 +36,16 @@ TEST(ProbDistributionsMultinomialLogit, RNGErrorCheck) {
   beta << 1.3, 0.1, -2.6;
   EXPECT_NO_THROW(stan::math::multinomial_logit_rng(beta, 10, rng));
 
+  // +inf allowed
   beta(1) = std::numeric_limits<double>::infinity();
   EXPECT_NO_THROW(stan::math::multinomial_logit_rng(beta, 10, rng));
 
+  // NaN throws
   beta(1) = std::numeric_limits<double>::quiet_NaN();
   EXPECT_THROW(stan::math::multinomial_logit_rng(beta, 10, rng),
                std::domain_error);
 
+  // all -inf throws
   beta << -std::numeric_limits<double>::infinity(),
       -std::numeric_limits<double>::infinity(),
       -std::numeric_limits<double>::infinity();
@@ -52,6 +55,7 @@ TEST(ProbDistributionsMultinomialLogit, RNGErrorCheck) {
 
 TEST(ProbDistributionsMultinomialLogit, RNGMultiplePosInfinityIsUniform) {
   boost::random::mt19937 rng;
+  // multiple +inf case: uniform over the +inf entries
   Matrix<double, Dynamic, 1> beta(4);
   beta << -std::numeric_limits<double>::infinity(),
       std::numeric_limits<double>::infinity(), 2.0,
@@ -63,6 +67,7 @@ TEST(ProbDistributionsMultinomialLogit, RNGMultiplePosInfinityIsUniform) {
 
   for (int i = 0; i < trials; i++) {
     std::vector<int> sample = stan::math::multinomial_logit_rng(beta, N, rng);
+    // -inf and finite entries get no counts
     EXPECT_EQ(0, sample[0]);
     EXPECT_EQ(0, sample[2]);
     EXPECT_EQ(N, sample[1] + sample[3]);
@@ -116,9 +121,13 @@ TEST(ProbDistributionsMultinomialLogit, error) {
 
   beta(0) = nan;
   EXPECT_THROW(multinomial_logit_lpmf(ns, beta), std::domain_error);
+  // +/-inf allowed for data
   beta(0) = inf;
-  EXPECT_THROW(multinomial_logit_lpmf(ns, beta), std::domain_error);
+  EXPECT_NO_THROW(multinomial_logit_lpmf(ns, beta));
   beta(0) = -inf;
+  EXPECT_NO_THROW(multinomial_logit_lpmf(ns, beta));
+  // all -inf throws
+  beta << -inf, -inf, -inf;
   EXPECT_THROW(multinomial_logit_lpmf(ns, beta), std::domain_error);
 
   beta(0) = 0.2;
@@ -181,4 +190,31 @@ TEST(ProbDistributionsMultinomialLogit, chiSquareGoodnessFitTest) {
     chi += ((bin[j] - expect[j]) * (bin[j] - expect[j])) / expect[j];
 
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
+}
+
+TEST(ProbDistributionsMultinomialLogit, infinityValues) {
+  double inf = std::numeric_limits<double>::infinity();
+
+  // -inf entries have zero probability, others as usual
+  Matrix<double, Dynamic, 1> beta(3);
+  beta << -inf, 1.0, 2.0;
+  Matrix<double, Dynamic, 1> finite(2);
+  finite << 1.0, 2.0;
+  std::vector<int> ns{0, 1, 2};
+  std::vector<int> finite_ns{1, 2};
+  EXPECT_FLOAT_EQ(multinomial_logit_lpmf(finite_ns, finite),
+                  multinomial_logit_lpmf(ns, beta));
+  // nonzero count on a -inf entry is impossible
+  ns = {1, 1, 1};
+  EXPECT_EQ(-inf, multinomial_logit_lpmf(ns, beta));
+
+  // +inf entries split the probability evenly
+  beta.resize(4);
+  beta << -inf, inf, 2.0, inf;
+  ns = {0, 1, 0, 2};
+  EXPECT_FLOAT_EQ(std::log(3.0) - 3 * std::log(2.0),
+                  multinomial_logit_lpmf(ns, beta));
+  // nonzero count outside the +inf entries is impossible
+  ns = {0, 1, 1, 1};
+  EXPECT_EQ(-inf, multinomial_logit_lpmf(ns, beta));
 }

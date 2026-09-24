@@ -4,9 +4,11 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/beta.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log_softmax.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <cmath>
 #include <vector>
 
 namespace stan {
@@ -19,10 +21,27 @@ inline return_type_t<T_prob> categorical_logit_lpmf(int n, const T_prob& beta) {
   check_bounded(function, "categorical outcome out of support", n, 1,
                 beta.size());
   ref_type_t<T_prob> beta_ref = beta;
-  check_finite(function, "log odds parameter", beta_ref);
+
+  // Autodiff args must be finite, data can be +/-inf
+  if constexpr (is_constant<T_prob>::value) {
+    check_not_nan(function, "log odds parameter", beta_ref);
+    check_greater(function, "log odds parameter", beta_ref.maxCoeff(),
+                  NEGATIVE_INFTY);
+  } else {
+    check_finite(function, "log odds parameter", beta_ref);
+  }
 
   if constexpr (!include_summand<propto, T_prob>::value) {
     return 0.0;
+  }
+
+  // INFTY case: uniform over the +inf entries, zero probability elsewhere
+  if constexpr (is_constant<T_prob>::value) {
+    int num_infty = (beta_ref.array() == INFTY).count();
+    if (num_infty > 0) {
+      return beta_ref.coeff(n - 1) == INFTY ? -std::log(num_infty)
+                                            : NEGATIVE_INFTY;
+    }
   }
 
   // FIXME:  wasteful vs. creating term (n-1) if not vectorized
@@ -38,7 +57,17 @@ inline return_type_t<T_prob> categorical_logit_lpmf(const std::vector<int>& ns,
   check_bounded(function, "categorical outcome out of support", ns, 1,
                 beta.size());
   ref_type_t<T_prob> beta_ref = beta;
-  check_finite(function, "log odds parameter", beta_ref);
+
+  // Autodiff args must be finite, data can be +/-inf
+  if constexpr (is_constant<T_prob>::value) {
+    check_not_nan(function, "log odds parameter", beta_ref);
+    if (beta_ref.size() > 0) {
+      check_greater(function, "log odds parameter", beta_ref.maxCoeff(),
+                    NEGATIVE_INFTY);
+    }
+  } else {
+    check_finite(function, "log odds parameter", beta_ref);
+  }
 
   if constexpr (!include_summand<propto, T_prob>::value) {
     return 0.0;
@@ -46,6 +75,19 @@ inline return_type_t<T_prob> categorical_logit_lpmf(const std::vector<int>& ns,
 
   if (ns.empty()) {
     return 0.0;
+  }
+
+  // INFTY case: uniform over the +inf entries, zero probability elsewhere
+  if constexpr (is_constant<T_prob>::value) {
+    int num_infty = (beta_ref.array() == INFTY).count();
+    if (num_infty > 0) {
+      double lp = 0.0;
+      for (int n : ns) {
+        lp += beta_ref.coeff(n - 1) == INFTY ? -std::log(num_infty)
+                                             : NEGATIVE_INFTY;
+      }
+      return lp;
+    }
   }
 
   auto log_softmax_beta = to_ref(log_softmax(beta_ref));

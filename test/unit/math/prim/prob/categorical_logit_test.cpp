@@ -68,12 +68,20 @@ TEST(ProbDistributionsCategoricalLogit, error) {
   theta(1) = std::numeric_limits<double>::quiet_NaN();
   EXPECT_THROW(categorical_logit_lpmf(1, theta), std::domain_error);
 
+  // +inf allowed for data
   theta(1) = std::numeric_limits<double>::infinity();
-  EXPECT_THROW(categorical_logit_lpmf(1, theta), std::domain_error);
+  EXPECT_NO_THROW(categorical_logit_lpmf(1, theta));
 
   std::vector<int> ns(2);
   ns[0] = 1;
   ns[1] = 2;
+  EXPECT_NO_THROW(categorical_logit_lpmf(ns, theta));
+
+  // all -inf throws
+  theta << -std::numeric_limits<double>::infinity(),
+      -std::numeric_limits<double>::infinity(),
+      -std::numeric_limits<double>::infinity();
+  EXPECT_THROW(categorical_logit_lpmf(1, theta), std::domain_error);
   EXPECT_THROW(categorical_logit_lpmf(ns, theta), std::domain_error);
 
   theta << 0.3, 0.5, 0.2;
@@ -85,4 +93,32 @@ TEST(ProbDistributionsCategoricalLogit, error) {
   ns[0] = 1;
   ns[1] = 12;
   EXPECT_THROW(categorical_logit_lpmf(ns, theta), std::domain_error);
+}
+
+TEST(ProbDistributionsCategoricalLogit, infinityValues) {
+  using Eigen::VectorXd;
+  using stan::math::categorical_logit_lpmf;
+  using stan::math::log_softmax;
+  double inf = std::numeric_limits<double>::infinity();
+
+  // -inf entries have zero probability, others as usual
+  VectorXd beta(3);
+  beta << -inf, 1.0, 2.0;
+  VectorXd finite(2);
+  finite << 1.0, 2.0;
+  EXPECT_EQ(-inf, categorical_logit_lpmf(1, beta));
+  EXPECT_FLOAT_EQ(log_softmax(finite)[0], categorical_logit_lpmf(2, beta));
+
+  // +inf entries split the probability evenly
+  beta.resize(4);
+  beta << -inf, inf, 2.0, inf;
+  EXPECT_EQ(-inf, categorical_logit_lpmf(1, beta));
+  EXPECT_FLOAT_EQ(-std::log(2.0), categorical_logit_lpmf(2, beta));
+  EXPECT_EQ(-inf, categorical_logit_lpmf(3, beta));
+
+  // vectorized: log probabilities summed over outcomes
+  std::vector<int> ns{2, 4};
+  EXPECT_FLOAT_EQ(-2 * std::log(2.0), categorical_logit_lpmf(ns, beta));
+  ns[1] = 3;
+  EXPECT_EQ(-inf, categorical_logit_lpmf(ns, beta));
 }

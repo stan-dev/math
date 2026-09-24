@@ -43,11 +43,12 @@ inline std::vector<int> multinomial_logit_rng(const T_beta& beta, int N,
                   NEGATIVE_INFTY);
   }
 
-  plain_type_t<T_beta> theta;
-
   auto is_pos_inf = (beta_ref.array() == INFTY);
   int num_infty = is_pos_inf.count();
 
+  plain_type_t<T_beta> theta;
+
+  // INFTY case: uniform over the +inf entries, zero probability elsewhere
   if (num_infty > 0) {
     theta = is_pos_inf.template cast<double>() / num_infty;
   } else {

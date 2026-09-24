@@ -43,6 +43,8 @@ inline int categorical_logit_rng(const Eigen::VectorXd& beta, RNG& rng) {
   int num_infty = is_pos_inf.count();
 
   Eigen::VectorXd theta;
+
+  // INFTY case: uniform over the +inf entries, zero probability elsewhere
   if (num_infty > 0) {
     theta = is_pos_inf.template cast<double>() / num_infty;
   } else {

@@ -3,10 +3,12 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <cmath>
 #include <vector>
 
 namespace stan {
@@ -16,9 +18,15 @@ namespace math {
  * Multinomial log PMF in log parametrization.
  * Multinomial(ns| softmax(beta))
  *
+ * If beta is data, -inf entries have zero probability and, if any
+ * entries are +inf, the probability is split evenly among them.
+ *
  * @param ns Array of outcome counts
  * @param beta Vector of unnormalized log probabilities
  * @return log probability
+ * @throw std::domain_error if beta contains NaN
+ * @throw std::domain_error if every entry of beta is negative infinity
+ * @throw std::domain_error if beta is not data and contains infinity
  */
 template <bool propto, typename T_beta, typename T_prob = scalar_type_t<T_beta>,
           require_eigen_col_vector_t<T_beta>* = nullptr>
@@ -29,7 +37,17 @@ inline return_type_t<T_prob> multinomial_logit_lpmf(const std::vector<int>& ns,
                    "rows of log-probabilities parameter", beta.rows());
   check_nonnegative(function, "Number of trials variable", ns);
   const auto& beta_ref = to_ref(beta);
-  check_finite(function, "log-probabilities parameter", beta_ref);
+
+  // Autodiff args must be finite, data can be +/-inf
+  if constexpr (is_constant<T_beta>::value) {
+    check_not_nan(function, "log-probabilities parameter", beta_ref);
+    if (beta_ref.size() > 0) {
+      check_greater(function, "log-probabilities parameter",
+                    beta_ref.maxCoeff(), NEGATIVE_INFTY);
+    }
+  } else {
+    check_finite(function, "log-probabilities parameter", beta_ref);
+  }
 
   return_type_t<T_prob> lp(0.0);
 
@@ -40,6 +58,20 @@ inline return_type_t<T_prob> multinomial_logit_lpmf(const std::vector<int>& ns,
   }
 
   if constexpr (include_summand<propto, T_prob>::value) {
+    // INFTY case: uniform over the +inf entries, zero probability elsewhere
+    if constexpr (is_constant<T_beta>::value) {
+      int num_infty = (beta_ref.array() == INFTY).count();
+      if (num_infty > 0) {
+        for (unsigned int i = 0; i < ns.size(); ++i) {
+          if (ns[i] != 0) {
+            lp += beta_ref.coeff(i) == INFTY ? -ns[i] * std::log(num_infty)
+                                             : NEGATIVE_INFTY;
+          }
+        }
+        return lp;
+      }
+    }
+
     T_prob alpha = log_sum_exp(beta_ref);
     for (unsigned int i = 0; i < ns.size(); ++i) {
       if (ns[i] != 0) {
