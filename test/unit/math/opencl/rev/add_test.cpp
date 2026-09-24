@@ -85,7 +85,8 @@ TEST(OpenCLPrim, add_aliasing) {
   using varmat_cl = var_value<matrix_cl<double>>;
   varmat_cl d11 = stan::math::to_matrix_cl(d1);
   // Add the same matrix as the left and right hand side
-  var res = stan::math::sum(stan::math::add(d11, d11));
+  var res
+      = stan::math::opencl::to_host(stan::math::sum(stan::math::add(d11, d11)));
   res.grad();
   // Get back adjoints
   Eigen::MatrixXd grad_res = stan::math::from_matrix_cl(d11.adj());

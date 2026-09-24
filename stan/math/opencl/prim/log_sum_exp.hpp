@@ -7,6 +7,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_matching_sizes.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/opencl/scalar_cl_reduce.hpp>
 
 namespace stan {
 namespace math {
@@ -24,30 +25,32 @@ namespace math {
  *
  * @tparam T type of input vector or matrix
  * @param[in] a matrix of specified values
- * @return the log of the sum of the exponentiated vector values
+ * @return device scalar holding the log of the sum of the exponentiated
+ * vector values
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-inline double log_sum_exp(const T& a) {
-  using std::log;
+inline opencl::ScalarCl<double> log_sum_exp(const T& a) {
   if (a.size() == 0) {
-    return NEGATIVE_INFTY;
+    return opencl::ScalarCl<double>(scalar_<double>(NEGATIVE_INFTY));
   }
+  const auto log_sum_exp_impl
+      = [](const auto& x, const opencl::ScalarCl<double>& x_max) {
+          opencl::ScalarCl<double> sum_exp = sum(exp(x - x_max));
+          auto x_max_op = as_operation_cl(x_max);
+          // a non finite maximum is the result; exp(x - x_max) is not used then
+          return opencl::ScalarCl<double>(
+              select(isfinite(x_max_op),
+                     x_max_op + log(as_operation_cl(sum_exp)), x_max_op));
+        };
   if constexpr (stan::internal::is_trivial_kg_expression<T>::value) {
-    double a_max = from_matrix_cl(max_2d(a)).maxCoeff();
-    if (!std::isfinite(a_max)) {
-      return a_max;
-    }
-    return a_max + log(sum(exp(a - a_max)));
+    return log_sum_exp_impl(a, opencl::internal::max_scalar_cl(a));
   } else {
     matrix_cl<double> a_eval;
-    matrix_cl<double> a_max_cl;
-    results(a_eval, a_max_cl) = expressions(a, max_2d(a));
-    double a_max = from_matrix_cl(a_max_cl).maxCoeff();
-    if (!std::isfinite(a_max)) {
-      return a_max;
-    }
-    return a_max + log(sum(exp(a_eval - a_max)));
+    matrix_cl<double> a_max_partial;
+    results(a_eval, a_max_partial) = expressions(a, max_2d(a));
+    return log_sum_exp_impl(a_eval,
+                            opencl::internal::max_scalar_cl(a_max_partial));
   }
 }
 

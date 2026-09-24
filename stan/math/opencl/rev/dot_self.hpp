@@ -5,6 +5,7 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/dot_self.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/opencl/rev/scalar_cl.hpp>
 
 namespace stan {
 namespace math {
@@ -18,10 +19,11 @@ namespace math {
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-inline var dot_self(const var_value<T>& v) {
-  return make_callback_var(dot_self(v.val()), [v](vari& res) mutable {
-    v.adj() += 2.0 * res.adj() * v.val();
-  });
+inline opencl::ScalarCl<var> dot_self(const var_value<T>& v) {
+  return opencl::make_callback_scalar_cl(
+      dot_self(v.val()), [v](const auto& res_adj, const auto&) mutable {
+        v.adj() += 2.0 * (res_adj * v.val());
+      });
 }
 
 }  // namespace math

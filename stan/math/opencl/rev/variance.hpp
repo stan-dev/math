@@ -7,6 +7,7 @@
 #include <stan/math/opencl/prim/mean.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
+#include <stan/math/opencl/rev/scalar_cl.hpp>
 
 namespace stan {
 namespace math {
@@ -21,21 +22,19 @@ namespace math {
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-inline var variance(const var_value<T>& A) {
+inline opencl::ScalarCl<var> variance(const var_value<T>& A) {
   if (A.size() == 1) {
-    return 0.0;
+    return opencl::ScalarCl<var>();
   }
-  double A_mean = mean(A.val());
+  opencl::ScalarCl<double> A_mean = mean(A.val());
   arena_matrix_cl<double> diff;
   matrix_cl<double> sq_norm;
   auto diff_expr = A.val() - A_mean;
-  auto sq_norm_expr = sum_2d(square(diff));
-  results(diff, sq_norm) = expressions(diff_expr, sq_norm_expr);
-
-  return make_callback_var(
-      elt_divide(from_matrix_cl(sq_norm).sum(), A.size() - 1.0),
-      [A, diff](vari& res) mutable {
-        A.adj() += elt_divide(2.0 * res.adj(), A.size() - 1.0) * diff;
+  results(diff, sq_norm) = expressions(diff_expr, sum_2d(square(diff_expr)));
+  return opencl::make_callback_scalar_cl(
+      sum(sq_norm) / (A.size() - 1.0),
+      [A, diff](const auto& res_adj, const auto&) mutable {
+        A.adj() += (2.0 / (A.size() - 1.0)) * (res_adj * diff);
       });
 }
 

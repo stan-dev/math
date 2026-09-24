@@ -8,6 +8,7 @@
 #include <stan/math/opencl/kernels/rep_matrix.hpp>
 #include <stan/math/opencl/prim/rep_matrix.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
+#include <stan/math/opencl/rev/scalar_cl.hpp>
 
 namespace stan {
 namespace math {
@@ -30,7 +31,7 @@ template <typename T_ret, require_var_vt<is_matrix_cl, T_ret>* = nullptr>
 inline var_value<matrix_cl<double>> rep_matrix(const var& A, int n, int m) {
   return make_callback_var(rep_matrix<matrix_cl<double>>(A.val(), n, m),
                            [A](vari_value<matrix_cl<double>>& res) mutable {
-                             A.adj() += sum(res.adj());
+                             A.adj() += opencl::to_host(sum(res.adj()));
                            });
 }
 

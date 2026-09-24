@@ -178,6 +178,32 @@ inline var to_host(const ScalarCl<var>& x) {
       to_host(x.val()), [x](const vari& res) mutable { x.adj() += res.adj(); });
 }
 
+/** \ingroup opencl
+ * Creates a device var whose value is computed now and whose reverse pass is
+ * given by a functor. The functor is called in the reverse pass with read-only
+ * views of the adjoint and of the value of the result, and must add the
+ * contributions of the result adjoint to the adjoints of the operands.
+ *
+ * The functor is stored in memory that is freed by `recover_memory()`, and
+ * its destructor is called then, so it may capture device scalars and
+ * `arena_matrix_cl` by value.
+ * @tparam F type of the functor
+ * @param value value of the result
+ * @param functor reverse pass functor taking `(adjoint, value)`
+ * @return device var
+ */
+template <typename F>
+inline ScalarCl<var> make_callback_scalar_cl(ScalarCl<double>&& value,
+                                             F&& functor) {
+  return ScalarCl<var>(make_callback_var(
+      std::move(value.matrix()),
+      [functor
+       = std::forward<F>(functor)](vari_value<matrix_cl<double>>& res) mutable {
+        functor(ScalarCl<const double&>(res.adj()),
+                ScalarCl<const double&>(res.val()));
+      }));
+}
+
 namespace internal {
 
 /**
@@ -261,17 +287,15 @@ inline ScalarCl<var> scalar_cl_binary(const T_a& a, const T_b& b,
                                       F_db&& db_f) {
   auto a_op = to_rev_operand(a);
   auto b_op = to_rev_operand(b);
-  ScalarCl<double> value = value_f(operand_value(a_op), operand_value(b_op));
-  return ScalarCl<var>(make_callback_var(
-      std::move(value.matrix()),
-      [a_op, b_op, da_f, db_f](vari_value<matrix_cl<double>>& res) mutable {
-        ScalarCl<const double&> res_adj(res.adj());
-        ScalarCl<const double&> res_val(res.val());
+  return make_callback_scalar_cl(
+      value_f(operand_value(a_op), operand_value(b_op)),
+      [a_op, b_op, da_f, db_f](const auto& res_adj,
+                               const auto& res_val) mutable {
         auto a_val = operand_value(a_op);
         auto b_val = operand_value(b_op);
         add_to_adjoint(a_op, da_f(res_adj, res_val, a_val, b_val));
         add_to_adjoint(b_op, db_f(res_adj, res_val, a_val, b_val));
-      }));
+      });
 }
 
 /**
@@ -285,14 +309,11 @@ inline ScalarCl<var> scalar_cl_binary(const T_a& a, const T_b& b,
 template <typename F_val, typename F_da>
 inline ScalarCl<var> scalar_cl_unary(const ScalarCl<var>& a, F_val&& value_f,
                                      F_da&& da_f) {
-  ScalarCl<double> value = value_f(a.val());
-  return ScalarCl<var>(
-      make_callback_var(std::move(value.matrix()),
-                        [a, da_f](vari_value<matrix_cl<double>>& res) mutable {
-                          ScalarCl<const double&> res_adj(res.adj());
-                          ScalarCl<const double&> res_val(res.val());
-                          a.adj() += da_f(res_adj, res_val, a.val());
-                        }));
+  return make_callback_scalar_cl(
+      value_f(a.val()),
+      [a, da_f](const auto& res_adj, const auto& res_val) mutable {
+        a.adj() += da_f(res_adj, res_val, a.val());
+      });
 }
 
 }  // namespace internal

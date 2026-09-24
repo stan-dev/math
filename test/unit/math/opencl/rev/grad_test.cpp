@@ -19,7 +19,7 @@ TEST(OpenCLGradTest, exceptions) {
   Eigen::VectorXd ret_grads_cl(6);
   using stan::math::add;
   using stan::math::subtract;
-  var ret = stan::math::sum(add(b_cl, b_cl));
+  var ret = stan::math::opencl::to_host(stan::math::sum(add(b_cl, b_cl)));
   stan::math::grad(ret, a_cl, ret_grads_cl);
   std::cout << "opencl grads: \n" << ret_grads_cl << std::endl;
   stan::math::recover_memory();

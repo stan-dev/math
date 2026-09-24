@@ -12,6 +12,7 @@
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/err/constraint_tolerance.hpp>
+#include <stan/math/opencl/scalar_cl.hpp>
 
 namespace stan {
 namespace math {
@@ -114,7 +115,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_covar_cl> multi_normal_cholesky_lpdf(
 
   matrix_cl<double> half = transpose(inv_L * y_mu_diff_cl);
   matrix_cl<double> scaled_diff = transpose(half * inv_L);
-  logp -= 0.5 * dot_self(half);
+  logp -= 0.5 * opencl::to_host(dot_self(half));
 
   auto ops_partials = make_partials_propagator(y, mu, L);
 

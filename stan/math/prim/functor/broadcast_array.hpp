@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/functor/broadcast_array_fwd.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_scalar_cl.hpp>
 #include <stan/math/prim/meta/is_var_or_arithmetic.hpp>
 #include <stan/math/prim/meta/promote_scalar_type.hpp>
 #include <stan/math/prim/meta/ref_type.hpp>
@@ -33,7 +34,14 @@ class broadcast_array<T, require_st_arithmetic<T>> {
    */
   template <typename Y>
   void operator=(const Y& m) {
-    prim_.get() = sum(m);
+    auto m_sum = sum(m);
+    if constexpr (is_scalar_cl<decltype(m_sum)>::value) {
+      // sums of OpenCL partials are device scalars; this edge holds a host
+      // value, so the sum is moved to the host explicitly
+      prim_.get() = to_host(m_sum);
+    } else {
+      prim_.get() = m_sum;
+    }
   }
 };
 

@@ -4,6 +4,7 @@
 
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
+#include <stan/math/opencl/scalar_cl_functions.hpp>
 
 namespace stan {
 namespace math {
@@ -22,10 +23,9 @@ namespace math {
 template <typename T_x,
           require_all_kernel_expressions_and_none_scalar_t<T_x>* = nullptr>
 inline auto unit_vector_constrain(T_x&& x) {
-  using std::sqrt;
   check_nonzero_size("unit_vector_constrain", "x", x);
-  value_type_t<T_x> SN = dot_self(x);
-  check_positive_finite("unit_vector_constrain", "norm", SN);
+  opencl::ScalarCl<double> SN = dot_self(x);
+  check_positive_finite("unit_vector_constrain", "norm", opencl::to_host(SN));
   return elt_divide(x, sqrt(SN));
 }
 
@@ -44,11 +44,11 @@ inline auto unit_vector_constrain(T_x&& x) {
 template <typename T_x,
           require_all_kernel_expressions_and_none_scalar_t<T_x>* = nullptr>
 inline auto unit_vector_constrain(T_x&& x, double& lp) {
-  using std::sqrt;
   check_nonzero_size("unit_vector_constrain", "x", x);
-  value_type_t<T_x> SN = dot_self(x);
-  check_positive_finite("unit_vector_constrain", "norm", SN);
-  lp -= 0.5 * SN;
+  opencl::ScalarCl<double> SN = dot_self(x);
+  const double SN_host = opencl::to_host(SN);
+  check_positive_finite("unit_vector_constrain", "norm", SN_host);
+  lp -= 0.5 * SN_host;
   return elt_divide(x, sqrt(SN));
 }
 

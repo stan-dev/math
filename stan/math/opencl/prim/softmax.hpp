@@ -8,6 +8,7 @@
 #include <stan/math/prim/err/check_matching_sizes.hpp>
 #include <stan/math/prim/err/check_nonzero_size.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/opencl/scalar_cl_reduce.hpp>
 
 namespace stan {
 namespace math {
@@ -28,13 +29,12 @@ inline matrix_cl<double> softmax(const T& a) {
   }
   matrix_cl<double> theta;
   if constexpr (stan::internal::is_trivial_kg_expression<T>::value) {
-    matrix_cl<double> a_max = max_2d(a);
-    theta = exp(a - from_matrix_cl(a_max).maxCoeff());
+    theta = exp(a - opencl::internal::max_scalar_cl(a));
   } else {
     matrix_cl<double> a_eval;
     matrix_cl<double> a_max;
     results(a_eval, a_max) = expressions(a, max_2d(a));
-    theta = exp(a_eval - from_matrix_cl(a_max).maxCoeff());
+    theta = exp(a_eval - opencl::internal::max_scalar_cl(a_max));
   }
   return elt_divide(theta, sum(theta));
 }

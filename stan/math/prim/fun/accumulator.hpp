@@ -79,7 +79,13 @@ class accumulator {
   template <typename S,
             require_all_kernel_expressions_and_none_scalar_t<S>* = nullptr>
   inline void add(const S& xs) {
-    buf_.push_back(stan::math::sum(xs));
+    auto xs_sum = stan::math::sum(xs);
+    if constexpr (is_scalar_cl<decltype(xs_sum)>::value) {
+      // an accumulator of host values needs the sum on the host
+      buf_.push_back(to_host(xs_sum));
+    } else {
+      buf_.push_back(xs_sum);
+    }
   }
 
 #endif

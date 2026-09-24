@@ -50,7 +50,7 @@ TEST(OpenCLerfcx, rev_tail_derivative_against_references) {
   stan::math::var_value<stan::math::matrix_cl<double>> x_cl(
       stan::math::to_matrix_cl(x));
   auto y = stan::math::erfcx(x_cl);
-  stan::math::var total = stan::math::sum(y);
+  stan::math::var total = stan::math::opencl::to_host(stan::math::sum(y));
   total.grad();
 
   const Eigen::VectorXd adj = stan::math::from_matrix_cl(x_cl.adj());

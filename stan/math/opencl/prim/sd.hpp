@@ -7,6 +7,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_matching_sizes.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/opencl/scalar_cl_functions.hpp>
 
 namespace stan {
 namespace math {
@@ -23,7 +24,7 @@ namespace math {
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-inline double sd(const T& a) {
+inline opencl::ScalarCl<double> sd(const T& a) {
   return sqrt(variance(a));
 }
 

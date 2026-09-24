@@ -104,9 +104,51 @@ inline void expect_eq(const T1& a, const T2& b, const char* msg,
   expect_eq(a, from_matrix_cl<plain_type_t<T1>>(b), msg, tol);
 }
 
+/**
+ * Copies the value of a device scalar to the host: a `double` for
+ * `ScalarCl<double>` and its views, a `double` for the value of a
+ * `ScalarCl<var>`.
+ */
+template <typename T, require_prim_scalar_cl_t<T>* = nullptr>
+inline double host_value(const T& a) {
+  return opencl::to_host(a);
+}
+inline double host_value(const opencl::ScalarCl<var>& a) {
+  return opencl::to_host(a.val());
+}
+
+template <typename T1, typename T2, require_scalar_cl_t<T1>* = nullptr,
+          require_not_scalar_cl_t<T2>* = nullptr>
+inline void expect_eq(const T1& a, const T2& b, const char* msg,
+                      stan::test::relative_tolerance tol
+                      = stan::test::relative_tolerance()) {
+  expect_eq(host_value(a), value_of(b), msg, tol);
+}
+template <typename T1, typename T2, require_not_scalar_cl_t<T1>* = nullptr,
+          require_scalar_cl_t<T2>* = nullptr>
+inline void expect_eq(const T1& a, const T2& b, const char* msg,
+                      stan::test::relative_tolerance tol
+                      = stan::test::relative_tolerance()) {
+  expect_eq(value_of(a), host_value(b), msg, tol);
+}
+
+/**
+ * Sums a result. Sums of OpenCL results are device scalars; they are moved to
+ * the host explicitly, and `ScalarCl<var>` becomes a CPU `var`, so gradients
+ * flow back to the device.
+ */
 template <typename T>
 auto recursive_sum(const T& a) {
-  return math::sum(a);
+  if constexpr (is_scalar_cl<T>::value) {
+    return opencl::to_host(a);
+  } else {
+    auto a_sum = math::sum(a);
+    if constexpr (is_scalar_cl<decltype(a_sum)>::value) {
+      return opencl::to_host(a_sum);
+    } else {
+      return a_sum;
+    }
+  }
 }
 template <typename T>
 auto recursive_sum(const std::vector<T>& a) {

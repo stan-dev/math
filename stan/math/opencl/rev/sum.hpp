@@ -6,6 +6,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
+#include <stan/math/opencl/rev/scalar_cl.hpp>
 
 namespace stan {
 namespace math {
@@ -19,9 +20,10 @@ namespace math {
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-inline var sum(const var_value<T>& x) {
-  return make_callback_var(sum(value_of(x)),
-                           [x](vari& res) mutable { x.adj() += res.adj(); });
+inline opencl::ScalarCl<var> sum(const var_value<T>& x) {
+  return opencl::make_callback_scalar_cl(
+      sum(value_of(x)),
+      [x](const auto& res_adj, const auto&) mutable { x.adj() += res_adj; });
 }
 
 }  // namespace math

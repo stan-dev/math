@@ -8,6 +8,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_matching_sizes.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/opencl/scalar_cl_functions.hpp>
 
 namespace stan {
 namespace math {
@@ -22,10 +23,10 @@ namespace math {
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-inline double variance(const T& a) {
+inline opencl::ScalarCl<double> variance(const T& a) {
   check_nonzero_size("variance (OpenCL)", "a", a);
   if (a.size() == 1) {
-    return 0.0;
+    return opencl::ScalarCl<double>();
   }
   if constexpr (stan::internal::is_trivial_kg_expression<T>::value) {
     return sum(square(a - mean(a))) / (a.size() - 1);
@@ -33,8 +34,7 @@ inline double variance(const T& a) {
     matrix_cl<double> a_eval;
     matrix_cl<double> a_sum;
     results(a_eval, a_sum) = expressions(a, sum_2d(a));
-    return sum(square(a_eval - from_matrix_cl(a_sum).sum() / a.size()))
-           / (a.size() - 1);
+    return sum(square(a_eval - sum(a_sum) / a.size())) / (a.size() - 1);
   }
 }
 

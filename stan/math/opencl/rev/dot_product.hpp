@@ -7,6 +7,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/adjoint_of.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
+#include <stan/math/opencl/rev/scalar_cl.hpp>
 
 namespace stan {
 namespace math {
@@ -25,16 +26,15 @@ namespace math {
 template <
     typename T1, typename T2, require_any_var_t<T1, T2>* = nullptr,
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T1, T2>* = nullptr>
-inline var dot_product(T1&& v1, T2&& v2) {
+inline opencl::ScalarCl<var> dot_product(T1&& v1, T2&& v2) {
   arena_t<T1> v1_arena = std::forward<T1>(v1);
   arena_t<T2> v2_arena = std::forward<T2>(v2);
-
-  return make_callback_var(dot_product(value_of(v1_arena), value_of(v2_arena)),
-                           [v1_arena, v2_arena](vari& res) mutable {
-                             adjoint_results(v1_arena, v2_arena)
-                                 += expressions(res.adj() * value_of(v2_arena),
-                                                res.adj() * value_of(v1_arena));
-                           });
+  return opencl::make_callback_scalar_cl(
+      dot_product(value_of(v1_arena), value_of(v2_arena)),
+      [v1_arena, v2_arena](const auto& res_adj, const auto&) mutable {
+        adjoint_results(v1_arena, v2_arena) += expressions(
+            res_adj * value_of(v2_arena), res_adj * value_of(v1_arena));
+      });
 }
 
 }  // namespace math

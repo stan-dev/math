@@ -1,9 +1,11 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/prim.hpp>
-#include <stan/math/opencl/kernels/scalar_sum.hpp>
+#include <stan/math/opencl/kernels/scalar_reduce.hpp>
 #include <test/unit/util.hpp>
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
+#include <cmath>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -11,6 +13,8 @@ using Eigen::MatrixXd;
 using stan::math::matrix_cl;
 using stan::math::opencl::ScalarCl;
 using stan::math::opencl::to_host;
+using stan::math::opencl::internal::max_scalar_cl;
+using stan::math::opencl::internal::prod_scalar_cl;
 using stan::math::opencl::internal::sum_into;
 
 namespace {
@@ -34,8 +38,14 @@ void build_cl12(const std::vector<std::string>& sources) {
 }
 }  // namespace
 
-TEST(ScalarClKernels, scalar_sum_builds_as_opencl_1_2) {
-  build_cl12({stan::math::opencl_kernels::scalar_sum_kernel_code});
+TEST(ScalarClKernels, scalar_reduce_builds_as_opencl_1_2) {
+  using stan::math::opencl_kernels::scalar_reduce_kernel_code;
+  build_cl12(
+      {stan::math::opencl_kernels::scalar_sum_op, scalar_reduce_kernel_code});
+  build_cl12(
+      {stan::math::opencl_kernels::scalar_max_op, scalar_reduce_kernel_code});
+  build_cl12(
+      {stan::math::opencl_kernels::scalar_prod_op, scalar_reduce_kernel_code});
 }
 
 TEST(ScalarClKernels, scalar_expression_builds_as_opencl_1_2) {
@@ -130,5 +140,34 @@ TEST(ScalarClKernels, generated_handwritten_generated_chain) {
   }
   EXPECT_NEAR(to_host(s), expected, 1e-9);
   EXPECT_MATRIX_NEAR(stan::math::from_matrix_cl(res_cl), m * expected, 1e-9);
+}
+TEST(ScalarClKernels, max_and_prod) {
+  for (auto dims : std::vector<std::pair<int, int>>{
+           {1, 1}, {7, 1}, {1, 9}, {3, 1000}, {1000, 3}, {300, 300}}) {
+    MatrixXd m = MatrixXd::Random(dims.first, dims.second);
+    matrix_cl<double> m_cl(m);
+    EXPECT_EQ(to_host(max_scalar_cl(m_cl)), m.maxCoeff())
+        << dims.first << "x" << dims.second;
+    MatrixXd p = (m.array() * 0.01 + 1.0).matrix();
+    matrix_cl<double> p_cl(p);
+    EXPECT_NEAR(to_host(prod_scalar_cl(p_cl)), p.prod(),
+                1e-12 * std::abs(p.prod()))
+        << dims.first << "x" << dims.second;
+    EXPECT_EQ(to_host(max_scalar_cl(m_cl * 2.0)), 2.0 * m.maxCoeff());
+  }
+  matrix_cl<double> empty_cl(0, 4);
+  EXPECT_EQ(to_host(max_scalar_cl(empty_cl)),
+            -std::numeric_limits<double>::infinity());
+  EXPECT_EQ(to_host(prod_scalar_cl(empty_cl)), 1.0);
+}
+
+TEST(ScalarClKernels, max_respects_triangular_view) {
+  MatrixXd m = -MatrixXd::Ones(40, 40);
+  m(0, 39) = 5.0;  // in the strictly upper triangle
+  matrix_cl<double> m_cl(m, stan::math::matrix_cl_view::Lower);
+  EXPECT_EQ(to_host(max_scalar_cl(m_cl)), 0.0);
+  matrix_cl<double> small_cl(MatrixXd(m.topRightCorner(3, 3)),
+                             stan::math::matrix_cl_view::Lower);
+  EXPECT_EQ(to_host(max_scalar_cl(small_cl)), 0.0);
 }
 #endif

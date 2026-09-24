@@ -8,6 +8,7 @@
 #include <stan/math/rev/fun/adjoint_of.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/opencl/rev/scalar_cl.hpp>
 
 namespace stan {
 namespace math {
@@ -44,7 +45,7 @@ inline auto add_diag(const T_m& mat, const T_a& to_add) {
         to_add_adj += diagonal(res.adj());
       } else {
         auto& to_add_adj = to_add_arena.adj();
-        to_add_adj += to_add_adj + sum(diagonal(res.adj()));
+        to_add_adj += opencl::to_host(sum(diagonal(res.adj())));
       }
     }
   });
