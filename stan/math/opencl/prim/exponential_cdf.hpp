@@ -8,7 +8,9 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/prod.hpp>
 
 namespace stan {
 namespace math {
@@ -30,9 +32,10 @@ template <typename T_y_cl, typename T_inv_scale_cl,
           require_all_prim_or_rev_kernel_expression_t<
               T_y_cl, T_inv_scale_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_inv_scale_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_inv_scale_cl> exponential_cdf(
+inline opencl::scalar_cl_return_t<T_y_cl, T_inv_scale_cl> exponential_cdf(
     const T_y_cl& y, const T_inv_scale_cl& beta) {
   static constexpr const char* function = "exponential_cdf(OpenCL)";
+  using T_return = opencl::scalar_cl_return_t<T_y_cl, T_inv_scale_cl>;
   using T_partials_return = partials_return_t<T_y_cl, T_inv_scale_cl>;
   using std::isfinite;
   using std::isnan;
@@ -40,15 +43,15 @@ inline return_type_t<T_y_cl, T_inv_scale_cl> exponential_cdf(
   check_consistent_sizes(function, "Random variable", y,
                          "Inverse scale parameter", beta);
   const size_t N = max_size(y, beta);
-  if (N == 0) {
-    return 1.0;
+  if (size_zero(y, beta)) {
+    return T_return(1.0);
   }
 
   const auto& y_col = as_column_vector_or_scalar(y);
   const auto& beta_col = as_column_vector_or_scalar(beta);
 
-  const auto& y_val = value_of(y_col);
-  const auto& beta_val = value_of(beta_col);
+  const auto& y_val = opencl::internal::as_operand(value_of(y_col));
+  const auto& beta_val = opencl::internal::as_operand(value_of(beta_col));
 
   auto check_y_nonnegative
       = check_cl(function, "Random variable", y_val, "nonnegative");
@@ -72,7 +75,7 @@ inline return_type_t<T_y_cl, T_inv_scale_cl> exponential_cdf(
           y_nonnegative_expr, beta_positive_finite_expr, cdf_expr,
           calc_if<is_any_autodiff_v<T_y_cl, T_inv_scale_cl>>(rep_deriv1));
 
-  T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
+  opencl::ScalarCl<double> cdf = prod(cdf_cl);
 
   auto rep_deriv2 = beta_deriv_cl * cdf;
   auto y_deriv = elt_multiply(static_select<is_constant_v<T_y_cl>>(0, beta_val),
@@ -84,7 +87,7 @@ inline return_type_t<T_y_cl, T_inv_scale_cl> exponential_cdf(
       = expressions(calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
                     calc_if<is_autodiff_v<T_inv_scale_cl>>(beta_deriv));
 
-  auto ops_partials = make_partials_propagator(y_col, beta_col);
+  auto ops_partials = opencl::make_partials_propagator(y_col, beta_col);
 
   if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
@@ -92,7 +95,7 @@ inline return_type_t<T_y_cl, T_inv_scale_cl> exponential_cdf(
   if constexpr (is_autodiff_v<T_inv_scale_cl>) {
     partials<1>(ops_partials) = std::move(beta_deriv_cl);
   }
-  return ops_partials.build(cdf);
+  return ops_partials.build(std::move(cdf));
 }
 
 }  // namespace math

@@ -8,7 +8,9 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -28,9 +30,10 @@ template <
     typename T_y_cl, typename T_scale_cl,
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_scale_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_scale_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_scale_cl> rayleigh_lcdf(
+inline opencl::scalar_cl_return_t<T_y_cl, T_scale_cl> rayleigh_lcdf(
     const T_y_cl& y, const T_scale_cl& sigma) {
   static constexpr const char* function = "rayleigh_lcdf(OpenCL)";
+  using T_return = opencl::scalar_cl_return_t<T_y_cl, T_scale_cl>;
   using T_partials_return = partials_return_t<T_y_cl, T_scale_cl>;
   using std::isfinite;
   using std::isnan;
@@ -38,15 +41,15 @@ inline return_type_t<T_y_cl, T_scale_cl> rayleigh_lcdf(
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          sigma);
   const size_t N = max_size(y, sigma);
-  if (N == 0) {
-    return 0.0;
+  if (size_zero(y, sigma)) {
+    return T_return(0.0);
   }
 
   const auto& y_col = as_column_vector_or_scalar(y);
   const auto& sigma_col = as_column_vector_or_scalar(sigma);
 
-  const auto& y_val = value_of(y_col);
-  const auto& sigma_val = value_of(sigma_col);
+  const auto& y_val = opencl::internal::as_operand(value_of(y_col));
+  const auto& sigma_val = opencl::internal::as_operand(value_of(sigma_col));
 
   auto check_y_nonnegative
       = check_cl(function, "Random variable", y_val, "nonnegative");
@@ -74,9 +77,9 @@ inline return_type_t<T_y_cl, T_scale_cl> rayleigh_lcdf(
                     calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
                     calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv));
 
-  T_partials_return lcdf = from_matrix_cl(lcdf_cl).sum();
+  opencl::ScalarCl<double> lcdf = sum(lcdf_cl);
 
-  auto ops_partials = make_partials_propagator(y_col, sigma_col);
+  auto ops_partials = opencl::make_partials_propagator(y_col, sigma_col);
 
   if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
@@ -85,7 +88,7 @@ inline return_type_t<T_y_cl, T_scale_cl> rayleigh_lcdf(
     partials<1>(ops_partials) = std::move(sigma_deriv_cl);
   }
 
-  return ops_partials.build(lcdf);
+  return ops_partials.build(std::move(lcdf));
 }
 
 }  // namespace math

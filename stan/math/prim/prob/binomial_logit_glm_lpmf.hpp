@@ -153,9 +153,8 @@ inline return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
 
 template <typename T_n, typename T_N, typename T_x, typename T_alpha,
           typename T_beta>
-inline return_type_t<T_x, T_beta, T_alpha> binomial_logit_glm_lpmf(
-    const T_n& n, const T_N& N, const T_x& x, const T_alpha& alpha,
-    const T_beta& beta) {
+inline auto binomial_logit_glm_lpmf(const T_n& n, const T_N& N, const T_x& x,
+                                    const T_alpha& alpha, const T_beta& beta) {
   return binomial_logit_glm_lpmf<false>(n, N, x, alpha, beta);
 }
 }  // namespace math

@@ -125,8 +125,7 @@ inline return_type_t<T_prob, T_prior_size> dirichlet_lpdf(
 }
 
 template <typename T_prob, typename T_prior_size>
-inline return_type_t<T_prob, T_prior_size> dirichlet_lpdf(
-    const T_prob& theta, const T_prior_size& alpha) {
+inline auto dirichlet_lpdf(const T_prob& theta, const T_prior_size& alpha) {
   return dirichlet_lpdf<false>(theta, alpha);
 }
 

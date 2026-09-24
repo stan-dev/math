@@ -115,9 +115,7 @@ inline return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y,
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y,
-                                                      const T_loc& mu,
-                                                      const T_scale& sigma) {
+inline auto cauchy_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   return cauchy_lpdf<false>(y, mu, sigma);
 }
 

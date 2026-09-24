@@ -8,7 +8,9 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/prod.hpp>
 
 namespace stan {
 namespace math {
@@ -31,9 +33,10 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_loc_cl,
                                                 T_scale_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> cauchy_cdf(
+inline opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl> cauchy_cdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma) {
   static constexpr const char* function = "cauchy_cdf(OpenCL)";
+  using T_return = opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
   using T_partials_return = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
   using std::isfinite;
   using std::isnan;
@@ -41,17 +44,17 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> cauchy_cdf(
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
   const size_t N = max_size(y, mu, sigma);
-  if (N == 0) {
-    return 1.0;
+  if (size_zero(y, mu, sigma)) {
+    return T_return(1.0);
   }
 
   const auto& y_col = as_column_vector_or_scalar(y);
   const auto& mu_col = as_column_vector_or_scalar(mu);
   const auto& sigma_col = as_column_vector_or_scalar(sigma);
 
-  const auto& y_val = value_of(y_col);
-  const auto& mu_val = value_of(mu_col);
-  const auto& sigma_val = value_of(sigma_col);
+  const auto& y_val = opencl::internal::as_operand(value_of(y_col));
+  const auto& mu_val = opencl::internal::as_operand(value_of(mu_col));
+  const auto& sigma_val = opencl::internal::as_operand(value_of(sigma_col));
 
   auto check_y_not_nan
       = check_cl(function, "Random variable", y_val, "not NaN");
@@ -89,10 +92,10 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> cauchy_cdf(
                     calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv_tmp));
 
   if (from_matrix_cl(any_y_neg_inf_cl).maxCoeff()) {
-    return 0.0;
+    return T_return(0.0);
   }
 
-  T_partials_return P = (from_matrix_cl(P_cl)).prod();
+  opencl::ScalarCl<double> P = prod(P_cl);
 
   auto mu_deriv = mu_deriv_cl * P;
   auto y_deriv = -mu_deriv;
@@ -103,7 +106,8 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> cauchy_cdf(
                     calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
                     calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv));
 
-  auto ops_partials = make_partials_propagator(y_col, mu_col, sigma_col);
+  auto ops_partials
+      = opencl::make_partials_propagator(y_col, mu_col, sigma_col);
 
   if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
@@ -114,7 +118,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> cauchy_cdf(
   if constexpr (is_autodiff_v<T_scale_cl>) {
     partials<2>(ops_partials) = std::move(sigma_deriv_cl);
   }
-  return ops_partials.build(P);
+  return ops_partials.build(std::move(P));
 }
 
 }  // namespace math

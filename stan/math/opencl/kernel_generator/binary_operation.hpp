@@ -207,33 +207,30 @@ ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
 ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
     elt_divide_, elt_divide, common_scalar_t<T_a COMMA T_b>, "/",
     inline std::pair<int, int> extreme_diagonals()
-        const { return {-rows() + 1, cols() - 1}; });
+        const { return this->dense_extreme_diagonals(); });
 ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
     elt_modulo_, operator%, common_scalar_t<T_a COMMA T_b>, "%",
     static_assert(
-        std::is_integral<scalar_type_t<T_a>>::value
-            && std::is_integral<scalar_type_t<T_b>>::value,
+        std::is_integral<scalar_type_t<T_a>>::value&&
+            std::is_integral<scalar_type_t<T_b>>::value,
         "both operands to operator% must have integral scalar types!");
     inline std::pair<int, int> extreme_diagonals()
-        const { return {-rows() + 1, cols() - 1}; });
+        const { return this->dense_extreme_diagonals(); });
 
 ADD_BINARY_OPERATION(less_than_, operator<, bool, "<");
 ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
     less_than_or_equal_, operator<=, bool,
-    "<=", inline std::pair<int, int> extreme_diagonals() const {
-      return {-rows() + 1, cols() - 1};
-    });
+    "<=", inline std::pair<int, int> extreme_diagonals()
+        const { return this->dense_extreme_diagonals(); });
 ADD_BINARY_OPERATION(greater_than_, operator>, bool, ">");
 ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
     greater_than_or_equal_, operator>=, bool,
-    ">=", inline std::pair<int, int> extreme_diagonals() const {
-      return {-rows() + 1, cols() - 1};
-    });
+    ">=", inline std::pair<int, int> extreme_diagonals()
+        const { return this->dense_extreme_diagonals(); });
 ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
     equals_, operator==, bool,
-    "==", inline std::pair<int, int> extreme_diagonals() const {
-      return {-rows() + 1, cols() - 1};
-    });
+    "==", inline std::pair<int, int> extreme_diagonals()
+        const { return this->dense_extreme_diagonals(); });
 ADD_BINARY_OPERATION(not_equals_, operator!=, bool, "!=");
 
 ADD_BINARY_OPERATION(logical_or_, operator||, bool, "||");

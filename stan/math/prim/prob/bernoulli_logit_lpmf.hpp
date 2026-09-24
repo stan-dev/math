@@ -92,8 +92,7 @@ inline return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n,
 }
 
 template <typename T_n, typename T_prob>
-inline return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n,
-                                                  const T_prob& theta) {
+inline auto bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   return bernoulli_logit_lpmf<false>(n, theta);
 }
 

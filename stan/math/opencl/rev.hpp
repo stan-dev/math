@@ -98,6 +98,7 @@
 #include <stan/math/opencl/rev/rows_dot_product.hpp>
 #include <stan/math/opencl/rev/rows_dot_self.hpp>
 #include <stan/math/opencl/rev/scalar_cl.hpp>
+#include <stan/math/opencl/rev/partials_propagator.hpp>
 #include <stan/math/opencl/rev/sd.hpp>
 #include <stan/math/opencl/rev/sin.hpp>
 #include <stan/math/opencl/rev/sinh.hpp>

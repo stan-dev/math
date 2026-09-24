@@ -94,8 +94,8 @@ inline return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
 }
 
 template <typename T_n, typename T_location, typename T_precision>
-inline return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
-    const T_n& n, const T_location& mu, const T_precision& phi) {
+inline auto neg_binomial_2_lpmf(const T_n& n, const T_location& mu,
+                                const T_precision& phi) {
   return neg_binomial_2_lpmf<false>(n, mu, phi);
 }
 

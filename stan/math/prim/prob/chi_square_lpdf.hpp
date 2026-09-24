@@ -99,8 +99,7 @@ inline return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y,
 }
 
 template <typename T_y, typename T_dof>
-inline return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y,
-                                                 const T_dof& nu) {
+inline auto chi_square_lpdf(const T_y& y, const T_dof& nu) {
   return chi_square_lpdf<false>(y, nu);
 }
 

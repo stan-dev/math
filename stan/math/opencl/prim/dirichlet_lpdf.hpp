@@ -10,8 +10,9 @@
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
 #include <stan/math/prim/err/constraint_tolerance.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -59,22 +60,23 @@ template <bool propto, typename T_prob_cl, typename T_prior_size_cl,
           require_all_prim_or_rev_kernel_expression_t<
               T_prob_cl, T_prior_size_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_prob_cl, T_prior_size_cl>* = nullptr>
-inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
+inline opencl::scalar_cl_return_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
     const T_prob_cl& theta, const T_prior_size_cl& alpha) {
   static constexpr const char* function = "dirichlet_lpdf(OpenCL)";
+  using T_return = opencl::scalar_cl_return_t<T_prob_cl, T_prior_size_cl>;
 
   check_consistent_sizes(function, "probabilities", theta, "prior sample sizes",
                          alpha);
 
   if (max_size(theta, alpha) == 0) {
-    return 0.0;
+    return T_return(0.0);
   }
   if constexpr (!include_summand<propto, T_prob_cl, T_prior_size_cl>::value) {
-    return 0.0;
+    return T_return(0.0);
   }
 
-  const auto& theta_val = value_of(theta);
-  const auto& alpha_val = value_of(alpha);
+  const auto& theta_val = opencl::internal::as_operand(value_of(theta));
+  const auto& alpha_val = opencl::internal::as_operand(value_of(alpha));
 
   auto check_alpha_positive
       = check_cl(function, "prior sample sizes", alpha_val, "positive");
@@ -186,7 +188,7 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
           lgamma_alpha_csum_cl = std::move(lgamma_alpha_csum_cl2);
         }
       }
-      double theta_sum = sum(from_matrix_cl(theta_csum));
+      double theta_sum = opencl::to_host(sum(theta_csum));
       check_cl(function, "sum of probabilities", theta_sum, "equal to 1")
           = (fabs(theta_sum - 1.0) <= CONSTRAINT_TOLERANCE);
     } else {
@@ -240,24 +242,24 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
         = (fabs(transpose(theta_csum_cl) - 1.0) <= CONSTRAINT_TOLERANCE);
   }
 
-  double lp = 0.0;
+  opencl::ScalarCl<double> lp;
 
   if constexpr (include_summand<propto, T_prior_size_cl>::value) {
     if (theta.cols() > alpha.cols()) {
-      lp += (lgamma(from_matrix_cl(alpha_csum_cl)) * theta.cols()
-             - from_matrix_cl(lgamma_alpha_csum_cl) * theta.cols())
-                .sum();
+      opencl::internal::sum_into(lp,
+                                 (lgamma(alpha_csum_cl) - lgamma_alpha_csum_cl)
+                                     * static_cast<double>(theta.cols()),
+                                 true);
     } else {
-      lp += (lgamma(from_matrix_cl(alpha_csum_cl))
-             - from_matrix_cl(lgamma_alpha_csum_cl))
-                .sum();
+      opencl::internal::sum_into(
+          lp, lgamma(alpha_csum_cl) - lgamma_alpha_csum_cl, true);
     }
   }
   if constexpr (include_summand<propto, T_prob_cl, T_prior_size_cl>::value) {
-    lp += from_matrix_cl(theta_log_alpha_m_1_sum_cl).sum();
+    lp += sum(theta_log_alpha_m_1_sum_cl);
   }
 
-  auto ops_partials = make_partials_propagator(theta, alpha);
+  auto ops_partials = opencl::make_partials_propagator(theta, alpha);
 
   if constexpr (is_autodiff_v<T_prob_cl>) {
     if (theta.cols() < alpha.cols()) {
@@ -277,7 +279,7 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
       partials<1>(ops_partials) = colwise_broadcast(tmp_cl) + alpha_deriv_cl;
     }
   }
-  return ops_partials.build(lp);
+  return ops_partials.build(std::move(lp));
 }
 
 }  // namespace math

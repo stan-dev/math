@@ -10,9 +10,10 @@
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/prim/fun/elt_divide.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -40,10 +41,11 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_n_cl, T_size1_cl,
                                                 T_size2_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_n_cl, T_size1_cl, T_size2_cl>* = nullptr>
-inline return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
-    const T_n_cl& n, const T_N_cl N, const T_size1_cl& alpha,
-    const T_size2_cl& beta) {
+inline opencl::scalar_cl_return_t<T_n_cl, T_size1_cl, T_size2_cl>
+beta_binomial_lpmf(const T_n_cl& n, const T_N_cl N, const T_size1_cl& alpha,
+                   const T_size2_cl& beta) {
   using std::isfinite;
+  using T_return = opencl::scalar_cl_return_t<T_n_cl, T_size1_cl, T_size2_cl>;
   static constexpr const char* function = "beta_binomial_lpmf(OpenCL)";
 
   check_consistent_sizes(function, "Successes variable", n,
@@ -52,17 +54,17 @@ inline return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
                          "Second prior sample size parameter", beta);
   const size_t N_size = max_size(n, N, alpha, beta);
   if (N_size == 0) {
-    return 0.0;
+    return T_return(0.0);
   }
   if constexpr (!include_summand<propto, T_size1_cl, T_size2_cl>::value) {
-    return 0.0;
+    return T_return(0.0);
   }
 
   const auto& alpha_col = as_column_vector_or_scalar(alpha);
   const auto& beta_col = as_column_vector_or_scalar(beta);
 
-  const auto& alpha_val = value_of(alpha_col);
-  const auto& beta_val = value_of(beta_col);
+  const auto& alpha_val = opencl::internal::as_operand(value_of(alpha_col));
+  const auto& beta_val = opencl::internal::as_operand(value_of(beta_col));
 
   auto check_N_nonnegative
       = check_cl(function, "Population size parameter", N, "nonnegative");
@@ -100,12 +102,12 @@ inline return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
                     calc_if<is_autodiff_v<T_size2_cl>>(beta_deriv));
 
   if (from_matrix_cl(return_neg_inf_cl).any()) {
-    return LOG_ZERO;
+    return T_return(LOG_ZERO);
   }
 
-  double logp = sum(from_matrix_cl(logp_cl));
+  opencl::ScalarCl<double> logp = sum(logp_cl);
 
-  auto ops_partials = make_partials_propagator(alpha_col, beta_col);
+  auto ops_partials = opencl::make_partials_propagator(alpha_col, beta_col);
   if constexpr (is_autodiff_v<T_size1_cl>) {
     partials<0>(ops_partials) = std::move(alpha_deriv_cl);
   }
@@ -113,7 +115,7 @@ inline return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
     partials<1>(ops_partials) = std::move(beta_deriv_cl);
   }
 
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

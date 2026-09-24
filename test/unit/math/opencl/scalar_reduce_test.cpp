@@ -56,10 +56,9 @@ TEST(ScalarClKernels, scalar_expression_builds_as_opencl_1_2) {
   build_cl12({stan::math::view_kernel_helpers,
               expr.get_kernel_source_for_evaluating_into(res_cl)});
   ScalarCl<double> t;
-  auto scalar_expr
-      = stan::math::scalar_result_<decltype(stan::math::as_operation_cl(s)
-                                            * 3.0)>(
-          stan::math::as_operation_cl(s) * 3.0);
+  auto scalar_expr = stan::math::scalar_result_<decltype(
+      stan::math::as_operation_cl(s) * 3.0)>(stan::math::as_operation_cl(s)
+                                             * 3.0);
   build_cl12({stan::math::view_kernel_helpers,
               scalar_expr.get_kernel_source_for_evaluating_into(t.matrix())});
 }
@@ -170,4 +169,14 @@ TEST(ScalarClKernels, max_respects_triangular_view) {
                              stan::math::matrix_cl_view::Lower);
   EXPECT_EQ(to_host(max_scalar_cl(small_cl)), 0.0);
 }
+TEST(ScalarClKernels, sum_of_expression_containing_reduction) {
+  MatrixXd m = MatrixXd::Random(3000, 4);
+  matrix_cl<double> m_cl(m);
+  ScalarCl<double> res;
+  sum_into(res, stan::math::colwise_sum(m_cl), false);
+  EXPECT_NEAR(to_host(res), m.sum(), 1e-9);
+  EXPECT_NEAR(to_host(stan::math::sum(stan::math::colwise_sum(m_cl * 2.0))),
+              2.0 * m.sum(), 1e-9);
+}
+
 #endif

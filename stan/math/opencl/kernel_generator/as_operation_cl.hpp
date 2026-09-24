@@ -109,11 +109,11 @@ inline auto as_operation_cl(T&& a) {
  *  is assigned using standard or compound assign.
  */
 template <typename T, assign_op_cl AssignOp = assign_op_cl::equals>
-using as_operation_cl_t = std::conditional_t<
-    std::is_lvalue_reference<T>::value,
-    decltype(as_operation_cl<AssignOp>(std::declval<T>())),
-    std::remove_reference_t<decltype(as_operation_cl<AssignOp>(
-        std::declval<T>()))>>;
+using as_operation_cl_t
+    = std::conditional_t<std::is_lvalue_reference<T>::value,
+                         decltype(as_operation_cl<AssignOp>(std::declval<T>())),
+                         std::remove_reference_t<decltype(
+                             as_operation_cl<AssignOp>(std::declval<T>()))>>;
 
 /** @}*/
 }  // namespace math

@@ -137,8 +137,7 @@ inline return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
 }
 
 template <typename T_n, typename T_N, typename T_prob>
-inline return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
-                                           const T_prob& theta) {
+inline auto binomial_lpmf(const T_n& n, const T_N& N, const T_prob& theta) {
   return binomial_lpmf<false>(n, N, theta);
 }
 

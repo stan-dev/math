@@ -116,8 +116,8 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(
 }
 
 template <typename T_y, typename T_shape, typename T_inv_scale>
-inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(
-    const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
+inline auto gamma_lpdf(const T_y& y, const T_shape& alpha,
+                       const T_inv_scale& beta) {
   return gamma_lpdf<false>(y, alpha, beta);
 }
 

@@ -5,7 +5,9 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -26,9 +28,10 @@ template <
     bool propto, typename T_n_cl, typename T_prob_cl,
     require_all_prim_or_rev_kernel_expression_t<T_n_cl, T_prob_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_n_cl, T_prob_cl>* = nullptr>
-inline return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
-                                                     const T_prob_cl& theta) {
+inline opencl::scalar_cl_return_t<T_prob_cl> bernoulli_logit_lpmf(
+    const T_n_cl& n, const T_prob_cl& theta) {
   static constexpr const char* function = "bernoulli_logit_lpmf(OpenCL)";
+  using T_return = opencl::scalar_cl_return_t<T_prob_cl>;
   using T_partials_return = partials_return_t<T_prob_cl>;
   using std::isnan;
   constexpr bool is_n_vector = !is_stan_scalar<T_n_cl>::value;
@@ -36,15 +39,15 @@ inline return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
   const size_t N = is_n_vector ? math::size(n) : math::size(theta);
-  if (N == 0) {
-    return 0.0;
+  if (size_zero(n, theta)) {
+    return T_return(0.0);
   }
   if constexpr (!include_summand<propto, T_prob_cl>::value) {
-    return 0.0;
+    return T_return(0.0);
   }
 
   const auto& theta_col = as_column_vector_or_scalar(theta);
-  const auto& theta_val = value_of(theta_col);
+  const auto& theta_val = opencl::internal::as_operand(value_of(theta_col));
 
   auto check_n_bounded = check_cl(function, "n", n, "in the interval [0, 1]");
   auto n_bounded_expr = 0 <= n && n <= 1;
@@ -75,14 +78,14 @@ inline return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
       = expressions(logp_expr, calc_if<is_autodiff_v<T_prob_cl>>(deriv_expr),
                     n_bounded_expr, theta_not_nan_expr);
 
-  T_partials_return logp = sum(from_matrix_cl(logp_cl));
-  auto ops_partials = make_partials_propagator(theta_col);
+  opencl::ScalarCl<double> logp = sum(logp_cl);
+  auto ops_partials = opencl::make_partials_propagator(theta_col);
 
   if constexpr (is_autodiff_v<T_prob_cl>) {
     partials<0>(ops_partials) = deriv_cl;
   }
 
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

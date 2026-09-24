@@ -17,6 +17,8 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 #include <cmath>
 
 namespace stan {
@@ -51,13 +53,16 @@ template <bool propto, typename T_y_cl, typename T_x_cl, typename T_alpha_cl,
           typename T_beta_cl,
           require_all_prim_or_rev_kernel_expression_t<
               T_y_cl, T_x_cl, T_alpha_cl, T_beta_cl>* = nullptr>
-inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> poisson_log_glm_lpmf(
-    const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
-    const T_beta_cl& beta) {
+inline opencl::scalar_cl_return_t<T_x_cl, T_alpha_cl, T_beta_cl>
+poisson_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
+                     const T_beta_cl& beta) {
   static constexpr const char* function = "poisson_log_glm_lpmf(OpenCL)";
+  using T_return = opencl::scalar_cl_return_t<T_x_cl, T_alpha_cl, T_beta_cl>;
   using T_partials_return = partials_return_t<T_x_cl, T_alpha_cl, T_beta_cl>;
-  constexpr bool is_y_vector = !is_stan_scalar<T_y_cl>::value;
-  constexpr bool is_alpha_vector = !is_stan_scalar<T_alpha_cl>::value;
+  constexpr bool is_y_vector
+      = !opencl::internal::is_host_or_device_scalar<T_y_cl>::value;
+  constexpr bool is_alpha_vector
+      = !opencl::internal::is_host_or_device_scalar<T_alpha_cl>::value;
   using Eigen::Dynamic;
   using std::exp;
   using std::isfinite;
@@ -76,20 +81,20 @@ inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> poisson_log_glm_lpmf(
                      math::size(alpha));
   }
   if (N == 0) {
-    return 0;
+    return T_return(0.0);
   }
 
   if constexpr (!include_summand<propto, T_x_cl, T_alpha_cl,
                                  T_beta_cl>::value) {
-    return 0;
+    return T_return(0.0);
   }
 
-  const auto& y_val = value_of(y);
-  const auto& x_val = value_of(x);
-  const auto& alpha_val = value_of(alpha);
-  const auto& beta_val = value_of(beta);
+  const auto& y_val = opencl::internal::as_operand(value_of(y));
+  const auto& x_val = opencl::internal::as_operand(value_of(x));
+  const auto& alpha_val = opencl::internal::as_operand(value_of(alpha));
+  const auto& beta_val = opencl::internal::as_operand(value_of(beta));
 
-  T_partials_return logp(0);
+  opencl::ScalarCl<double> logp;
 
   const bool need_logp = include_summand<propto>::value;
 
@@ -110,9 +115,9 @@ inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> poisson_log_glm_lpmf(
   results(theta_derivative_cl, theta_derivative_sum_cl, logp_cl) = expressions(
       theta_derivative_expr, colwise_sum(theta_derivative_expr), logp_expr);
 
-  double theta_derivative_sum = sum(from_matrix_cl(theta_derivative_sum_cl));
-  logp += sum(from_matrix_cl(logp_cl));
-  if (!std::isfinite(theta_derivative_sum)) {
+  opencl::ScalarCl<double> theta_derivative_sum = sum(theta_derivative_sum_cl);
+  logp += sum(logp_cl);
+  if (!std::isfinite(opencl::to_host(theta_derivative_sum))) {
     results(check_cl(function, "Vector of dependent variables", y_val,
                      "nonnegative"),
             check_cl(function, "Intercept", alpha_val, "finite"))
@@ -123,7 +128,7 @@ inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> poisson_log_glm_lpmf(
         = isfinite(x_val);
   }
 
-  auto ops_partials = make_partials_propagator(x, alpha, beta);
+  auto ops_partials = opencl::make_partials_propagator(x, alpha, beta);
   // Compute the necessary derivatives.
   if constexpr (is_autodiff_v<T_x_cl>) {
     partials<0>(ops_partials)
@@ -151,7 +156,7 @@ inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> poisson_log_glm_lpmf(
               edge3_partials_transpose_cl.write_events().back());
     }
   }
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

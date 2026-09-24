@@ -359,6 +359,64 @@ class ScalarCl<const double&>
   inline const matrix_cl<double>& matrix() const noexcept { return *m_; }
 };
 
+namespace internal {
+/**
+ * Prepares a value for a handwritten kernel that takes a buffer. A device
+ * scalar passes its own 1x1 buffer, with no transfer; host values are copied
+ * to the device.
+ * @tparam T type of the value
+ * @param x value
+ * @return the backing `matrix_cl` of a device scalar, `to_matrix_cl(x)`
+ * otherwise
+ */
+template <typename T>
+inline decltype(auto) as_kernel_buffer(const T& x) {
+  if constexpr (is_prim_scalar_cl<T>::value) {
+    return x.matrix();
+  } else {
+    return to_matrix_cl(x);
+  }
+}
+
+/**
+ * Checks if a type is a scalar on the host or on the device, as opposed to a
+ * container of values.
+ */
+template <typename T>
+struct is_host_or_device_scalar
+    : math::disjunction<is_stan_scalar<T>, is_scalar_cl<T>> {};
+
+/**
+ * Prepares a value for use in a kernel generator expression that also
+ * involves matrices. Device scalars become a `scalar_buf_` operation, so
+ * comparisons, checks and arithmetic on them are fused into the same kernel as
+ * the matrix operations instead of being evaluated on their own. Other values
+ * are returned unchanged.
+ * @tparam T type of the value
+ * @param x value
+ * @return kernel generator operation for a device scalar, `x` otherwise
+ */
+template <typename T>
+inline decltype(auto) as_operand(T&& x) {
+  if constexpr (is_prim_scalar_cl<T>::value) {
+    return as_operation_cl(std::forward<T>(x));
+  } else {
+    return std::forward<T>(x);
+  }
+}
+}  // namespace internal
+
+/** \ingroup opencl
+ * A device scalar is already a scalar, so it is returned as it is.
+ * @tparam T type of the device scalar
+ * @param x device scalar
+ * @return `x`
+ */
+template <typename T, require_scalar_cl_t<T>* = nullptr>
+inline const T& as_column_vector_or_scalar(const T& x) {
+  return x;
+}
+
 /** \ingroup opencl
  * Copies a device scalar to the host. Blocks until all writes to the scalar
  * have finished and the value has been read.

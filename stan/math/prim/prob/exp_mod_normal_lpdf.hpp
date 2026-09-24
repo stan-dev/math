@@ -119,9 +119,9 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>
-inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma,
-    const T_inv_scale& lambda) {
+inline auto exp_mod_normal_lpdf(const T_y& y, const T_loc& mu,
+                                const T_scale& sigma,
+                                const T_inv_scale& lambda) {
   return exp_mod_normal_lpdf<false>(y, mu, sigma, lambda);
 }
 

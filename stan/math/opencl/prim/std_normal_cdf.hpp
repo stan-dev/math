@@ -8,7 +8,9 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/prod.hpp>
 
 namespace stan {
 namespace math {
@@ -23,19 +25,20 @@ namespace math {
 template <typename T_y_cl,
           require_all_prim_or_rev_kernel_expression_t<T_y_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl>* = nullptr>
-inline return_type_t<T_y_cl> std_normal_cdf(const T_y_cl& y) {
+inline opencl::scalar_cl_return_t<T_y_cl> std_normal_cdf(const T_y_cl& y) {
   static constexpr const char* function = "std_normal_cdf(OpenCL)";
+  using T_return = opencl::scalar_cl_return_t<T_y_cl>;
   using T_partials_return = partials_return_t<T_y_cl>;
   using std::isfinite;
   using std::isnan;
 
   const size_t N = math::size(y);
-  if (N == 0) {
-    return 1.0;
+  if (size_zero(y)) {
+    return T_return(1.0);
   }
 
   const auto& y_col = as_column_vector_or_scalar(y);
-  const auto& y_val = value_of(y_col);
+  const auto& y_val = opencl::internal::as_operand(value_of(y_col));
 
   auto check_y_not_nan
       = check_cl(function, "Random variable", y_val, "not NaN");
@@ -57,14 +60,14 @@ inline return_type_t<T_y_cl> std_normal_cdf(const T_y_cl& y) {
   results(check_y_not_nan, cdf_cl, y_deriv_cl) = expressions(
       y_not_nan_expr, cdf_expr, calc_if<is_autodiff_v<T_y_cl>>(y_deriv1));
 
-  T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
+  opencl::ScalarCl<double> cdf = prod(cdf_cl);
 
-  auto ops_partials = make_partials_propagator(y_col);
+  auto ops_partials = opencl::make_partials_propagator(y_col);
 
   if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = y_deriv_cl * cdf;
   }
-  return ops_partials.build(cdf);
+  return ops_partials.build(std::move(cdf));
 }
 
 }  // namespace math

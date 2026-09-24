@@ -9,6 +9,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/scalar_cl.hpp>
 #include <algorithm>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -47,26 +48,36 @@ inline int scalar_reduce_local_size() {
 template <typename Dst, typename T, typename Partial, typename Kernel>
 inline void reduce_into(Dst&& dst, const T& m, Partial&& partial_f,
                         const Kernel& kernel, bool accumulate, double offset) {
-  const int local_size = scalar_reduce_local_size();
-  const auto reduce = [&](const matrix_cl<double>& partials) {
-    kernel(cl::NDRange(local_size), cl::NDRange(local_size), dst, partials,
-           partials.size(), offset, static_cast<int>(accumulate));
-  };
-  if constexpr (is_matrix_cl<T>::value) {
-    // A buffer with no implied zeros can be reduced directly.
-    if (m.view() == matrix_cl_view::Entire && m.size() <= 64 * local_size) {
-      reduce(m);
-      return;
-    }
-  }
-  matrix_cl<double> partials;
-  if (m.rows() <= 8) {
-    // without transpose we would use just a few threads in a work group
-    partials = partial_f(transpose(m));
+  if constexpr (!is_matrix_cl<T>::value
+                && std::decay_t<decltype(
+                    as_operation_cl(m))>::Deriv::require_specific_local_size) {
+    // an expression containing a reduction can not be nested in another
+    // reduction, so it is evaluated first
+    reduce_into(std::forward<Dst>(dst), matrix_cl<double>(m),
+                std::forward<Partial>(partial_f), kernel, accumulate, offset);
+    return;
   } else {
-    partials = partial_f(m);
+    const int local_size = scalar_reduce_local_size();
+    const auto reduce = [&](const matrix_cl<double>& partials) {
+      kernel(cl::NDRange(local_size), cl::NDRange(local_size), dst, partials,
+             partials.size(), offset, static_cast<int>(accumulate));
+    };
+    if constexpr (is_matrix_cl<T>::value) {
+      // A buffer with no implied zeros can be reduced directly.
+      if (m.view() == matrix_cl_view::Entire && m.size() <= 64 * local_size) {
+        reduce(m);
+        return;
+      }
+    }
+    matrix_cl<double> partials;
+    if (m.rows() <= 8) {
+      // without transpose we would use just a few threads in a work group
+      partials = partial_f(transpose(m));
+    } else {
+      partials = partial_f(m);
+    }
+    reduce(partials);
   }
-  reduce(partials);
 }
 
 /**

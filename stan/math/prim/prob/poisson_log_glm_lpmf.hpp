@@ -152,8 +152,8 @@ inline return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(
 }
 
 template <typename T_y, typename T_x, typename T_alpha, typename T_beta>
-inline return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(
-    const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
+inline auto poisson_log_glm_lpmf(const T_y& y, const T_x& x,
+                                 const T_alpha& alpha, const T_beta& beta) {
   return poisson_log_glm_lpmf<false>(y, x, alpha, beta);
 }
 

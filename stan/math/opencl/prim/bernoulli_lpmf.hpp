@@ -8,7 +8,9 @@
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -29,9 +31,10 @@ template <
     bool propto, typename T_n_cl, typename T_prob_cl,
     require_all_prim_or_rev_kernel_expression_t<T_n_cl, T_prob_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_n_cl, T_prob_cl>* = nullptr>
-inline return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
-                                               const T_prob_cl& theta) {
+inline opencl::scalar_cl_return_t<T_prob_cl> bernoulli_lpmf(
+    const T_n_cl& n, const T_prob_cl& theta) {
   static constexpr const char* function = "bernoulli_lpmf(OpenCL)";
+  using T_return = opencl::scalar_cl_return_t<T_prob_cl>;
   using T_partials_return = partials_return_t<T_prob_cl>;
   constexpr bool is_n_vector = !is_stan_scalar<T_n_cl>::value;
   constexpr bool is_theta_vector = !is_stan_scalar<T_prob_cl>::value;
@@ -39,18 +42,18 @@ inline return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
   const size_t N = is_n_vector ? math::size(n) : math::size(theta);
-  if (N == 0) {
-    return 0.0;
+  if (size_zero(n, theta)) {
+    return T_return(0.0);
   }
   if constexpr (!include_summand<propto, T_prob_cl>::value) {
-    return 0.0;
+    return T_return(0.0);
   }
 
   const auto& theta_col = as_column_vector_or_scalar(theta);
-  const auto& theta_val = value_of(theta_col);
+  const auto& theta_val = opencl::internal::as_operand(value_of(theta_col));
 
-  T_partials_return logp(0.0);
-  auto ops_partials = make_partials_propagator(theta_col);
+  opencl::ScalarCl<double> logp;
+  auto ops_partials = opencl::make_partials_propagator(theta_col);
 
   auto check_n_bounded = check_cl(function, "n", n, "in the interval [0, 1]");
   auto n_bounded_expr = 0 <= n && n <= 1;
@@ -71,7 +74,7 @@ inline return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
         = expressions(logp_expr, calc_if<is_autodiff_v<T_prob_cl>>(deriv_expr),
                       n_bounded_expr, theta_bounded_expr);
 
-    logp = sum(from_matrix_cl(logp_cl));
+    logp = sum(logp_cl);
 
     if constexpr (is_autodiff_v<T_prob_cl>) {
       partials<0>(ops_partials) = deriv_cl;
@@ -84,28 +87,34 @@ inline return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
     results(n_sum_cl, check_n_bounded)
         = expressions(n_sum_expr, n_bounded_expr);
 
-    size_t n_sum = sum(from_matrix_cl(n_sum_cl));
+    // theta is a host scalar here, so the result is computed on the host and
+    // moved to the device explicitly
+    size_t n_sum = sum(n_sum_cl);
     double theta_val_scal = theta_val;
+    double logp_host;
     if (n_sum == N) {
-      logp = N * log(theta_val_scal);
+      logp_host = N * log(theta_val_scal);
     } else if (n_sum == 0) {
-      logp = N * log1m(theta_val_scal);
+      logp_host = N * log1m(theta_val_scal);
     } else {
-      logp = n_sum * log(theta_val_scal) + (N - n_sum) * log1m(theta_val_scal);
+      logp_host
+          = n_sum * log(theta_val_scal) + (N - n_sum) * log1m(theta_val_scal);
     }
+    logp = opencl::ScalarCl<double>(logp_host);
     if constexpr (is_autodiff_v<T_prob_cl>) {
-      double& edge1_partial = partials<0>(ops_partials)[0];
+      double edge1_partial;
       if (n_sum == N) {
-        edge1_partial += N / theta_val_scal;
+        edge1_partial = N / theta_val_scal;
       } else if (n_sum == 0) {
-        edge1_partial += N / (theta_val_scal - 1);
+        edge1_partial = N / (theta_val_scal - 1);
       } else {
         edge1_partial
-            += n_sum / theta_val_scal + (N - n_sum) / (theta_val_scal - 1);
+            = n_sum / theta_val_scal + (N - n_sum) / (theta_val_scal - 1);
       }
+      partials<0>(ops_partials) = opencl::ScalarCl<double>(edge1_partial);
     }
   }
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

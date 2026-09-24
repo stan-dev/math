@@ -82,7 +82,7 @@ inline return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
 }
 
 template <typename T_n, typename T_rate>
-inline return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
+inline auto poisson_lpmf(const T_n& n, const T_rate& lambda) {
   return poisson_lpmf<false>(n, lambda);
 }
 

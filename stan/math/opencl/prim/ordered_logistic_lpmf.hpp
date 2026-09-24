@@ -10,8 +10,9 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
 #include <stan/math/prim/err/constraint_tolerance.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -67,9 +68,12 @@ namespace math {
 template <bool propto, typename T_y_cl, typename T_loc_cl, typename T_cuts_cl,
           require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_loc_cl,
                                                       T_cuts_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
-    const T_y_cl& y, const T_loc_cl& lambda, const T_cuts_cl& cuts) {
-  constexpr bool is_y_vector = !is_stan_scalar<T_y_cl>::value;
+inline opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_cuts_cl>
+ordered_logistic_lpmf(const T_y_cl& y, const T_loc_cl& lambda,
+                      const T_cuts_cl& cuts) {
+  constexpr bool is_y_vector
+      = !opencl::internal::is_host_or_device_scalar<T_y_cl>::value;
+  using T_return = opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_cuts_cl>;
   static constexpr const char* function = "ordered_logistic_lpmf(OpenCL)";
 
   if (size(y) != 1) {
@@ -86,9 +90,9 @@ inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
                      "Number of cutpoint vectors ", N_cut_sets);
   }
   if (N_instances == 0 || N_classes == 1) {
-    return 0.0;
+    return T_return(0.0);
   }
-  const auto& cuts_val = eval(value_of(cuts));
+  const auto& cuts_val = opencl::internal::as_operand(eval(value_of(cuts)));
   if (N_classes >= 2) {
     auto cuts_head
         = block_zero_based(cuts_val, 0, 0, cuts.rows() - 1, N_cut_sets);
@@ -101,11 +105,11 @@ inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
   }
 
   if constexpr (!include_summand<propto, T_loc_cl, T_cuts_cl>::value) {
-    return 0.0;
+    return T_return(0.0);
   }
 
-  const auto& y_val = eval(value_of(y));
-  const auto& lambda_val = eval(value_of(lambda));
+  const auto& y_val = opencl::internal::as_operand(eval(value_of(y)));
+  const auto& lambda_val = opencl::internal::as_operand(eval(value_of(lambda)));
 
   const auto& y_val_cl = to_matrix_cl(y_val);
 
@@ -133,16 +137,16 @@ inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
     check_opencl_error(function, e);
   }
 
-  double logp = sum(from_matrix_cl(logp_cl));
+  opencl::ScalarCl<double> logp = sum(logp_cl);
 
-  if (!std::isfinite(logp)) {
+  if (!std::isfinite(opencl::to_host(logp))) {
     results(check_cl(function, "Vector of dependent variables", y_val,
                      "between 0 and number of classes"),
             check_cl(function, "lambda vector", lambda_val, "finite"))
         = expressions(y_val >= 1 && y_val <= static_cast<int>(N_classes),
                       isfinite(lambda_val));
   }
-  auto ops_partials = make_partials_propagator(lambda, cuts);
+  auto ops_partials = opencl::make_partials_propagator(lambda, cuts);
 
   if constexpr (is_autodiff_v<T_loc_cl>) {
     partials<0>(ops_partials) = lambda_derivative_cl;
@@ -154,7 +158,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
       partials<1>(ops_partials) = std::move(cuts_derivative_cl);
     }
   }
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

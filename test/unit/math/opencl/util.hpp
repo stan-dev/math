@@ -20,9 +20,14 @@ template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline T opencl_argument(const T& x) {
   return x;
 }
-template <typename T, require_not_stan_scalar_t<T>* = nullptr>
+template <typename T, require_not_stan_scalar_t<T>* = nullptr,
+          require_not_scalar_cl_t<T>* = nullptr>
 auto opencl_argument(const T& x) {
   return to_matrix_cl(x);
+}
+template <typename T, require_scalar_cl_t<T>* = nullptr>
+inline const T& opencl_argument(const T& x) {
+  return x;
 }
 
 template <typename T, require_t<std::is_integral<scalar_type_t<T>>>* = nullptr>
@@ -124,6 +129,12 @@ inline void expect_eq(const T1& a, const T2& b, const char* msg,
                       = stan::test::relative_tolerance()) {
   expect_eq(host_value(a), value_of(b), msg, tol);
 }
+template <typename T1, typename T2, require_all_scalar_cl_t<T1, T2>* = nullptr>
+inline void expect_eq(const T1& a, const T2& b, const char* msg,
+                      stan::test::relative_tolerance tol
+                      = stan::test::relative_tolerance()) {
+  expect_eq(host_value(a), host_value(b), msg, tol);
+}
 template <typename T1, typename T2, require_not_scalar_cl_t<T1>* = nullptr,
           require_scalar_cl_t<T2>* = nullptr>
 inline void expect_eq(const T1& a, const T2& b, const char* msg,
@@ -175,6 +186,13 @@ inline void expect_adj_near(const T1& a, const T2& b, const char* msg) {
   stan::test::expect_near_rel(msg, a_ref.adj(), b_ref.adj(),
                               stan::test::relative_tolerance(1e-5));
 }
+inline void expect_adj_near(const opencl::ScalarCl<var>& a, const var& b,
+                            const char* msg) {
+  stan::test::expect_near_rel(msg, opencl::to_host(a.adj()), b.adj(),
+                              stan::test::relative_tolerance(1e-5));
+}
+inline void expect_adj_near(const opencl::ScalarCl<double>& a, double b,
+                            const char* msg) {}
 template <typename T>
 inline void expect_adj_near(const std::vector<T>& a, const std::vector<T>& b,
                             const char* msg) {
@@ -213,41 +231,87 @@ inline void prim_rev_argument_combinations(const Functor& f, const Arg0& arg0,
       args...);
 }
 
+/**
+ * Floating point scalar arguments become device scalars for the OpenCL call:
+ * `ScalarCl<double>` if `Var` is false, `ScalarCl<var>` otherwise. Other
+ * arguments are passed as they are for the CPU and OpenCL calls.
+ */
+template <bool Var, typename T>
+auto scalar_cl_cpu_argument(const T& x) {
+  if constexpr (Var) {
+    return var_argument(x);
+  } else {
+    return x;
+  }
+}
+template <bool Var, typename T>
+auto scalar_cl_opencl_argument(const T& x) {
+  if constexpr (std::is_floating_point<T>::value) {
+    if constexpr (Var) {
+      return opencl::ScalarCl<var>(x);
+    } else {
+      return opencl::ScalarCl<double>(x);
+    }
+  } else {
+    return scalar_cl_cpu_argument<Var>(x);
+  }
+}
+
+/**
+ * Calls the functor with two argument combinations in which every floating
+ * point scalar is a device scalar in the OpenCL call: once with
+ * `ScalarCl<double>` and primitive containers, and once with `ScalarCl<var>`
+ * and autodiff containers.
+ */
+template <typename Functor, typename... Args>
+inline void scalar_cl_argument_combinations(const Functor& f,
+                                            const Args&... args) {
+#ifndef STAN_TEST_OPENCL_NO_SCALAR_CL
+  if constexpr ((std::is_floating_point<Args>::value || ...)) {
+    f(std::make_tuple(scalar_cl_cpu_argument<false>(args)...),
+      std::make_tuple(scalar_cl_opencl_argument<false>(args)...));
+    f(std::make_tuple(scalar_cl_cpu_argument<true>(args)...),
+      std::make_tuple(scalar_cl_opencl_argument<true>(args)...));
+  }
+#endif
+}
+
 template <typename Functor, std::size_t... Is, typename... Args>
 inline void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
                                              stan::test::relative_tolerance tol,
                                              std::index_sequence<Is...>,
                                              const Args&... args) {
-  prim_rev_argument_combinations(
-      [&functor, tol](const auto& args_for_cpu, const auto& args_for_opencl) {
-        std::string signature = type_name<decltype(args_for_cpu)>().data();
-        try {
-          auto res_cpu = eval(functor(std::get<Is>(args_for_cpu)...));
-          auto res_opencl = eval(
-              functor(opencl_argument(std::get<Is>(args_for_opencl))...));
-          expect_eq(res_opencl, res_cpu,
-                    ("CPU and OpenCL return values do not match for signature "
-                     + signature + "!")
-                        .c_str(),
-                    tol);
-          var(recursive_sum(res_cpu) + recursive_sum(res_opencl)).grad();
+  const auto compare = [&functor, tol](const auto& args_for_cpu,
+                                       const auto& args_for_opencl) {
+    std::string signature = type_name<decltype(args_for_cpu)>().data();
+    try {
+      auto res_cpu = eval(functor(std::get<Is>(args_for_cpu)...));
+      auto res_opencl
+          = eval(functor(opencl_argument(std::get<Is>(args_for_opencl))...));
+      expect_eq(res_opencl, res_cpu,
+                ("CPU and OpenCL return values do not match for signature "
+                 + signature + "!")
+                    .c_str(),
+                tol);
+      var(recursive_sum(res_cpu) + recursive_sum(res_opencl)).grad();
 
-          static_cast<void>(std::initializer_list<int>{
-              (expect_adj_near(
-                   std::get<Is>(args_for_opencl), std::get<Is>(args_for_cpu),
-                   ("CPU and OpenCL adjoints do not match for argument "
-                    + std::to_string(Is) + " for signature " + signature + "!")
-                       .c_str()),
-               0)...});
-        } catch (...) {
-          std::cerr << "exception thrown in signature " << signature << ":"
-                    << std::endl;
-          throw;
-        }
+      static_cast<void>(std::initializer_list<int>{
+          (expect_adj_near(
+               std::get<Is>(args_for_opencl), std::get<Is>(args_for_cpu),
+               ("CPU and OpenCL adjoints do not match for argument "
+                + std::to_string(Is) + " for signature " + signature + "!")
+                   .c_str()),
+           0)...});
+    } catch (...) {
+      std::cerr << "exception thrown in signature " << signature << ":"
+                << std::endl;
+      throw;
+    }
 
-        set_zero_all_adjoints();
-      },
-      args...);
+    set_zero_all_adjoints();
+  };
+  prim_rev_argument_combinations(compare, args...);
+  scalar_cl_argument_combinations(compare, args...);
 }
 
 template <typename FunctorCPU, typename FunctorCL, std::size_t... Is,
@@ -257,31 +321,32 @@ inline void compare_cpu_opencl_prim_rev_impl(const FunctorCPU& functorCPU,
                                              stan::test::relative_tolerance tol,
                                              std::index_sequence<Is...>,
                                              const Args&... args) {
-  prim_rev_argument_combinations(
-      [&functorCPU, &functorCL, tol](const auto& args_for_cpu,
-                                     const auto& args_for_opencl) {
-        auto res_cpu = eval(functorCPU(std::get<Is>(args_for_cpu)...));
-        auto res_opencl = eval(
-            functorCL(opencl_argument(std::get<Is>(args_for_opencl))...));
-        std::string signature = type_name<decltype(args_for_cpu)>().data();
-        expect_eq(res_opencl, res_cpu,
-                  ("CPU and OpenCL return values do not match for signature "
-                   + signature + "!")
-                      .c_str(),
-                  tol);
-        var(recursive_sum(res_cpu) + recursive_sum(res_opencl)).grad();
+  const auto compare = [&functorCPU, &functorCL, tol](
+                           const auto& args_for_cpu,
+                           const auto& args_for_opencl) {
+    auto res_cpu = eval(functorCPU(std::get<Is>(args_for_cpu)...));
+    auto res_opencl
+        = eval(functorCL(opencl_argument(std::get<Is>(args_for_opencl))...));
+    std::string signature = type_name<decltype(args_for_cpu)>().data();
+    expect_eq(res_opencl, res_cpu,
+              ("CPU and OpenCL return values do not match for signature "
+               + signature + "!")
+                  .c_str(),
+              tol);
+    var(recursive_sum(res_cpu) + recursive_sum(res_opencl)).grad();
 
-        static_cast<void>(std::initializer_list<int>{
-            (expect_adj_near(
-                 std::get<Is>(args_for_opencl), std::get<Is>(args_for_cpu),
-                 ("CPU and OpenCL adjoints do not match for argument "
-                  + std::to_string(Is) + " for signature " + signature + "!")
-                     .c_str()),
-             0)...});
+    static_cast<void>(std::initializer_list<int>{
+        (expect_adj_near(
+             std::get<Is>(args_for_opencl), std::get<Is>(args_for_cpu),
+             ("CPU and OpenCL adjoints do not match for argument "
+              + std::to_string(Is) + " for signature " + signature + "!")
+                 .c_str()),
+         0)...});
 
-        set_zero_all_adjoints();
-      },
-      args...);
+    set_zero_all_adjoints();
+  };
+  prim_rev_argument_combinations(compare, args...);
+  scalar_cl_argument_combinations(compare, args...);
 }
 
 template <bool Condition, typename T, std::enable_if_t<Condition>* = nullptr>

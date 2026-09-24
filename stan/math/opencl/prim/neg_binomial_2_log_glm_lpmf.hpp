@@ -20,6 +20,9 @@
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 #include <vector>
 #include <cmath>
 
@@ -65,16 +68,21 @@ template <bool propto, typename T_y_cl, typename T_x_cl, typename T_alpha_cl,
           typename T_beta_cl, typename T_phi_cl,
           require_all_prim_or_rev_kernel_expression_t<
               T_x_cl, T_y_cl, T_alpha_cl, T_beta_cl, T_phi_cl>* = nullptr>
-inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl>
+inline opencl::scalar_cl_return_t<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl>
 neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
                             const T_alpha_cl& alpha, const T_beta_cl& beta,
                             const T_phi_cl& phi) {
   static constexpr const char* function = "neg_binomial_2_log_glm_lpmf(OpenCL)";
+  using T_return
+      = opencl::scalar_cl_return_t<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl>;
   using T_partials_return
       = partials_return_t<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl>;
-  constexpr bool is_y_vector = !is_stan_scalar<T_y_cl>::value;
-  constexpr bool is_phi_vector = !is_stan_scalar<T_phi_cl>::value;
-  constexpr bool is_alpha_vector = !is_stan_scalar<T_alpha_cl>::value;
+  constexpr bool is_y_vector
+      = !opencl::internal::is_host_or_device_scalar<T_y_cl>::value;
+  constexpr bool is_phi_vector
+      = !opencl::internal::is_host_or_device_scalar<T_phi_cl>::value;
+  constexpr bool is_alpha_vector
+      = !opencl::internal::is_host_or_device_scalar<T_alpha_cl>::value;
   using Eigen::Dynamic;
   using std::isfinite;
 
@@ -96,23 +104,26 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
                      math::size(alpha));
   }
   if (N == 0) {
-    return 0;
+    return T_return(0.0);
   }
   if constexpr (!include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl,
                                  T_phi_cl>::value) {
-    return 0;
+    return T_return(0.0);
   }
 
-  const auto& y_val = eval(value_of(y));
-  const auto& x_val = eval(value_of(x));
-  const auto& alpha_val = eval(value_of(alpha));
-  const auto& beta_val = eval(value_of(beta));
-  const auto& phi_val = eval(value_of(phi));
+  const auto& y_val = opencl::internal::as_operand(eval(value_of(y)));
+  const auto& x_val = opencl::internal::as_operand(eval(value_of(x)));
+  const auto& alpha_val = opencl::internal::as_operand(eval(value_of(alpha)));
+  const auto& beta_val = opencl::internal::as_operand(eval(value_of(beta)));
+  const auto& phi_val = opencl::internal::as_operand(eval(value_of(phi)));
 
-  // copy any scalars to device, as this is expected by the kernel
+  // the kernel takes buffers: host scalars are copied to the device and device
+  // scalars pass their own buffer
   const auto& y_val_cl = to_matrix_cl(y_val);
-  const auto& alpha_val_cl = to_matrix_cl(alpha_val);
-  const auto& phi_val_cl = to_matrix_cl(phi_val);
+  const auto& alpha_val_cl
+      = opencl::internal::as_kernel_buffer(eval(value_of(alpha)));
+  const auto& phi_val_cl
+      = opencl::internal::as_kernel_buffer(eval(value_of(phi)));
 
   const int local_size
       = opencl_kernels::neg_binomial_2_log_glm.get_option("LOCAL_SIZE_");
@@ -150,8 +161,8 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
     check_opencl_error(function, e);
   }
 
-  T_partials_return logp = sum(from_matrix_cl(logp_cl));
-  if (!std::isfinite(logp)) {
+  opencl::ScalarCl<double> logp = sum(logp_cl);
+  if (!std::isfinite(opencl::to_host(logp))) {
     results(
         check_cl(function, "Vector of dependent variables", y_val,
                  "nonnegative"),
@@ -162,20 +173,26 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
     check_cl(function, "Design matrix", x_val, "finite") = isfinite(x_val);
     check_cl(function, "Weight vector", beta_val, "finite")
         = isfinite(beta_val);
+  } else if constexpr (is_scalar_cl<T_phi_cl>::value) {
+    // a check of a device scalar alone is evaluated as a 1x1 expression
+    auto phi_check = isfinite(phi_val) && phi_val > 0;
+    check_cl(function, "Precision parameter", phi_val, "positive finite")
+        = scalar_result_<decltype(phi_check)>(std::move(phi_check));
   } else {
     check_cl(function, "Precision parameter", phi_val, "positive finite")
         = isfinite(phi_val) && phi_val > 0;
   }
 
   if constexpr (include_summand<propto, T_phi_cl>::value && !is_phi_vector) {
-    logp += N * (multiply_log(phi_val, phi_val) - lgamma(phi_val));
+    logp += static_cast<double>(N)
+            * (multiply_log(phi_val, phi_val) - lgamma(phi_val));
   }
   if constexpr (include_summand<propto, T_phi_cl>::value && !is_y_vector
                 && !is_phi_vector) {
-    logp += lgamma(y_val + phi_val) * N;
+    logp += lgamma(y_val + phi_val) * static_cast<double>(N);
   }
 
-  auto ops_partials = make_partials_propagator(x, alpha, beta, phi);
+  auto ops_partials = opencl::make_partials_propagator(x, alpha, beta, phi);
   // Compute the necessary derivatives.
   if constexpr (is_autodiff_v<T_x_cl>) {
     partials<0>(ops_partials)
@@ -200,18 +217,17 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
     if constexpr (is_alpha_vector) {
       partials<1>(ops_partials) = std::move(theta_derivative_cl);
     } else {
-      partials<1>(ops_partials)[0]
-          = sum(from_matrix_cl(theta_derivative_sum_cl));
+      partials<1>(ops_partials)[0] = sum(theta_derivative_sum_cl);
     }
   }
   if constexpr (is_autodiff_v<T_phi_cl>) {
     if constexpr (is_phi_vector) {
       partials<3>(ops_partials) = std::move(phi_derivative_cl);
     } else {
-      partials<3>(ops_partials)[0] = sum(from_matrix_cl(phi_derivative_cl));
+      partials<3>(ops_partials)[0] = sum(phi_derivative_cl);
     }
   }
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

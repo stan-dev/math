@@ -18,6 +18,8 @@
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -46,10 +48,13 @@ template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta,
           require_all_prim_or_rev_kernel_expression_t<T_y, T_x, T_alpha,
                                                       T_beta>* = nullptr>
-inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
-    const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
+inline opencl::scalar_cl_return_t<T_x, T_alpha, T_beta>
+categorical_logit_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
+                           const T_beta& beta) {
   using T_partials_return = partials_return_t<T_x, T_alpha, T_beta>;
-  constexpr bool is_y_vector = !is_stan_scalar<T_y>::value;
+  using T_return = opencl::scalar_cl_return_t<T_x, T_alpha, T_beta>;
+  constexpr bool is_y_vector
+      = !opencl::internal::is_host_or_device_scalar<T_y>::value;
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -69,16 +74,16 @@ inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
                    "beta", beta.rows());
 
   if (N_instances == 0 || N_classes <= 1) {
-    return 0;
+    return T_return(0.0);
   }
   if constexpr (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
-    return 0;
+    return T_return(0.0);
   }
 
-  const auto& y_val = eval(value_of(y));
-  const auto& x_val = eval(value_of(x));
-  const auto& alpha_val = eval(value_of(alpha));
-  const auto& beta_val = eval(value_of(beta));
+  const auto& y_val = opencl::internal::as_operand(eval(value_of(y)));
+  const auto& x_val = opencl::internal::as_operand(eval(value_of(x)));
+  const auto& alpha_val = opencl::internal::as_operand(eval(value_of(alpha)));
+  const auto& beta_val = opencl::internal::as_operand(eval(value_of(beta)));
 
   const auto& y_val_cl = to_matrix_cl(y_val);
 
@@ -109,9 +114,9 @@ inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   } catch (const cl::Error& e) {
     check_opencl_error(function, e);
   }
-  T_partials_return logp = sum(from_matrix_cl(logp_cl));
+  opencl::ScalarCl<double> logp = sum(logp_cl);
 
-  if (!std::isfinite(logp)) {
+  if (!std::isfinite(opencl::to_host(logp))) {
     results(check_cl(function, "Vector of dependent variables", y_val,
                      "between 0 and cols of beta"),
             check_cl(function, "Intercept", alpha_val, "finite"))
@@ -122,7 +127,7 @@ inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
         = isfinite(beta_val);
   }
 
-  auto ops_partials = make_partials_propagator(x, alpha, beta);
+  auto ops_partials = opencl::make_partials_propagator(x, alpha, beta);
   if constexpr (is_autodiff_v<T_x>) {
     if constexpr (is_y_vector) {
       partials<0>(ops_partials)
@@ -158,7 +163,7 @@ inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
       }
     }
   }
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

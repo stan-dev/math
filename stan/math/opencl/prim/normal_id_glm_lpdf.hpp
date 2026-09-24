@@ -18,6 +18,8 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/prob/normal_id_glm_lpdf.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 #include <cmath>
 
 namespace stan {
@@ -59,14 +61,20 @@ template <bool propto, typename T_y_cl, typename T_x_cl, typename T_alpha_cl,
           typename T_beta_cl, typename T_sigma_cl,
           require_all_prim_or_rev_kernel_expression_t<
               T_x_cl, T_y_cl, T_alpha_cl, T_beta_cl, T_sigma_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_x_cl, T_alpha_cl, T_beta_cl, T_sigma_cl>
+inline opencl::scalar_cl_return_t<T_y_cl, T_x_cl, T_alpha_cl, T_beta_cl,
+                                  T_sigma_cl>
 normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
                    const T_beta_cl& beta, const T_sigma_cl& sigma) {
   using T_partials_return
       = partials_return_t<T_y_cl, T_x_cl, T_alpha_cl, T_beta_cl, T_sigma_cl>;
-  constexpr bool is_y_vector = !is_stan_scalar<T_y_cl>::value;
-  constexpr bool is_sigma_vector = !is_stan_scalar<T_sigma_cl>::value;
-  constexpr bool is_alpha_vector = !is_stan_scalar<T_alpha_cl>::value;
+  using T_return = opencl::scalar_cl_return_t<T_y_cl, T_x_cl, T_alpha_cl,
+                                              T_beta_cl, T_sigma_cl>;
+  constexpr bool is_y_vector
+      = !opencl::internal::is_host_or_device_scalar<T_y_cl>::value;
+  constexpr bool is_sigma_vector
+      = !opencl::internal::is_host_or_device_scalar<T_sigma_cl>::value;
+  constexpr bool is_alpha_vector
+      = !opencl::internal::is_host_or_device_scalar<T_alpha_cl>::value;
   using std::isfinite;
   static constexpr const char* function = "normal_id_glm_lpdf(OpenCL)";
 
@@ -89,17 +97,17 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
   }
   if (!include_summand<propto, T_y_cl, T_x_cl, T_alpha_cl, T_beta_cl,
                        T_sigma_cl>::value) {
-    return 0;
+    return T_return(0.0);
   }
   if (N == 0) {
-    return 0;
+    return T_return(0.0);
   }
 
-  const auto& y_val = value_of(y);
-  const auto& x_val = value_of(x);
-  const auto& alpha_val = value_of(alpha);
-  const auto& beta_val = value_of(beta);
-  const auto& sigma_val = value_of(sigma);
+  const auto& y_val = opencl::internal::as_operand(value_of(y));
+  const auto& x_val = opencl::internal::as_operand(value_of(x));
+  const auto& alpha_val = opencl::internal::as_operand(value_of(alpha));
+  const auto& beta_val = opencl::internal::as_operand(value_of(beta));
+  const auto& sigma_val = opencl::internal::as_operand(value_of(sigma));
 
   auto inv_sigma_expr = elt_divide(1., sigma_val);
   auto y_scaled_expr = elt_multiply(
@@ -139,11 +147,12 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
                     calc_if<need_sigma_derivative>(sigma_derivative_expr),
                     calc_if<need_log_sigma_sum>(log_sigma_sum_expr));
 
-  double y_scaled_sq_sum = sum(from_matrix_cl(y_scaled_sq_sum_cl));
-  auto ops_partials = make_partials_propagator(y, x, alpha, beta, sigma);
-  double mu_derivative_sum;
+  opencl::ScalarCl<double> y_scaled_sq_sum = sum(y_scaled_sq_sum_cl);
+  auto ops_partials
+      = opencl::make_partials_propagator(y, x, alpha, beta, sigma);
+  opencl::ScalarCl<double> mu_derivative_sum;
   if (need_mu_derivative_sum) {
-    mu_derivative_sum = sum(from_matrix_cl(mu_derivative_sum_cl));
+    mu_derivative_sum = sum(mu_derivative_sum_cl);
   }
   if constexpr (is_autodiff_v<T_y_cl>) {
     if constexpr (is_y_vector) {
@@ -182,7 +191,7 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
     partials<4>(ops_partials) = sigma_derivative_cl;
   }
 
-  if (!std::isfinite(y_scaled_sq_sum)) {
+  if (!std::isfinite(opencl::to_host(y_scaled_sq_sum))) {
     results(
         check_cl(function, "Vector of dependent variables", y_val, "finite"),
         check_cl(function, "Intercept", alpha_val, "finite"),
@@ -195,20 +204,20 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
   }
 
   // Compute log probability.
-  T_partials_return logp(0.0);
+  opencl::ScalarCl<double> logp;
   if constexpr (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * N;
   }
   if constexpr (include_summand<propto, T_sigma_cl>::value) {
     if constexpr (is_sigma_vector) {
-      logp -= sum(from_matrix_cl(log_sigma_sum_cl));
+      logp -= sum(log_sigma_sum_cl);
     } else {
-      logp -= N * log(sigma_val);
+      logp -= static_cast<double>(N) * log(sigma_val);
     }
   }
   logp -= 0.5 * y_scaled_sq_sum;
 
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

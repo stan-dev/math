@@ -211,8 +211,8 @@ inline return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
 }
 
 template <typename T_y, typename T_x, typename T_beta, typename T_cuts>
-inline return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
-    const T_y& y, const T_x& x, const T_beta& beta, const T_cuts& cuts) {
+inline auto ordered_logistic_glm_lpmf(const T_y& y, const T_x& x,
+                                      const T_beta& beta, const T_cuts& cuts) {
   return ordered_logistic_glm_lpmf<false>(y, x, beta, cuts);
 }
 

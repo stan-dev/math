@@ -5,10 +5,11 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/fun/log_inv_logit.hpp>
 #include <stan/math/prim/fun/log1m_inv_logit.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -31,10 +32,10 @@ template <bool propto, typename T_n_cl, typename T_N_cl, typename T_prob_cl,
                                                       T_prob_cl>* = nullptr,
           require_any_nonscalar_prim_or_rev_kernel_expression_t<
               T_n_cl, T_N_cl, T_prob_cl>* = nullptr>
-inline return_type_t<T_prob_cl> binomial_logit_lpmf(const T_n_cl& n,
-                                                    const T_N_cl N,
-                                                    const T_prob_cl& alpha) {
+inline opencl::scalar_cl_return_t<T_prob_cl> binomial_logit_lpmf(
+    const T_n_cl& n, const T_N_cl N, const T_prob_cl& alpha) {
   static constexpr const char* function = "binomial_logit_lpmf(OpenCL)";
+  using T_return = opencl::scalar_cl_return_t<T_prob_cl>;
   using T_partials_return = partials_return_t<T_prob_cl>;
   using std::isfinite;
 
@@ -43,14 +44,14 @@ inline return_type_t<T_prob_cl> binomial_logit_lpmf(const T_n_cl& n,
                          "Probability parameter", alpha);
   const size_t siz = max_size(n, N, alpha);
   if (siz == 0) {
-    return 0.0;
+    return T_return(0.0);
   }
   if constexpr (!include_summand<propto, T_prob_cl>::value) {
-    return 0.0;
+    return T_return(0.0);
   }
 
   const auto& alpha_col = as_column_vector_or_scalar(alpha);
-  const auto& alpha_val = value_of(alpha_col);
+  const auto& alpha_val = opencl::internal::as_operand(value_of(alpha_col));
 
   auto check_n_bounded
       = check_cl(function, "Successes variable", n, "in the interval [0, N]");
@@ -80,13 +81,13 @@ inline return_type_t<T_prob_cl> binomial_logit_lpmf(const T_n_cl& n,
       = expressions(n_bounded, N_nonnegative, alpha_finite, logp_expr,
                     calc_if<is_autodiff_v<T_prob_cl>>(alpha_deriv));
 
-  T_partials_return logp = sum(from_matrix_cl(logp_cl));
-  auto ops_partials = make_partials_propagator(alpha_col);
+  opencl::ScalarCl<double> logp = sum(logp_cl);
+  auto ops_partials = opencl::make_partials_propagator(alpha_col);
   if constexpr (is_autodiff_v<T_prob_cl>) {
     partials<0>(ops_partials) = std::move(alpha_deriv_cl);
   }
 
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

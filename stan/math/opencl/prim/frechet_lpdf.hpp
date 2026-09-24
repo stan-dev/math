@@ -9,7 +9,9 @@
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -36,32 +38,34 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_shape_cl,
                                                 T_scale_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_shape_cl, T_scale_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_shape_cl, T_scale_cl> frechet_lpdf(
+inline opencl::scalar_cl_return_t<T_y_cl, T_shape_cl, T_scale_cl> frechet_lpdf(
     const T_y_cl& y, const T_shape_cl& alpha, const T_scale_cl& sigma) {
   using std::isfinite;
+  using T_return = opencl::scalar_cl_return_t<T_y_cl, T_shape_cl, T_scale_cl>;
   static constexpr const char* function = "frechet_lpdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_shape_cl, T_scale_cl>;
 
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale parameter", sigma);
   const size_t N = max_size(y, alpha, sigma);
-  if (N == 0) {
-    return 0.0;
+  if (size_zero(y, alpha, sigma)) {
+    return T_return(0.0);
   }
   if constexpr (!include_summand<propto, T_y_cl, T_shape_cl,
                                  T_scale_cl>::value) {
-    return 0.0;
+    return T_return(0.0);
   }
 
   const auto& y_col = as_column_vector_or_scalar(y);
   const auto& alpha_col = as_column_vector_or_scalar(alpha);
   const auto& sigma_col = as_column_vector_or_scalar(sigma);
 
-  const auto& y_val = value_of(y_col);
-  const auto& alpha_val = value_of(alpha_col);
-  const auto& sigma_val = value_of(sigma_col);
+  const auto& y_val = opencl::internal::as_operand(value_of(y_col));
+  const auto& alpha_val = opencl::internal::as_operand(value_of(alpha_col));
+  const auto& sigma_val = opencl::internal::as_operand(value_of(sigma_col));
 
-  auto ops_partials = make_partials_propagator(y_col, alpha_col, sigma_col);
+  auto ops_partials
+      = opencl::make_partials_propagator(y_col, alpha_col, sigma_col);
 
   auto check_y_positive
       = check_cl(function, "Random variable", y_val, "positive");
@@ -107,7 +111,7 @@ inline return_type_t<T_y_cl, T_shape_cl, T_scale_cl> frechet_lpdf(
                     sigma_pos_finite_expr, logp_expr, y_deriv_expr,
                     alpha_deriv_expr, sigma_deriv_expr);
 
-  T_partials_return logp = sum(from_matrix_cl(logp_cl));
+  opencl::ScalarCl<double> logp = sum(logp_cl);
 
   if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
@@ -119,7 +123,7 @@ inline return_type_t<T_y_cl, T_shape_cl, T_scale_cl> frechet_lpdf(
     partials<2>(ops_partials) = std::move(sigma_deriv_cl);
   }
 
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

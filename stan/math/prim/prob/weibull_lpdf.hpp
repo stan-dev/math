@@ -112,9 +112,8 @@ inline return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
 }
 
 template <typename T_y, typename T_shape, typename T_scale>
-inline return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
-                                                         const T_shape& alpha,
-                                                         const T_scale& sigma) {
+inline auto weibull_lpdf(const T_y& y, const T_shape& alpha,
+                         const T_scale& sigma) {
   return weibull_lpdf<false>(y, alpha, sigma);
 }
 

@@ -84,6 +84,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/scalar_cl.hpp>
 #include <stan/math/opencl/scalar_cl_functions.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
 
 #include <stan/math/opencl/scalar_type.hpp>
 #include <stan/math/opencl/copy.hpp>

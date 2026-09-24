@@ -515,8 +515,20 @@ class results_cl {
         = stan::math::disjunction<stan::bool_constant<std::decay_t<
             T_expressions>::Deriv::require_specific_local_size>...>::value;
 
-    int n_rows = std::get<0>(assignment_pairs).second.thread_rows();
-    int n_cols = std::get<0>(assignment_pairs).second.thread_cols();
+    // The number of threads is given by the first expression with a known
+    // size; expressions of dynamic size (such as device scalars) broadcast.
+    int n_rows = -1;
+    int n_cols = -1;
+    index_apply<sizeof...(T_expressions)>([&](auto... Is) {
+      static_cast<void>(std::initializer_list<int>{
+          (n_rows = n_rows >= 0
+                        ? n_rows
+                        : std::get<Is>(assignment_pairs).second.thread_rows(),
+           n_cols = n_cols >= 0
+                        ? n_cols
+                        : std::get<Is>(assignment_pairs).second.thread_cols(),
+           0)...});
+    });
     const char* function = "results_cl.assignment";
     impl::check_assign_dimensions(n_rows, n_cols, assignment_pairs);
     if (n_rows * n_cols == 0) {

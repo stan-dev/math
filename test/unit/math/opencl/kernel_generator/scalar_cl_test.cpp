@@ -157,4 +157,25 @@ TEST(KernelGeneratorScalarCl, chained_scalar_results_stay_ordered) {
   EXPECT_MATRIX_NEAR(from_matrix_cl(res_cl), m * expected, 1e-9);
 }
 
+TEST(KernelGeneratorScalarCl, scalar_only_subexpressions_keep_dense_view) {
+  // Scalar-only subexpressions have dynamic size; they must not shrink the
+  // triangular view inferred for the result.
+  MatrixXd m = test_matrix();
+  matrix_cl<double> m_cl(m);
+  ScalarCl<double> s(2.0);
+  auto s_op = stan::math::as_operation_cl(s);
+  matrix_cl<double> div_cl
+      = stan::math::elt_multiply(stan::math::elt_divide(1.0, s_op), m_cl);
+  EXPECT_EQ(div_cl.view(), stan::math::matrix_cl_view::Entire);
+  EXPECT_MATRIX_EQ(from_matrix_cl(div_cl), m / 2.0);
+  matrix_cl<double> log_cl
+      = stan::math::elt_multiply(stan::math::log(s_op), m_cl);
+  EXPECT_EQ(log_cl.view(), stan::math::matrix_cl_view::Entire);
+  EXPECT_MATRIX_NEAR(from_matrix_cl(log_cl), m * std::log(2.0), 1e-14);
+  matrix_cl<double> fmax_cl
+      = stan::math::elt_multiply(stan::math::fmax(s_op, 1.0), m_cl);
+  EXPECT_EQ(fmax_cl.view(), stan::math::matrix_cl_view::Entire);
+  EXPECT_MATRIX_EQ(from_matrix_cl(fmax_cl), m * 2.0);
+}
+
 #endif

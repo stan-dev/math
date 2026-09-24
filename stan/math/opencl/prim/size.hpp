@@ -20,6 +20,16 @@ int64_t size(const T& m) {
   return m.rows() * m.cols();
 }
 
+/**
+ * Returns the size of a device scalar (`opencl::ScalarCl`), which is one.
+ * @tparam T type of the device scalar
+ * @return 1
+ */
+template <typename T, require_scalar_cl_t<T>* = nullptr>
+inline constexpr int64_t size(const T& /* x */) noexcept {
+  return 1;
+}
+
 }  // namespace math
 }  // namespace stan
 

@@ -8,7 +8,9 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -30,9 +32,10 @@ template <typename T_y_cl, typename T_low_cl, typename T_high_cl,
           require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_low_cl,
                                                       T_high_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_low_cl, T_high_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_lcdf(
+inline opencl::scalar_cl_return_t<T_y_cl, T_low_cl, T_high_cl> uniform_lcdf(
     const T_y_cl& y, const T_low_cl& alpha, const T_high_cl& beta) {
   static constexpr const char* function = "uniform_lcdf(OpenCL)";
+  using T_return = opencl::scalar_cl_return_t<T_y_cl, T_low_cl, T_high_cl>;
   using T_partials_return = partials_return_t<T_y_cl, T_low_cl, T_high_cl>;
   using std::isfinite;
   using std::isnan;
@@ -40,17 +43,17 @@ inline return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_lcdf(
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          alpha, "Scale parameter", beta);
   const size_t N = max_size(y, alpha, beta);
-  if (N == 0) {
-    return 0.0;
+  if (size_zero(y, alpha, beta)) {
+    return T_return(0.0);
   }
 
   const auto& y_col = as_column_vector_or_scalar(y);
   const auto& alpha_col = as_column_vector_or_scalar(alpha);
   const auto& beta_col = as_column_vector_or_scalar(beta);
 
-  const auto& y_val = value_of(y_col);
-  const auto& alpha_val = value_of(alpha_col);
-  const auto& beta_val = value_of(beta_col);
+  const auto& y_val = opencl::internal::as_operand(value_of(y_col));
+  const auto& alpha_val = opencl::internal::as_operand(value_of(alpha_col));
+  const auto& beta_val = opencl::internal::as_operand(value_of(beta_col));
 
   auto check_y_not_nan
       = check_cl(function, "Random variable", y_val, "not NaN");
@@ -94,12 +97,13 @@ inline return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_lcdf(
                     calc_if<is_autodiff_v<T_high_cl>>(high_deriv));
 
   if (from_matrix_cl(any_y_out_of_bounds_cl).maxCoeff()) {
-    return -INFINITY;
+    return T_return(NEGATIVE_INFTY);
   }
 
-  T_partials_return lcdf = from_matrix_cl(lcdf_cl).sum();
+  opencl::ScalarCl<double> lcdf = sum(lcdf_cl);
 
-  auto ops_partials = make_partials_propagator(y_col, alpha_col, beta_col);
+  auto ops_partials
+      = opencl::make_partials_propagator(y_col, alpha_col, beta_col);
 
   if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
@@ -110,7 +114,7 @@ inline return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_lcdf(
   if constexpr (is_autodiff_v<T_high_cl>) {
     partials<2>(ops_partials) = std::move(beta_deriv_cl);
   }
-  return ops_partials.build(lcdf);
+  return ops_partials.build(std::move(lcdf));
 }
 
 }  // namespace math

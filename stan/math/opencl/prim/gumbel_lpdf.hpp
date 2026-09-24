@@ -8,7 +8,9 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -33,9 +35,10 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_loc_cl,
                                                 T_scale_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lpdf(
+inline opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lpdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& beta) {
   using std::isfinite;
+  using T_return = opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
   using std::isnan;
   static constexpr const char* function = "gumbel_lpdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
@@ -43,20 +46,20 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lpdf(
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", beta);
   const size_t N = max_size(y, mu, beta);
-  if (N == 0) {
-    return 0.0;
+  if (size_zero(y, mu, beta)) {
+    return T_return(0.0);
   }
   if constexpr (!include_summand<propto, T_y_cl, T_loc_cl, T_scale_cl>::value) {
-    return 0.0;
+    return T_return(0.0);
   }
 
   const auto& y_col = as_column_vector_or_scalar(y);
   const auto& mu_col = as_column_vector_or_scalar(mu);
   const auto& beta_col = as_column_vector_or_scalar(beta);
 
-  const auto& y_val = value_of(y_col);
-  const auto& mu_val = value_of(mu_col);
-  const auto& beta_val = value_of(beta_col);
+  const auto& y_val = opencl::internal::as_operand(value_of(y_col));
+  const auto& mu_val = opencl::internal::as_operand(value_of(mu_col));
+  const auto& beta_val = opencl::internal::as_operand(value_of(beta_col));
 
   auto check_y_not_nan
       = check_cl(function, "Random variable", y_val, "not NaN");
@@ -95,9 +98,9 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lpdf(
                     calc_if<is_autodiff_v<T_loc_cl>>(-scaled_diff_expr),
                     calc_if<is_autodiff_v<T_scale_cl>>(beta_deriv_expr));
 
-  T_partials_return logp = sum(from_matrix_cl(logp_cl));
+  opencl::ScalarCl<double> logp = sum(logp_cl);
 
-  auto ops_partials = make_partials_propagator(y_col, mu_col, beta_col);
+  auto ops_partials = opencl::make_partials_propagator(y_col, mu_col, beta_col);
   if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
@@ -108,7 +111,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lpdf(
     partials<2>(ops_partials) = std::move(beta_deriv_cl);
   }
 
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

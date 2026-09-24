@@ -8,7 +8,9 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -40,9 +42,11 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_dof_cl,
                                                 T_scale_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_dof_cl, T_scale_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_dof_cl, T_scale_cl> scaled_inv_chi_square_lpdf(
-    const T_y_cl& y, const T_dof_cl& nu, const T_scale_cl& s) {
+inline opencl::scalar_cl_return_t<T_y_cl, T_dof_cl, T_scale_cl>
+scaled_inv_chi_square_lpdf(const T_y_cl& y, const T_dof_cl& nu,
+                           const T_scale_cl& s) {
   static constexpr const char* function = "scaled_inv_chi_square_lpdf(OpenCL)";
+  using T_return = opencl::scalar_cl_return_t<T_y_cl, T_dof_cl, T_scale_cl>;
   using T_partials_return = partials_return_t<T_y_cl, T_dof_cl, T_scale_cl>;
   using std::isfinite;
   using std::isnan;
@@ -51,20 +55,20 @@ inline return_type_t<T_y_cl, T_dof_cl, T_scale_cl> scaled_inv_chi_square_lpdf(
                          "Degrees of freedom parameter", nu, "Scale parameter",
                          s);
   const size_t N = max_size(y, nu, s);
-  if (N == 0) {
-    return 0.0;
+  if (size_zero(y, nu, s)) {
+    return T_return(0.0);
   }
   if constexpr (!include_summand<propto, T_y_cl, T_dof_cl, T_scale_cl>::value) {
-    return 0.0;
+    return T_return(0.0);
   }
 
   const auto& y_col = as_column_vector_or_scalar(y);
   const auto& nu_col = as_column_vector_or_scalar(nu);
   const auto& s_col = as_column_vector_or_scalar(s);
 
-  const auto& y_val = value_of(y_col);
-  const auto& nu_val = value_of(nu_col);
-  const auto& s_val = value_of(s_col);
+  const auto& y_val = opencl::internal::as_operand(value_of(y_col));
+  const auto& nu_val = opencl::internal::as_operand(value_of(nu_col));
+  const auto& s_val = opencl::internal::as_operand(value_of(s_col));
 
   auto check_y_not_nan
       = check_cl(function, "Random variable", y_val, "not NaN");
@@ -121,12 +125,12 @@ inline return_type_t<T_y_cl, T_dof_cl, T_scale_cl> scaled_inv_chi_square_lpdf(
                     calc_if<is_autodiff_v<T_scale_cl>>(s_deriv));
 
   if (from_matrix_cl(any_y_nonpositive_cl).any()) {
-    return LOG_ZERO;
+    return T_return(LOG_ZERO);
   }
 
-  T_partials_return logp = sum(from_matrix_cl(logp_cl));
+  opencl::ScalarCl<double> logp = sum(logp_cl);
 
-  auto ops_partials = make_partials_propagator(y_col, nu_col, s_col);
+  auto ops_partials = opencl::make_partials_propagator(y_col, nu_col, s_col);
 
   if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
@@ -137,7 +141,7 @@ inline return_type_t<T_y_cl, T_dof_cl, T_scale_cl> scaled_inv_chi_square_lpdf(
   if constexpr (is_autodiff_v<T_scale_cl>) {
     partials<2>(ops_partials) = std::move(s_deriv_cl);
   }
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

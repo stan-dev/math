@@ -59,7 +59,7 @@ inline return_type_t<T_y> std_normal_lpdf(const T_y& y) {
 }
 
 template <typename T_y>
-inline return_type_t<T_y> std_normal_lpdf(const T_y& y) {
+inline auto std_normal_lpdf(const T_y& y) {
   return std_normal_lpdf<false>(y);
 }
 

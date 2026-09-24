@@ -116,6 +116,16 @@ struct is_nonscalar_prim_or_rev_kernel_expression
           math::conjunction<is_var<T>, is_kernel_expression_and_not_scalar<
                                            value_type_t<T>>>> {};
 
+/**
+ * Determines whether a type is an OpenCL operand: a non-scalar kernel
+ * generator expression, a var containing one, or a device scalar
+ * (`opencl::ScalarCl`).
+ */
+template <typename T>
+struct is_opencl_operand
+    : math::disjunction<is_nonscalar_prim_or_rev_kernel_expression<T>,
+                        is_scalar_cl<T>> {};
+
 /** @}*/
 
 /*! \ingroup opencl_kernel_generator */

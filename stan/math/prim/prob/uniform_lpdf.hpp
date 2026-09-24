@@ -114,9 +114,7 @@ inline return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y,
 }
 
 template <typename T_y, typename T_low, typename T_high>
-inline return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y,
-                                                      const T_low& alpha,
-                                                      const T_high& beta) {
+inline auto uniform_lpdf(const T_y& y, const T_low& alpha, const T_high& beta) {
   return uniform_lpdf<false>(y, alpha, beta);
 }
 

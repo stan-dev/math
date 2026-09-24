@@ -18,6 +18,8 @@
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 #include <cmath>
 
 namespace stan {
@@ -49,15 +51,18 @@ template <bool propto, typename T_y, typename T_x, typename T_beta,
           typename T_cuts,
           require_all_prim_or_rev_kernel_expression_t<T_y, T_x, T_beta,
                                                       T_cuts>* = nullptr>
-inline return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
-    const T_y& y, const T_x& x, const T_beta& beta, const T_cuts& cuts) {
+inline opencl::scalar_cl_return_t<T_x, T_beta, T_cuts>
+ordered_logistic_glm_lpmf(const T_y& y, const T_x& x, const T_beta& beta,
+                          const T_cuts& cuts) {
   using Eigen::Array;
+  using T_return = opencl::scalar_cl_return_t<T_x, T_beta, T_cuts>;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
   using std::isfinite;
   using T_partials_return = partials_return_t<T_beta, T_cuts>;
-  constexpr bool is_y_vector = !is_stan_scalar<T_y>::value;
+  constexpr bool is_y_vector
+      = !opencl::internal::is_host_or_device_scalar<T_y>::value;
 
   static constexpr const char* function = "ordered_logistic_glm_lpmf";
 
@@ -72,7 +77,7 @@ inline return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   check_size_match(function, "Columns of ", "x", N_attributes, "Size of",
                    "beta", math::size(beta));
 
-  const auto& cuts_val = eval(value_of(cuts));
+  const auto& cuts_val = opencl::internal::as_operand(eval(value_of(cuts)));
   if (N_classes >= 2) {
     auto cuts_head = block_zero_based(cuts_val, 0, 0, math::size(cuts) - 1, 1);
     auto cuts_tail = block_zero_based(cuts_val, 1, 0, math::size(cuts) - 1, 1);
@@ -83,15 +88,15 @@ inline return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   }
 
   if (N_instances == 0 || N_classes == 1) {
-    return 0;
+    return T_return(0.0);
   }
   if constexpr (!include_summand<propto, T_x, T_beta, T_cuts>::value) {
-    return 0;
+    return T_return(0.0);
   }
 
-  const auto& y_val = eval(value_of(y));
-  const auto& x_val = eval(value_of(x));
-  const auto& beta_val = eval(value_of(beta));
+  const auto& y_val = opencl::internal::as_operand(eval(value_of(y)));
+  const auto& x_val = opencl::internal::as_operand(eval(value_of(x)));
+  const auto& beta_val = opencl::internal::as_operand(eval(value_of(beta)));
 
   const auto& y_val_cl = to_matrix_cl(y_val);
 
@@ -118,9 +123,9 @@ inline return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
     check_opencl_error(function, e);
   }
 
-  T_partials_return logp = sum(from_matrix_cl(logp_cl));
+  opencl::ScalarCl<double> logp = sum(logp_cl);
 
-  if (!std::isfinite(sum(from_matrix_cl(location_sum_cl)))) {
+  if (!std::isfinite(opencl::to_host(sum(location_sum_cl)))) {
     check_cl(function, "Vector of dependent variables", y_val,
              "between 0 and number of classes")
         = y_val >= 1 && y_val <= static_cast<int>(N_classes);
@@ -129,7 +134,7 @@ inline return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
         = isfinite(beta_val);
   }
 
-  auto ops_partials = make_partials_propagator(x, beta, cuts);
+  auto ops_partials = opencl::make_partials_propagator(x, beta, cuts);
   if constexpr (is_autodiff_v<T_x>) {
     partials<0>(ops_partials)
         = transpose(location_derivative_cl) * transpose(beta_val);
@@ -152,7 +157,7 @@ inline return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
       partials<2>(ops_partials) = rowwise_sum(cuts_derivative_cl);
     }
   }
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

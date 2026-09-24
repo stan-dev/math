@@ -18,6 +18,8 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 #include <cmath>
 #include <cstdint>
@@ -29,13 +31,16 @@ template <bool propto, typename T_n_cl, typename T_N_cl, typename T_x_cl,
           typename T_alpha_cl, typename T_beta_cl,
           require_all_prim_or_rev_kernel_expression_t<
               T_n_cl, T_N_cl, T_x_cl, T_alpha_cl, T_beta_cl>* = nullptr>
-inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> binomial_logit_glm_lpmf(
-    const T_n_cl& n, const T_N_cl& N, const T_x_cl& x, const T_alpha_cl& alpha,
-    const T_beta_cl& beta) {
+inline opencl::scalar_cl_return_t<T_x_cl, T_alpha_cl, T_beta_cl>
+binomial_logit_glm_lpmf(const T_n_cl& n, const T_N_cl& N, const T_x_cl& x,
+                        const T_alpha_cl& alpha, const T_beta_cl& beta) {
   static const char* function = "binomial_logit_glm_lpmf(OpenCL)";
+  using T_return = opencl::scalar_cl_return_t<T_x_cl, T_alpha_cl, T_beta_cl>;
   using T_partials_return = partials_return_t<T_x_cl, T_alpha_cl, T_beta_cl>;
-  constexpr bool is_y_vector = !is_stan_scalar<T_n_cl>::value;
-  constexpr bool is_alpha_vector = !is_stan_scalar<T_alpha_cl>::value;
+  constexpr bool is_y_vector
+      = !opencl::internal::is_host_or_device_scalar<T_n_cl>::value;
+  constexpr bool is_alpha_vector
+      = !opencl::internal::is_host_or_device_scalar<T_alpha_cl>::value;
 
   const size_t N_instances
       = max(max_size(n, N, alpha), static_cast<int64_t>(x.rows()));
@@ -49,16 +54,16 @@ inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> binomial_logit_glm_lpmf(
   check_consistent_size(function, "Vector of intercepts", alpha, N_instances);
 
   if (N_instances == 0 || N_attributes == 0) {
-    return 0;
+    return T_return(0.0);
   }
   if constexpr (!include_summand<propto, T_x_cl, T_alpha_cl,
                                  T_beta_cl>::value) {
-    return 0;
+    return T_return(0.0);
   }
 
-  auto&& x_val = value_of(x);
-  auto&& alpha_val = value_of(alpha);
-  auto&& beta_val = value_of(beta);
+  auto&& x_val = opencl::internal::as_operand(value_of(x));
+  auto&& alpha_val = opencl::internal::as_operand(value_of(alpha));
+  auto&& beta_val = opencl::internal::as_operand(value_of(beta));
 
   auto check_n_bounded
       = check_cl(function, "Successes variable", n, "in the interval [0, N]");
@@ -93,9 +98,9 @@ inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> binomial_logit_glm_lpmf(
           calc_if<need_theta_deriv>(theta_deriv_expr),
           calc_if<need_theta_deriv_sum>(colwise_sum(theta_deriv_expr)));
 
-  T_partials_return logp = sum(from_matrix_cl(logp_cl));
+  opencl::ScalarCl<double> logp = sum(logp_cl);
   using std::isfinite;
-  if (!isfinite(logp)) {
+  if (!std::isfinite(opencl::to_host(logp))) {
     check_cl(function, "Intercept", alpha_val, "finite") = isfinite(alpha_val);
     check_cl(function, "Weight vector", beta_val, "finite")
         = isfinite(beta_val);
@@ -103,7 +108,7 @@ inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> binomial_logit_glm_lpmf(
         = isfinite(x_val);
   }
 
-  auto ops_partials = make_partials_propagator(x, alpha, beta);
+  auto ops_partials = opencl::make_partials_propagator(x, alpha, beta);
   if constexpr (is_autodiff_v<T_x_cl>) {
     partials<0>(ops_partials) = transpose(beta_val * transpose(theta_deriv_cl));
   }
@@ -111,7 +116,7 @@ inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> binomial_logit_glm_lpmf(
     if constexpr (is_alpha_vector) {
       partials<1>(ops_partials) = theta_deriv_cl;
     } else {
-      partials<1>(ops_partials)[0] = sum(from_matrix_cl(theta_deriv_sum_cl));
+      partials<1>(ops_partials)[0] = sum(theta_deriv_sum_cl);
     }
   }
   if constexpr (is_autodiff_v<T_beta_cl>) {
@@ -129,7 +134,7 @@ inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> binomial_logit_glm_lpmf(
               edge3_partials_transpose_cl.write_events().back());
     }
   }
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

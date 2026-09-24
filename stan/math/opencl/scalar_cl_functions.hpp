@@ -43,7 +43,7 @@ using require_scalar_cl_operands_t = require_t<
 #define STAN_OPENCL_SCALAR_CL_BINARY_OPERATOR(op)                          \
   template <typename T_a, typename T_b,                                    \
             internal::require_scalar_cl_operands_t<T_a, T_b>* = nullptr>   \
-  inline ScalarCl<double> operator op(T_a && a, T_b && b) {                \
+  inline ScalarCl<double> operator op(T_a&& a, T_b&& b) {                  \
     return ScalarCl<double>(as_operation_cl(std::forward<T_a>(a))          \
                                 op as_operation_cl(std::forward<T_b>(b))); \
   }

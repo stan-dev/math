@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
+#include <stan/math/prim/meta/is_kernel_expression.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <vector>
 #include <type_traits>
@@ -114,7 +115,8 @@ inline constexpr auto& partials_vec(
  * `partials_propagator`.
  * @param ops The operands to be placed into the edges.
  */
-template <typename... Ops>
+template <typename... Ops,
+          require_all_not_t<is_opencl_operand<std::decay_t<Ops>>...>* = nullptr>
 inline auto make_partials_propagator(Ops&&... ops) {
   using return_type = return_type_t<Ops...>;
   return internal::partials_propagator<return_type, void,

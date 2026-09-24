@@ -10,9 +10,10 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
 #include <stan/math/prim/err/constraint_tolerance.hpp>
 #include <stan/math/opencl/scalar_cl.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -40,9 +41,11 @@ namespace math {
 template <bool propto, typename T_y_cl, typename T_loc_cl, typename T_covar_cl,
           require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_loc_cl,
                                                       T_covar_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_loc_cl, T_covar_cl> multi_normal_cholesky_lpdf(
-    const T_y_cl& y, const T_loc_cl& mu, const T_covar_cl& L) {
+inline opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_covar_cl>
+multi_normal_cholesky_lpdf(const T_y_cl& y, const T_loc_cl& mu,
+                           const T_covar_cl& L) {
   static constexpr const char* function = "multi_normal_cholesky_lpdf(OpenCL)";
+  using T_return = opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_covar_cl>;
 
   check_consistent_sizes(function, "y", y, "mu", mu);
   check_square(function, "covariance parameter", L);
@@ -50,20 +53,20 @@ inline return_type_t<T_y_cl, T_loc_cl, T_covar_cl> multi_normal_cholesky_lpdf(
                    "rows of covariance parameter", L.rows());
 
   if (max_size(y, mu, L) == 0) {
-    return 0.0;
+    return T_return(0.0);
   }
   if constexpr (!include_summand<propto, T_y_cl, T_loc_cl, T_covar_cl>::value) {
-    return 0.0;
+    return T_return(0.0);
   }
 
-  const auto& y_val = value_of(y);
-  const auto& mu_val = value_of(mu);
-  const auto& L_val_eval = eval(value_of(L));
+  const auto& y_val = opencl::internal::as_operand(value_of(y));
+  const auto& mu_val = opencl::internal::as_operand(value_of(mu));
+  const auto& L_val_eval = opencl::internal::as_operand(eval(value_of(L)));
 
   int L_size = L_val_eval.rows();
   int N_cases = std::max(y_val.cols(), mu_val.cols());
 
-  double logp = 0;
+  opencl::ScalarCl<double> logp;
   if constexpr (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * L_size * N_cases;
   }
@@ -110,14 +113,14 @@ inline return_type_t<T_y_cl, T_loc_cl, T_covar_cl> multi_normal_cholesky_lpdf(
   }
 
   if constexpr (include_summand<propto, T_covar_cl>::value) {
-    logp += sum(from_matrix_cl(sum_log_diag_inv_L_cl)) * N_cases;
+    logp += sum(sum_log_diag_inv_L_cl) * N_cases;
   }
 
   matrix_cl<double> half = transpose(inv_L * y_mu_diff_cl);
   matrix_cl<double> scaled_diff = transpose(half * inv_L);
-  logp -= 0.5 * opencl::to_host(dot_self(half));
+  logp -= 0.5 * dot_self(half);
 
-  auto ops_partials = make_partials_propagator(y, mu, L);
+  auto ops_partials = opencl::make_partials_propagator(y, mu, L);
 
   if constexpr (is_autodiff_v<T_y_cl>) {
     if (y_val.cols() == 1) {
@@ -137,7 +140,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_covar_cl> multi_normal_cholesky_lpdf(
     partials<2>(ops_partials) = scaled_diff * half - N_cases * transpose(inv_L);
   }
 
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

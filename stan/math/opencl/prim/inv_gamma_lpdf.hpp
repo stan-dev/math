@@ -10,7 +10,9 @@
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -36,9 +38,11 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_shape_cl,
                                                 T_scale_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_shape_cl, T_scale_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_shape_cl, T_scale_cl> inv_gamma_lpdf(
-    const T_y_cl& y, const T_shape_cl& alpha, const T_scale_cl& beta) {
+inline opencl::scalar_cl_return_t<T_y_cl, T_shape_cl, T_scale_cl>
+inv_gamma_lpdf(const T_y_cl& y, const T_shape_cl& alpha,
+               const T_scale_cl& beta) {
   using std::isfinite;
+  using T_return = opencl::scalar_cl_return_t<T_y_cl, T_shape_cl, T_scale_cl>;
   using std::isnan;
   static constexpr const char* function = "inv_gamma_lpdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_shape_cl, T_scale_cl>;
@@ -47,23 +51,24 @@ inline return_type_t<T_y_cl, T_shape_cl, T_scale_cl> inv_gamma_lpdf(
                          "First shape parameter", alpha,
                          "Second shape parameter", beta);
   const size_t N = max_size(y, alpha, beta);
-  if (N == 0) {
-    return 0.0;
+  if (size_zero(y, alpha, beta)) {
+    return T_return(0.0);
   }
   if constexpr (!include_summand<propto, T_y_cl, T_shape_cl,
                                  T_scale_cl>::value) {
-    return 0.0;
+    return T_return(0.0);
   }
 
   const auto& y_col = as_column_vector_or_scalar(y);
   const auto& alpha_col = as_column_vector_or_scalar(alpha);
   const auto& beta_col = as_column_vector_or_scalar(beta);
 
-  const auto& y_val = value_of(y_col);
-  const auto& alpha_val = value_of(alpha_col);
-  const auto& beta_val = value_of(beta_col);
+  const auto& y_val = opencl::internal::as_operand(value_of(y_col));
+  const auto& alpha_val = opencl::internal::as_operand(value_of(alpha_col));
+  const auto& beta_val = opencl::internal::as_operand(value_of(beta_col));
 
-  auto ops_partials = make_partials_propagator(y_col, alpha_col, beta_col);
+  auto ops_partials
+      = opencl::make_partials_propagator(y_col, alpha_col, beta_col);
 
   auto check_y_not_nan
       = check_cl(function, "Random variable", y_val, "not NaN");
@@ -113,10 +118,10 @@ inline return_type_t<T_y_cl, T_shape_cl, T_scale_cl> inv_gamma_lpdf(
                     calc_if<is_autodiff_v<T_scale_cl>>(beta_deriv));
 
   if (from_matrix_cl(any_y_nonpositive_cl).any()) {
-    return LOG_ZERO;
+    return T_return(LOG_ZERO);
   }
 
-  T_partials_return logp = sum(from_matrix_cl(logp_cl));
+  opencl::ScalarCl<double> logp = sum(logp_cl);
 
   if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
@@ -128,7 +133,7 @@ inline return_type_t<T_y_cl, T_shape_cl, T_scale_cl> inv_gamma_lpdf(
     partials<2>(ops_partials) = std::move(beta_deriv_cl);
   }
 
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

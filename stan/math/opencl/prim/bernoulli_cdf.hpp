@@ -6,7 +6,9 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/prod.hpp>
 
 namespace stan {
 namespace math {
@@ -27,9 +29,10 @@ template <
     typename T_n_cl, typename T_prob_cl,
     require_all_prim_or_rev_kernel_expression_t<T_n_cl, T_prob_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_n_cl, T_prob_cl>* = nullptr>
-inline return_type_t<T_prob_cl> bernoulli_cdf(const T_n_cl& n,
-                                              const T_prob_cl& theta) {
+inline opencl::scalar_cl_return_t<T_prob_cl> bernoulli_cdf(
+    const T_n_cl& n, const T_prob_cl& theta) {
   static constexpr const char* function = "bernoulli_cdf(OpenCL)";
+  using T_return = opencl::scalar_cl_return_t<T_prob_cl>;
   using T_partials_return = partials_return_t<T_prob_cl>;
   using std::isnan;
   constexpr bool is_n_vector = !is_stan_scalar<T_n_cl>::value;
@@ -37,12 +40,12 @@ inline return_type_t<T_prob_cl> bernoulli_cdf(const T_n_cl& n,
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
   const size_t N = is_n_vector ? math::size(n) : math::size(theta);
-  if (N == 0) {
-    return 1.0;
+  if (size_zero(n, theta)) {
+    return T_return(1.0);
   }
 
   const auto& theta_col = as_column_vector_or_scalar(theta);
-  const auto& theta_val = value_of(theta_col);
+  const auto& theta_val = opencl::internal::as_operand(value_of(theta_col));
 
   auto check_theta_bounded = check_cl(function, "Probability parameter",
                                       theta_val, "in the interval [0, 1]");
@@ -63,17 +66,17 @@ inline return_type_t<T_prob_cl> bernoulli_cdf(const T_n_cl& n,
                     calc_if<(is_autodiff_v<T_prob_cl>)>(Pi), P_expr);
 
   if (from_matrix_cl(any_n_negative_cl).maxCoeff()) {
-    return 0.0;
+    return T_return(0.0);
   }
 
-  T_partials_return P = from_matrix_cl(P_cl).prod();
-  auto ops_partials = make_partials_propagator(theta_col);
+  opencl::ScalarCl<double> P = prod(P_cl);
+  auto ops_partials = opencl::make_partials_propagator(theta_col);
 
   if constexpr (is_autodiff_v<T_prob_cl>) {
     partials<0>(ops_partials) = elt_divide(-P, Pi_cl);
   }
 
-  return ops_partials.build(P);
+  return ops_partials.build(std::move(P));
 }
 
 }  // namespace math

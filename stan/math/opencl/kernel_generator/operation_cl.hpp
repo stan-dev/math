@@ -12,6 +12,7 @@
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <CL/opencl.hpp>
 #include <algorithm>
+#include <limits>
 #include <string>
 #include <utility>
 #include <tuple>
@@ -407,6 +408,19 @@ class operation_cl : public operation_cl_base {
    * @return number of columns
    */
   inline int thread_cols() const { return derived().cols(); }
+
+  /**
+   * Indices of the extreme sub- and superdiagonals of an expression that may
+   * be nonzero anywhere. A dynamic (broadcast) number of rows or columns does
+   * not bound the diagonals.
+   * @return pair of indices - bottom and top diagonal
+   */
+  inline std::pair<int, int> dense_extreme_diagonals() const {
+    const int rows = derived().rows();
+    const int cols = derived().cols();
+    return {rows == dynamic ? std::numeric_limits<int>::min() : -rows + 1,
+            cols == dynamic ? std::numeric_limits<int>::max() : cols - 1};
+  }
 
   /**
    * Determine indices of extreme sub- and superdiagonals written. Some

@@ -91,9 +91,8 @@ inline return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
 }
 
 template <typename T_y, typename T_scale, typename T_shape>
-inline return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
-                                                        const T_scale& y_min,
-                                                        const T_shape& alpha) {
+inline auto pareto_lpdf(const T_y& y, const T_scale& y_min,
+                        const T_shape& alpha) {
   return pareto_lpdf<false>(y, y_min, alpha);
 }
 

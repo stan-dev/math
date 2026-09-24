@@ -80,7 +80,7 @@ class opencl_code_output
    * @return pair of indices - bottom and top diagonal
    */
   inline std::pair<int, int> extreme_diagonals() const {
-    return {-this->rows() + 1, this->cols() - 1};
+    return this->dense_extreme_diagonals();
   }
 };
 

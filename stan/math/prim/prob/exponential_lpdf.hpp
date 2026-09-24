@@ -98,8 +98,7 @@ inline return_type_t<T_y, T_inv_scale> exponential_lpdf(
 }
 
 template <typename T_y, typename T_inv_scale>
-inline return_type_t<T_y, T_inv_scale> exponential_lpdf(
-    const T_y& y, const T_inv_scale& beta) {
+inline auto exponential_lpdf(const T_y& y, const T_inv_scale& beta) {
   return exponential_lpdf<false>(y, beta);
 }
 

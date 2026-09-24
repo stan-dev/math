@@ -9,7 +9,9 @@
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -44,29 +46,30 @@ template <bool propto, typename T_y_cl, typename T_inv_scale_cl,
           require_all_prim_or_rev_kernel_expression_t<
               T_y_cl, T_inv_scale_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_inv_scale_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_inv_scale_cl> exponential_lpdf(
+inline opencl::scalar_cl_return_t<T_y_cl, T_inv_scale_cl> exponential_lpdf(
     const T_y_cl& y, const T_inv_scale_cl& beta) {
   using std::isfinite;
+  using T_return = opencl::scalar_cl_return_t<T_y_cl, T_inv_scale_cl>;
   static constexpr const char* function = "exponential_lpdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_inv_scale_cl>;
 
   check_consistent_sizes(function, "Random variable", y,
                          "Inverse scale parameter", beta);
   const size_t N = max_size(y, beta);
-  if (N == 0) {
-    return 0.0;
+  if (size_zero(y, beta)) {
+    return T_return(0.0);
   }
   if constexpr (!include_summand<propto, T_y_cl, T_inv_scale_cl>::value) {
-    return 0.0;
+    return T_return(0.0);
   }
 
   const auto& y_col = as_column_vector_or_scalar(y);
   const auto& beta_col = as_column_vector_or_scalar(beta);
 
-  const auto& y_val = value_of(y_col);
-  const auto& beta_val = value_of(beta_col);
+  const auto& y_val = opencl::internal::as_operand(value_of(y_col));
+  const auto& beta_val = opencl::internal::as_operand(value_of(beta_col));
 
-  auto ops_partials = make_partials_propagator(y_col, beta_col);
+  auto ops_partials = opencl::make_partials_propagator(y_col, beta_col);
 
   auto check_y_nonnegative
       = check_cl(function, "Random variable", y_val, "nonnegative");
@@ -95,7 +98,7 @@ inline return_type_t<T_y_cl, T_inv_scale_cl> exponential_lpdf(
                     calc_if<is_autodiff_v<T_y_cl>>(y_deriv_expr),
                     calc_if<is_autodiff_v<T_inv_scale_cl>>(beta_deriv_expr));
 
-  T_partials_return logp = sum(from_matrix_cl(logp_cl));
+  opencl::ScalarCl<double> logp = sum(logp_cl);
 
   if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
@@ -104,7 +107,7 @@ inline return_type_t<T_y_cl, T_inv_scale_cl> exponential_lpdf(
     partials<1>(ops_partials) = std::move(beta_deriv_cl);
   }
 
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

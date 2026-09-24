@@ -8,7 +8,9 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -33,10 +35,12 @@ template <typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
               T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl,
                                         T_shape_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>
+inline opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>
 pareto_type_2_lcdf(const T_y_cl& y, const T_loc_cl& mu,
                    const T_scale_cl& lambda, const T_shape_cl& alpha) {
   static constexpr const char* function = "pareto_type_2_lcdf(OpenCL)";
+  using T_return
+      = opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>;
   using T_partials_return
       = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>;
   using std::isfinite;
@@ -46,8 +50,8 @@ pareto_type_2_lcdf(const T_y_cl& y, const T_loc_cl& mu,
                          mu, "Scale parameter", lambda, "Shape parameter",
                          alpha);
   const size_t N = max_size(y, mu, lambda, alpha);
-  if (N == 0) {
-    return 1.0;
+  if (size_zero(y, mu, lambda, alpha)) {
+    return T_return(1.0);
   }
 
   const auto& y_col = as_column_vector_or_scalar(y);
@@ -55,10 +59,10 @@ pareto_type_2_lcdf(const T_y_cl& y, const T_loc_cl& mu,
   const auto& lambda_col = as_column_vector_or_scalar(lambda);
   const auto& alpha_col = as_column_vector_or_scalar(alpha);
 
-  const auto& y_val = value_of(y_col);
-  const auto& mu_val = value_of(mu_col);
-  const auto& lambda_val = value_of(lambda_col);
-  const auto& alpha_val = value_of(alpha_col);
+  const auto& y_val = opencl::internal::as_operand(value_of(y_col));
+  const auto& mu_val = opencl::internal::as_operand(value_of(mu_col));
+  const auto& lambda_val = opencl::internal::as_operand(value_of(lambda_col));
+  const auto& alpha_val = opencl::internal::as_operand(value_of(alpha_col));
 
   auto check_y_nonnegative
       = check_cl(function, "Random variable", y_val, "nonnegative");
@@ -102,10 +106,10 @@ pareto_type_2_lcdf(const T_y_cl& y, const T_loc_cl& mu,
                     calc_if<is_autodiff_v<T_scale_cl>>(lambda_deriv),
                     calc_if<is_autodiff_v<T_shape_cl>>(alpha_deriv));
 
-  T_partials_return lcdf = from_matrix_cl(lcdf_cl).sum();
+  opencl::ScalarCl<double> lcdf = sum(lcdf_cl);
 
   auto ops_partials
-      = make_partials_propagator(y_col, mu_col, lambda_col, alpha_col);
+      = opencl::make_partials_propagator(y_col, mu_col, lambda_col, alpha_col);
   if constexpr (is_any_autodiff_v<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>) {
     if constexpr (is_autodiff_v<T_y_cl>) {
       partials<0>(ops_partials) = std::move(y_deriv_cl);
@@ -120,7 +124,7 @@ pareto_type_2_lcdf(const T_y_cl& y, const T_loc_cl& mu,
       partials<3>(ops_partials) = std::move(alpha_deriv_cl);
     }
   }
-  return ops_partials.build(lcdf);
+  return ops_partials.build(std::move(lcdf));
 }
 
 }  // namespace math

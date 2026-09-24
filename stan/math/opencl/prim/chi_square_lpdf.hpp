@@ -6,7 +6,9 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -35,27 +37,28 @@ template <
     bool propto, typename T_y_cl, typename T_dof_cl,
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_dof_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_dof_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_dof_cl> chi_square_lpdf(const T_y_cl& y,
-                                                       const T_dof_cl& nu) {
+inline opencl::scalar_cl_return_t<T_y_cl, T_dof_cl> chi_square_lpdf(
+    const T_y_cl& y, const T_dof_cl& nu) {
   static constexpr const char* function = "chi_square_lpdf(OpenCL)";
+  using T_return = opencl::scalar_cl_return_t<T_y_cl, T_dof_cl>;
   using T_partials_return = partials_return_t<T_y_cl, T_dof_cl>;
   using std::isfinite;
 
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu);
   const size_t N = max_size(y, nu);
-  if (N == 0) {
-    return 0.0;
+  if (size_zero(y, nu)) {
+    return T_return(0.0);
   }
   if constexpr (!include_summand<propto, T_y_cl, T_dof_cl>::value) {
-    return 0.0;
+    return T_return(0.0);
   }
 
   const auto& y_col = as_column_vector_or_scalar(y);
   const auto& nu_col = as_column_vector_or_scalar(nu);
 
-  const auto& y_val = value_of(y_col);
-  const auto& nu_val = value_of(nu_col);
+  const auto& y_val = opencl::internal::as_operand(value_of(y_col));
+  const auto& nu_val = opencl::internal::as_operand(value_of(nu_col));
 
   auto check_y_nonnegative
       = check_cl(function, "Random variable", y_val, "nonnegative");
@@ -88,9 +91,9 @@ inline return_type_t<T_y_cl, T_dof_cl> chi_square_lpdf(const T_y_cl& y,
                     calc_if<is_autodiff_v<T_y_cl>>(y_deriv_expr),
                     calc_if<is_autodiff_v<T_dof_cl>>(nu_deriv_expr));
 
-  T_partials_return logp = sum(from_matrix_cl(logp_cl));
+  opencl::ScalarCl<double> logp = sum(logp_cl);
 
-  auto ops_partials = make_partials_propagator(y_col, nu_col);
+  auto ops_partials = opencl::make_partials_propagator(y_col, nu_col);
 
   if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
@@ -98,7 +101,7 @@ inline return_type_t<T_y_cl, T_dof_cl> chi_square_lpdf(const T_y_cl& y,
   if constexpr (is_autodiff_v<T_dof_cl>) {
     partials<1>(ops_partials) = std::move(nu_deriv_cl);
   }
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

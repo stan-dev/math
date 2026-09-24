@@ -132,7 +132,7 @@ class elt_function_cl : public operation_cl<Derived, Scal, T...> {
           std::move(arg1_copy), std::move(arg2_copy)};                      \
     }                                                                       \
     inline std::pair<int, int> extreme_diagonals() const {                  \
-      return {-rows() + 1, cols() - 1};                                     \
+      return this->dense_extreme_diagonals();                               \
     }                                                                       \
   };                                                                        \
                                                                             \
@@ -172,7 +172,7 @@ class elt_function_cl : public operation_cl<Derived, Scal, T...> {
           std::move(arg_copy)};                                                \
     }                                                                          \
     inline std::pair<int, int> extreme_diagonals() const {                     \
-      return {-rows() + 1, cols() - 1};                                        \
+      return this->dense_extreme_diagonals();                                  \
     }                                                                          \
   };                                                                           \
                                                                                \
@@ -339,7 +339,7 @@ ADD_UNARY_FUNCTION_WITH_INCLUDES(
     "double square(double x){return x*x;}\n"
     "#endif\n")
 
-ADD_CLASSIFICATION_FUNCTION(isfinite, {-rows() + 1, cols() - 1})
+ADD_CLASSIFICATION_FUNCTION(isfinite, this->dense_extreme_diagonals())
 ADD_CLASSIFICATION_FUNCTION(isinf,
                             this->template get_arg<0>().extreme_diagonals())
 ADD_CLASSIFICATION_FUNCTION(isnan,
@@ -392,7 +392,7 @@ class lbeta_ : public elt_function_cl<lbeta_<T1, T2>, double, T1, T2> {
         std::move(arg1_copy), std::move(arg2_copy)};
   }
   inline std::pair<int, int> extreme_diagonals() const {
-    return {-rows() + 1, cols() - 1};
+    return this->dense_extreme_diagonals();
   }
 };
 

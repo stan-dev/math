@@ -8,7 +8,9 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -33,12 +35,14 @@ template <typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
               T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl,
                                         T_skewness_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>
+inline opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>
 skew_double_exponential_lccdf(const T_y_cl& y, const T_loc_cl& mu,
                               const T_scale_cl& sigma,
                               const T_skewness_cl& tau) {
   static constexpr const char* function
       = "skew_double_exponential_lccdf(OpenCL)";
+  using T_return
+      = opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>;
   using T_partials_return
       = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>;
   using std::isfinite;
@@ -48,8 +52,8 @@ skew_double_exponential_lccdf(const T_y_cl& y, const T_loc_cl& mu,
                          mu, "Shape parameter", sigma, "Skewness parameter",
                          tau);
   const size_t N = max_size(y, mu, sigma, tau);
-  if (N == 0) {
-    return 1.0;
+  if (size_zero(y, mu, sigma, tau)) {
+    return T_return(1.0);
   }
 
   const auto& y_col = as_column_vector_or_scalar(y);
@@ -57,10 +61,10 @@ skew_double_exponential_lccdf(const T_y_cl& y, const T_loc_cl& mu,
   const auto& sigma_col = as_column_vector_or_scalar(sigma);
   const auto& tau_col = as_column_vector_or_scalar(tau);
 
-  const auto& y_val = value_of(y_col);
-  const auto& mu_val = value_of(mu_col);
-  const auto& sigma_val = value_of(sigma_col);
-  const auto& tau_val = value_of(tau_col);
+  const auto& y_val = opencl::internal::as_operand(value_of(y_col));
+  const auto& mu_val = opencl::internal::as_operand(value_of(mu_col));
+  const auto& sigma_val = opencl::internal::as_operand(value_of(sigma_col));
+  const auto& tau_val = opencl::internal::as_operand(value_of(tau_col));
 
   auto check_y_not_nan
       = check_cl(function, "Random variable", y_val, "not NaN");
@@ -131,10 +135,10 @@ skew_double_exponential_lccdf(const T_y_cl& y, const T_loc_cl& mu,
                     calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv),
                     calc_if<is_autodiff_v<T_skewness_cl>>(tau_deriv));
 
-  T_partials_return lccdf = (from_matrix_cl(lccdf_cl)).sum();
+  opencl::ScalarCl<double> lccdf = sum(lccdf_cl);
 
   auto ops_partials
-      = make_partials_propagator(y_col, mu_col, sigma_col, tau_col);
+      = opencl::make_partials_propagator(y_col, mu_col, sigma_col, tau_col);
 
   if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
@@ -149,7 +153,7 @@ skew_double_exponential_lccdf(const T_y_cl& y, const T_loc_cl& mu,
     partials<3>(ops_partials) = std::move(tau_deriv_cl);
   }
 
-  return ops_partials.build(lccdf);
+  return ops_partials.build(std::move(lccdf));
 }
 
 }  // namespace math

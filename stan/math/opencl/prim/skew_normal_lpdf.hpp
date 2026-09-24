@@ -8,7 +8,9 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -39,10 +41,12 @@ template <bool propto, typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
               T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl,
                                         T_shape_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
-    const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma,
-    const T_shape_cl& alpha) {
+inline opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>
+skew_normal_lpdf(const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma,
+                 const T_shape_cl& alpha) {
   static constexpr const char* function = "skew_normal_lpdf(OpenCL)";
+  using T_return
+      = opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>;
   using T_partials_return
       = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>;
   using std::isfinite;
@@ -52,12 +56,12 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
                          mu, "Scale parameter", sigma, "Shape parameter",
                          alpha);
   const size_t N = max_size(y, mu, sigma, alpha);
-  if (N == 0) {
-    return 0.0;
+  if (size_zero(y, mu, sigma, alpha)) {
+    return T_return(0.0);
   }
   if (!include_summand<propto, T_y_cl, T_loc_cl, T_scale_cl,
                        T_shape_cl>::value) {
-    return 0.0;
+    return T_return(0.0);
   }
 
   const auto& y_col = as_column_vector_or_scalar(y);
@@ -65,10 +69,10 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
   const auto& sigma_col = as_column_vector_or_scalar(sigma);
   const auto& alpha_col = as_column_vector_or_scalar(alpha);
 
-  const auto& y_val = value_of(y_col);
-  const auto& mu_val = value_of(mu_col);
-  const auto& sigma_val = value_of(sigma_col);
-  const auto& alpha_val = value_of(alpha_col);
+  const auto& y_val = opencl::internal::as_operand(value_of(y_col));
+  const auto& mu_val = opencl::internal::as_operand(value_of(mu_col));
+  const auto& sigma_val = opencl::internal::as_operand(value_of(sigma_col));
+  const auto& alpha_val = opencl::internal::as_operand(value_of(alpha_col));
 
   auto check_y_not_nan
       = check_cl(function, "Random variable", y_val, "not NaN");
@@ -127,14 +131,14 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
                     calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv),
                     calc_if<is_autodiff_v<T_shape_cl>>(alpha_deriv));
 
-  T_partials_return logp = sum(from_matrix_cl(logp_cl));
+  opencl::ScalarCl<double> logp = sum(logp_cl);
 
   if constexpr (include_summand<propto>::value) {
     logp -= HALF_LOG_TWO_PI * N;
   }
 
   auto ops_partials
-      = make_partials_propagator(y_col, mu_col, sigma_col, alpha_col);
+      = opencl::make_partials_propagator(y_col, mu_col, sigma_col, alpha_col);
 
   if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
@@ -148,7 +152,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
   if constexpr (is_autodiff_v<T_shape_cl>) {
     partials<3>(ops_partials) = std::move(alpha_deriv_cl);
   }
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

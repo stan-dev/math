@@ -9,8 +9,10 @@
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -39,10 +41,12 @@ template <bool propto, typename T_n_cl, typename T_log_location_cl,
               T_n_cl, T_log_location_cl, T_precision_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_n_cl, T_log_location_cl,
                                         T_precision_cl>* = nullptr>
-inline return_type_t<T_n_cl, T_log_location_cl, T_precision_cl>
+inline opencl::scalar_cl_return_t<T_n_cl, T_log_location_cl, T_precision_cl>
 neg_binomial_2_log_lpmf(const T_n_cl& n, const T_log_location_cl& eta,
                         const T_precision_cl& phi) {
   static constexpr const char* function = "neg_binomial_2_log_lpmf(OpenCL)";
+  using T_return
+      = opencl::scalar_cl_return_t<T_n_cl, T_log_location_cl, T_precision_cl>;
   using T_partials_return
       = partials_return_t<T_n_cl, T_log_location_cl, T_precision_cl>;
   using std::isfinite;
@@ -52,19 +56,19 @@ neg_binomial_2_log_lpmf(const T_n_cl& n, const T_log_location_cl& eta,
                          "Log location parameter", eta, "Precision parameter",
                          phi);
   const size_t N = max_size(n, eta, phi);
-  if (N == 0) {
-    return 0.0;
+  if (size_zero(n, eta, phi)) {
+    return T_return(0.0);
   }
   if constexpr (!include_summand<propto, T_n_cl, T_log_location_cl,
                                  T_precision_cl>::value) {
-    return 0.0;
+    return T_return(0.0);
   }
 
   const auto& eta_col = as_column_vector_or_scalar(eta);
   const auto& phi_col = as_column_vector_or_scalar(phi);
 
-  const auto& eta_val = value_of(eta_col);
-  const auto& phi_val = value_of(phi_col);
+  const auto& eta_val = opencl::internal::as_operand(value_of(eta_col));
+  const auto& phi_val = opencl::internal::as_operand(value_of(phi_col));
 
   auto check_n_nonnegative
       = check_cl(function, "Failures variable", n, "nonnegative");
@@ -106,9 +110,9 @@ neg_binomial_2_log_lpmf(const T_n_cl& n, const T_log_location_cl& eta,
                     calc_if<is_autodiff_v<T_log_location_cl>>(eta_deriv),
                     calc_if<is_autodiff_v<T_precision_cl>>(phi_deriv));
 
-  T_partials_return logp = sum(from_matrix_cl(logp_cl));
+  opencl::ScalarCl<double> logp = sum(logp_cl);
 
-  auto ops_partials = make_partials_propagator(eta_col, phi_col);
+  auto ops_partials = opencl::make_partials_propagator(eta_col, phi_col);
 
   if constexpr (is_autodiff_v<T_log_location_cl>) {
     partials<0>(ops_partials) = std::move(eta_deriv_cl);
@@ -116,7 +120,7 @@ neg_binomial_2_log_lpmf(const T_n_cl& n, const T_log_location_cl& eta,
   if constexpr (is_autodiff_v<T_precision_cl>) {
     partials<1>(ops_partials) = std::move(phi_deriv_cl);
   }
-  return ops_partials.build(logp);
+  return ops_partials.build(std::move(logp));
 }
 
 }  // namespace math

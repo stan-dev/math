@@ -9,7 +9,9 @@
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/std_normal_lcdf.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -35,10 +37,12 @@ template <typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
               T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl,
                                         T_inv_scale_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>
+inline opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>
 exp_mod_normal_lcdf(const T_y_cl& y, const T_loc_cl& mu,
                     const T_scale_cl& sigma, const T_inv_scale_cl& lambda) {
   static constexpr const char* function = "exp_mod_normal_lcdf(OpenCL)";
+  using T_return = opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl,
+                                              T_inv_scale_cl>;
   using T_partials_return
       = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>;
   using std::isfinite;
@@ -47,8 +51,8 @@ exp_mod_normal_lcdf(const T_y_cl& y, const T_loc_cl& mu,
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
   const size_t N = max_size(y, mu, sigma);
-  if (N == 0) {
-    return 0.0;
+  if (size_zero(y, mu, sigma, lambda)) {
+    return T_return(0.0);
   }
 
   const auto& y_col = as_column_vector_or_scalar(y);
@@ -56,10 +60,10 @@ exp_mod_normal_lcdf(const T_y_cl& y, const T_loc_cl& mu,
   const auto& sigma_col = as_column_vector_or_scalar(sigma);
   const auto& lambda_col = as_column_vector_or_scalar(lambda);
 
-  const auto& y_val = value_of(y_col);
-  const auto& mu_val = value_of(mu_col);
-  const auto& sigma_val = value_of(sigma_col);
-  const auto& lambda_val = value_of(lambda_col);
+  const auto& y_val = opencl::internal::as_operand(value_of(y_col));
+  const auto& mu_val = opencl::internal::as_operand(value_of(mu_col));
+  const auto& sigma_val = opencl::internal::as_operand(value_of(sigma_col));
+  const auto& lambda_val = opencl::internal::as_operand(value_of(lambda_col));
 
   auto check_y_not_nan
       = check_cl(function, "Random variable", y_val, "not NaN");
@@ -167,17 +171,17 @@ exp_mod_normal_lcdf(const T_y_cl& y, const T_loc_cl& mu,
                     calc_if<is_autodiff_v<T_inv_scale_cl>>(lambda_deriv));
 
   if (from_matrix_cl(any_y_pos_inf_cl).maxCoeff()) {
-    return 0.0;
+    return T_return(0.0);
   }
 
   if (from_matrix_cl(any_y_neg_inf_cl).maxCoeff()) {
-    return NEGATIVE_INFTY;
+    return T_return(NEGATIVE_INFTY);
   }
 
-  T_partials_return cdf_log = (from_matrix_cl(cdf_log_cl)).sum();
+  opencl::ScalarCl<double> cdf_log = sum(cdf_log_cl);
 
   auto ops_partials
-      = make_partials_propagator(y_col, mu_col, sigma_col, lambda_col);
+      = opencl::make_partials_propagator(y_col, mu_col, sigma_col, lambda_col);
 
   if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
@@ -191,7 +195,7 @@ exp_mod_normal_lcdf(const T_y_cl& y, const T_loc_cl& mu,
   if constexpr (is_autodiff_v<T_inv_scale_cl>) {
     partials<3>(ops_partials) = std::move(lambda_deriv_cl);
   }
-  return ops_partials.build(cdf_log);
+  return ops_partials.build(std::move(cdf_log));
 }
 
 }  // namespace math

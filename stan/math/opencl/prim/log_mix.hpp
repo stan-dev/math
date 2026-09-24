@@ -38,7 +38,7 @@ template <typename T_theta_cl, typename T_lambda_cl,
                                                       T_lambda_cl>* = nullptr>
 inline auto log_mix(const T_theta_cl& theta, const T_lambda_cl& lambda) {
   static constexpr const char* function = "log_mix(OpenCL)";
-  using T_return = return_type_t<T_theta_cl, T_lambda_cl>;
+  using T_return = opencl::scalar_cl_return_t<T_theta_cl, T_lambda_cl>;
   using std::isfinite;
   using std::isnan;
 
@@ -93,7 +93,7 @@ inline auto log_mix(const T_theta_cl& theta, const T_lambda_cl& lambda) {
       calc_if<is_any_autodiff_v<T_theta_cl, T_lambda_cl>>(logp_vec_expr),
       colwise_sum(logp_vec_expr));
 
-  auto ops_partials = make_partials_propagator(theta_col, lambda);
+  auto ops_partials = opencl::make_partials_propagator(theta_col, lambda);
   if constexpr (is_any_autodiff_v<T_theta_cl, T_lambda_cl>) {
     auto derivs_expr = exp(lambda_val - colwise_broadcast(transpose(logp_vec)));
     if constexpr (is_autodiff_v<T_lambda_cl>) {
@@ -111,7 +111,7 @@ inline auto log_mix(const T_theta_cl& theta, const T_lambda_cl& lambda) {
       partials<0>(ops_partials) = rowwise_sum(derivs_expr);
     }
   }
-  return ops_partials.build(sum(from_matrix_cl(logp_sum)));
+  return ops_partials.build(sum(logp_sum));
 }
 }  // namespace math
 }  // namespace stan

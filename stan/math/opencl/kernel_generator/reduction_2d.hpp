@@ -189,7 +189,7 @@ class reduction_2d
    * @return pair of indices - bottom and top diagonal
    */
   inline std::pair<int, int> extreme_diagonals() const {
-    return {-rows() + 1, cols() - 1};
+    return this->dense_extreme_diagonals();
   }
 };  // namespace math
 

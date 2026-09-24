@@ -85,8 +85,8 @@ inline return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
 }
 
 template <typename T_n, typename T_N, typename T_prob>
-inline return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
-                                                 const T_prob& alpha) {
+inline auto binomial_logit_lpmf(const T_n& n, const T_N& N,
+                                const T_prob& alpha) {
   return binomial_logit_lpmf<false>(n, N, alpha);
 }
 

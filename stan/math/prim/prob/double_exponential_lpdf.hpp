@@ -105,8 +105,8 @@ inline return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+inline auto double_exponential_lpdf(const T_y& y, const T_loc& mu,
+                                    const T_scale& sigma) {
   return double_exponential_lpdf<false>(y, mu, sigma);
 }
 
