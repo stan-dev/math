@@ -14,7 +14,22 @@
 namespace stan {
 namespace math {
 
-// CategoricalLog(n|theta)  [0 < n <= N, theta unconstrained], no checking
+/** \ingroup multivar_dists
+ * Categorical log PMF in log-odds parametrization.
+ * Categorical(n | softmax(beta))
+ *
+ * Entries of beta equal to -inf have zero probability; if any entries
+ * are +inf, probability is split evenly among them.
+ *
+ * @param n Outcome, in 1:size(beta)
+ * @param beta Vector of log odds (unnormalized log probabilities)
+ * @return log probability of the outcome
+ * @throw std::domain_error if n is not in 1:size(beta)
+ * @throw std::domain_error if beta contains NaN
+ * @throw std::domain_error if every entry of beta is negative infinity
+ * @throw std::domain_error if beta is an autodiff (var) type and
+ *   contains any non-finite value
+ */
 template <bool propto, typename T_prob, require_col_vector_t<T_prob>* = nullptr>
 inline return_type_t<T_prob> categorical_logit_lpmf(int n, const T_prob& beta) {
   static constexpr const char* function = "categorical_logit_lpmf";
@@ -22,12 +37,14 @@ inline return_type_t<T_prob> categorical_logit_lpmf(int n, const T_prob& beta) {
                 beta.size());
   ref_type_t<T_prob> beta_ref = beta;
 
-  // Autodiff args must be finite, data can be +/-inf
+  // Autodiff args must be finite data may be +/-inf
   if constexpr (is_constant<T_prob>::value) {
+    // Data Case: Throws in nan and all -inf case
     check_not_nan(function, "log odds parameter", beta_ref);
     check_greater(function, "log odds parameter", beta_ref.maxCoeff(),
                   NEGATIVE_INFTY);
   } else {
+    // Autodiff Case: Throws in non-finite case
     check_finite(function, "log odds parameter", beta_ref);
   }
 
@@ -35,7 +52,8 @@ inline return_type_t<T_prob> categorical_logit_lpmf(int n, const T_prob& beta) {
     return 0.0;
   }
 
-  // INFTY case: uniform over the +inf entries, zero probability elsewhere
+  // softmax is NaN with +inf, so split probability evenly over the
+  // +inf entries and give every other entry zero probability
   if constexpr (is_constant<T_prob>::value) {
     int num_infty = (beta_ref.array() == INFTY).count();
     if (num_infty > 0) {
@@ -49,6 +67,27 @@ inline return_type_t<T_prob> categorical_logit_lpmf(int n, const T_prob& beta) {
          - log_sum_exp(beta_ref);  // == log_softmax(beta)(n-1);
 }
 
+/** \ingroup multivar_dists
+ * Categorical log PMF in log-odds parametrization, summed over an
+ * array of outcomes.
+ * Categorical(ns | softmax(beta))
+ *
+ * Entries of beta equal to -inf have zero probability; if any entries
+ * are +inf, probability is split evenly among them.
+ *
+ * If ns is empty the log probability is 0; in that case beta may also
+ * be empty.
+ *
+ * @param ns Array of outcomes, each in 1:size(beta)
+ * @param beta Vector of log odds (unnormalized log probabilities)
+ * @return sum of the log probabilities of the outcomes
+ * @throw std::domain_error if any element of ns is not in 1:size(beta)
+ * @throw std::domain_error if beta contains NaN
+ * @throw std::domain_error if beta is non-empty and every entry of beta
+ *   is negative infinity
+ * @throw std::domain_error if beta is an autodiff (var) type and
+ *   contains any non-finite value
+ */
 template <bool propto, typename T_prob, require_col_vector_t<T_prob>* = nullptr>
 inline return_type_t<T_prob> categorical_logit_lpmf(const std::vector<int>& ns,
                                                     const T_prob& beta) {
@@ -58,14 +97,17 @@ inline return_type_t<T_prob> categorical_logit_lpmf(const std::vector<int>& ns,
                 beta.size());
   ref_type_t<T_prob> beta_ref = beta;
 
-  // Autodiff args must be finite, data can be +/-inf
+  // Autodiff args must be finite data may be +/-inf
   if constexpr (is_constant<T_prob>::value) {
+    // Data Case: Throws in nan and all -inf case
     check_not_nan(function, "log odds parameter", beta_ref);
+    // maxCoeff() is undefined for an empty beta
     if (beta_ref.size() > 0) {
       check_greater(function, "log odds parameter", beta_ref.maxCoeff(),
                     NEGATIVE_INFTY);
     }
   } else {
+    // Autodiff Case: Throws in non-finite case
     check_finite(function, "log odds parameter", beta_ref);
   }
 
@@ -77,7 +119,8 @@ inline return_type_t<T_prob> categorical_logit_lpmf(const std::vector<int>& ns,
     return 0.0;
   }
 
-  // INFTY case: uniform over the +inf entries, zero probability elsewhere
+  // softmax is NaN with +inf, so split probability evenly over the
+  // +inf entries and give every other entry zero probability
   if constexpr (is_constant<T_prob>::value) {
     int num_infty = (beta_ref.array() == INFTY).count();
     if (num_infty > 0) {

@@ -27,8 +27,9 @@ namespace math {
  * @param rng Pseudo-random number generator.
  * @return Multinomial random variate.
  * @throw std::domain_error if beta contains NaN
- * @throw std::domain_error if every entry of beta is negative infinity
- * @throw std::domain_error is N is less than 0.
+ * @throw std::domain_error if beta is non-empty and every entry of beta
+ *   is negative infinity
+ * @throw std::domain_error if N is less than 0.
  */
 template <class RNG, typename T_beta,
           require_eigen_col_vector_t<T_beta>* = nullptr>
@@ -37,7 +38,9 @@ inline std::vector<int> multinomial_logit_rng(const T_beta& beta, int N,
   static constexpr const char* function = "multinomial_logit_rng";
   const auto& beta_ref = to_ref(beta);
   check_nonnegative(function, "number of trials variables", N);
+  // Throws in nan and all -inf case
   check_not_nan(function, "Log-probabilities parameter", beta_ref);
+  // maxCoeff() is undefined for an empty beta
   if (beta_ref.size() > 0) {
     check_greater(function, "Log-probabilities parameter", beta_ref.maxCoeff(),
                   NEGATIVE_INFTY);
@@ -48,7 +51,8 @@ inline std::vector<int> multinomial_logit_rng(const T_beta& beta, int N,
 
   plain_type_t<T_beta> theta;
 
-  // INFTY case: uniform over the +inf entries, zero probability elsewhere
+  // softmax is NaN with +inf, so split probability evenly over the
+  // +inf entries and give every other entry zero probability
   if (num_infty > 0) {
     theta = is_pos_inf.template cast<double>() / num_infty;
   } else {

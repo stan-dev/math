@@ -18,15 +18,19 @@ namespace math {
  * Multinomial log PMF in log parametrization.
  * Multinomial(ns| softmax(beta))
  *
- * If beta is data, -inf entries have zero probability and, if any
- * entries are +inf, the probability is split evenly among them.
+ * Entries of beta equal to -inf have zero probability; if any entries
+ * are +inf, probability is split evenly among them.
  *
  * @param ns Array of outcome counts
  * @param beta Vector of unnormalized log probabilities
  * @return log probability
+ * @throw std::invalid_argument if the sizes of ns and beta do not match
+ * @throw std::domain_error if any element of ns is negative
  * @throw std::domain_error if beta contains NaN
- * @throw std::domain_error if every entry of beta is negative infinity
- * @throw std::domain_error if beta is not data and contains infinity
+ * @throw std::domain_error if beta is non-empty and every entry of beta
+ *   is negative infinity
+ * @throw std::domain_error if beta is an autodiff (var) type and
+ *   contains any non-finite value
  */
 template <bool propto, typename T_beta, typename T_prob = scalar_type_t<T_beta>,
           require_eigen_col_vector_t<T_beta>* = nullptr>
@@ -38,14 +42,17 @@ inline return_type_t<T_prob> multinomial_logit_lpmf(const std::vector<int>& ns,
   check_nonnegative(function, "Number of trials variable", ns);
   const auto& beta_ref = to_ref(beta);
 
-  // Autodiff args must be finite, data can be +/-inf
+  // Autodiff args must be finite data may be +/-inf
   if constexpr (is_constant<T_beta>::value) {
+    // Data Case: Throws in nan and all -inf case
     check_not_nan(function, "log-probabilities parameter", beta_ref);
+    // maxCoeff() is undefined for an empty beta
     if (beta_ref.size() > 0) {
       check_greater(function, "log-probabilities parameter",
                     beta_ref.maxCoeff(), NEGATIVE_INFTY);
     }
   } else {
+    // Autodiff Case: Throws in non-finite case
     check_finite(function, "log-probabilities parameter", beta_ref);
   }
 
@@ -58,7 +65,8 @@ inline return_type_t<T_prob> multinomial_logit_lpmf(const std::vector<int>& ns,
   }
 
   if constexpr (include_summand<propto, T_prob>::value) {
-    // INFTY case: uniform over the +inf entries, zero probability elsewhere
+    // softmax is NaN with +inf, so split probability evenly over the
+    // +inf entries and give every other entry zero probability
     if constexpr (is_constant<T_beta>::value) {
       int num_infty = (beta_ref.array() == INFTY).count();
       if (num_infty > 0) {

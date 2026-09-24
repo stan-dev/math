@@ -14,8 +14,8 @@ namespace stan {
 namespace math {
 
 /** \ingroup multivar_dists
- * Return a draw from a Categorical distribution given a
- * a vector of unnormalized log probabilities and a psuedo-random
+ * Return a draw from a Categorical distribution given
+ * a vector of unnormalized log probabilities and a pseudo-random
  * number generator.
  *
  * In the case of finite and -inf values this is a convenience
@@ -34,6 +34,7 @@ inline int categorical_logit_rng(const Eigen::VectorXd& beta, RNG& rng) {
   using boost::uniform_01;
   using boost::variate_generator;
   static constexpr const char* function = "categorical_logit_rng";
+  // Throws in nan and all -inf case
   check_not_nan(function, "Log odds parameter", beta);
   check_nonzero_size(function, "Log odds parameter", beta);
   check_greater(function, "Log odds parameter", beta.maxCoeff(),
@@ -44,7 +45,8 @@ inline int categorical_logit_rng(const Eigen::VectorXd& beta, RNG& rng) {
 
   Eigen::VectorXd theta;
 
-  // INFTY case: uniform over the +inf entries, zero probability elsewhere
+  // softmax is NaN with +inf, so split probability evenly over the
+  // +inf entries and give every other entry zero probability
   if (num_infty > 0) {
     theta = is_pos_inf.template cast<double>() / num_infty;
   } else {
