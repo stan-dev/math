@@ -37,9 +37,9 @@ inline std::vector<int> multinomial_logit_rng(const T_beta& beta, int N,
   static constexpr const char* function = "multinomial_logit_rng";
   const auto& beta_ref = to_ref(beta);
   check_nonnegative(function, "number of trials variables", N);
-  check_not_nan(function, "Log odds parameter", beta_ref);
+  check_not_nan(function, "Log-probabilities parameter", beta_ref);
   if (beta_ref.size() > 0) {
-    check_greater(function, "Log odds parameter", beta_ref.maxCoeff(),
+    check_greater(function, "Log-probabilities parameter", beta_ref.maxCoeff(),
                   NEGATIVE_INFTY);
   }
 
