@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta/conjunction.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
 #include <stan/math/prim/meta/is_matrix_cl.hpp>
+#include <stan/math/prim/meta/is_scalar_cl.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
 #include <type_traits>
@@ -40,14 +41,14 @@ struct is_kernel_expression_and_not_scalar<T, require_matrix_cl_t<T>>
 
 /**
  * Determines whether a type is is a valid kernel generator expression. Valid
- * expressions are kernel generator operations, scalars and \c matrix_cl and
- * references of these types.
+ * expressions are kernel generator operations, scalars, device scalars
+ * (`opencl::ScalarCl<double>`) and \c matrix_cl and references of these types.
  */
 template <typename T>
 struct is_kernel_expression
     : bool_constant<is_kernel_expression_and_not_scalar<T>::value
-                    || std::is_arithmetic<std::remove_reference_t<T>>::value> {
-};
+                    || std::is_arithmetic<std::remove_reference_t<T>>::value
+                    || is_prim_scalar_cl<T>::value> {};
 
 /**
  * Enables a template if all given types are non-scalar types that are a
@@ -77,11 +78,14 @@ template <typename T>
 struct is_kernel_expression_lhs<T, require_matrix_cl_t<T>> : std::true_type {};
 
 /**
- * Determines whether a type is a var containing a kernel generator expression.
+ * Determines whether a type is a var containing a kernel generator expression
+ * or a device scalar holding a var (`opencl::ScalarCl<var>`).
  */
 template <typename T>
 struct is_rev_kernel_expression
-    : math::conjunction<is_var<T>, is_kernel_expression<value_type_t<T>>> {};
+    : math::disjunction<
+          math::conjunction<is_var<T>, is_kernel_expression<value_type_t<T>>>,
+          is_rev_scalar_cl<T>> {};
 
 /**
  * Determines whether a type is either a kernel generator

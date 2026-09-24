@@ -82,6 +82,7 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/scalar_cl.hpp>
 
 #include <stan/math/opencl/scalar_type.hpp>
 #include <stan/math/opencl/copy.hpp>
