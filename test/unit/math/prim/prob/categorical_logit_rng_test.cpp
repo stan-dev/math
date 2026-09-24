@@ -80,8 +80,10 @@ TEST(ProbDistributionsCategoricalLogit, multiplePosInfinityIsUniform) {
   int count_4 = 0;
   for (int i = 0; i < N; i++) {
     int result = categorical_logit_rng(beta, rng);
-    if (result == 2) count_2++;
-    if (result == 4) count_4++;
+    if (result == 2)
+      count_2++;
+    if (result == 4)
+      count_4++;
   }
 
   // every draw lands on one of the +inf entries, split roughly evenly
