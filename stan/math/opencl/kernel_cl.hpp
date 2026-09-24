@@ -130,6 +130,9 @@ template <typename T, typename K,
           require_any_same_t<T, out_buffer, in_out_buffer>* = nullptr>
 inline tbb::concurrent_vector<cl::Event> select_events(K& m) {
   static_assert(!std::is_const<K>::value, "Can not write to const matrix_cl!");
+  static_assert(!std::is_same<std::decay_t<K>,
+                              math::opencl::ScalarCl<const double&>>::value,
+                "Can not write to a read-only ScalarCl view!");
   return m.read_write_events();
 }
 

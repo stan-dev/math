@@ -21,15 +21,16 @@ namespace internal {
  * transferring data to the host. Large inputs are first reduced to partial
  * sums with `sum_2d()`; the partial sums are then reduced by a single work
  * group.
+ * @tparam Dst type of the device scalar or writable view receiving the sum
  * @tparam T type of the expression
  * @param[in,out] dst device scalar receiving the sum
  * @param m expression to sum
  * @param accumulate whether to add the sum to `dst` instead of overwriting it
  * @param offset value added to the sum
  */
-template <typename T,
+template <typename Dst, typename T, require_prim_scalar_cl_t<Dst>* = nullptr,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-inline void sum_into(ScalarCl<double>& dst, const T& m, bool accumulate,
+inline void sum_into(Dst&& dst, const T& m, bool accumulate,
                      double offset = 0.0) {
   if (m.size() == 0) {
     if (accumulate) {

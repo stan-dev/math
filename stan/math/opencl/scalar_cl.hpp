@@ -3,17 +3,170 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err/check_size_match.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <CL/opencl.hpp>
 #include <tbb/concurrent_vector.h>
+#include <type_traits>
 #include <utility>
 
 namespace stan {
 namespace math {
 namespace opencl {
+namespace internal {
+
+/**
+ * Buffer and event access shared by device scalars and device scalar views.
+ * Everything is forwarded to the backing 1x1 `matrix_cl` returned by
+ * `Derived::matrix()`, so views and owners share event state.
+ * @tparam Derived the device scalar type
+ */
+template <typename Derived>
+class scalar_cl_access {
+ public:
+  /**
+   * @return the OpenCL buffer holding the value
+   */
+  inline const cl::Buffer& buffer() const noexcept {
+    return derived().matrix().buffer();
+  }
+  /**
+   * @return events of all operations writing to the value
+   */
+  inline const tbb::concurrent_vector<cl::Event>& write_events() const {
+    return derived().matrix().write_events();
+  }
+  /**
+   * @return events of all operations reading the value
+   */
+  inline const tbb::concurrent_vector<cl::Event>& read_events() const {
+    return derived().matrix().read_events();
+  }
+  /**
+   * @return events of all operations reading or writing the value
+   */
+  inline tbb::concurrent_vector<cl::Event> read_write_events() const {
+    return derived().matrix().read_write_events();
+  }
+  /**
+   * Adds an event of an operation reading the value.
+   * @param new_event event to add
+   */
+  inline void add_read_event(cl::Event new_event) const {
+    derived().matrix().add_read_event(std::move(new_event));
+  }
+  /**
+   * Adds an event of an operation writing the value.
+   * @param new_event event to add
+   */
+  inline void add_write_event(cl::Event new_event) const {
+    derived().matrix().add_write_event(std::move(new_event));
+  }
+  /**
+   * Adds an event of an operation reading and writing the value.
+   * @param new_event event to add
+   */
+  inline void add_read_write_event(cl::Event new_event) const {
+    derived().matrix().add_read_write_event(std::move(new_event));
+  }
+
+ protected:
+  inline const Derived& derived() const noexcept {
+    return static_cast<const Derived&>(*this);
+  }
+  inline Derived& derived() noexcept { return static_cast<Derived&>(*this); }
+};
+
+/**
+ * Assignment and compound assignment shared by writable device scalars. The
+ * right hand side is evaluated on the device with a single thread.
+ * @tparam Derived the device scalar type
+ */
+template <typename Derived>
+class scalar_cl_assign : public scalar_cl_access<Derived> {
+ public:
+  /**
+   * Adds a scalar or 1x1 kernel generator expression to this device scalar.
+   * @tparam T type of the argument
+   * @param b value to add
+   * @return this device scalar
+   */
+  template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
+  Derived& operator+=(T&& b) {
+    assign(as_operation_cl(this->derived())
+           + as_operation_cl(std::forward<T>(b)));
+    return this->derived();
+  }
+
+  /**
+   * Subtracts a scalar or 1x1 kernel generator expression from this device
+   * scalar.
+   * @tparam T type of the argument
+   * @param b value to subtract
+   * @return this device scalar
+   */
+  template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
+  Derived& operator-=(T&& b) {
+    assign(as_operation_cl(this->derived())
+           - as_operation_cl(std::forward<T>(b)));
+    return this->derived();
+  }
+
+  /**
+   * Multiplies this device scalar by a scalar or 1x1 kernel generator
+   * expression.
+   * @tparam T type of the argument
+   * @param b value to multiply by
+   * @return this device scalar
+   */
+  template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
+  Derived& operator*=(T&& b) {
+    assign(elt_multiply(as_operation_cl(this->derived()),
+                        as_operation_cl(std::forward<T>(b))));
+    return this->derived();
+  }
+
+  /**
+   * Divides this device scalar by a scalar or 1x1 kernel generator expression.
+   * @tparam T type of the argument
+   * @param b value to divide by
+   * @return this device scalar
+   */
+  template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
+  Derived& operator/=(T&& b) {
+    assign(elt_divide(as_operation_cl(this->derived()),
+                      as_operation_cl(std::forward<T>(b))));
+    return this->derived();
+  }
+
+ protected:
+  /**
+   * Evaluates an expression into the backing buffer with a single thread.
+   * @tparam Expr type of the expression
+   * @param expression expression to evaluate
+   * @throw std::invalid_argument if the expression is not 1x1
+   */
+  template <typename Expr>
+  inline void assign(Expr&& expression) {
+    this->derived().matrix() = scalar_result_<as_operation_cl_t<Expr>>(
+        as_operation_cl(std::forward<Expr>(expression)));
+  }
+};
+
+/**
+ * Checks that a `matrix_cl` can back a device scalar.
+ * @param m matrix to check
+ * @throw std::invalid_argument if the matrix is not 1x1
+ */
+inline void check_scalar_cl_matrix(const matrix_cl<double>& m) {
+  check_size_match("ScalarCl", "rows", m.rows(), "", 1);
+  check_size_match("ScalarCl", "columns", m.cols(), "", 1);
+}
+
+}  // namespace internal
 
 /** \ingroup opencl
  * A double that lives on the OpenCL device.
@@ -27,7 +180,7 @@ namespace opencl {
  * device buffer.
  */
 template <>
-class ScalarCl<double> {
+class ScalarCl<double> : public internal::scalar_cl_assign<ScalarCl<double>> {
  private:
   matrix_cl<double> buf_;
 
@@ -51,6 +204,24 @@ class ScalarCl<double> {
       : buf_(std::move(value), matrix_cl_view::Entire) {}
 
   /**
+   * Takes ownership of a 1x1 `matrix_cl`.
+   * @param m matrix holding the value
+   * @throw std::invalid_argument if the matrix is not 1x1
+   */
+  explicit ScalarCl(matrix_cl<double>&& m) : buf_(std::move(m)) {
+    internal::check_scalar_cl_matrix(buf_);
+  }
+
+  /**
+   * Copies the value of a device scalar view on the device.
+   * @tparam T type of the view
+   * @param other device scalar view
+   */
+  template <typename T, require_prim_scalar_cl_t<T>* = nullptr,
+            require_not_same_t<std::decay_t<T>, ScalarCl<double>>* = nullptr>
+  explicit ScalarCl(const T& other) : buf_(other.matrix()) {}
+
+  /**
    * Evaluates a kernel generator expression into a device scalar. The
    * expression must be 1x1 or consist only of scalars.
    * @tparam Expr type of the expression
@@ -60,7 +231,7 @@ class ScalarCl<double> {
   template <typename Expr,
             require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
   explicit ScalarCl(Expr&& expression) : buf_(1, 1) {
-    assign(std::forward<Expr>(expression));
+    this->assign(std::forward<Expr>(expression));
   }
 
   ScalarCl(const ScalarCl& other) = default;
@@ -79,59 +250,7 @@ class ScalarCl<double> {
   template <typename Expr,
             require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
   ScalarCl& operator=(Expr&& expression) {
-    assign(std::forward<Expr>(expression));
-    return *this;
-  }
-
-  /**
-   * Adds a scalar or 1x1 kernel generator expression to this device scalar.
-   * @tparam T type of the argument
-   * @param b value to add
-   * @return this device scalar
-   */
-  template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
-  ScalarCl& operator+=(T&& b) {
-    assign(as_operation_cl(*this) + as_operation_cl(std::forward<T>(b)));
-    return *this;
-  }
-
-  /**
-   * Subtracts a scalar or 1x1 kernel generator expression from this device
-   * scalar.
-   * @tparam T type of the argument
-   * @param b value to subtract
-   * @return this device scalar
-   */
-  template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
-  ScalarCl& operator-=(T&& b) {
-    assign(as_operation_cl(*this) - as_operation_cl(std::forward<T>(b)));
-    return *this;
-  }
-
-  /**
-   * Multiplies this device scalar by a scalar or 1x1 kernel generator
-   * expression.
-   * @tparam T type of the argument
-   * @param b value to multiply by
-   * @return this device scalar
-   */
-  template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
-  ScalarCl& operator*=(T&& b) {
-    assign(elt_multiply(as_operation_cl(*this),
-                        as_operation_cl(std::forward<T>(b))));
-    return *this;
-  }
-
-  /**
-   * Divides this device scalar by a scalar or 1x1 kernel generator expression.
-   * @tparam T type of the argument
-   * @param b value to divide by
-   * @return this device scalar
-   */
-  template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
-  ScalarCl& operator/=(T&& b) {
-    assign(elt_divide(as_operation_cl(*this),
-                      as_operation_cl(std::forward<T>(b))));
+    this->assign(std::forward<Expr>(expression));
     return *this;
   }
 
@@ -143,77 +262,112 @@ class ScalarCl<double> {
    * @return the backing 1x1 `matrix_cl`
    */
   inline matrix_cl<double>& matrix() noexcept { return buf_; }
+};
 
-  /**
-   * @return the OpenCL buffer holding the value
-   */
-  inline const cl::Buffer& buffer() const noexcept { return buf_.buffer(); }
-  /**
-   * @return the OpenCL buffer holding the value
-   */
-  inline cl::Buffer& buffer() noexcept { return buf_.buffer(); }
-
-  /**
-   * @return events of all operations writing to the value
-   */
-  inline const tbb::concurrent_vector<cl::Event>& write_events() const {
-    return buf_.write_events();
-  }
-  /**
-   * @return events of all operations reading the value
-   */
-  inline const tbb::concurrent_vector<cl::Event>& read_events() const {
-    return buf_.read_events();
-  }
-  /**
-   * @return events of all operations reading or writing the value
-   */
-  inline tbb::concurrent_vector<cl::Event> read_write_events() const {
-    return buf_.read_write_events();
-  }
-  /**
-   * Adds an event of an operation reading the value.
-   * @param new_event event to add
-   */
-  inline void add_read_event(cl::Event new_event) const {
-    buf_.add_read_event(std::move(new_event));
-  }
-  /**
-   * Adds an event of an operation writing the value.
-   * @param new_event event to add
-   */
-  inline void add_write_event(cl::Event new_event) const {
-    buf_.add_write_event(std::move(new_event));
-  }
-  /**
-   * Adds an event of an operation reading and writing the value.
-   * @param new_event event to add
-   */
-  inline void add_read_write_event(cl::Event new_event) const {
-    buf_.add_read_write_event(std::move(new_event));
-  }
-
+/** \ingroup opencl
+ * A writable view of a device scalar, such as the adjoint of a
+ * `ScalarCl<var>`. It refers to a 1x1 `matrix_cl` owned elsewhere and shares
+ * its buffer and events. Assigning to the view writes the referenced value.
+ */
+template <>
+class ScalarCl<double&> : public internal::scalar_cl_assign<ScalarCl<double&>> {
  private:
+  matrix_cl<double>* m_;
+
+ public:
+  using value_type = double;
+
   /**
-   * Evaluates an expression into the backing buffer with a single thread.
+   * @param m 1x1 matrix holding the value
+   * @throw std::invalid_argument if the matrix is not 1x1
+   */
+  explicit ScalarCl(matrix_cl<double>& m) : m_(&m) {
+    internal::check_scalar_cl_matrix(m);
+  }
+
+  ScalarCl(const ScalarCl& other) = default;
+
+  /**
+   * Assigns the value of another view to the value referenced by this one.
+   * @param other view to copy the value from
+   * @return this view
+   */
+  ScalarCl& operator=(const ScalarCl& other) {
+    this->assign(other);
+    return *this;
+  }
+
+  /**
+   * Evaluates a device scalar or a kernel generator expression into the
+   * referenced value. The expression must be 1x1 or consist only of scalars.
    * @tparam Expr type of the expression
    * @param expression expression to evaluate
+   * @return this view
    * @throw std::invalid_argument if the expression is not 1x1
    */
-  template <typename Expr>
-  inline void assign(Expr&& expression) {
-    buf_ = scalar_result_<as_operation_cl_t<Expr>>(
-        as_operation_cl(std::forward<Expr>(expression)));
+  template <typename Expr, require_all_kernel_expressions_t<Expr>* = nullptr>
+  ScalarCl& operator=(Expr&& expression) {
+    this->assign(std::forward<Expr>(expression));
+    return *this;
   }
+
+  /**
+   * @return the referenced 1x1 `matrix_cl`
+   */
+  inline matrix_cl<double>& matrix() const noexcept { return *m_; }
+};
+
+/** \ingroup opencl
+ * A read-only view of a device scalar, such as the value of a
+ * `ScalarCl<var>`. It refers to a 1x1 `matrix_cl` owned elsewhere and shares
+ * its buffer and events.
+ */
+template <>
+class ScalarCl<const double&>
+    : public internal::scalar_cl_access<ScalarCl<const double&>> {
+ private:
+  const matrix_cl<double>* m_;
+
+ public:
+  using value_type = double;
+
+  /**
+   * @param m 1x1 matrix holding the value
+   * @throw std::invalid_argument if the matrix is not 1x1
+   */
+  explicit ScalarCl(const matrix_cl<double>& m) : m_(&m) {
+    internal::check_scalar_cl_matrix(m);
+  }
+
+  /**
+   * Views the value of a device scalar or of a writable view.
+   * @tparam T type of the device scalar
+   * @param x device scalar
+   */
+  template <
+      typename T, require_prim_scalar_cl_t<T>* = nullptr,
+      require_not_same_t<std::decay_t<T>, ScalarCl<const double&>>* = nullptr>
+  ScalarCl(const T& x)  // NOLINT(runtime/explicit)
+      : m_(&x.matrix()) {}
+
+  ScalarCl(const ScalarCl& other) = default;
+  ScalarCl& operator=(const ScalarCl& other) = delete;
+
+  /**
+   * @return the referenced 1x1 `matrix_cl`
+   */
+  inline const matrix_cl<double>& matrix() const noexcept { return *m_; }
 };
 
 /** \ingroup opencl
  * Copies a device scalar to the host. Blocks until all writes to the scalar
  * have finished and the value has been read.
+ * @tparam T type of the device scalar
  * @param x device scalar
  * @return host copy of the value
  */
-inline double to_host(const ScalarCl<double>& x) {
+template <typename T, require_prim_scalar_cl_t<T>* = nullptr>
+inline double to_host(const T& x) {
   return from_matrix_cl<double>(x.matrix());
 }
 

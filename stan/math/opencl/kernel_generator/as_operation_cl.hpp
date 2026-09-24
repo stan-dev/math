@@ -78,9 +78,9 @@ inline load_<T_matrix_cl, AssignOp> as_operation_cl(T_matrix_cl&& a) {
 }
 
 /**
- * Converts a device scalar (`opencl::ScalarCl<double>`) into a kernel generator
- * expression that broadcasts its value. Lvalues are referenced; rvalues are
- * moved into the expression.
+ * Converts a device scalar (`opencl::ScalarCl<double>` or a view of one) into a
+ * kernel generator expression that broadcasts its value. Owning rvalues are
+ * moved into the expression; everything else is referenced.
  * @tparam T type of the device scalar
  * @param a device scalar
  * @return \c scalar_buf_ wrapping the backing buffer of the device scalar
@@ -88,10 +88,12 @@ inline load_<T_matrix_cl, AssignOp> as_operation_cl(T_matrix_cl&& a) {
 template <assign_op_cl AssignOp = assign_op_cl::equals, typename T,
           require_prim_scalar_cl_t<T>* = nullptr>
 inline auto as_operation_cl(T&& a) {
-  if constexpr (std::is_lvalue_reference<T>::value) {
-    return scalar_buf_<decltype((a.matrix()))>(a.matrix());
-  } else {
+  if constexpr (!std::is_lvalue_reference<T>::value
+                && std::is_same<std::decay_t<T>,
+                                math::opencl::ScalarCl<double>>::value) {
     return scalar_buf_<matrix_cl<double>>(std::move(a.matrix()));
+  } else {
+    return scalar_buf_<decltype((a.matrix()))>(a.matrix());
   }
 }
 

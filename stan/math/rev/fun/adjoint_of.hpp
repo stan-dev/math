@@ -48,7 +48,8 @@ inline auto& adjoint_of(const T& x) noexcept {
  * @param x any non-var object
  * @return a dummy adjoint
  */
-template <typename T, require_not_var_t<T>* = nullptr>
+template <typename T, require_not_var_t<T>* = nullptr,
+          require_not_rev_scalar_cl_t<T>* = nullptr>
 internal::nonexisting_adjoint adjoint_of(const T& x) {
   return {};
 }

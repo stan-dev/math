@@ -23,7 +23,7 @@ struct is_scalar_cl_impl : std::false_type {};
 
 template <typename T>
 struct is_scalar_cl_impl<math::opencl::ScalarCl<T>> : std::true_type {
-  using type = T;
+  using type = std::decay_t<T>;
 };
 }  // namespace internal
 
@@ -40,7 +40,7 @@ struct is_prim_scalar_cl_impl : std::false_type {};
 
 template <typename T>
 struct is_prim_scalar_cl_impl<math::opencl::ScalarCl<T>>
-    : std::is_arithmetic<T> {};
+    : std::is_arithmetic<std::decay_t<T>> {};
 
 template <typename T>
 struct is_rev_scalar_cl_impl : std::false_type {};
@@ -51,7 +51,8 @@ struct is_rev_scalar_cl_impl<math::opencl::ScalarCl<T>> : is_var<T> {};
 
 /** \ingroup type_traits
  * Checks if the decayed type of T is an `opencl::ScalarCl` holding an
- * arithmetic value (`opencl::ScalarCl<double>`).
+ * arithmetic value: `opencl::ScalarCl<double>` or one of the views
+ * `opencl::ScalarCl<double&>` and `opencl::ScalarCl<const double&>`.
  */
 template <typename T>
 struct is_prim_scalar_cl : internal::is_prim_scalar_cl_impl<std::decay_t<T>> {};
@@ -118,6 +119,11 @@ using require_prim_scalar_cl_t = require_t<is_prim_scalar_cl<T>>;
 /*! @tparam T the type to check */
 template <typename T>
 using require_rev_scalar_cl_t = require_t<is_rev_scalar_cl<T>>;
+
+/*! \brief Require type does not satisfy @ref is_rev_scalar_cl */
+/*! @tparam T the type to check */
+template <typename T>
+using require_not_rev_scalar_cl_t = require_not_t<is_rev_scalar_cl<T>>;
 /*! @} */
 
 }  // namespace stan
