@@ -124,9 +124,10 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
     }                                                                         \
   };                                                                          \
                                                                               \
-  template <typename T_a, typename T_b,                                       \
-            require_all_kernel_expressions_t<T_a, T_b>* = nullptr,            \
-            require_any_not_arithmetic_t<T_a, T_b>* = nullptr>                \
+  template <                                                                  \
+      typename T_a, typename T_b,                                             \
+      require_all_kernel_expressions_t<T_a, T_b>* = nullptr,                  \
+      require_any_kernel_expressions_and_not_scalar_t<T_a, T_b>* = nullptr>   \
   inline class_name<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>           \
   function_name(T_a&& a, T_b&& b) { /* NOLINT */                              \
     return {as_operation_cl(std::forward<T_a>(a)),                            \
@@ -175,9 +176,10 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
     __VA_ARGS__                                                               \
   };                                                                          \
                                                                               \
-  template <typename T_a, typename T_b,                                       \
-            require_all_kernel_expressions_t<T_a, T_b>* = nullptr,            \
-            require_any_not_arithmetic_t<T_a, T_b>* = nullptr>                \
+  template <                                                                  \
+      typename T_a, typename T_b,                                             \
+      require_all_kernel_expressions_t<T_a, T_b>* = nullptr,                  \
+      require_any_kernel_expressions_and_not_scalar_t<T_a, T_b>* = nullptr>   \
   inline class_name<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>           \
   function_name(T_a&& a, T_b&& b) { /* NOLINT */                              \
     return {as_operation_cl(std::forward<T_a>(a)),                            \
@@ -204,18 +206,16 @@ ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
     });
 ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
     elt_divide_, elt_divide, common_scalar_t<T_a COMMA T_b>, "/",
-    inline std::pair<int, int> extreme_diagonals() const {
-      return {-rows() + 1, cols() - 1};
-    });
+    inline std::pair<int, int> extreme_diagonals()
+        const { return {-rows() + 1, cols() - 1}; });
 ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
     elt_modulo_, operator%, common_scalar_t<T_a COMMA T_b>, "%",
     static_assert(
-        std::is_integral<scalar_type_t<T_a>>::value&&
-            std::is_integral<scalar_type_t<T_b>>::value,
+        std::is_integral<scalar_type_t<T_a>>::value
+            && std::is_integral<scalar_type_t<T_b>>::value,
         "both operands to operator% must have integral scalar types!");
-    inline std::pair<int, int> extreme_diagonals() const {
-      return {-rows() + 1, cols() - 1};
-    });
+    inline std::pair<int, int> extreme_diagonals()
+        const { return {-rows() + 1, cols() - 1}; });
 
 ADD_BINARY_OPERATION(less_than_, operator<, bool, "<");
 ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
@@ -258,10 +258,26 @@ ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
  * @return Multiplication of given arguments
  */
 template <typename T_a, typename T_b, typename = require_arithmetic_t<T_a>,
-          typename = require_all_kernel_expressions_t<T_b>>
+          typename = require_all_kernel_expressions_and_none_scalar_t<T_b>>
 inline elt_multiply_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>> operator*(
     T_a a, T_b&& b) {  // NOLINT
   return {as_operation_cl(a), as_operation_cl(std::forward<T_b>(b))};
+}
+
+/**
+ * Multiplication of a device scalar and a kernel generator expression.
+ * @tparam T_a type of device scalar
+ * @tparam T_b type of expression
+ * @param a device scalar
+ * @param b expression
+ * @return Multiplication of given arguments
+ */
+template <typename T_a, typename T_b, require_prim_scalar_cl_t<T_a>* = nullptr,
+          require_all_kernel_expressions_and_none_scalar_t<T_b>* = nullptr>
+inline elt_multiply_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>> operator*(
+    T_a&& a, T_b&& b) {  // NOLINT
+  return {as_operation_cl(std::forward<T_a>(a)),
+          as_operation_cl(std::forward<T_b>(b))};
 }
 
 /**
@@ -273,11 +289,28 @@ inline elt_multiply_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>> operator*(
  * @return Multiplication of given arguments
  */
 template <typename T_a, typename T_b,
-          typename = require_all_kernel_expressions_t<T_a>,
+          typename = require_all_kernel_expressions_and_none_scalar_t<T_a>,
           typename = require_arithmetic_t<T_b>>
 inline elt_multiply_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>> operator*(
     T_a&& a, const T_b b) {  // NOLINT
   return {as_operation_cl(std::forward<T_a>(a)), as_operation_cl(b)};
+}
+
+/**
+ * Multiplication of a kernel generator expression and a device scalar.
+ * @tparam T_a type of expression
+ * @tparam T_b type of device scalar
+ * @param a expression
+ * @param b device scalar
+ * @return Multiplication of given arguments
+ */
+template <typename T_a, typename T_b,
+          require_all_kernel_expressions_and_none_scalar_t<T_a>* = nullptr,
+          require_prim_scalar_cl_t<T_b>* = nullptr>
+inline elt_multiply_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>> operator*(
+    T_a&& a, T_b&& b) {  // NOLINT
+  return {as_operation_cl(std::forward<T_a>(a)),
+          as_operation_cl(std::forward<T_b>(b))};
 }
 
 #undef COMMA

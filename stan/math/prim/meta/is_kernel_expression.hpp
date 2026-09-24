@@ -59,6 +59,15 @@ using require_all_kernel_expressions_and_none_scalar_t
     = require_all_t<is_kernel_expression_and_not_scalar<Types>...>;
 
 /**
+ * Enables a template if any of the given types is a non-scalar type that is a
+ * valid kernel generator expression. Operations whose operands are all scalars
+ * (host or device) have no size, so they are evaluated elsewhere.
+ */
+template <typename... Types>
+using require_any_kernel_expressions_and_not_scalar_t
+    = require_any_t<is_kernel_expression_and_not_scalar<Types>...>;
+
+/**
  * Enables a template if all given types are are a valid kernel generator
  * expressions.
  */

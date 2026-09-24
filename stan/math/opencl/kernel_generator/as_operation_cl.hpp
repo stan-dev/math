@@ -6,6 +6,7 @@
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
+#include <stan/math/opencl/kernel_generator/scalar_buf.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <type_traits>
@@ -77,6 +78,24 @@ inline load_<T_matrix_cl, AssignOp> as_operation_cl(T_matrix_cl&& a) {
 }
 
 /**
+ * Converts a device scalar (`opencl::ScalarCl<double>`) into a kernel generator
+ * expression that broadcasts its value. Lvalues are referenced; rvalues are
+ * moved into the expression.
+ * @tparam T type of the device scalar
+ * @param a device scalar
+ * @return \c scalar_buf_ wrapping the backing buffer of the device scalar
+ */
+template <assign_op_cl AssignOp = assign_op_cl::equals, typename T,
+          require_prim_scalar_cl_t<T>* = nullptr>
+inline auto as_operation_cl(T&& a) {
+  if constexpr (std::is_lvalue_reference<T>::value) {
+    return scalar_buf_<decltype((a.matrix()))>(a.matrix());
+  } else {
+    return scalar_buf_<matrix_cl<double>>(std::move(a.matrix()));
+  }
+}
+
+/**
  * Type that results when converting any valid kernel generator expression into
  * operation. If a function accepts a forwarding reference T&& a, the result of
  * as_operation_cl(a) should be stored in a variable of type
@@ -88,11 +107,11 @@ inline load_<T_matrix_cl, AssignOp> as_operation_cl(T_matrix_cl&& a) {
  *  is assigned using standard or compound assign.
  */
 template <typename T, assign_op_cl AssignOp = assign_op_cl::equals>
-using as_operation_cl_t
-    = std::conditional_t<std::is_lvalue_reference<T>::value,
-                         decltype(as_operation_cl<AssignOp>(std::declval<T>())),
-                         std::remove_reference_t<decltype(
-                             as_operation_cl<AssignOp>(std::declval<T>()))>>;
+using as_operation_cl_t = std::conditional_t<
+    std::is_lvalue_reference<T>::value,
+    decltype(as_operation_cl<AssignOp>(std::declval<T>())),
+    std::remove_reference_t<decltype(as_operation_cl<AssignOp>(
+        std::declval<T>()))>>;
 
 /** @}*/
 }  // namespace math

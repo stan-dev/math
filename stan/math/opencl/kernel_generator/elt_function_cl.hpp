@@ -136,9 +136,10 @@ class elt_function_cl : public operation_cl<Derived, Scal, T...> {
     }                                                                       \
   };                                                                        \
                                                                             \
-  template <typename T1, typename T2,                                       \
-            require_all_kernel_expressions_t<T1, T2>* = nullptr,            \
-            require_any_not_stan_scalar_t<T1, T2>* = nullptr>               \
+  template <                                                                \
+      typename T1, typename T2,                                             \
+      require_all_kernel_expressions_t<T1, T2>* = nullptr,                  \
+      require_any_kernel_expressions_and_not_scalar_t<T1, T2>* = nullptr>   \
   inline fun##_<as_operation_cl_t<T1>, as_operation_cl_t<T2>> fun(T1&& a,   \
                                                                   T2&& b) { \
     return fun##_<as_operation_cl_t<T1>, as_operation_cl_t<T2>>(            \
@@ -397,7 +398,7 @@ class lbeta_ : public elt_function_cl<lbeta_<T1, T2>, double, T1, T2> {
 
 template <typename T1, typename T2,
           require_all_kernel_expressions_t<T1, T2>* = nullptr,
-          require_any_not_stan_scalar_t<T1, T2>* = nullptr>
+          require_any_kernel_expressions_and_not_scalar_t<T1, T2>* = nullptr>
 inline lbeta_<as_operation_cl_t<T1>, as_operation_cl_t<T2>> lbeta(T1&& a,
                                                                   T2&& b) {
   return lbeta_<as_operation_cl_t<T1>, as_operation_cl_t<T2>>(

@@ -4,6 +4,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/copy.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <CL/opencl.hpp>
@@ -49,10 +50,90 @@ class ScalarCl<double> {
   explicit ScalarCl(double value)
       : buf_(std::move(value), matrix_cl_view::Entire) {}
 
+  /**
+   * Evaluates a kernel generator expression into a device scalar. The
+   * expression must be 1x1 or consist only of scalars.
+   * @tparam Expr type of the expression
+   * @param expression expression to evaluate
+   * @throw std::invalid_argument if the expression is not 1x1
+   */
+  template <typename Expr,
+            require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
+  explicit ScalarCl(Expr&& expression) : buf_(1, 1) {
+    assign(std::forward<Expr>(expression));
+  }
+
   ScalarCl(const ScalarCl& other) = default;
   ScalarCl(ScalarCl&& other) = default;
   ScalarCl& operator=(const ScalarCl& other) = default;
   ScalarCl& operator=(ScalarCl&& other) = default;
+
+  /**
+   * Evaluates a kernel generator expression into this device scalar. The
+   * expression must be 1x1 or consist only of scalars.
+   * @tparam Expr type of the expression
+   * @param expression expression to evaluate
+   * @return this device scalar
+   * @throw std::invalid_argument if the expression is not 1x1
+   */
+  template <typename Expr,
+            require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
+  ScalarCl& operator=(Expr&& expression) {
+    assign(std::forward<Expr>(expression));
+    return *this;
+  }
+
+  /**
+   * Adds a scalar or 1x1 kernel generator expression to this device scalar.
+   * @tparam T type of the argument
+   * @param b value to add
+   * @return this device scalar
+   */
+  template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
+  ScalarCl& operator+=(T&& b) {
+    assign(as_operation_cl(*this) + as_operation_cl(std::forward<T>(b)));
+    return *this;
+  }
+
+  /**
+   * Subtracts a scalar or 1x1 kernel generator expression from this device
+   * scalar.
+   * @tparam T type of the argument
+   * @param b value to subtract
+   * @return this device scalar
+   */
+  template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
+  ScalarCl& operator-=(T&& b) {
+    assign(as_operation_cl(*this) - as_operation_cl(std::forward<T>(b)));
+    return *this;
+  }
+
+  /**
+   * Multiplies this device scalar by a scalar or 1x1 kernel generator
+   * expression.
+   * @tparam T type of the argument
+   * @param b value to multiply by
+   * @return this device scalar
+   */
+  template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
+  ScalarCl& operator*=(T&& b) {
+    assign(elt_multiply(as_operation_cl(*this),
+                        as_operation_cl(std::forward<T>(b))));
+    return *this;
+  }
+
+  /**
+   * Divides this device scalar by a scalar or 1x1 kernel generator expression.
+   * @tparam T type of the argument
+   * @param b value to divide by
+   * @return this device scalar
+   */
+  template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
+  ScalarCl& operator/=(T&& b) {
+    assign(elt_divide(as_operation_cl(*this),
+                      as_operation_cl(std::forward<T>(b))));
+    return *this;
+  }
 
   /**
    * @return the backing 1x1 `matrix_cl`
@@ -110,6 +191,19 @@ class ScalarCl<double> {
    */
   inline void add_read_write_event(cl::Event new_event) const {
     buf_.add_read_write_event(std::move(new_event));
+  }
+
+ private:
+  /**
+   * Evaluates an expression into the backing buffer with a single thread.
+   * @tparam Expr type of the expression
+   * @param expression expression to evaluate
+   * @throw std::invalid_argument if the expression is not 1x1
+   */
+  template <typename Expr>
+  inline void assign(Expr&& expression) {
+    buf_ = scalar_result_<as_operation_cl_t<Expr>>(
+        as_operation_cl(std::forward<Expr>(expression)));
   }
 };
 
