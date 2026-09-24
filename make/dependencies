@@ -4,10 +4,18 @@
 DEPTARGETS = -MT $(patsubst %.d,%.o,$@)
 ifeq ($(OS),Windows_NT)
   DEPFLAGS_OS ?= -M -E
+  COMPILE_DEPFLAGS_OS ?= -MD
 else
   DEPFLAGS_OS ?= -MM -E
+  COMPILE_DEPFLAGS_OS ?= -MMD
 endif
 DEPFLAGS = $(DEPTARGETS) $(DEPFLAGS_OS) -MG -MP -MF $@
+COMPILE_DEPFLAGS = $(COMPILE_DEPFLAGS_OS) -MP -MT $@ -MF $(@:.o=.d)
+
+# Refresh the dependency list whenever a test is compiled. A tracked header can
+# introduce new includes without changing the .cpp that triggers the scan below.
+test/%.o: test/%.cpp
+	$(COMPILE.cpp) $(COMPILE_DEPFLAGS) $(OUTPUT_OPTION) $<
 
 %.d: %.cpp
 	$(COMPILE.cpp) $(DEPFLAGS) $<
