@@ -29,6 +29,51 @@ TEST(ProbDistributionsMultinomialLogit, RNGSize) {
   EXPECT_EQ(5U, sample.size());
 }
 
+TEST(ProbDistributionsMultinomialLogit, RNGErrorCheck) {
+  boost::random::mt19937 rng;
+  Matrix<double, Dynamic, 1> beta(3);
+
+  beta << 1.3, 0.1, -2.6;
+  EXPECT_NO_THROW(stan::math::multinomial_logit_rng(beta, 10, rng));
+
+  beta(1) = std::numeric_limits<double>::infinity();
+  EXPECT_NO_THROW(stan::math::multinomial_logit_rng(beta, 10, rng));
+
+  beta(1) = std::numeric_limits<double>::quiet_NaN();
+  EXPECT_THROW(stan::math::multinomial_logit_rng(beta, 10, rng),
+               std::domain_error);
+
+  beta << -std::numeric_limits<double>::infinity(),
+      -std::numeric_limits<double>::infinity(),
+      -std::numeric_limits<double>::infinity();
+  EXPECT_THROW(stan::math::multinomial_logit_rng(beta, 10, rng),
+               std::domain_error);
+}
+
+TEST(ProbDistributionsMultinomialLogit, RNGMultiplePosInfinityIsUniform) {
+  boost::random::mt19937 rng;
+  Matrix<double, Dynamic, 1> beta(4);
+  beta << -std::numeric_limits<double>::infinity(),
+      std::numeric_limits<double>::infinity(), 2.0,
+      std::numeric_limits<double>::infinity();
+
+  int N = 20;
+  int trials = 1000;
+  int total_2 = 0;
+
+  for (int i = 0; i < trials; i++) {
+    std::vector<int> sample = stan::math::multinomial_logit_rng(beta, N, rng);
+    EXPECT_EQ(0, sample[0]);
+    EXPECT_EQ(0, sample[2]);
+    EXPECT_EQ(N, sample[1] + sample[3]);
+    total_2 += sample[1];
+  }
+
+  // roughly even split of all counts between the two +inf entries
+  double expected = trials * N / 2.0;
+  EXPECT_NEAR(total_2, expected, expected * 0.05);
+}
+
 TEST(ProbDistributionsMultinomialLogit, MultinomialLogit) {
   std::vector<int> ns;
   ns.push_back(1);

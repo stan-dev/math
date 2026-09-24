@@ -18,8 +18,9 @@ namespace math {
  * a vector of unnormalized log probabilities and a psuedo-random
  * number generator.
  *
- * This is a convenience wrapper around
- * <code>categorical_rng(softmax(beta), rng)</code>.
+ * In the case of finite and -inf values this is a convenience
+ * wrapper around <code>categorical_rng(softmax(beta), rng)</code>.
+ * Assumes a uniform distribution among all +inf values.
  *
  * @tparam RNG Type of pseudo-random number generator.
  * @param beta Vector of unnormalized log probabilities.
@@ -53,7 +54,7 @@ inline int categorical_logit_rng(const Eigen::VectorXd& beta, RNG& rng) {
 
   double c = uniform01_rng();
   int b = 0;
-  while (c > index(b)) {
+  while (c >= index(b)) {
     b++;
   }
   return b + 1;

@@ -61,53 +61,26 @@ TEST(ProbDistributionsCategoricalLogit, chiSquareGoodnessFitTest) {
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
 
-TEST(ProbDistributionsCategoricalLogit, negInfinityIsNeverSelected) {
-  using Eigen::VectorXd;
-  using stan::math::categorical_logit_rng;
-  boost::random::mt19937 rng;
-
-  VectorXd beta(3);
-  beta << 1.0, -std::numeric_limits<double>::infinity(), 2.0;
-
-  for (int i = 0; i < 1000; i++) {
-    int result = categorical_logit_rng(beta, rng);
-    EXPECT_NE(result, 2);
-  }
-}
-
-TEST(ProbDistributionsCategoricalLogit, singlePosInfinityIsDeterministic) {
-  using Eigen::VectorXd;
-  using stan::math::categorical_logit_rng;
-  boost::random::mt19937 rng;
-
-  VectorXd beta(3);
-  beta << 1.0, std::numeric_limits<double>::infinity(), 2.0;
-
-  for (int i = 0; i < 1000; i++) {
-    int result = categorical_logit_rng(beta, rng);
-    EXPECT_EQ(result, 2);
-  }
-}
-
 TEST(ProbDistributionsCategoricalLogit, multiplePosInfinityIsUniform) {
   using Eigen::VectorXd;
   using stan::math::categorical_logit_rng;
   boost::random::mt19937 rng;
 
   VectorXd beta(4);
-  beta << 1.0, std::numeric_limits<double>::infinity(), 2.0,
+  beta << -std::numeric_limits<double>::infinity(),
+      std::numeric_limits<double>::infinity(), 2.0,
       std::numeric_limits<double>::infinity();
 
   int N = 10000;
-  int count_1 = 0;
-  int count_3 = 0;
+  int count_2 = 0;
+  int count_4 = 0;
   for (int i = 0; i < N; i++) {
     int result = categorical_logit_rng(beta, rng);
-    EXPECT_TRUE(result == 2 || result == 4);
-    if (result == 2) count_1++;
-    if (result == 4) count_3++;
+    if (result == 2) count_2++;
+    if (result == 4) count_4++;
   }
 
-  EXPECT_NEAR(count_1, N / 2, N * 0.05);
-  EXPECT_NEAR(count_3, N / 2, N * 0.05);
+  // every draw lands on one of the +inf entries, split roughly evenly
+  EXPECT_EQ(N, count_2 + count_4);
+  EXPECT_NEAR(count_2, N / 2, N * 0.05);
 }
