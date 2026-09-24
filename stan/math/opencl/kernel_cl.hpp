@@ -30,7 +30,8 @@ namespace internal {
  * @param t The type that will be returned.
  * @return the input t.
  */
-template <typename T, require_not_matrix_cl_t<T>* = nullptr>
+template <typename T,
+          require_all_not_t<is_matrix_cl<T>, is_scalar_cl<T>>* = nullptr>
 inline const T& get_kernel_args(const T& t) {
   return t;
 }
@@ -42,7 +43,8 @@ inline const T& get_kernel_args(const T& t) {
  * @param m The \c matrix with an OpenCL Buffer.
  * @return The OpenCL Buffer.
  */
-template <typename K, require_matrix_cl_t<K>* = nullptr>
+template <typename K,
+          require_any_t<is_matrix_cl<K>, is_prim_scalar_cl<K>>* = nullptr>
 inline const cl::Buffer& get_kernel_args(const K& m) {
   return m.buffer();
 }
@@ -54,20 +56,24 @@ inline const cl::Buffer& get_kernel_args(const K& m) {
  * @tparam K The type of the \c matrix_cl.
  * @param e The event to be assigned.
  */
-template <typename T, require_not_matrix_cl_t<T>* = nullptr>
+template <typename T,
+          require_all_not_t<is_matrix_cl<T>, is_scalar_cl<T>>* = nullptr>
 inline void assign_event(const cl::Event& e, const T&) {}
 
-template <typename T, typename K, require_matrix_cl_t<K>* = nullptr,
+template <typename T, typename K,
+          require_any_t<is_matrix_cl<K>, is_prim_scalar_cl<K>>* = nullptr,
           require_same_t<T, in_buffer>* = nullptr>
 inline void assign_event(const cl::Event& e, const K& m) {
   m.add_read_event(e);
 }
-template <typename T, typename K, require_matrix_cl_t<K>* = nullptr,
+template <typename T, typename K,
+          require_any_t<is_matrix_cl<K>, is_prim_scalar_cl<K>>* = nullptr,
           require_same_t<T, out_buffer>* = nullptr>
 inline void assign_event(const cl::Event& e, K& m) {
   m.add_write_event(e);
 }
-template <typename T, typename K, require_matrix_cl_t<K>* = nullptr,
+template <typename T, typename K,
+          require_any_t<is_matrix_cl<K>, is_prim_scalar_cl<K>>* = nullptr,
           require_same_t<T, in_out_buffer>* = nullptr>
 inline void assign_event(const cl::Event& e, K& m) {
   m.add_read_write_event(e);
@@ -108,16 +114,19 @@ inline void assign_events(const cl::Event& new_event, CallArg& m,
  * nothing.
  * @return A vector of OpenCL events.
  */
-template <typename T, require_not_matrix_cl_t<T>* = nullptr>
+template <typename T,
+          require_all_not_t<is_matrix_cl<T>, is_scalar_cl<T>>* = nullptr>
 inline tbb::concurrent_vector<cl::Event> select_events(const T& m) {
   return tbb::concurrent_vector<cl::Event>{};
 }
-template <typename T, typename K, require_matrix_cl_t<K>* = nullptr,
+template <typename T, typename K,
+          require_any_t<is_matrix_cl<K>, is_prim_scalar_cl<K>>* = nullptr,
           require_same_t<T, in_buffer>* = nullptr>
 inline const tbb::concurrent_vector<cl::Event>& select_events(const K& m) {
   return m.write_events();
 }
-template <typename T, typename K, require_matrix_cl_t<K>* = nullptr,
+template <typename T, typename K,
+          require_any_t<is_matrix_cl<K>, is_prim_scalar_cl<K>>* = nullptr,
           require_any_same_t<T, out_buffer, in_out_buffer>* = nullptr>
 inline tbb::concurrent_vector<cl::Event> select_events(K& m) {
   static_assert(!std::is_const<K>::value, "Can not write to const matrix_cl!");
