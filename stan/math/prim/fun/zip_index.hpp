@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUN_ZIP_HPP
-#define STAN_MATH_PRIM_FUN_ZIP_HPP
+#ifndef STAN_MATH_PRIM_FUN_ZIP_INDEX_HPP
+#define STAN_MATH_PRIM_FUN_ZIP_INDEX_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
@@ -10,9 +10,8 @@ namespace stan {
 namespace math {
 
 /**
- * Return a vector of matrix values obtained by zipping
- * two N-dimensional integer vectors to form tuples of
- * corresponding elements.
+ * Return the column vector of elements of x selected
+ * by paired (zipped) 1-based row and column indices
  *
  * @tparam EigMat type of the matrix
  * @param x input matrix
@@ -25,9 +24,9 @@ namespace math {
 template <typename EigMat, typename IdxRows, typename IdxCols,
           require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
           require_all_vector_t<IdxRows, IdxCols>* = nullptr>
-inline auto zip(EigMat&& x, IdxRows&& idx_row, IdxCols&& idx_col) {
-  check_size_match("zip", "size of idx_row", idx_row.size(), "size of idx_col",
-                   idx_col.size());
+inline auto zip_index(EigMat&& x, IdxRows&& idx_row, IdxCols&& idx_col) {
+  check_size_match("zip_index", "size of idx_row", idx_row.size(),
+                   "size of idx_col", idx_col.size());
   return make_holder(
       [](auto&& x_, auto&& idx_row_, auto&& idx_col_) {
         using map_t = Eigen::Map<const Eigen::Array<int, Eigen::Dynamic, 1>>;
@@ -35,10 +34,14 @@ inline auto zip(EigMat&& x, IdxRows&& idx_row, IdxCols&& idx_col) {
         const map_t cols(idx_col_.data(), idx_col_.size());
     // If the user turns of range checks do not pay for min and max sweeps
 #ifndef STAN_NO_RANGE_CHECKS
-        check_range("zip", "minimum row index", x_.rows(), rows.minCoeff());
-        check_range("zip", "maximum row index", x_.rows(), rows.maxCoeff());
-        check_range("zip", "minimum column index", x_.cols(), cols.minCoeff());
-        check_range("zip", "maximum column index", x_.cols(), cols.maxCoeff());
+        check_range("zip_index", "minimum row index", x_.rows(),
+                    rows.minCoeff());
+        check_range("zip_index", "maximum row index", x_.rows(),
+                    rows.maxCoeff());
+        check_range("zip_index", "minimum column index", x_.cols(),
+                    cols.minCoeff());
+        check_range("zip_index", "maximum column index", x_.cols(),
+                    cols.maxCoeff());
 #endif
         const auto linear_idx = (rows.cast<Eigen::Index>() - 1)
                                 + (cols.cast<Eigen::Index>() - 1) * x_.rows();
