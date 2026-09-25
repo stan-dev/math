@@ -20,6 +20,7 @@
 #include <stan/math/prim/prob/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/prim/partials_propagator.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
+#include <stan/math/opencl/scalar_cl_functions.hpp>
 #include <cmath>
 
 namespace stan {

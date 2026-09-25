@@ -5,6 +5,9 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
+#include <stan/math/opencl/scalar_cl_functions.hpp>
+#include <stan/math/opencl/prim/partials_propagator.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {

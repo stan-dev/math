@@ -8,6 +8,7 @@
 #include <stan/math/opencl/prim/partials_propagator.hpp>
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
+#include <stan/math/opencl/scalar_cl_functions.hpp>
 
 namespace stan {
 namespace math {

@@ -14,6 +14,7 @@
 #include <stan/math/prim/err/constraint_tolerance.hpp>
 #include <stan/math/opencl/scalar_cl.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
+#include <stan/math/opencl/scalar_cl_functions.hpp>
 
 namespace stan {
 namespace math {

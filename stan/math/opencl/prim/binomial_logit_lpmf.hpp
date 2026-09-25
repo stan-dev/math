@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/log_inv_logit.hpp>
 #include <stan/math/prim/fun/log1m_inv_logit.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
+#include <stan/math/opencl/scalar_cl_functions.hpp>
 
 namespace stan {
 namespace math {

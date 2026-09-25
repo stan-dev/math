@@ -14,6 +14,7 @@
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
+#include <stan/math/opencl/scalar_cl_functions.hpp>
 
 namespace stan {
 namespace math {

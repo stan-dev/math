@@ -12,6 +12,7 @@
 #include <stan/math/prim/fun/sign.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
+#include <stan/math/opencl/scalar_cl_functions.hpp>
 
 namespace stan {
 namespace math {
