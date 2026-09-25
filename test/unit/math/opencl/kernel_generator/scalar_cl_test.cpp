@@ -2,10 +2,12 @@
 
 #include <stan/math/opencl/prim.hpp>
 #include <test/unit/util.hpp>
+#include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <stdexcept>
+#include <string>
 #include <type_traits>
 
 using Eigen::MatrixXd;
@@ -176,6 +178,85 @@ TEST(KernelGeneratorScalarCl, scalar_only_subexpressions_keep_dense_view) {
       = stan::math::elt_multiply(stan::math::fmax(s_op, 1.0), m_cl);
   EXPECT_EQ(fmax_cl.view(), stan::math::matrix_cl_view::Entire);
   EXPECT_MATRIX_EQ(from_matrix_cl(fmax_cl), m * 2.0);
+}
+
+namespace {
+/**
+ * Checks generated kernel source against the stored reference kernel.
+ * Defining STAN_TEST_KERNEL_GENERATOR_STORE_REFERENCE_KERNELS rewrites the
+ * reference instead.
+ */
+void expect_reference_kernel(const std::string& kernel_filename,
+                             const std::string& kernel_src) {
+  stan::test::store_reference_kernel_if_needed(kernel_filename, kernel_src);
+  std::string expected_kernel_src
+      = stan::test::load_reference_kernel(kernel_filename);
+  EXPECT_EQ(expected_kernel_src, kernel_src);
+}
+}  // namespace
+
+TEST(KernelGeneratorScalarCl, broadcast_kernel_source) {
+  // the device scalar is read from element 0 of its buffer, and a scalar used
+  // twice is passed to the kernel once
+  matrix_cl<double> m_cl(test_matrix());
+  ScalarCl<double> s(2.0);
+  auto expr = m_cl * s + s;
+  matrix_cl<double> res_cl;
+  expect_reference_kernel("scalar_cl_broadcast.cl",
+                          expr.get_kernel_source_for_evaluating_into(res_cl));
+  res_cl = expr;
+  EXPECT_MATRIX_EQ(from_matrix_cl(res_cl),
+                   (test_matrix().array() * 2.0 + 2.0).matrix());
+}
+
+TEST(KernelGeneratorScalarCl, scalar_result_kernel_source) {
+  // a scalar-only expression is evaluated by one thread into a 1x1 buffer
+  ScalarCl<double> s(2.0);
+  ScalarCl<double> t(3.0);
+  auto expr = stan::math::scalar_result_<decltype(
+      stan::math::exp(stan::math::as_operation_cl(s))
+      + stan::math::as_operation_cl(t))>(
+      stan::math::exp(stan::math::as_operation_cl(s))
+      + stan::math::as_operation_cl(t));
+  ScalarCl<double> res;
+  expect_reference_kernel(
+      "scalar_cl_scalar_result.cl",
+      expr.get_kernel_source_for_evaluating_into(res.matrix()));
+  res.matrix() = expr;
+  EXPECT_NEAR(to_host(res), std::exp(2.0) + 3.0, 1e-14);
+}
+
+TEST(KernelGeneratorScalarCl, compound_assignment_kernel_source) {
+  // s += t reads and writes the same buffer in one single-thread kernel
+  ScalarCl<double> s(2.0);
+  ScalarCl<double> t(3.0);
+  auto expr = stan::math::scalar_result_<decltype(
+      stan::math::as_operation_cl(s) + stan::math::as_operation_cl(t))>(
+      stan::math::as_operation_cl(s) + stan::math::as_operation_cl(t));
+  expect_reference_kernel(
+      "scalar_cl_compound_assignment.cl",
+      expr.get_kernel_source_for_evaluating_into(s.matrix()));
+  s += t;
+  EXPECT_EQ(to_host(s), 5.0);
+}
+
+TEST(KernelGeneratorScalarCl, fused_check_kernel_source) {
+  // a check of a device scalar placed first in a multi-result kernel: the
+  // number of threads comes from the matrix expression
+  MatrixXd m = test_matrix();
+  matrix_cl<double> m_cl(m);
+  ScalarCl<double> sigma(1.5);
+  auto sigma_op = stan::math::as_operation_cl(sigma);
+  auto check_sigma
+      = stan::math::check_cl("test", "sigma", sigma_op, "positive");
+  matrix_cl<double> res_cl;
+  auto res = stan::math::results(check_sigma, res_cl);
+  auto exprs = stan::math::expressions(sigma_op > 0.0,
+                                       stan::math::elt_divide(m_cl, sigma_op));
+  expect_reference_kernel("scalar_cl_fused_check.cl",
+                          res.get_kernel_source_for_evaluating(exprs));
+  res = exprs;
+  EXPECT_MATRIX_NEAR(from_matrix_cl(res_cl), m / 1.5, 1e-14);
 }
 
 #endif
