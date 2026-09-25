@@ -18,7 +18,11 @@ namespace math {
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto as_array_or_scalar(T&& v) {
-  return v.array();
+  if constexpr (is_eigen_array<value_type_t<T>>::value) {
+    return std::forward<T>(v);
+  } else {
+    return v.array();
+  }
 }
 
 }  // namespace math

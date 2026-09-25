@@ -14,28 +14,16 @@
 namespace stan {
 namespace math {
 namespace internal {
-constexpr char std_normal_lcdf_opencl_func[] = "std_normal_lcdf(OpenCL)";
-}  // namespace internal
-/** \ingroup opencl
- * Returns the log standard normal complementary cumulative distribution
- * function.
- *
- * @tparam T_y_cl type of scalar outcome
- * @param y (Sequence of) scalar(s).
- * @return The log of the product of densities.
- */
-template <const char* func = internal::std_normal_lcdf_opencl_func,
-          typename T_y_cl,
-          require_all_prim_or_rev_kernel_expression_t<T_y_cl>* = nullptr,
-          require_any_not_stan_scalar_t<T_y_cl>* = nullptr>
-inline return_type_t<T_y_cl> std_normal_lcdf(const T_y_cl& y) {
-  static constexpr const char* function = func;
+template <bool reflect, typename T_y_cl>
+inline return_type_t<T_y_cl> std_normal_lcdf_opencl_impl(const char* function,
+                                                         const T_y_cl& y) {
+  constexpr double sign = reflect ? -1.0 : 1.0;
   using std::isfinite;
   using std::isnan;
 
   const size_t N = math::size(y);
   if (N == 0) {
-    return 1.0;
+    return 0.0;
   }
 
   const auto& y_col = as_column_vector_or_scalar(y);
@@ -45,10 +33,9 @@ inline return_type_t<T_y_cl> std_normal_lcdf(const T_y_cl& y) {
       = check_cl(function, "Random variable", y_val, "not NaN");
   auto y_not_nan_expr = !isnan(y_val);
 
-  auto scaled_y = y_val * INV_SQRT_TWO;
-  auto lcdf_expr = colwise_sum(std_normal_lcdf_scaled_impl(scaled_y));
-  auto dnlcdf = std_normal_lcdf_dscaled_impl(scaled_y);
-  auto y_deriv = dnlcdf * INV_SQRT_TWO;
+  auto z = sign * y_val;
+  auto lcdf_expr = colwise_sum(math::std_normal_lcdf_impl(z));
+  auto y_deriv = sign * std_normal_lcdf_derivative(z);
 
   matrix_cl<double> lcdf_cl;
   matrix_cl<double> y_deriv_cl;
@@ -64,6 +51,24 @@ inline return_type_t<T_y_cl> std_normal_lcdf(const T_y_cl& y) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
   return ops_partials.build(lcdf);
+}
+
+}  // namespace internal
+
+/** \ingroup opencl
+ * Returns the log standard normal cumulative distribution
+ * function.
+ *
+ * @tparam T_y_cl type of scalar outcome
+ * @param y (Sequence of) scalar(s).
+ * @return The log of the product of cumulative probabilities.
+ */
+template <typename T_y_cl,
+          require_all_prim_or_rev_kernel_expression_t<T_y_cl>* = nullptr,
+          require_any_not_stan_scalar_t<T_y_cl>* = nullptr>
+inline return_type_t<T_y_cl> std_normal_lcdf(const T_y_cl& y) {
+  return internal::std_normal_lcdf_opencl_impl<false>("std_normal_lcdf(OpenCL)",
+                                                      y);
 }
 
 }  // namespace math
