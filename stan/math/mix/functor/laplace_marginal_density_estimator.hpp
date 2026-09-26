@@ -10,8 +10,9 @@
 #include <stan/math/prim/fun/quad_form_diag.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/iter_tuple_nested.hpp>
-#include <unsupported/Eigen/MatrixFunctions>
+#include <algorithm>
 #include <cmath>
+#include <limits>
 #include <mutex>
 #include <iomanip>
 
@@ -219,57 +220,71 @@ struct laplace_density_estimates {
 };
 
 /**
- * Returns the principal square root of a block diagonal matrix.
+ * Returns the principal square root of a symmetric positive semi-definite
+ * block diagonal matrix.
+ *
+ * Each block is symmetrised and decomposed with a symmetric eigensolver.
+ * Eigenvalues that are negative only at rounding level, as the zero
+ * eigenvalues of a rank-deficient block are (for example the negative
+ * Hessian of a likelihood with more latent variables than observations),
+ * are clamped to zero. An eigenvalue below
+ * `-block_size * epsilon * max(|eigenvalues|, 1)` means the block is not
+ * positive semi-definite.
+ *
  * @tparam WRootMat A type inheriting from `Eigen::EigenBase`.
  * @param W_root The output matrix to store the square root.
  * @param W The input block diagonal matrix.
  * @param block_size The size of each block in the block diagonal matrix.
+ * @throw std::domain_error if a block has non-finite entries or is not
+ * positive semi-definite.
  */
 template <typename WRootMat>
 inline void block_matrix_sqrt(WRootMat& W_root,
                               const Eigen::SparseMatrix<double>& W,
                               const Eigen::Index block_size) {
-  int n_block = W.cols() / block_size;
+  const Eigen::Index n_block = W.cols() / block_size;
   Eigen::MatrixXd local_block(block_size, block_size);
   Eigen::MatrixXd local_block_sqrt(block_size, block_size);
-  Eigen::MatrixXd sqrt_t_mat = Eigen::MatrixXd::Zero(block_size, block_size);
+  Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigensolver;
   // No block operation available for sparse matrices, so we have to loop
   // See https://eigen.tuxfamily.org/dox/group__TutorialSparse.html#title7
-  for (int i = 0; i < n_block; i++) {
-    sqrt_t_mat.setZero();
+  for (Eigen::Index i = 0; i < n_block; i++) {
     local_block
         = W.block(i * block_size, i * block_size, block_size, block_size);
-    if (!local_block.array().isFinite().any()) {
+    if (!local_block.array().isFinite().all()) {
       throw std::domain_error(
           std::string("Error in block_matrix_sqrt: "
-                      "NaNs detected in block diagonal starting at (")
+                      "non-finite values detected in block diagonal "
+                      "starting at (")
           + std::to_string(i) + ", " + std::to_string(i) + ")");
     }
-    // Issue here, sqrt is done over T of the complex schur
-    Eigen::RealSchur<Eigen::MatrixXd> schurOfA(local_block);
-    // Compute Schur decomposition of arg
-    const auto& t_mat = schurOfA.matrixT();
-    const auto& u_mat = schurOfA.matrixU();
-    // Check if diagonal of schur is not positive
-    if ((t_mat.diagonal().array() < 0).any()) {
+    local_block_sqrt = 0.5 * (local_block + local_block.transpose());
+    eigensolver.compute(local_block_sqrt);
+    if (eigensolver.info() != Eigen::Success) {
       throw std::domain_error(
           std::string("Error in block_matrix_sqrt: "
-                      "values less than 0 detected in block diagonal's schur "
-                      "decomposition starting at (")
+                      "eigendecomposition failed for block diagonal "
+                      "starting at (")
           + std::to_string(i) + ", " + std::to_string(i) + ")");
     }
-    try {
-      // Compute square root of T
-      Eigen::matrix_sqrt_quasi_triangular(t_mat, sqrt_t_mat);
-      // Compute square root of arg
-      local_block_sqrt = u_mat * sqrt_t_mat * u_mat.adjoint();
-    } catch (const std::exception& e) {
+    const Eigen::VectorXd eigenvalues = eigensolver.eigenvalues();
+    const double tolerance
+        = block_size * std::numeric_limits<double>::epsilon()
+          * std::max(eigenvalues.cwiseAbs().maxCoeff(), 1.0);
+    if (eigenvalues.minCoeff() < -tolerance) {
       throw std::domain_error(
-          "Error in block_matrix_sqrt: "
-          "The matrix is not positive definite");
+          std::string("Error in block_matrix_sqrt: block diagonal starting "
+                      "at (")
+          + std::to_string(i) + ", " + std::to_string(i)
+          + ") is not positive semi-definite (smallest eigenvalue "
+          + std::to_string(eigenvalues.minCoeff()) + ")");
     }
-    for (int k = 0; k < block_size; k++) {
-      for (int j = 0; j < block_size; j++) {
+    local_block_sqrt.noalias()
+        = eigensolver.eigenvectors()
+          * eigenvalues.cwiseMax(0.0).cwiseSqrt().asDiagonal()
+          * eigensolver.eigenvectors().transpose();
+    for (Eigen::Index k = 0; k < block_size; k++) {
+      for (Eigen::Index j = 0; j < block_size; j++) {
         W_root.coeffRef(i * block_size + j, i * block_size + k)
             = local_block_sqrt(j, k);
       }
