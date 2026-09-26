@@ -8,5 +8,7 @@ TEST(MathMixMatFun, diagMatrix) {
     for (int n = 0; n < a.size(); ++n)
       a(n) = n;
     stan::test::expect_ad(f, a);
+    Eigen::RowVectorXd b = a.transpose();
+    stan::test::expect_ad(f, b);
   }
 }
