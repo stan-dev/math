@@ -136,9 +136,7 @@ inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
       }
       edge<0>(ops_partials).partials_
           = beta_y
-            - multiply(exp_lin.matrix(), beta_val.transpose())
-                  .array()
-                  .colwise()
+            - multiply(exp_lin.matrix(), beta_val.transpose()).array().colwise()
                   * inv_sum_exp_lin * N_instances;
     } else {
       Array<T_beta_partials, Dynamic, Dynamic> beta_y(N_instances,
@@ -148,9 +146,7 @@ inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
       }
       edge<0>(ops_partials).partials_
           = beta_y
-            - multiply(exp_lin.matrix(), beta_val.transpose())
-                  .array()
-                  .colwise()
+            - multiply(exp_lin.matrix(), beta_val.transpose()).array().colwise()
                   * inv_sum_exp_lin;
       // TODO(Tadej) maybe we can replace previous block with the following
       // line when we have newer Eigen  partials<0>(ops_partials) = beta_val(y

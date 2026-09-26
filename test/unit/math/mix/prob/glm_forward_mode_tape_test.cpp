@@ -68,8 +68,8 @@ TEST(mathMixProbGlm, forwardModeSweepAddsLinearNumberOfNodes) {
             bound);
   EXPECT_LT(nodes_per_sweep(
                 [&](auto&& x, auto&& alpha, auto&& beta) {
-                  return stan::math::binomial_logit_glm_lpmf(
-                      y_count, y_trials, x, alpha, beta);
+                  return stan::math::binomial_logit_glm_lpmf(y_count, y_trials,
+                                                             x, alpha, beta);
                 },
                 n, k),
             bound);

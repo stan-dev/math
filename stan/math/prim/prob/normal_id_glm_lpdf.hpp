@@ -158,8 +158,7 @@ inline return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
       if constexpr (T_x_rows == 1) {
         edge<3>(ops_partials).partials_ = mu_derivative.sum() * x_val;
       } else {
-        partials<3>(ops_partials)
-            = multiply(mu_derivative.transpose(), x_val);
+        partials<3>(ops_partials) = multiply(mu_derivative.transpose(), x_val);
       }
     }
     if constexpr (is_autodiff_v<T_alpha>) {
