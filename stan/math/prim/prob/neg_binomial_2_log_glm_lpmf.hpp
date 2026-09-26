@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
@@ -142,7 +143,7 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
     T_theta_tmp theta_tmp = (x_val * beta_val_vec)(0, 0);
     theta = theta_tmp + as_array_or_scalar(alpha_val_vec);
   } else {
-    theta = (x_val * beta_val_vec).array();
+    theta = multiply(x_val, beta_val_vec).array();
     theta += as_array_or_scalar(alpha_val_vec);
   }
   check_finite(function, "Matrix of independent variables", theta);
@@ -199,7 +200,7 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
           edge<2>(ops_partials).partials_ = theta_derivative.sum() * x_val;
         } else {
           edge<2>(ops_partials).partials_
-              = x_val.transpose() * theta_derivative;
+              = multiply(x_val.transpose(), theta_derivative);
         }
       }
       if constexpr (is_autodiff_v<T_x>) {
