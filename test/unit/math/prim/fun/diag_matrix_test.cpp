@@ -16,6 +16,8 @@ TEST(MathMatrixPrimMat, diag_matrix_row_vector) {
   stan::math::vector_d v = rv.transpose();
   EXPECT_MATRIX_EQ(diag_matrix(v), diag_matrix(rv));
   EXPECT_NO_THROW(diag_matrix(stan::math::row_vector_d()));
+  // rvalue plain matrices are the case that broke with make_holder
+  EXPECT_MATRIX_EQ(diag_matrix(v), diag_matrix(stan::math::vector_d(v)));
 
   Eigen::Matrix<std::complex<double>, 1, Eigen::Dynamic> crv(2);
   crv << std::complex<double>(1, 2), std::complex<double>(3, 4);
