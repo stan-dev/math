@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
@@ -92,7 +93,7 @@ inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val).transpose();
 
   Array<T_partials_return, T_x_rows, Dynamic> lin
-      = (x_val * beta_val).rowwise() + alpha_val_vec;
+      = multiply(x_val, beta_val).rowwise() + alpha_val_vec;
   Array<T_partials_return, T_x_rows, 1> lin_max
       = lin.rowwise().maxCoeff();  // This is used to prevent overflow when
                                    // calculating softmax/log_sum_exp and
@@ -135,7 +136,9 @@ inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
       }
       edge<0>(ops_partials).partials_
           = beta_y
-            - (exp_lin.matrix() * beta_val.transpose()).array().colwise()
+            - multiply(exp_lin.matrix(), beta_val.transpose())
+                  .array()
+                  .colwise()
                   * inv_sum_exp_lin * N_instances;
     } else {
       Array<T_beta_partials, Dynamic, Dynamic> beta_y(N_instances,
@@ -145,7 +148,9 @@ inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
       }
       edge<0>(ops_partials).partials_
           = beta_y
-            - (exp_lin.matrix() * beta_val.transpose()).array().colwise()
+            - multiply(exp_lin.matrix(), beta_val.transpose())
+                  .array()
+                  .colwise()
                   * inv_sum_exp_lin;
       // TODO(Tadej) maybe we can replace previous block with the following
       // line when we have newer Eigen  partials<0>(ops_partials) = beta_val(y
@@ -169,8 +174,7 @@ inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
     }
     if constexpr (is_autodiff_v<T_beta>) {
       Matrix<T_partials_return, Dynamic, Dynamic> beta_derivative
-          = x_val.transpose().template cast<T_partials_return>()
-            * neg_softmax_lin.matrix();
+          = multiply(x_val.transpose(), neg_softmax_lin.matrix());
       if constexpr (T_x_rows == 1) {
         beta_derivative *= N_instances;
       }

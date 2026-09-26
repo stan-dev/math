@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
@@ -103,7 +104,7 @@ inline return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(
     T_theta_tmp theta_tmp = (x_val * beta_val_vec).coeff(0, 0);
     theta = theta_tmp + as_array_or_scalar(alpha_val_vec);
   } else {
-    theta = x_val * beta_val_vec;
+    theta = multiply(x_val, beta_val_vec);
     theta += as_array_or_scalar(alpha_val_vec);
   }
 
@@ -130,7 +131,8 @@ inline return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(
     if constexpr (T_x_rows == 1) {
       edge<2>(ops_partials).partials_ = theta_derivative.sum() * x_val;
     } else {
-      partials<2>(ops_partials) = x_val.transpose() * theta_derivative;
+      partials<2>(ops_partials)
+          = multiply(x_val.transpose(), theta_derivative);
     }
   }
   if constexpr (is_autodiff_v<T_x>) {
