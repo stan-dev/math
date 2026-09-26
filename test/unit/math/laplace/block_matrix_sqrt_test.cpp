@@ -38,8 +38,8 @@ Eigen::SparseMatrix<double> block_diag(
 
 void expect_principal_sqrt(const Eigen::SparseMatrix<double>& w,
                            int block_size) {
-  Eigen::SparseMatrix<double> w_root = block_pattern(w.rows() / block_size,
-                                                     block_size);
+  Eigen::SparseMatrix<double> w_root
+      = block_pattern(w.rows() / block_size, block_size);
   EXPECT_NO_THROW(
       stan::math::internal::block_matrix_sqrt(w_root, w, block_size));
   const Eigen::MatrixXd root = w_root;

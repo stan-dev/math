@@ -268,9 +268,8 @@ inline void block_matrix_sqrt(WRootMat& W_root,
           + std::to_string(i) + ", " + std::to_string(i) + ")");
     }
     const Eigen::VectorXd eigenvalues = eigensolver.eigenvalues();
-    const double tolerance
-        = block_size * std::numeric_limits<double>::epsilon()
-          * std::max(eigenvalues.cwiseAbs().maxCoeff(), 1.0);
+    const double tolerance = block_size * std::numeric_limits<double>::epsilon()
+                             * std::max(eigenvalues.cwiseAbs().maxCoeff(), 1.0);
     if (eigenvalues.minCoeff() < -tolerance) {
       throw std::domain_error(
           std::string("Error in block_matrix_sqrt: block diagonal starting "
