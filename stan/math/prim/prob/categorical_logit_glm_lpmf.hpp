@@ -92,8 +92,13 @@ inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
 
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val).transpose();
 
-  Array<T_partials_return, T_x_rows, Dynamic> lin
-      = multiply(x_val, beta_val).rowwise() + alpha_val_vec;
+  Array<T_partials_return, T_x_rows, Dynamic> lin;
+  if constexpr (T_x_rows == 1) {
+    // multiply of a row vector and a column vector is a dot product
+    lin = (x_val * beta_val).rowwise() + alpha_val_vec;
+  } else {
+    lin = multiply(x_val, beta_val).rowwise() + alpha_val_vec;
+  }
   Array<T_partials_return, T_x_rows, 1> lin_max
       = lin.rowwise().maxCoeff();  // This is used to prevent overflow when
                                    // calculating softmax/log_sum_exp and
