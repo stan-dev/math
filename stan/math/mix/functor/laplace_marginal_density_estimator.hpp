@@ -1036,8 +1036,25 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
 }
 
 /**
- * @brief Log a solver fallback event to the provided stream.
- * @param[in] allow_fallthrough If false, throw instead of logging
+ * @brief Throw for a solver failure when falling through to the next solver
+ * is not allowed.
+ * @param[in] context Context string for the message
+ * @param[in] iter Current iteration number
+ * @param[in] failed_solver Name of the solver that failed
+ * @param[in] e Exception that caused the failure
+ */
+[[noreturn]] inline void throw_solver_failure(std::string_view context,
+                                              Eigen::Index iter,
+                                              std::string_view failed_solver,
+                                              const std::exception& e) {
+  std::ostringstream os;
+  os << context << ": " << failed_solver << " failed at iteration " << iter
+     << " and allow_fallthrough is false. Reason: " << e.what();
+  throw std::domain_error(os.str());
+}
+
+/**
+ * @brief Log a solver fallback event to the provided stream, if any.
  * @param[in,out] msgs Output stream (may be nullptr)
  * @param[in] context Context string for the log
  * @param[in] iter Current iteration number
@@ -1045,16 +1062,17 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
  * @param[in] next_solver Name of the solver being attempted next
  * @param[in] e Exception that caused the fallback
  */
-inline void log_solver_fallback(const bool allow_fallthrough,
-                                std::ostream* msgs, std::string_view context,
+inline void log_solver_fallback(std::ostream* msgs, std::string_view context,
                                 Eigen::Index iter,
                                 std::string_view failed_solver,
                                 std::string_view next_solver,
                                 const std::exception& e) {
+  if (!msgs) {
+    return;
+  }
   // Build once so we don't interleave with other logs.
   std::ostringstream os;
-  std::string msg_type = allow_fallthrough ? "WARNING" : "ERROR";
-  os << "[" << context << "] " << msg_type << ": solver fallback\n"
+  os << "[" << context << "] WARNING: solver fallback\n"
      << "  " << std::left << std::setw(12) << "iteration:" << iter << "\n"
      << "  " << std::left << std::setw(12) << "failed:" << failed_solver << "\n"
      << "  " << std::left << std::setw(12) << "reason:" << e.what() << "\n"
@@ -1062,11 +1080,7 @@ inline void log_solver_fallback(const bool allow_fallthrough,
      << "trying " << next_solver << "\n"
      << "note: this warning message will only be displayed once."
      << "\n";
-  if (allow_fallthrough && msgs) {
-    (*msgs) << os.str();
-  } else {
-    throw std::domain_error(std::string("[") + std::string(context) + "]");
-  }
+  (*msgs) << os.str();
 }
 
 template <bool InitTheta, typename Opts>
@@ -1228,13 +1242,16 @@ inline auto laplace_marginal_density_est(
     const std::string solver_type
         = (options.hessian_block_size == 1) ? "Diagonal" : "Block";
     std::string failed = "solver 1 (" + solver_type + " Hessian-root Cholesky)";
+    if (!options.allow_fallthrough) {
+      throw_solver_failure("laplace_marginal_density", step_iter, failed, e);
+    }
     std::call_once(
         fallback_warning,
         [](auto&&... args) {
           log_solver_fallback(std::forward<decltype(args)>(args)...);
         },
-        options.allow_fallthrough, msgs, "laplace_marginal_density", step_iter,
-        std::move(failed), "solver 2 (Covariance-root Cholesky)", e);
+        msgs, "laplace_marginal_density", step_iter, std::move(failed),
+        "solver 2 (Covariance-root Cholesky)", e);
   }
   try {
     if (options.solver == 2 || options.allow_fallthrough) {
@@ -1243,12 +1260,16 @@ inline auto laplace_marginal_density_est(
                              covariance, update_fun, msgs);
     }
   } catch (const std::exception& e) {
+    if (!options.allow_fallthrough) {
+      throw_solver_failure("laplace_marginal_density", step_iter,
+                           "solver 2 (Covariance-root Cholesky)", e);
+    }
     std::call_once(
         fallback_warning,
         [](auto&&... args) {
           log_solver_fallback(std::forward<decltype(args)>(args)...);
         },
-        options.allow_fallthrough, msgs, "laplace_marginal_density", step_iter,
+        msgs, "laplace_marginal_density", step_iter,
         "solver 2 (Covariance-root Cholesky)", "solver 3 (General LU solver)",
         e);
   }
