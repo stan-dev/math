@@ -19,7 +19,10 @@ namespace math {
  *
  * In the case of finite and -inf values this is equivalent to
  * <code>multinomial_rng(softmax(beta), N, rng)</code>.
- * Assumes a uniform distribution among all +inf values.
+ * Entries of beta equal to -inf have zero probability; if any entries
+ * are +inf, probability is split evenly among them. These are the limits
+ * of softmax: as beta[n] -> -inf, softmax(beta)[n] -> 0, and if k entries
+ * -> +inf at the same rate, each has probability 1/k.
  *
  * @tparam RNG Type of pseudo-random number generator.
  * @param beta Vector of unnormalized log probabilities.
@@ -38,13 +41,13 @@ inline std::vector<int> multinomial_logit_rng(const T_beta& beta, int N,
   static constexpr const char* function = "multinomial_logit_rng";
   const auto& beta_ref = to_ref(beta);
   check_nonnegative(function, "number of trials variables", N);
+  if (beta_ref.size() == 0) {
+    return {};
+  }
   // Throws in nan and all -inf case
   check_not_nan(function, "Log-probabilities parameter", beta_ref);
-  // maxCoeff() is undefined for an empty beta
-  if (beta_ref.size() > 0) {
-    check_greater(function, "Log-probabilities parameter", beta_ref.maxCoeff(),
-                  NEGATIVE_INFTY);
-  }
+  check_greater(function, "Log-probabilities parameter", beta_ref.maxCoeff(),
+                NEGATIVE_INFTY);
 
   auto is_pos_inf = (beta_ref.array() == INFTY);
   int num_infty = is_pos_inf.count();

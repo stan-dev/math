@@ -20,7 +20,10 @@ namespace math {
  *
  * In the case of finite and -inf values this is a convenience
  * wrapper around <code>categorical_rng(softmax(beta), rng)</code>.
- * Assumes a uniform distribution among all +inf values.
+ * Entries of beta equal to -inf have zero probability; if any entries
+ * are +inf, probability is split evenly among them. These are the limits
+ * of softmax: as beta[n] -> -inf, softmax(beta)[n] -> 0, and if k entries
+ * -> +inf at the same rate, each has probability 1/k.
  *
  * @tparam RNG Type of pseudo-random number generator.
  * @param beta Vector of unnormalized log probabilities.

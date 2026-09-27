@@ -19,7 +19,9 @@ namespace math {
  * Multinomial(ns| softmax(beta))
  *
  * Entries of beta equal to -inf have zero probability; if any entries
- * are +inf, probability is split evenly among them.
+ * are +inf, probability is split evenly among them. These are the limits
+ * of softmax: as beta[n] -> -inf, softmax(beta)[n] -> 0, and if k entries
+ * -> +inf at the same rate, each has probability 1/k.
  *
  * @param ns Array of outcome counts
  * @param beta Vector of unnormalized log probabilities
@@ -42,15 +44,17 @@ inline return_type_t<T_prob> multinomial_logit_lpmf(const std::vector<int>& ns,
   check_nonnegative(function, "Number of trials variable", ns);
   const auto& beta_ref = to_ref(beta);
 
+  // An empty beta forces ns to be empty (checked above)
+  if (beta_ref.size() == 0) {
+    return 0.0;
+  }
+
   // Autodiff args must be finite data may be +/-inf
-  if constexpr (is_constant<T_beta>::value) {
+  if constexpr (is_constant_v<T_beta>) {
     // Data Case: Throws in nan and all -inf case
     check_not_nan(function, "log-probabilities parameter", beta_ref);
-    // maxCoeff() is undefined for an empty beta
-    if (beta_ref.size() > 0) {
-      check_greater(function, "log-probabilities parameter",
-                    beta_ref.maxCoeff(), NEGATIVE_INFTY);
-    }
+    check_greater(function, "log-probabilities parameter",
+                  beta_ref.maxCoeff(), NEGATIVE_INFTY);
   } else {
     // Autodiff Case: Throws in non-finite case
     check_finite(function, "log-probabilities parameter", beta_ref);
@@ -67,13 +71,15 @@ inline return_type_t<T_prob> multinomial_logit_lpmf(const std::vector<int>& ns,
   if constexpr (include_summand<propto, T_prob>::value) {
     // softmax is NaN with +inf, so split probability evenly over the
     // +inf entries and give every other entry zero probability
-    if constexpr (is_constant<T_beta>::value) {
+    if constexpr (is_constant_v<T_beta>) {
       int num_infty = (beta_ref.array() == INFTY).count();
       if (num_infty > 0) {
         for (unsigned int i = 0; i < ns.size(); ++i) {
           if (ns[i] != 0) {
-            lp += beta_ref.coeff(i) == INFTY ? -ns[i] * std::log(num_infty)
-                                             : NEGATIVE_INFTY;
+            if (beta_ref.coeff(i) != INFTY) {
+              return NEGATIVE_INFTY;
+            }
+            lp -= ns[i] * std::log(num_infty);
           }
         }
         return lp;
