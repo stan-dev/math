@@ -53,8 +53,8 @@ inline return_type_t<T_prob> multinomial_logit_lpmf(const std::vector<int>& ns,
   if constexpr (is_constant_v<T_beta>) {
     // Data Case: Throws in nan and all -inf case
     check_not_nan(function, "log-probabilities parameter", beta_ref);
-    check_greater(function, "log-probabilities parameter",
-                  beta_ref.maxCoeff(), NEGATIVE_INFTY);
+    check_greater(function, "log-probabilities parameter", beta_ref.maxCoeff(),
+                  NEGATIVE_INFTY);
   } else {
     // Autodiff Case: Throws in non-finite case
     check_finite(function, "log-probabilities parameter", beta_ref);
