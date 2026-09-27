@@ -5,6 +5,8 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <algorithm>
+#include <iterator>
 #include <tuple>
 
 namespace stan {
@@ -89,26 +91,33 @@ interp1_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
 /**
  * Evaluate cubic Hermite interpolation.
  *
- * This is a placeholder implementation. It validates the precomputed storage
- * shape and returns the evaluation location unchanged.
- *
- * When fully implemented, this will compute the cubic Hermite interpolation
- * value at the given point using the stored coefficients and knot data.
- * See boost/math/interpolators/detail/cubic_hermite_detail.hpp for the
- * evaluation algorithm.
+ * This function evaluates the cubic Hermite interpolant built by
+ * `interp1_cubic_hermite_setup` at the location `x`. It first locates the
+ * interval `[xk(i), xk(i + 1)]` containing `x` (mirroring the search
+ * performed in `cubic_hermite_detail::operator()` in
+ * boost/math/interpolators/detail/cubic_hermite_detail.hpp), and then
+ * evaluates the corresponding cubic polynomial
+ *   y(x) = a0 + a1 * dx + a2 * dx^2 + a3 * dx^3,
+ * with `dx = x - xk(i)`, using Horner's method. Because the coefficients
+ * were derived so that this polynomial agrees exactly with the Hermite basis
+ * representation on `[xk(i), xk(i + 1)]`, this reproduces the values that
+ * would be returned by `cubic_hermite_detail::operator()`, including the
+ * special handling at the right endpoint `x = xk(K - 1)`.
  *
  * @tparam T type of the evaluation location
  * @tparam Coef type of the coefficient matrix
  * @tparam Knots type of the knot locations
  * @param x Location at which to evaluate the interpolation.
  * @param W Tuple returned by `interp1_cubic_hermite_setup`.
- * @return `x`
+ * @return The interpolated value at `x`.
  * @throw std::invalid_argument if `W` does not have the expected dimensions
+ * @throw std::domain_error if `x` is not finite or is outside of the range
+ *   spanned by the knots
  */
 template <typename T, typename Coef, typename Knots,
           require_stan_scalar_t<T>* = nullptr>
-inline T interp1_cubic_hermite_eval(const T& x,
-                                    const std::tuple<Coef, Knots>& W) {
+inline return_type_t<T, Coef, Knots> interp1_cubic_hermite_eval(
+    const T& x, const std::tuple<Coef, Knots>& W) {
   static constexpr const char* function = "interp1_cubic_hermite_eval";
   const auto& coef = std::get<0>(W);
   const auto& xk = std::get<1>(W);
@@ -117,8 +126,29 @@ inline T interp1_cubic_hermite_eval(const T& x,
                    4);
   check_size_match(function, "rows of coefficient matrix plus one",
                    coef.rows() + 1, "size of xk", xk.size());
+  check_finite(function, "x", x);
 
-  return x;
+  const Eigen::Index K = xk.size();
+  check_bounded(function, "x", x, xk.coeff(0), xk.coeff(K - 1));
+
+  // Locate the interval i such that xk(i) <= x <= xk(i + 1). This mirrors
+  // the std::upper_bound-based search in cubic_hermite_detail::operator():
+  // `it` points to the first knot strictly greater than `x`, so `i` (one
+  // less than the resulting index) is the interval containing `x`. When
+  // `x` equals the last knot, `it == end`, giving `i == K - 1`; in that
+  // case we fall back to the last interval, exactly as the reference
+  // implementation special-cases `x == x_.back()`.
+  const auto* begin = xk.data();
+  const auto* end = begin + K;
+  const auto it = std::upper_bound(begin, end, x);
+  Eigen::Index i = std::distance(begin, it) - 1;
+  if (i == K - 1) {
+    --i;
+  }
+
+  const auto dx = x - xk.coeff(i);
+  return coef(i, 0)
+         + dx * (coef(i, 1) + dx * (coef(i, 2) + dx * coef(i, 3)));
 }
 
 }  // namespace math
