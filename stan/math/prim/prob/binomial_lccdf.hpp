@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/beta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
+#include <stan/math/prim/fun/inc_beta_ddz.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
@@ -98,10 +99,11 @@ inline return_type_t<T_prob> binomial_lccdf(const T_n& n, const T_N& N,
     P += log(Pi);
 
     if constexpr (is_autodiff_v<T_prob>) {
-      const T_partials_return denom = beta(N_dbl - n_dbl, n_dbl + 1) * Pi;
-      partials<0>(ops_partials)[i] += pow(theta_dbl, n_dbl)
-                                      * pow(1 - theta_dbl, N_dbl - n_dbl - 1)
-                                      / denom;
+      // inc_beta_ddz is the same density, evaluated without the product of
+      // two powers over a beta function, each of which can underflow on
+      // its own.
+      partials<0>(ops_partials)[i]
+          += inc_beta_ddz(n_dbl + 1, N_dbl - n_dbl, theta_dbl) / Pi;
     }
   }
 
