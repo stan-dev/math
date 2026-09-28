@@ -22,8 +22,9 @@ inline T eval(T&& arg) {
 }
 
 /**
- * Inputs which have a plain_type different from their own type are
- * Eval'd (this catches Eigen expressions)
+ * Inputs which have a plain_type different from their own type are evaluated
+ * using their `eval()` member when available. Eigen types without an `eval()`
+ * member are converted to their plain type.
  *
  * @tparam T Input type
  * @param[in] arg Input argument
@@ -32,7 +33,11 @@ inline T eval(T&& arg) {
 template <typename T,
           require_not_same_t<std::decay_t<T>, plain_type_t<T>>* = nullptr>
 inline decltype(auto) eval(const T& arg) {
-  return arg.eval();
+  if constexpr (stan::internal::has_eval<T>::value) {
+    return arg.eval();
+  } else {
+    return plain_type_t<T>(arg);
+  }
 }
 
 }  // namespace math

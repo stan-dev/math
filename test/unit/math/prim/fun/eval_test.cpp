@@ -137,6 +137,21 @@ TEST(MathMatrixPrimMat, eval_expression) {
     EXPECT_EQ(correct_c(i), res_c(i));
 }
 
+TEST(MathMatrixPrimMat, eval_diagonal_wrapper) {
+  Eigen::VectorXd v(3);
+  v << 1, 2, 3;
+  auto diagonal = v.asDiagonal();
+
+  auto result = stan::math::eval(diagonal);
+
+  EXPECT_TRUE((std::is_same<decltype(result),
+                            typename decltype(diagonal)::PlainObject>::value));
+  Eigen::MatrixXd result_dense = result;
+  Eigen::MatrixXd expected = Eigen::MatrixXd::Zero(3, 3);
+  expected.diagonal() = v;
+  EXPECT_MATRIX_EQ(expected, result_dense);
+}
+
 TEST(MathFunctions, eval_return_type_short_circuit_std_vector) {
   std::vector<double> a(5);
   const std::vector<double> b(5);

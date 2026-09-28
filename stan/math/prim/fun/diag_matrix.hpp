@@ -17,9 +17,13 @@ namespace math {
  * @return Diagonal matrix with vector as diagonal values.
  */
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
-diag_matrix(EigVec&& v) {
-  return v.asDiagonal();
+inline auto diag_matrix(EigVec&& v) {
+  if constexpr (std::is_lvalue_reference_v<EigVec&&>) {
+    return v.asDiagonal();
+  } else {
+    using diagonal_t = std::decay_t<decltype(v.asDiagonal())>;
+    return typename diagonal_t::PlainObject(std::forward<EigVec>(v));
+  }
 }
 
 }  // namespace math
