@@ -14,10 +14,11 @@ namespace stan {
 namespace math {
 
 /**
- * Return the log softmax of each vector in a container of `fvar` values.
+ * Return the log softmax of each vector or matrix in a container of `fvar`
+ * values.
  *
  * @tparam T `std::vector` whose scalar type is `fvar`
- * @param x container of vectors to transform
+ * @param x container of vectors or matrices to transform
  * @return container of log softmax results
  */
 template <typename T, require_std_vector_st<is_fvar, T>* = nullptr>
@@ -28,27 +29,31 @@ inline auto log_softmax(T&& x) {
 }
 
 /**
- * Return the log softmax of the specified vector of `fvar` values.
+ * Return the log softmax of the specified vector or matrix of `fvar` values.
  *
- * @tparam Vec Eigen vector with `fvar` scalar
- * @param x vector to transform
- * @return log softmax of the vector, or an empty result if the input is empty
+ * @tparam Mat Eigen vector or matrix with `fvar` scalar
+ * @param x vector or matrix to transform
+ * @return log softmax of the vector or matrix, or an empty result if the
+ * input is empty
  */
-template <typename Vec, require_eigen_vector_vt<is_fvar, Vec>* = nullptr>
-inline auto log_softmax(Vec&& x) {
-  using vec = std::decay_t<Vec>;
-  constexpr int Rows = vec::RowsAtCompileTime;
-  constexpr int Cols = vec::ColsAtCompileTime;
-  using T = typename value_type_t<vec>::Scalar;
-  decltype(auto) x_ref = to_ref(std::forward<Vec>(x));
+template <typename Mat, require_eigen_vt<is_fvar, Mat>* = nullptr>
+inline auto log_softmax(Mat&& x) {
+  using mat = std::decay_t<Mat>;
+  constexpr int Rows = mat::RowsAtCompileTime;
+  constexpr int Cols = mat::ColsAtCompileTime;
+  using T = typename value_type_t<mat>::Scalar;
+  decltype(auto) x_ref = to_ref(std::forward<Mat>(x));
   if (x_ref.size() == 0) {
     return Eigen::Matrix<fvar<T>, Rows, Cols>{};
   }
-  const auto s = softmax(value_of(x_ref));
+  const auto x_val = value_of(x_ref);
+  const auto lse = log_sum_exp(x_val);
+  const auto s = softmax(x_val);
   const auto d_in = x_ref.d();
-  const auto dot_sd = s.dot(d_in);
-  Eigen::Matrix<fvar<T>, Rows, Cols> result(x_ref.size());
-  result.val() = s.array().log().matrix();
+  const auto dot_sd = (s.array() * d_in.array()).sum();
+
+  Eigen::Matrix<fvar<T>, Rows, Cols> result(x_ref.rows(), x_ref.cols());
+  result.val() = (x_val.array() - lse).matrix();
   result.d() = (d_in.array() - dot_sd).matrix();
   return result;
 }
