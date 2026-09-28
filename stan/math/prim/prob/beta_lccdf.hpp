@@ -76,7 +76,10 @@ inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
     const auto alpha_dbl = alpha_vec.val(n);
     const auto beta_dbl = beta_vec.val(n);
     const auto betafunc_dbl = beta(alpha_dbl, beta_dbl);
-    const auto Pn = 1.0 - inc_beta(alpha_dbl, beta_dbl, y_dbl);
+    // The complement by the symmetry relation I_y(a, b) = I_{1-y}(b, a).
+    // Forming it as 1 - I_y(a, b) loses every digit once I_y(a, b) rounds
+    // to 1, which happens for every complement below eps.
+    const auto Pn = inc_beta(beta_dbl, alpha_dbl, 1.0 - y_dbl);
     const auto inv_Pn
         = is_constant_all<T_y, T_scale_succ, T_scale_fail>::value ? 0 : inv(Pn);
 
@@ -88,22 +91,24 @@ inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
                                       / betafunc_dbl;
     }
 
+    // On the reflected arguments the derivatives are those of Pn itself:
+    // the first shape is beta, the second alpha.
     if constexpr (calc_alpha && calc_beta) {
       const auto [g1, g2] = grad_reg_inc_beta<GRAD_RIB::BOTH>(
-          alpha_dbl, beta_dbl, y_dbl, digamma(alpha_dbl), digamma(beta_dbl),
-          digamma(alpha_dbl + beta_dbl), 0.0);
-      partials<1>(ops_partials)[n] -= g1 * inv_Pn;
-      partials<2>(ops_partials)[n] -= g2 * inv_Pn;
+          beta_dbl, alpha_dbl, 1.0 - y_dbl, digamma(beta_dbl),
+          digamma(alpha_dbl), digamma(alpha_dbl + beta_dbl), 0.0);
+      partials<1>(ops_partials)[n] += g2 * inv_Pn;
+      partials<2>(ops_partials)[n] += g1 * inv_Pn;
     } else if constexpr (calc_alpha) {
       partials<1>(ops_partials)[n]
-          -= grad_reg_inc_beta<GRAD_RIB::G1>(alpha_dbl, beta_dbl, y_dbl,
-                                             digamma(alpha_dbl), 0.0,
+          += grad_reg_inc_beta<GRAD_RIB::G2>(beta_dbl, alpha_dbl, 1.0 - y_dbl,
+                                             0.0, digamma(alpha_dbl),
                                              digamma(alpha_dbl + beta_dbl), 0.0)
              * inv_Pn;
     } else if constexpr (calc_beta) {
       partials<2>(ops_partials)[n]
-          -= grad_reg_inc_beta<GRAD_RIB::G2>(alpha_dbl, beta_dbl, y_dbl, 0.0,
-                                             digamma(beta_dbl),
+          += grad_reg_inc_beta<GRAD_RIB::G1>(beta_dbl, alpha_dbl, 1.0 - y_dbl,
+                                             digamma(beta_dbl), 0.0,
                                              digamma(alpha_dbl + beta_dbl), 0.0)
              * inv_Pn;
     }

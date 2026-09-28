@@ -108,8 +108,11 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(
       }
 
     } else {
-      auto z = 1.0 - inc_beta(0.5, 0.5 * nu_dbl, r);
-
+      // Same quantity as in the other branch, by the symmetry relation
+      // 1 - I_r(1/2, nu/2) = I_{1-r}(nu/2, 1/2). Forming it as the
+      // complement loses every digit once I_r(1/2, nu/2) rounds to 1,
+      // which happens for every z below eps.
+      auto z = inc_beta(0.5 * nu_dbl, 0.5, 1.0 - r);
       zJacobian *= -1;
 
       const auto Pn = t > 0 ? 1.0 - 0.5 * z : 0.5 * z;
@@ -123,13 +126,15 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
       if constexpr (is_autodiff_v<T_dof>) {
-        // nu / 2 is the second shape of inc_beta here and 1 / 2 the first
-        const auto g2 = grad_reg_inc_beta<GRAD_RIB::G2>(
-            0.5, 0.5 * nu_dbl, r, 0.0, digamma(0.5 * nu_dbl),
+        // On the reflected arguments nu / 2 is the first shape, and the
+        // partial is d z / d (nu / 2) directly, which is the negative of the
+        // second-shape partial of the unreflected call.
+        const auto g1 = grad_reg_inc_beta<GRAD_RIB::G1>(
+            0.5 * nu_dbl, 0.5, 1.0 - r, digamma(0.5 * nu_dbl), 0.0,
             digamma(0.5 + 0.5 * nu_dbl), 0.0);
 
         partials<1>(ops_partials)[n]
-            += zJacobian * (-d_ibeta * (r / t) * (r / t) + 0.5 * g2) / Pn;
+            += zJacobian * (-d_ibeta * (r / t) * (r / t) - 0.5 * g1) / Pn;
       }
       if constexpr (is_autodiff_v<T_loc>) {
         partials<2>(ops_partials)[n]
