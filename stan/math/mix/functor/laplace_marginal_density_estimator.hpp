@@ -228,7 +228,7 @@ struct laplace_density_estimates {
  * eigenvalues of a rank-deficient block are (for example the negative
  * Hessian of a likelihood with more latent variables than observations),
  * are clamped to zero. An eigenvalue below
- * `-block_size * epsilon * max(|eigenvalues|, 1)` means the block is not
+ * `-block_size * epsilon * max(|eigenvalues|)` means the block is not
  * positive semi-definite.
  *
  * @tparam WRootMat A type inheriting from `Eigen::EigenBase`.
@@ -268,8 +268,8 @@ inline void block_matrix_sqrt(WRootMat& W_root,
           + std::to_string(i) + ", " + std::to_string(i) + ")");
     }
     const Eigen::VectorXd eigenvalues = eigensolver.eigenvalues();
-const double tolerance = block_size * std::numeric_limits<double>::epsilon()
-                         * eigenvalues.cwiseAbs().maxCoeff();
+    const double tolerance = block_size * std::numeric_limits<double>::epsilon()
+                             * eigenvalues.cwiseAbs().maxCoeff();
     if (eigenvalues.minCoeff() < -tolerance) {
       throw std::domain_error(
           std::string("Error in block_matrix_sqrt: block diagonal starting "
