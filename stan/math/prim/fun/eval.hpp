@@ -32,11 +32,11 @@ inline T eval(T&& arg) {
  **/
 template <typename T,
           require_not_same_t<std::decay_t<T>, plain_type_t<T>>* = nullptr>
-inline decltype(auto) eval(const T& arg) {
+inline decltype(auto) eval(T&& arg) {
   if constexpr (stan::internal::has_eval<T>::value) {
-    return arg.eval();
+    return std::forward<T>(arg).eval();
   } else {
-    return plain_type_t<T>(arg);
+    return plain_type_t<T>(std::forward<T>(arg));
   }
 }
 
