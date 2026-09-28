@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
+#include <stan/math/prim/fun/inc_beta_ddz.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -109,9 +110,11 @@ inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
     ccdf_log += log(Pn);
 
     if constexpr (is_autodiff_v<T_y>) {
-      partials<0>(ops_partials)[n] -= pow(1 - y_dbl, beta_dbl - 1)
-                                      * pow(y_dbl, alpha_dbl - 1) * inv_Pn
-                                      / betafunc_dbl;
+      // inc_beta_ddz is the same density, evaluated without the product of
+      // two powers over a beta function, each of which can underflow on
+      // its own.
+      partials<0>(ops_partials)[n]
+          -= inc_beta_ddz(alpha_dbl, beta_dbl, y_dbl) * inv_Pn;
     }
 
     T_partials_return g1 = 0;

@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
+#include <stan/math/prim/fun/inc_beta_ddz.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -121,9 +122,11 @@ inline return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
       partials<0>(ops_partials)[i] += g2 / Pi;
     }
     if constexpr (is_autodiff_v<T_inv_scale>) {
-      partials<1>(ops_partials)[i] -= d_dbl * pow(1 - p_dbl, n_dbl)
-                                      * pow(p_dbl, alpha_dbl - 1)
-                                      / (beta_func * Pi);
+      // inc_beta_ddz is the same density, evaluated without the product of
+      // two powers over a beta function, each of which can underflow on
+      // its own.
+      partials<1>(ops_partials)[i]
+          -= d_dbl * inc_beta_ddz(alpha_dbl, n_dbl + 1.0, p_dbl) / Pi;
     }
   }
 
