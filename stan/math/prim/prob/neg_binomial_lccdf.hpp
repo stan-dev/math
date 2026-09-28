@@ -99,7 +99,12 @@ inline return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
     const T_partials_return inv_beta_p1 = inv(beta_dbl + 1);
     const T_partials_return p_dbl = beta_dbl * inv_beta_p1;
     const T_partials_return d_dbl = square(inv_beta_p1);
-    const T_partials_return Pi = 1.0 - inc_beta(alpha_dbl, n_dbl + 1.0, p_dbl);
+    // The complement by the symmetry relation I_p(a, b) = I_{1-p}(b, a),
+    // with 1 - p = 1 / (beta + 1) taken from inv_beta_p1 rather than as
+    // 1 - p_dbl. Forming the complement as 1 - I_p(a, b) loses every digit
+    // once I_p(a, b) rounds to 1, which happens for every complement below
+    // eps.
+    const T_partials_return Pi = inc_beta(n_dbl + 1.0, alpha_dbl, inv_beta_p1);
     const T_partials_return beta_func = beta(n_dbl + 1, alpha_dbl);
 
     P += log(Pi);
@@ -108,10 +113,12 @@ inline return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
       T_partials_return g1 = 0;
       T_partials_return g2 = 0;
 
-      grad_reg_inc_beta(g1, g2, alpha_dbl, n_dbl + 1, p_dbl,
-                        digammaAlpha_vec[i], digammaN_vec[i], digammaSum_vec[i],
+      // On the reflected arguments the second output is the derivative of
+      // Pi itself with respect to alpha.
+      grad_reg_inc_beta(g1, g2, n_dbl + 1, alpha_dbl, inv_beta_p1,
+                        digammaN_vec[i], digammaAlpha_vec[i], digammaSum_vec[i],
                         beta_func);
-      partials<0>(ops_partials)[i] -= g1 / Pi;
+      partials<0>(ops_partials)[i] += g2 / Pi;
     }
     if constexpr (is_autodiff_v<T_inv_scale>) {
       partials<1>(ops_partials)[i] -= d_dbl * pow(1 - p_dbl, n_dbl)

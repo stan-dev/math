@@ -99,7 +99,10 @@ inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
     const T_partials_return alpha_dbl = alpha_vec.val(n);
     const T_partials_return beta_dbl = beta_vec.val(n);
     const T_partials_return betafunc_dbl = beta(alpha_dbl, beta_dbl);
-    const T_partials_return Pn = 1.0 - inc_beta(alpha_dbl, beta_dbl, y_dbl);
+    // The complement by the symmetry relation I_y(a, b) = I_{1-y}(b, a).
+    // Forming it as 1 - I_y(a, b) loses every digit once I_y(a, b) rounds
+    // to 1, which happens for every complement below eps.
+    const T_partials_return Pn = inc_beta(beta_dbl, alpha_dbl, 1.0 - y_dbl);
     const T_partials_return inv_Pn
         = is_constant_all<T_y, T_scale_succ, T_scale_fail>::value ? 0 : inv(Pn);
 
@@ -115,14 +118,17 @@ inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
     T_partials_return g2 = 0;
 
     if constexpr (is_any_autodiff_v<T_scale_succ, T_scale_fail>) {
-      grad_reg_inc_beta(g1, g2, alpha_dbl, beta_dbl, y_dbl, digamma_alpha[n],
-                        digamma_beta[n], digamma_sum[n], betafunc_dbl);
+      // On the reflected arguments the two outputs are the derivatives of
+      // Pn itself: g1 with respect to beta, g2 with respect to alpha.
+      grad_reg_inc_beta(g1, g2, beta_dbl, alpha_dbl, 1.0 - y_dbl,
+                        digamma_beta[n], digamma_alpha[n], digamma_sum[n],
+                        betafunc_dbl);
     }
     if constexpr (is_autodiff_v<T_scale_succ>) {
-      partials<1>(ops_partials)[n] -= g1 * inv_Pn;
+      partials<1>(ops_partials)[n] += g2 * inv_Pn;
     }
     if constexpr (is_autodiff_v<T_scale_fail>) {
-      partials<2>(ops_partials)[n] -= g2 * inv_Pn;
+      partials<2>(ops_partials)[n] += g1 * inv_Pn;
     }
   }
   return ops_partials.build(ccdf_log);

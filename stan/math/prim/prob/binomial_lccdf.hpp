@@ -89,8 +89,11 @@ inline return_type_t<T_prob> binomial_lccdf(const T_n& n, const T_N& N,
     }
 
     const T_partials_return theta_dbl = theta_vec.val(i);
-    const T_partials_return Pi
-        = 1.0 - inc_beta(N_dbl - n_dbl, n_dbl + 1, 1 - theta_dbl);
+    // The complement by the symmetry relation I_z(a, b) = I_{1-z}(b, a),
+    // which also removes the 1 - theta argument. Forming it as
+    // 1 - I_{1-theta}(N - n, n + 1) loses every digit once that rounds to
+    // 1, which happens for every complement below eps.
+    const T_partials_return Pi = inc_beta(n_dbl + 1, N_dbl - n_dbl, theta_dbl);
 
     P += log(Pi);
 

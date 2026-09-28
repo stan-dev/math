@@ -105,7 +105,10 @@ inline return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(
     const T_partials_return kappa_mukappa_dbl = kappa_dbl - mukappa_dbl;
     const T_partials_return betafunc_dbl = beta(mukappa_dbl, kappa_mukappa_dbl);
     const T_partials_return Pn
-        = 1 - inc_beta(mukappa_dbl, kappa_mukappa_dbl, y_dbl);
+    // The complement by the symmetry relation I_y(a, b) = I_{1-y}(b, a).
+    // Forming it as 1 - I_y(a, b) loses every digit once I_y(a, b) rounds
+    // to 1, which happens for every complement below eps.
+        = inc_beta(kappa_mukappa_dbl, mukappa_dbl, 1 - y_dbl);
 
     ccdf_log += log(Pn);
 
@@ -122,16 +125,19 @@ inline return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(
     T_partials_return g2 = 0;
 
     if constexpr (is_any_autodiff_v<T_loc, T_prec>) {
-      grad_reg_inc_beta(g1, g2, mukappa_dbl, kappa_mukappa_dbl, y_dbl,
-                        digamma_mukappa[n], digamma_kappa_mukappa[n],
+      // On the reflected arguments the two outputs are the derivatives of
+      // Pn itself: g1 with respect to kappa - mu kappa, g2 with respect to
+      // mu kappa.
+      grad_reg_inc_beta(g1, g2, kappa_mukappa_dbl, mukappa_dbl, 1 - y_dbl,
+                        digamma_kappa_mukappa[n], digamma_mukappa[n],
                         digamma_kappa[n], betafunc_dbl);
     }
     if constexpr (is_autodiff_v<T_loc>) {
-      partials<1>(ops_partials)[n] -= kappa_dbl * (g1 - g2) * inv_Pn;
+      partials<1>(ops_partials)[n] += kappa_dbl * (g2 - g1) * inv_Pn;
     }
     if constexpr (is_autodiff_v<T_prec>) {
       partials<2>(ops_partials)[n]
-          -= (g1 * mu_dbl + g2 * (1 - mu_dbl)) * inv_Pn;
+          += (g2 * mu_dbl + g1 * (1 - mu_dbl)) * inv_Pn;
     }
   }
   return ops_partials.build(ccdf_log);
