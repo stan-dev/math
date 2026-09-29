@@ -37,7 +37,6 @@ inline opencl::scalar_cl_return_t<T_y_cl, T_inv_scale_cl> exponential_lccdf(
     const T_y_cl& y, const T_inv_scale_cl& beta) {
   static constexpr const char* function = "exponential_lccdf(OpenCL)";
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_inv_scale_cl>;
-  using T_partials_return = partials_return_t<T_y_cl, T_inv_scale_cl>;
   using std::isfinite;
   using std::isnan;
 

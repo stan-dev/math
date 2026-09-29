@@ -46,7 +46,6 @@ inline opencl::scalar_cl_return_t<T_y_cl, T_low_cl, T_high_cl> uniform_lpdf(
     const T_y_cl& y, const T_low_cl& alpha, const T_high_cl& beta) {
   static constexpr const char* function = "uniform_lpdf(OpenCL)";
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_low_cl, T_high_cl>;
-  using T_partials_return = partials_return_t<T_y_cl, T_low_cl, T_high_cl>;
   using std::isfinite;
   using std::isnan;
 

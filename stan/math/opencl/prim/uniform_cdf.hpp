@@ -12,7 +12,6 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/opencl/prim/prod.hpp>
 #include <stan/math/opencl/scalar_cl_functions.hpp>
-#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -38,13 +37,11 @@ inline opencl::scalar_cl_return_t<T_y_cl, T_low_cl, T_high_cl> uniform_cdf(
     const T_y_cl& y, const T_low_cl& alpha, const T_high_cl& beta) {
   static constexpr const char* function = "uniform_cdf(OpenCL)";
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_low_cl, T_high_cl>;
-  using T_partials_return = partials_return_t<T_y_cl, T_low_cl, T_high_cl>;
   using std::isfinite;
   using std::isnan;
 
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          alpha, "Scale parameter", beta);
-  const size_t N = max_size(y, alpha, beta);
   if (size_zero(y, alpha, beta)) {
     return T_return(1.0);
   }

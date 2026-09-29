@@ -59,7 +59,6 @@ poisson_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
                      const T_beta_cl& beta) {
   static constexpr const char* function = "poisson_log_glm_lpmf(OpenCL)";
   using T_return = opencl::scalar_cl_return_t<T_x_cl, T_alpha_cl, T_beta_cl>;
-  using T_partials_return = partials_return_t<T_x_cl, T_alpha_cl, T_beta_cl>;
   constexpr bool is_y_vector
       = !opencl::internal::is_host_or_device_scalar<T_y_cl>::value;
   constexpr bool is_alpha_vector
@@ -95,8 +94,6 @@ poisson_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
   const auto& alpha_val = opencl::internal::as_operand(value_of(alpha));
   const auto& beta_val = opencl::internal::as_operand(value_of(beta));
 
-  opencl::ScalarCl<double> logp;
-
   const bool need_logp = include_summand<propto>::value;
 
   auto theta_expr = matrix_vector_multiply(x_val, beta_val) + alpha_val;
@@ -117,7 +114,7 @@ poisson_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
       theta_derivative_expr, colwise_sum(theta_derivative_expr), logp_expr);
 
   opencl::ScalarCl<double> theta_derivative_sum = sum(theta_derivative_sum_cl);
-  logp += sum(logp_cl);
+  opencl::ScalarCl<double> logp = sum(logp_cl);
   if (!std::isfinite(opencl::to_host(theta_derivative_sum))) {
     results(check_cl(function, "Vector of dependent variables", y_val,
                      "nonnegative"),

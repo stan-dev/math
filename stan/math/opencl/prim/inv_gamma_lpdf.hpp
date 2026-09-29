@@ -46,7 +46,6 @@ inv_gamma_lpdf(const T_y_cl& y, const T_shape_cl& alpha,
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_shape_cl, T_scale_cl>;
   using std::isnan;
   static constexpr const char* function = "inv_gamma_lpdf(OpenCL)";
-  using T_partials_return = partials_return_t<T_y_cl, T_shape_cl, T_scale_cl>;
 
   check_consistent_sizes(function, "Random variable", y,
                          "First shape parameter", alpha,

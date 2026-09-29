@@ -257,7 +257,7 @@ inline opencl::scalar_cl_return_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
     }
   }
   if constexpr (include_summand<propto, T_prob_cl, T_prior_size_cl>::value) {
-    lp += sum(theta_log_alpha_m_1_sum_cl);
+    opencl::internal::sum_into(lp, theta_log_alpha_m_1_sum_cl, true);
   }
 
   auto ops_partials = opencl::make_partials_propagator(theta, alpha);

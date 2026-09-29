@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_generator.hpp>
+#include <cmath>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/opencl/rev/scalar_cl.hpp>
@@ -44,9 +45,9 @@ template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline var_value<matrix_cl<double>> unit_vector_constrain(const var_value<T>& A,
                                                           var& lp) {
-  opencl::ScalarCl<double> r_sq = dot_self(A.val());
-  lp -= 0.5 * opencl::to_host(r_sq);
-  opencl::ScalarCl<double> r = sqrt(r_sq);
+  const double r_sq = opencl::to_host(dot_self(A.val()));
+  lp -= 0.5 * r_sq;
+  const double r = std::sqrt(r_sq);
   return make_callback_var(
       elt_divide(A.val(), r),
       [A, r, lp](vari_value<matrix_cl<double>>& res) mutable {

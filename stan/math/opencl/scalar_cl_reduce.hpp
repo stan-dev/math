@@ -9,27 +9,12 @@
 #include <stan/math/opencl/kernels/scalar_reduce.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/scalar_cl.hpp>
-#include <algorithm>
 #include <type_traits>
 
 namespace stan {
 namespace math {
 namespace opencl {
 namespace internal {
-
-/**
- * Work group size for the single work group reduction kernels: the largest
- * power of two no larger than 256 or the device's `LOCAL_SIZE_`.
- * @return work group size
- */
-inline int scalar_reduce_local_size() {
-  const int limit = std::min(256, opencl_context.base_opts().at("LOCAL_SIZE_"));
-  int local_size = 1;
-  while (local_size * 2 <= limit) {
-    local_size *= 2;
-  }
-  return local_size;
-}
 
 /**
  * Reduces a non-empty kernel generator expression into a device scalar
@@ -58,7 +43,7 @@ inline void reduce_into(Dst&& dst, const T& m, Partial&& partial_f,
                 std::forward<Partial>(partial_f), kernel, accumulate, offset);
     return;
   } else {
-    const int local_size = scalar_reduce_local_size();
+    const int local_size = kernel.get_option("LOCAL_SIZE_");
     const auto reduce = [&](const matrix_cl<double>& partials) {
       kernel(cl::NDRange(local_size), cl::NDRange(local_size), dst, partials,
              partials.size(), offset, static_cast<int>(accumulate));

@@ -79,8 +79,7 @@ inline auto offset_multiplier_constrain(const T& x, const M& mu_in,
 template <typename T, typename M, typename S, typename T_lp,
           require_all_kernel_expressions_t<T, M, S>* = nullptr,
           require_any_not_stan_scalar_t<T, M, S>* = nullptr,
-          require_t<math::disjunction<std::is_same<T_lp, double>,
-                                      is_prim_scalar_cl<T_lp>>>* = nullptr>
+          opencl::internal::require_prim_lp_t<T_lp>* = nullptr>
 inline auto offset_multiplier_constrain(const T& x, const M& mu_in,
                                         const S& sigma_in, T_lp& lp) {
   using std::isfinite;

@@ -35,7 +35,6 @@ inline opencl::scalar_cl_return_t<T_log_rate_cl> poisson_log_lpmf(
     const T_n_cl& n, const T_log_rate_cl& alpha) {
   static constexpr const char* function = "poisson_log_lpmf(OpenCL)";
   using T_return = opencl::scalar_cl_return_t<T_log_rate_cl>;
-  using T_partials_return = partials_return_t<T_log_rate_cl>;
   using std::isinf;
   using std::isnan;
   constexpr bool is_n_vector = !is_stan_scalar<T_n_cl>::value;
@@ -53,7 +52,6 @@ inline opencl::scalar_cl_return_t<T_log_rate_cl> poisson_log_lpmf(
   const auto& alpha_col = as_column_vector_or_scalar(alpha);
   const auto& alpha_val = opencl::internal::as_operand(value_of(alpha_col));
 
-  opencl::ScalarCl<double> logp;
   auto ops_partials = opencl::make_partials_propagator(alpha_col);
 
   auto check_n_nonnegative
@@ -88,7 +86,7 @@ inline opencl::scalar_cl_return_t<T_log_rate_cl> poisson_log_lpmf(
     return T_return(LOG_ZERO);
   }
 
-  logp = sum(logp_cl);
+  opencl::ScalarCl<double> logp = sum(logp_cl);
 
   if constexpr (is_autodiff_v<T_log_rate_cl>) {
     partials<0>(ops_partials) = deriv_cl;

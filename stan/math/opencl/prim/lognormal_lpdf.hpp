@@ -45,7 +45,6 @@ inline opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl> lognormal_lpdf(
   using std::isfinite;
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
   static constexpr const char* function = "lognormal_lpdf(OpenCL)";
-  using T_partials_return = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
 
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);

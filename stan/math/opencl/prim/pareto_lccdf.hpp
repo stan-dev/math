@@ -37,14 +37,12 @@ inline opencl::scalar_cl_return_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_lccdf(
     const T_y_cl& y, const T_scale_cl& y_min, const T_shape_cl& alpha) {
   static constexpr const char* function = "pareto_lccdf(OpenCL)";
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_scale_cl, T_shape_cl>;
-  using T_partials_return = partials_return_t<T_y_cl, T_scale_cl, T_shape_cl>;
   using std::isfinite;
   using std::isinf;
   using std::isnan;
 
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          y_min, "Scale parameter", alpha);
-  const size_t N = max_size(y, y_min, alpha);
   if (size_zero(y, y_min, alpha)) {
     return T_return(0.0);
   }

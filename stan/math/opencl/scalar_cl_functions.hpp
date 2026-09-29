@@ -23,20 +23,12 @@ namespace opencl {
  */
 namespace internal {
 /**
- * Checks if a type is a host arithmetic value or a device scalar holding one.
- */
-template <typename T>
-struct is_scalar_cl_operand
-    : math::disjunction<std::is_arithmetic<std::decay_t<T>>,
-                        is_prim_scalar_cl<T>> {};
-
-/**
  * Enables a template if all types are host arithmetic values or device
  * scalars and at least one is a device scalar.
  */
 template <typename... Types>
 using require_scalar_cl_operands_t = require_t<
-    math::conjunction<is_scalar_cl_operand<Types>...,
+    math::conjunction<is_prim_host_or_device_scalar<Types>...,
                       math::disjunction<is_prim_scalar_cl<Types>...>>>;
 }  // namespace internal
 

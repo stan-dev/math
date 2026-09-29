@@ -48,14 +48,11 @@ neg_binomial_2_lpmf(const T_n_cl& n, const T_location_cl& mu,
   static constexpr const char* function = "neg_binomial_2_lpmf(OpenCL)";
   using T_return
       = opencl::scalar_cl_return_t<T_n_cl, T_location_cl, T_precision_cl>;
-  using T_partials_return
-      = partials_return_t<T_n_cl, T_location_cl, T_precision_cl>;
   using std::isfinite;
   using std::isnan;
 
   check_consistent_sizes(function, "Failures variable", n, "Location parameter",
                          mu, "Precision parameter", phi);
-  const size_t N = max_size(n, mu, phi);
   if (size_zero(n, mu, phi)) {
     return T_return(0.0);
   }

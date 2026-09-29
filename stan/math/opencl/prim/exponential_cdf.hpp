@@ -12,7 +12,6 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/opencl/prim/prod.hpp>
 #include <stan/math/opencl/scalar_cl_functions.hpp>
-#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -38,13 +37,11 @@ inline opencl::scalar_cl_return_t<T_y_cl, T_inv_scale_cl> exponential_cdf(
     const T_y_cl& y, const T_inv_scale_cl& beta) {
   static constexpr const char* function = "exponential_cdf(OpenCL)";
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_inv_scale_cl>;
-  using T_partials_return = partials_return_t<T_y_cl, T_inv_scale_cl>;
   using std::isfinite;
   using std::isnan;
 
   check_consistent_sizes(function, "Random variable", y,
                          "Inverse scale parameter", beta);
-  const size_t N = max_size(y, beta);
   if (size_zero(y, beta)) {
     return T_return(1.0);
   }

@@ -44,14 +44,11 @@ exp_mod_normal_lcdf(const T_y_cl& y, const T_loc_cl& mu,
   static constexpr const char* function = "exp_mod_normal_lcdf(OpenCL)";
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl,
                                               T_inv_scale_cl>;
-  using T_partials_return
-      = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>;
   using std::isfinite;
   using std::isnan;
 
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
-  const size_t N = max_size(y, mu, sigma);
   if (size_zero(y, mu, sigma, lambda)) {
     return T_return(0.0);
   }

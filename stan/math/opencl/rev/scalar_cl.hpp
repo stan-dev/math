@@ -513,6 +513,22 @@ using require_scalar_cl_and_matrix_rev_t = require_t<math::conjunction<
         math::conjunction<is_nonscalar_prim_or_rev_kernel_expression<T_a>,
                           is_scalar_cl<T_b>>>,
     math::disjunction<is_var<scalar_type_t<T_a>>, is_var<scalar_type_t<T_b>>>>>;
+
+/**
+ * Enables a template if the log density accumulator of a reverse mode
+ * constraint is a host `var` or a device `ScalarCl<var>`.
+ */
+template <typename T_lp>
+using require_rev_lp_t
+    = require_t<math::disjunction<is_var<T_lp>, is_rev_scalar_cl<T_lp>>>;
+
+/**
+ * The primitive type a reverse mode constraint accumulates its log density
+ * increment into before adding it to an accumulator of type `T_lp`.
+ */
+template <typename T_lp>
+using lp_partial_t = std::conditional_t<is_rev_scalar_cl<T_lp>::value,
+                                        ScalarCl<double>, double>;
 }  // namespace internal
 
 /** \ingroup opencl

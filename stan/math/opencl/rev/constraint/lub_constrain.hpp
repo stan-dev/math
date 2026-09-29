@@ -103,17 +103,14 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_x, T_lb, T_ub>* = nullptr,
     require_any_st_var<T_x, T_lb, T_ub>* = nullptr,
     require_any_not_stan_scalar_t<T_x, T_lb, T_ub>* = nullptr,
-    require_t<
-        math::disjunction<is_var<T_lp>, is_rev_scalar_cl<T_lp>>>* = nullptr>
+    opencl::internal::require_rev_lp_t<T_lp>* = nullptr>
 inline var_value<matrix_cl<double>> lub_constrain(T_x&& x, T_lb&& lb, T_ub&& ub,
                                                   T_lp& lp) {
   arena_t<T_x> x_arena = std::forward<T_x>(x);
   arena_t<T_lb> lb_arena = std::forward<T_lb>(lb);
   arena_t<T_ub> ub_arena = std::forward<T_ub>(ub);
 
-  std::conditional_t<is_rev_scalar_cl<T_lp>::value, opencl::ScalarCl<double>,
-                     double>
-      lp_inc{};
+  opencl::internal::lp_partial_t<T_lp> lp_inc{};
   matrix_cl<double> res
       = lub_constrain(opencl::internal::as_operand(value_of(x_arena)),
                       opencl::internal::as_operand(value_of(lb_arena)),

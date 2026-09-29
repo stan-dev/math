@@ -35,7 +35,6 @@ inline opencl::scalar_cl_return_t<T_prob_cl> bernoulli_cdf(
     const T_n_cl& n, const T_prob_cl& theta) {
   static constexpr const char* function = "bernoulli_cdf(OpenCL)";
   using T_return = opencl::scalar_cl_return_t<T_prob_cl>;
-  using T_partials_return = partials_return_t<T_prob_cl>;
   using std::isnan;
   constexpr bool is_n_vector = !is_stan_scalar<T_n_cl>::value;
 

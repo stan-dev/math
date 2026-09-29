@@ -47,12 +47,10 @@ beta_proportion_lpdf(const T_y_cl& y, const T_loc_cl& mu,
                      const T_prec_cl& kappa) {
   static constexpr const char* function = "beta_proportion_lpdf(OpenCL)";
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_prec_cl>;
-  using T_partials_return = partials_return_t<T_y_cl, T_loc_cl, T_prec_cl>;
   using std::isfinite;
 
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Precision parameter", kappa);
-  const size_t N = max_size(y, mu, kappa);
   if (size_zero(y, mu, kappa)) {
     return T_return(0.0);
   }

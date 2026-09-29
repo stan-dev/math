@@ -61,8 +61,7 @@ inline auto ub_constrain(T&& x, U&& ub) {
 template <typename T, typename U, typename T_lp,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr,
           require_all_kernel_expressions_t<U>* = nullptr,
-          require_t<math::disjunction<std::is_same<T_lp, double>,
-                                      is_prim_scalar_cl<T_lp>>>* = nullptr>
+          opencl::internal::require_prim_lp_t<T_lp>* = nullptr>
 inline auto ub_constrain(const T& x, const U& ub_in, T_lp& lp) {
   const auto& ub = opencl::internal::as_operand(ub_in);
   matrix_cl<double> lp_inc;

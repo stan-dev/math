@@ -387,6 +387,14 @@ struct is_prim_host_or_device_scalar
                         is_prim_scalar_cl<T>> {};
 
 /**
+ * Enables a template if the log density accumulator of a primitive
+ * constraint is a host `double` or a primitive device scalar.
+ */
+template <typename T_lp>
+using require_prim_lp_t = require_t<
+    math::disjunction<std::is_same<T_lp, double>, is_prim_scalar_cl<T_lp>>>;
+
+/**
  * Returns a device scalar holding a value: device scalars are returned as they
  * are and host values are copied to the device.
  * @tparam T type of the value
@@ -399,6 +407,48 @@ inline decltype(auto) to_device_scalar(T&& x) {
     return std::forward<T>(x);
   } else {
     return ScalarCl<double>(static_cast<double>(x));
+  }
+}
+
+/**
+ * Prepares an argument of a kernel that reads its floating point parameters
+ * from device buffers: floating point values and device scalars become device
+ * scalars, other arguments are returned unchanged.
+ * @tparam T type of the argument
+ * @param x argument
+ * @return argument for the kernel
+ */
+template <typename T>
+inline decltype(auto) scalar_param_arg(T&& x) {
+  if constexpr (math::disjunction<std::is_floating_point<std::decay_t<T>>,
+                                  is_prim_scalar_cl<std::decay_t<T>>>::value) {
+    return to_device_scalar(std::forward<T>(x));
+  } else {
+    return std::forward<T>(x);
+  }
+}
+
+/**
+ * Launches a kernel written with `SCALAR_PARAM`. When none of the arguments
+ * is a device scalar the variant taking floating point parameters by value is
+ * launched. Otherwise the variant reading them from device buffers is
+ * launched, and host floating point values are moved to the device.
+ * @tparam KernelValue type of the kernel taking parameters by value
+ * @tparam KernelBuffer type of the kernel taking parameters as buffers
+ * @tparam Args types of the kernel arguments
+ * @param kernel_value kernel taking parameters by value
+ * @param kernel_buffer kernel taking parameters as buffers
+ * @param args kernel arguments, starting with the ranges
+ */
+template <typename KernelValue, typename KernelBuffer, typename... Args>
+inline void launch_scalar_param_kernel(const KernelValue& kernel_value,
+                                       const KernelBuffer& kernel_buffer,
+                                       Args&&... args) {
+  if constexpr (math::disjunction<
+                    is_prim_scalar_cl<std::decay_t<Args>>...>::value) {
+    kernel_buffer(scalar_param_arg(std::forward<Args>(args))...);
+  } else {
+    kernel_value(std::forward<Args>(args)...);
   }
 }
 

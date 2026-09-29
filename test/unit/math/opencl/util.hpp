@@ -114,12 +114,9 @@ inline void expect_eq(const T1& a, const T2& b, const char* msg,
  * `ScalarCl<double>` and its views, a `double` for the value of a
  * `ScalarCl<var>`.
  */
-template <typename T, require_prim_scalar_cl_t<T>* = nullptr>
+template <typename T, require_scalar_cl_t<T>* = nullptr>
 inline double host_value(const T& a) {
-  return opencl::to_host(a);
-}
-inline double host_value(const opencl::ScalarCl<var>& a) {
-  return opencl::to_host(a.val());
+  return opencl::to_host(value_of(a));
 }
 
 template <typename T1, typename T2, require_scalar_cl_t<T1>* = nullptr,

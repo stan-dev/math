@@ -36,22 +36,6 @@ inline var_value<matrix_cl<double>> rep_matrix(const var& A, int n, int m) {
                            });
 }
 
-/** \ingroup opencl
- * Creates a matrix_cl by replicating the input
- * vector or row_vector.  The elements of the
- * vector or row_vector must be of arithmetic type.
- *
- * @tparam T type of elements in the input matrix
- * @param A the input matrix_cl (vector or row_vector)
- * @param m number of rows (if x is a row_vector) or columns
- *  (if x is a vector) in the results matrix
- *
- * @return result matrix with replicated rows or columns
- *
- * @throw <code>domain_error</code> if the
- * requested dimensions are negative
- *
- */
 /**
  * Creates a matrix by replicating a device var. The reverse pass sums the
  * result adjoints into the device adjoint of the scalar without reading them
@@ -73,6 +57,22 @@ inline var_value<matrix_cl<double>> rep_matrix(const opencl::ScalarCl<var>& A,
                            });
 }
 
+/** \ingroup opencl
+ * Creates a matrix_cl by replicating the input
+ * vector or row_vector.  The elements of the
+ * vector or row_vector must be of arithmetic type.
+ *
+ * @tparam T type of elements in the input matrix
+ * @param A the input matrix_cl (vector or row_vector)
+ * @param m number of rows (if x is a row_vector) or columns
+ *  (if x is a vector) in the results matrix
+ *
+ * @return result matrix with replicated rows or columns
+ *
+ * @throw <code>domain_error</code> if the
+ * requested dimensions are negative
+ *
+ */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline var_value<matrix_cl<double>> rep_matrix(const var_value<T>& A, int m) {

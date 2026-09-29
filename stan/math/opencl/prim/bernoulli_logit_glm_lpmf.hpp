@@ -61,7 +61,6 @@ bernoulli_logit_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
                          const T_alpha_cl& alpha, const T_beta_cl& beta) {
   static constexpr const char* function = "bernoulli_logit_glm_lpmf(OpenCL)";
   using T_return = opencl::scalar_cl_return_t<T_x_cl, T_alpha_cl, T_beta_cl>;
-  using T_partials_return = partials_return_t<T_x_cl, T_alpha_cl, T_beta_cl>;
   constexpr bool is_y_vector
       = !opencl::internal::is_host_or_device_scalar<T_y_cl>::value;
   constexpr bool is_alpha_vector

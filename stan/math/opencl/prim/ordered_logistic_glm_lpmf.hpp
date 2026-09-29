@@ -61,7 +61,6 @@ ordered_logistic_glm_lpmf(const T_y& y, const T_x& x, const T_beta& beta,
   using Eigen::Matrix;
   using Eigen::VectorXd;
   using std::isfinite;
-  using T_partials_return = partials_return_t<T_beta, T_cuts>;
   constexpr bool is_y_vector
       = !opencl::internal::is_host_or_device_scalar<T_y>::value;
 

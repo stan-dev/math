@@ -50,11 +50,9 @@ inline opencl::scalar_cl_return_t<T_y_cl, T_dof_cl> inv_chi_square_lpdf(
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_dof_cl>;
   using std::isnan;
   static constexpr const char* function = "inv_chi_square_lpdf(OpenCL)";
-  using T_partials_return = partials_return_t<T_y_cl, T_dof_cl>;
 
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu);
-  const size_t N = max_size(y, nu);
   if (size_zero(y, nu)) {
     return T_return(0.0);
   }

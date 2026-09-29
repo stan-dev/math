@@ -46,14 +46,11 @@ neg_binomial_lpmf(const T_n_cl& n, const T_shape_cl& alpha,
   static constexpr const char* function = "neg_binomial_lpmf(OpenCL)";
   using T_return
       = opencl::scalar_cl_return_t<T_n_cl, T_shape_cl, T_inv_scale_cl>;
-  using T_partials_return
-      = partials_return_t<T_n_cl, T_shape_cl, T_inv_scale_cl>;
   using std::isfinite;
   using std::isnan;
 
   check_consistent_sizes(function, "Failures variable", n, "Shape parameter",
                          alpha, "Inverse scale parameter", beta);
-  const size_t N = max_size(n, alpha, beta);
   if (size_zero(n, alpha, beta)) {
     return T_return(0.0);
   }

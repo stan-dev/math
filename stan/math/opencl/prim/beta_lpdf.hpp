@@ -50,13 +50,10 @@ beta_lpdf(const T_y_cl& y, const T_scale_succ_cl& alpha,
   using T_return
       = opencl::scalar_cl_return_t<T_y_cl, T_scale_succ_cl, T_scale_fail_cl>;
   static constexpr const char* function = "beta_lpdf(OpenCL)";
-  using T_partials_return
-      = partials_return_t<T_y_cl, T_scale_succ_cl, T_scale_fail_cl>;
 
   check_consistent_sizes(function, "Random variable", y,
                          "First shape parameter", alpha,
                          "Second shape parameter", beta);
-  const size_t N = max_size(y, alpha, beta);
   if (size_zero(y, alpha, beta)) {
     return T_return(0.0);
   }

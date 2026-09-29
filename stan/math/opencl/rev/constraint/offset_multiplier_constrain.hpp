@@ -90,8 +90,7 @@ template <typename T, typename M, typename S, typename T_lp,
           require_all_prim_or_rev_kernel_expression_t<T, M, S>* = nullptr,
           require_any_not_stan_scalar_t<T, M, S>* = nullptr,
           require_any_st_var<T, M, S>* = nullptr,
-          require_t<math::disjunction<is_var<T_lp>,
-                                      is_rev_scalar_cl<T_lp>>>* = nullptr>
+          opencl::internal::require_rev_lp_t<T_lp>* = nullptr>
 inline var_value<matrix_cl<double>> offset_multiplier_constrain(T&& A, M&& mu,
                                                                 S&& sigma,
                                                                 T_lp& lp) {
@@ -102,9 +101,7 @@ inline var_value<matrix_cl<double>> offset_multiplier_constrain(T&& A, M&& mu,
   arena_t<M> mu_arena = std::forward<M>(mu);
   arena_t<S> sigma_arena = std::forward<S>(sigma);
 
-  std::conditional_t<is_rev_scalar_cl<T_lp>::value, opencl::ScalarCl<double>,
-                     double>
-      lp_inc{};
+  opencl::internal::lp_partial_t<T_lp> lp_inc{};
   auto res = offset_multiplier_constrain(
       opencl::internal::as_operand(value_of(A_arena)),
       opencl::internal::as_operand(value_of(mu_arena)),

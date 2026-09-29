@@ -48,7 +48,6 @@ scaled_inv_chi_square_lpdf(const T_y_cl& y, const T_dof_cl& nu,
                            const T_scale_cl& s) {
   static constexpr const char* function = "scaled_inv_chi_square_lpdf(OpenCL)";
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_dof_cl, T_scale_cl>;
-  using T_partials_return = partials_return_t<T_y_cl, T_dof_cl, T_scale_cl>;
   using std::isfinite;
   using std::isnan;
 

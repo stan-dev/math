@@ -12,7 +12,6 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/opencl/prim/prod.hpp>
 #include <stan/math/opencl/scalar_cl_functions.hpp>
-#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -43,15 +42,12 @@ pareto_type_2_cdf(const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& lambda,
   static constexpr const char* function = "pareto_type_2_cdf(OpenCL)";
   using T_return
       = opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>;
-  using T_partials_return
-      = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>;
   using std::isfinite;
   using std::isnan;
 
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", lambda, "Shape parameter",
                          alpha);
-  const size_t N = max_size(y, mu, lambda, alpha);
   if (size_zero(y, mu, lambda, alpha)) {
     return T_return(1.0);
   }

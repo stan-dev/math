@@ -44,11 +44,9 @@ inline opencl::scalar_cl_return_t<T_y_cl, T_shape_cl, T_scale_cl> frechet_lpdf(
   using std::isfinite;
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_shape_cl, T_scale_cl>;
   static constexpr const char* function = "frechet_lpdf(OpenCL)";
-  using T_partials_return = partials_return_t<T_y_cl, T_shape_cl, T_scale_cl>;
 
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale parameter", sigma);
-  const size_t N = max_size(y, alpha, sigma);
   if (size_zero(y, alpha, sigma)) {
     return T_return(0.0);
   }

@@ -33,18 +33,11 @@ inline matrix_cl<return_type_t<T1, T2, T3>> gp_exp_quad_cov(
     const matrix_cl<T1>& x, const T2& sigma, const T3& length_scale) {
   matrix_cl<return_type_t<T1, T2, T3>> res(x.cols(), x.cols());
   try {
-    if constexpr (math::disjunction<is_scalar_cl<T2>,
-                                    is_scalar_cl<T3>>::value) {
-      opencl_kernels::gp_exp_quad_cov_scalar_cl(
-          cl::NDRange(x.cols(), x.cols()), x, res,
-          opencl::internal::to_device_scalar(sigma * sigma),
-          opencl::internal::to_device_scalar(-0.5 / square(length_scale)),
-          x.cols(), x.rows());
-    } else {
-      opencl_kernels::gp_exp_quad_cov(
-          cl::NDRange(x.cols(), x.cols()), x, res, sigma * sigma,
-          -0.5 / square(length_scale), x.cols(), x.rows());
-    }
+    opencl::internal::launch_scalar_param_kernel(
+        opencl_kernels::gp_exp_quad_cov,
+        opencl_kernels::gp_exp_quad_cov_scalar_cl,
+        cl::NDRange(x.cols(), x.cols()), x, res, sigma * sigma,
+        -0.5 / square(length_scale), x.cols(), x.rows());
   } catch (const cl::Error& e) {
     check_opencl_error("gp_exp_quad_cov", e);
   }
@@ -79,18 +72,11 @@ inline matrix_cl<return_type_t<T1, T2, T3, T4>> gp_exp_quad_cov(
   check_size_match("gp_exp_quad_cov_cross", "x", x.rows(), "y", y.rows());
   matrix_cl<return_type_t<T1, T2, T3, T4>> res(x.cols(), y.cols());
   try {
-    if constexpr (math::disjunction<is_scalar_cl<T3>,
-                                    is_scalar_cl<T4>>::value) {
-      opencl_kernels::gp_exp_quad_cov_cross_scalar_cl(
-          cl::NDRange(x.cols(), y.cols()), x, y, res,
-          opencl::internal::to_device_scalar(sigma * sigma),
-          opencl::internal::to_device_scalar(-0.5 / square(length_scale)),
-          x.cols(), y.cols(), x.rows());
-    } else {
-      opencl_kernels::gp_exp_quad_cov_cross(
-          cl::NDRange(x.cols(), y.cols()), x, y, res, sigma * sigma,
-          -0.5 / square(length_scale), x.cols(), y.cols(), x.rows());
-    }
+    opencl::internal::launch_scalar_param_kernel(
+        opencl_kernels::gp_exp_quad_cov_cross,
+        opencl_kernels::gp_exp_quad_cov_cross_scalar_cl,
+        cl::NDRange(x.cols(), y.cols()), x, y, res, sigma * sigma,
+        -0.5 / square(length_scale), x.cols(), y.cols(), x.rows());
   } catch (const cl::Error& e) {
     check_opencl_error("gp_exp_quad_cov_cross", e);
   }

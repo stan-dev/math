@@ -61,8 +61,7 @@ inline auto lb_constrain(T&& x, L&& lb) {
 template <typename T, typename L, typename T_lp,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr,
           require_all_kernel_expressions_t<L>* = nullptr,
-          require_t<math::disjunction<std::is_same<T_lp, double>,
-                                      is_prim_scalar_cl<T_lp>>>* = nullptr>
+          opencl::internal::require_prim_lp_t<T_lp>* = nullptr>
 inline auto lb_constrain(const T& x, const L& lb_in, T_lp& lp) {
   const auto& lb = opencl::internal::as_operand(lb_in);
   matrix_cl<double> lp_inc;

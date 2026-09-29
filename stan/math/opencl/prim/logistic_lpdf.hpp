@@ -45,11 +45,9 @@ inline opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_lpdf(
   using std::isfinite;
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
   static constexpr const char* function = "logistic_lpdf(OpenCL)";
-  using T_partials_return = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
 
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
-  const size_t N = max_size(y, mu, sigma);
   if (size_zero(y, mu, sigma)) {
     return T_return(0.0);
   }

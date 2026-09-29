@@ -34,9 +34,11 @@ inline opencl::ScalarCl<var> sd(const var_value<T>& A) {
   return opencl::make_callback_scalar_cl(
       sqrt(sum(sq_norm) / (A.size() - 1.0)),
       [A, diff](const auto& res_adj, const auto& res_val) mutable {
-        opencl::ScalarCl<double> factor
-            = res_adj / (res_val * (A.size() - 1.0));
-        A.adj() += factor * diff;
+        A.adj()
+            += elt_multiply(elt_divide(opencl::internal::as_operand(res_adj),
+                                       opencl::internal::as_operand(res_val)
+                                           * (A.size() - 1.0)),
+                            diff);
       });
 }
 

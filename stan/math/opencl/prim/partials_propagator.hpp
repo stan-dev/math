@@ -47,16 +47,7 @@ class scalar_cl_partial {
   template <typename T, require_all_kernel_expressions_t<T>* = nullptr,
             require_not_arithmetic_t<T>* = nullptr>
   scalar_cl_partial& operator=(T&& x) {
-    if constexpr (is_prim_scalar_cl<T>::value) {
-      value_ = ScalarCl<double>(x);
-    } else {
-      auto&& x_op = as_operation_cl(std::forward<T>(x));
-      if (x_op.rows() == -1 && x_op.cols() == -1) {
-        value_ = x_op;
-      } else {
-        sum_into(value_, x_op, false);
-      }
-    }
+    assign(std::forward<T>(x), false);
     return *this;
   }
 
@@ -69,16 +60,7 @@ class scalar_cl_partial {
   template <typename T, require_all_kernel_expressions_t<T>* = nullptr,
             require_not_arithmetic_t<T>* = nullptr>
   scalar_cl_partial& operator+=(T&& x) {
-    if constexpr (is_prim_scalar_cl<T>::value) {
-      value_ += x;
-    } else {
-      auto&& x_op = as_operation_cl(std::forward<T>(x));
-      if (x_op.rows() == -1 && x_op.cols() == -1) {
-        value_ += x_op;
-      } else {
-        sum_into(value_, x_op, true);
-      }
-    }
+    assign(std::forward<T>(x), true);
     return *this;
   }
 
@@ -87,6 +69,35 @@ class scalar_cl_partial {
    * @return this partial
    */
   inline scalar_cl_partial& operator[](int) { return *this; }
+
+ private:
+  /**
+   * Assigns or adds a device scalar or the sum of a kernel generator
+   * expression.
+   * @tparam T type of the device scalar or expression
+   * @param x device scalar or expression
+   * @param accumulate whether to add to the current value
+   */
+  template <typename T>
+  void assign(T&& x, bool accumulate) {
+    if constexpr (std::is_same<T, ScalarCl<double>>::value) {
+      if (!accumulate) {
+        value_ = std::move(x);
+        return;
+      }
+    }
+    auto&& x_op = as_operation_cl(std::forward<T>(x));
+    using x_op_t = std::decay_t<decltype(x_op)>;
+    if (x_op.rows() == x_op_t::dynamic && x_op.cols() == x_op_t::dynamic) {
+      if (accumulate) {
+        value_ += x_op;
+      } else {
+        value_ = x_op;
+      }
+    } else {
+      sum_into(value_, x_op, accumulate);
+    }
+  }
 };
 
 }  // namespace internal

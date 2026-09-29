@@ -42,7 +42,6 @@ inline opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl> cauchy_lpdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma) {
   static constexpr const char* function = "cauchy_lpdf(OpenCL)";
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
-  using T_partials_return = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
   using std::isfinite;
   using std::isnan;
 

@@ -37,7 +37,6 @@ inline opencl::scalar_cl_return_t<T_prob_cl> binomial_logit_lpmf(
     const T_n_cl& n, const T_N_cl N, const T_prob_cl& alpha) {
   static constexpr const char* function = "binomial_logit_lpmf(OpenCL)";
   using T_return = opencl::scalar_cl_return_t<T_prob_cl>;
-  using T_partials_return = partials_return_t<T_prob_cl>;
   using std::isfinite;
 
   check_consistent_sizes(function, "Successes variable", n,

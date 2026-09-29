@@ -44,15 +44,12 @@ skew_double_exponential_lcdf(const T_y_cl& y, const T_loc_cl& mu,
       = "skew_double_exponential_lcdf(OpenCL)";
   using T_return
       = opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>;
-  using T_partials_return
-      = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>;
   using std::isfinite;
   using std::isnan;
 
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Shape parameter", sigma, "Skewness parameter",
                          tau);
-  const size_t N = max_size(y, mu, sigma, tau);
   if (size_zero(y, mu, sigma, tau)) {
     return T_return(1.0);
   }

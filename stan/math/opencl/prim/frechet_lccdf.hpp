@@ -38,13 +38,11 @@ inline opencl::scalar_cl_return_t<T_y_cl, T_shape_cl, T_scale_cl> frechet_lccdf(
     const T_y_cl& y, const T_shape_cl& alpha, const T_scale_cl& sigma) {
   static constexpr const char* function = "frechet_lccdf(OpenCL)";
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_shape_cl, T_scale_cl>;
-  using T_partials_return = partials_return_t<T_y_cl, T_shape_cl, T_scale_cl>;
   using std::isfinite;
   using std::isnan;
 
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale parameter", sigma);
-  const size_t N = max_size(y, alpha, sigma);
   if (size_zero(y, alpha, sigma)) {
     return T_return(1.0);
   }

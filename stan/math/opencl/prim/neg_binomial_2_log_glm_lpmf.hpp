@@ -21,7 +21,6 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/opencl/prim/partials_propagator.hpp>
-#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/opencl/scalar_cl_functions.hpp>
 #include <vector>
@@ -76,8 +75,6 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
   static constexpr const char* function = "neg_binomial_2_log_glm_lpmf(OpenCL)";
   using T_return
       = opencl::scalar_cl_return_t<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl>;
-  using T_partials_return
-      = partials_return_t<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl>;
   constexpr bool is_y_vector
       = !opencl::internal::is_host_or_device_scalar<T_y_cl>::value;
   constexpr bool is_phi_vector
@@ -113,18 +110,18 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
   }
 
   const auto& y_val = opencl::internal::as_operand(eval(value_of(y)));
-  const auto& x_val = opencl::internal::as_operand(eval(value_of(x)));
-  const auto& alpha_val = opencl::internal::as_operand(eval(value_of(alpha)));
-  const auto& beta_val = opencl::internal::as_operand(eval(value_of(beta)));
-  const auto& phi_val = opencl::internal::as_operand(eval(value_of(phi)));
+  const auto& x_val = eval(value_of(x));
+  const auto& alpha_eval = eval(value_of(alpha));
+  const auto& alpha_val = opencl::internal::as_operand(alpha_eval);
+  const auto& beta_val = eval(value_of(beta));
+  const auto& phi_eval = eval(value_of(phi));
+  const auto& phi_val = opencl::internal::as_operand(phi_eval);
 
   // the kernel takes buffers: host scalars are copied to the device and device
   // scalars pass their own buffer
   const auto& y_val_cl = to_matrix_cl(y_val);
-  const auto& alpha_val_cl
-      = opencl::internal::as_kernel_buffer(eval(value_of(alpha)));
-  const auto& phi_val_cl
-      = opencl::internal::as_kernel_buffer(eval(value_of(phi)));
+  const auto& alpha_val_cl = opencl::internal::as_kernel_buffer(alpha_eval);
+  const auto& phi_val_cl = opencl::internal::as_kernel_buffer(phi_eval);
 
   const int local_size
       = opencl_kernels::neg_binomial_2_log_glm.get_option("LOCAL_SIZE_");

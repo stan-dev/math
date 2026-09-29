@@ -52,7 +52,6 @@ inline opencl::scalar_cl_return_t<T_y_cl, T_inv_scale_cl> exponential_lpdf(
   using std::isfinite;
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_inv_scale_cl>;
   static constexpr const char* function = "exponential_lpdf(OpenCL)";
-  using T_partials_return = partials_return_t<T_y_cl, T_inv_scale_cl>;
 
   check_consistent_sizes(function, "Random variable", y,
                          "Inverse scale parameter", beta);

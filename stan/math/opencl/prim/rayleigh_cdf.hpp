@@ -12,7 +12,6 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/opencl/prim/prod.hpp>
 #include <stan/math/opencl/scalar_cl_functions.hpp>
-#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -36,13 +35,11 @@ inline opencl::scalar_cl_return_t<T_y_cl, T_scale_cl> rayleigh_cdf(
     const T_y_cl& y, const T_scale_cl& sigma) {
   static constexpr const char* function = "rayleigh_cdf(OpenCL)";
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_scale_cl>;
-  using T_partials_return = partials_return_t<T_y_cl, T_scale_cl>;
   using std::isfinite;
   using std::isnan;
 
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          sigma);
-  const size_t N = max_size(y, sigma);
   if (size_zero(y, sigma)) {
     return T_return(1.0);
   }

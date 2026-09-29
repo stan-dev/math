@@ -35,7 +35,6 @@ template <bool propto, typename T_y_cl,
 inline opencl::scalar_cl_return_t<T_y_cl> std_normal_lpdf(const T_y_cl& y) {
   static constexpr const char* function = "std_normal_lpdf(OpenCL)";
   using T_return = opencl::scalar_cl_return_t<T_y_cl>;
-  using T_partials_return = partials_return_t<T_y_cl>;
   using std::isfinite;
   using std::isnan;
 

@@ -42,11 +42,9 @@ inline opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lpdf(
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
   using std::isnan;
   static constexpr const char* function = "gumbel_lpdf(OpenCL)";
-  using T_partials_return = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
 
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", beta);
-  const size_t N = max_size(y, mu, beta);
   if (size_zero(y, mu, beta)) {
     return T_return(0.0);
   }

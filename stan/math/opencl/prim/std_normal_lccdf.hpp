@@ -3,9 +3,6 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/prim/std_normal_lcdf.hpp>
-#include <stan/math/opencl/prim/partials_propagator.hpp>
-#include <stan/math/opencl/scalar_cl_functions.hpp>
-#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -26,7 +23,6 @@ template <typename T_y_cl,
           require_any_not_stan_scalar_t<T_y_cl>* = nullptr>
 inline opencl::scalar_cl_return_t<T_y_cl> std_normal_lccdf(const T_y_cl& y) {
   return std_normal_lcdf<internal::std_normal_lccdf_opencl_func>(-y);
-  using T_return = opencl::scalar_cl_return_t<T_y_cl>;
 }
 
 }  // namespace math

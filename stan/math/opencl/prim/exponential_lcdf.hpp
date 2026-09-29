@@ -37,13 +37,11 @@ inline opencl::scalar_cl_return_t<T_y_cl, T_inv_scale_cl> exponential_lcdf(
     const T_y_cl& y, const T_inv_scale_cl& beta) {
   static constexpr const char* function = "exponential_lcdf(OpenCL)";
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_inv_scale_cl>;
-  using T_partials_return = partials_return_t<T_y_cl, T_inv_scale_cl>;
   using std::isfinite;
   using std::isnan;
 
   check_consistent_sizes(function, "Random variable", y,
                          "Inverse scale parameter", beta);
-  const size_t N = max_size(y, beta);
   if (size_zero(y, beta)) {
     return T_return(0.0);
   }

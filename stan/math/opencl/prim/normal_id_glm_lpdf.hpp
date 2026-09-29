@@ -66,8 +66,6 @@ inline opencl::scalar_cl_return_t<T_y_cl, T_x_cl, T_alpha_cl, T_beta_cl,
                                   T_sigma_cl>
 normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
                    const T_beta_cl& beta, const T_sigma_cl& sigma) {
-  using T_partials_return
-      = partials_return_t<T_y_cl, T_x_cl, T_alpha_cl, T_beta_cl, T_sigma_cl>;
   using T_return = opencl::scalar_cl_return_t<T_y_cl, T_x_cl, T_alpha_cl,
                                               T_beta_cl, T_sigma_cl>;
   constexpr bool is_y_vector

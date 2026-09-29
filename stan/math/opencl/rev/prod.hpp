@@ -23,7 +23,10 @@ template <typename T,
 inline opencl::ScalarCl<var> prod(const var_value<T>& x) {
   return opencl::make_callback_scalar_cl(
       prod(value_of(x)), [x](const auto& res_adj, const auto& res_val) mutable {
-        x.adj() += elt_divide(res_adj * res_val, x.val());
+        x.adj()
+            += elt_divide(elt_multiply(opencl::internal::as_operand(res_adj),
+                                       opencl::internal::as_operand(res_val)),
+                          x.val());
       });
 }
 
