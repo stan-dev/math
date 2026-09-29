@@ -74,6 +74,13 @@ inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
   constexpr bool calc_beta = is_autodiff_v<T_scale_fail>;
   for (size_t n = 0; n < N; n++) {
     const auto y_dbl = y_vec.val(n);
+
+    // Explicit results for extreme values
+    // The gradients are technically ill-defined, but treated as zero
+    if (y_dbl >= 1.0) {
+      return ops_partials.build(negative_infinity());
+    }
+
     const auto alpha_dbl = alpha_vec.val(n);
     const auto beta_dbl = beta_vec.val(n);
     const auto betafunc_dbl = beta(alpha_dbl, beta_dbl);
