@@ -251,32 +251,38 @@ inline void block_matrix_sqrt(WRootMat& W_root,
   for (Eigen::Index i = 0; i < n_block; i++) {
     local_block
         = W.block(i * block_size, i * block_size, block_size, block_size);
-    if (!local_block.array().isFinite().all()) {
-      throw std::domain_error(
-          std::string("Error in block_matrix_sqrt: "
-                      "non-finite values detected in block diagonal "
-                      "starting at (")
-          + std::to_string(i) + ", " + std::to_string(i) + ")");
+    if (unlikely(!local_block.array().isFinite().all())) {
+      [](auto i) STAN_COLD_PATH {
+        throw std::domain_error(
+            std::string("Error in block_matrix_sqrt: "
+                        "non-finite values detected in block diagonal "
+                        "starting at (")
+            + std::to_string(i) + ", " + std::to_string(i) + ")");
+      }(i);
     }
     local_block_sqrt = 0.5 * (local_block + local_block.transpose());
     eigensolver.compute(local_block_sqrt);
-    if (eigensolver.info() != Eigen::Success) {
-      throw std::domain_error(
-          std::string("Error in block_matrix_sqrt: "
-                      "eigendecomposition failed for block diagonal "
-                      "starting at (")
-          + std::to_string(i) + ", " + std::to_string(i) + ")");
+    if (unlikely(eigensolver.info() != Eigen::Success)) {
+      [](auto i) STAN_COLD_PATH {
+        throw std::domain_error(
+            std::string("Error in block_matrix_sqrt: "
+                        "eigendecomposition failed for block diagonal "
+                        "starting at (")
+            + std::to_string(i) + ", " + std::to_string(i) + ")");
+      }(i);
     }
     const Eigen::VectorXd eigenvalues = eigensolver.eigenvalues();
     const double tolerance = block_size * std::numeric_limits<double>::epsilon()
                              * eigenvalues.cwiseAbs().maxCoeff();
-    if (eigenvalues.minCoeff() < -tolerance) {
-      throw std::domain_error(
-          std::string("Error in block_matrix_sqrt: block diagonal starting "
-                      "at (")
-          + std::to_string(i) + ", " + std::to_string(i)
-          + ") is not positive semi-definite (smallest eigenvalue "
-          + std::to_string(eigenvalues.minCoeff()) + ")");
+    if (unlikely(eigenvalues.minCoeff() < -tolerance)) {
+      [](auto&& i, auto&& eigenvalues) {
+        throw std::domain_error(
+            std::string("Error in block_matrix_sqrt: block diagonal starting "
+                        "at (")
+            + std::to_string(i) + ", " + std::to_string(i)
+            + ") is not positive semi-definite (smallest eigenvalue "
+            + std::to_string(eigenvalues.minCoeff()) + ")");
+      }(i, eigenvalues);
     }
     local_block_sqrt.noalias()
         = eigensolver.eigenvectors()
@@ -1142,7 +1148,8 @@ inline auto create_update_fun(ObjFun&& obj_fun, ThetaGradFun&& theta_grad_f,
       };
 }
 
-static STAN_THREADS_DEF std::once_flag fallback_warning;
+static STAN_THREADS_DEF std::once_flag fallback_warning_1_2;
+static STAN_THREADS_DEF std::once_flag fallback_warning_2_3;
 /**
  * For a latent Gaussian model with hyperparameters phi and
  * latent variables theta, and observations y, this function computes
@@ -1245,8 +1252,8 @@ inline auto laplace_marginal_density_est(
       throw_solver_failure("laplace_marginal_density", step_iter, failed, e);
     }
     std::call_once(
-        fallback_warning,
-        [](auto&&... args) {
+        fallback_warning_1_2,
+        [](auto&&... args) STAN_COLD_PATH {
           log_solver_fallback(std::forward<decltype(args)>(args)...);
         },
         msgs, "laplace_marginal_density", step_iter, std::move(failed),
@@ -1264,8 +1271,8 @@ inline auto laplace_marginal_density_est(
                            "solver 2 (Covariance-root Cholesky)", e);
     }
     std::call_once(
-        fallback_warning,
-        [](auto&&... args) {
+        fallback_warning_2_3,
+        [](auto&&... args) STAN_COLD_PATH {
           log_solver_fallback(std::forward<decltype(args)>(args)...);
         },
         msgs, "laplace_marginal_density", step_iter,
