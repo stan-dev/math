@@ -51,6 +51,7 @@
 #include <stan/math/rev/fun/elt_multiply.hpp>
 #include <stan/math/rev/fun/erf.hpp>
 #include <stan/math/rev/fun/erfc.hpp>
+#include <stan/math/rev/fun/erfcx.hpp>
 #include <stan/math/rev/fun/exp.hpp>
 #include <stan/math/rev/fun/exp2.hpp>
 #include <stan/math/rev/fun/expm1.hpp>
