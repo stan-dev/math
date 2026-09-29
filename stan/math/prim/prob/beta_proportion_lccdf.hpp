@@ -100,6 +100,13 @@ inline return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = y_vec.val(n);
+
+    // Explicit results for extreme values
+    // The gradients are technically ill-defined, but treated as zero
+    if (y_dbl >= 1.0) {
+      return ops_partials.build(negative_infinity());
+    }
+
     const T_partials_return mu_dbl = mu_vec.val(n);
     const T_partials_return kappa_dbl = kappa_vec.val(n);
     const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;

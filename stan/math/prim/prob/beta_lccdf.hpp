@@ -97,6 +97,13 @@ inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = y_vec.val(n);
+
+    // Explicit results for extreme values
+    // The gradients are technically ill-defined, but treated as zero
+    if (y_dbl >= 1.0) {
+      return ops_partials.build(negative_infinity());
+    }
+
     const T_partials_return alpha_dbl = alpha_vec.val(n);
     const T_partials_return beta_dbl = beta_vec.val(n);
     const T_partials_return betafunc_dbl = beta(alpha_dbl, beta_dbl);
