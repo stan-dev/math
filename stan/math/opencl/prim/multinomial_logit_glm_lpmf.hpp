@@ -122,14 +122,15 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
   decltype(auto) alpha_val = eval(value_of(alpha));
   decltype(auto) beta_val = eval(value_of(beta));
 
+  // y (N×K), x (N×M), alpha (1×K or N×K) and beta (M×K) generally differ in
+  // size, so they cannot share one multi-result kernel.
   auto validate_inputs = [&]() {
-    auto check_y = check_cl(function, "outcome counts", y_val, "nonnegative");
-    auto check_x = check_cl(function, "Design matrix", x_val, "finite");
-    auto check_alpha = check_cl(function, "Intercept", alpha_val,
-                                "less than positive infinity");
-    auto check_beta = check_cl(function, "Weight matrix", beta_val, "finite");
-    results(check_y, check_x, check_alpha, check_beta) = expressions(
-        y_val >= 0, isfinite(x_val), alpha_val < INFTY, isfinite(beta_val));
+    check_cl(function, "outcome counts", y_val, "nonnegative") = y_val >= 0;
+    check_cl(function, "Design matrix", x_val, "finite") = isfinite(x_val);
+    check_cl(function, "Intercept", alpha_val, "less than positive infinity")
+        = alpha_val < INFTY;
+    check_cl(function, "Weight matrix", beta_val, "finite")
+        = isfinite(beta_val);
   };
 
   if (N_classes == 0) {
