@@ -37,12 +37,12 @@ inline matrix_cl<return_type_t<T1, T2, T3>> gp_exponential_cov(
   int n_blocks = (x.cols() + block_size - 1) / block_size;
   int blocked_size = block_size * n_blocks;
   try {
-    opencl::internal::launch_scalar_param_kernel(
-        opencl_kernels::gp_exponential_cov,
-        opencl_kernels::gp_exponential_cov_scalar_cl,
+    opencl_kernels::gp_exponential_cov(
         cl::NDRange(blocked_size, blocked_size),
-        cl::NDRange(block_size, block_size), x_eval, res, sigma * sigma,
-        -1.0 / length_scale, x.cols(), x.rows());
+        cl::NDRange(block_size, block_size), x_eval, res,
+        opencl::internal::to_device_scalar(sigma * sigma),
+        opencl::internal::to_device_scalar(-1.0 / length_scale), x.cols(),
+        x.rows());
   } catch (const cl::Error& e) {
     check_opencl_error("gp_exponential_cov", e);
   }
@@ -83,12 +83,12 @@ inline matrix_cl<return_type_t<T1, T2, T3, T4>> gp_exponential_cov(
   int y_blocks = (y.cols() + block_size - 1) / block_size;
   int y_blocked_size = block_size * y_blocks;
   try {
-    opencl::internal::launch_scalar_param_kernel(
-        opencl_kernels::gp_exponential_cov_cross,
-        opencl_kernels::gp_exponential_cov_cross_scalar_cl,
+    opencl_kernels::gp_exponential_cov_cross(
         cl::NDRange(x_blocked_size, y_blocked_size),
-        cl::NDRange(block_size, block_size), x_eval, y_eval, res, sigma * sigma,
-        -1.0 / length_scale, x.cols(), y.cols(), x.rows());
+        cl::NDRange(block_size, block_size), x_eval, y_eval, res,
+        opencl::internal::to_device_scalar(sigma * sigma),
+        opencl::internal::to_device_scalar(-1.0 / length_scale), x.cols(),
+        y.cols(), x.rows());
   } catch (const cl::Error& e) {
     check_opencl_error("gp_exponential_cov_cross", e);
   }
@@ -119,12 +119,11 @@ inline matrix_cl<return_type_t<T1, T2, T3>> gp_exponential_cov(
   int n_blocks = (x.cols() + block_size - 1) / block_size;
   int blocked_size = block_size * n_blocks;
   try {
-    opencl::internal::launch_scalar_param_kernel(
-        opencl_kernels::gp_exponential_cov,
-        opencl_kernels::gp_exponential_cov_scalar_cl,
+    opencl_kernels::gp_exponential_cov(
         cl::NDRange(blocked_size, blocked_size),
-        cl::NDRange(block_size, block_size), x_eval, res, sigma * sigma, -1.0,
-        x.cols(), x.rows());
+        cl::NDRange(block_size, block_size), x_eval, res,
+        opencl::internal::to_device_scalar(sigma * sigma),
+        opencl::internal::to_device_scalar(-1.0), x.cols(), x.rows());
   } catch (const cl::Error& e) {
     check_opencl_error("gp_exponential_cov", e);
   }
@@ -165,12 +164,11 @@ inline matrix_cl<return_type_t<T1, T2, T3, T4>> gp_exponential_cov(
   int y_blocks = (y.cols() + block_size - 1) / block_size;
   int y_blocked_size = block_size * y_blocks;
   try {
-    opencl::internal::launch_scalar_param_kernel(
-        opencl_kernels::gp_exponential_cov_cross,
-        opencl_kernels::gp_exponential_cov_cross_scalar_cl,
+    opencl_kernels::gp_exponential_cov_cross(
         cl::NDRange(x_blocked_size, y_blocked_size),
-        cl::NDRange(block_size, block_size), x_eval, y_eval, res, sigma * sigma,
-        -1.0, x.cols(), y.cols(), x.rows());
+        cl::NDRange(block_size, block_size), x_eval, y_eval, res,
+        opencl::internal::to_device_scalar(sigma * sigma),
+        opencl::internal::to_device_scalar(-1.0), x.cols(), y.cols(), x.rows());
   } catch (const cl::Error& e) {
     check_opencl_error("gp_exponential_cov_cross", e);
   }

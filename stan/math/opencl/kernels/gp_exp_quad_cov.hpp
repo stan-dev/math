@@ -3,7 +3,6 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
-#include <stan/math/opencl/kernels/scalar_params.hpp>
 #include <string>
 
 namespace stan {
@@ -23,8 +22,9 @@ static constexpr const char* gp_exp_quad_cov_kernel_code = STRINGIFY(
      * @param element_size the number of doubles that make one element of x
      */
     __kernel void gp_exp_quad_cov(const __global double* x,
-                                  __global double* res, SCALAR_PARAM(sigma_sq),
-                                  SCALAR_PARAM(neg_half_inv_l_sq),
+                                  __global double* res,
+                                  const __global double* sigma_sq,
+                                  const __global double* neg_half_inv_l_sq,
                                   const int size, const int element_size) {
       const int i = get_global_id(0);
       const int j = get_global_id(1);
@@ -34,12 +34,11 @@ static constexpr const char* gp_exp_quad_cov_kernel_code = STRINGIFY(
           double d = x[i * element_size + k] - x[j * element_size + k];
           sum += d * d;
         }
-        double a = SCALAR_VALUE(sigma_sq)
-                   * exp(SCALAR_VALUE(neg_half_inv_l_sq) * sum);
+        double a = sigma_sq[0] * exp(neg_half_inv_l_sq[0] * sum);
         res[j * size + i] = a;
         res[i * size + j] = a;
       } else if (i == j) {
-        res[j * size + i] = SCALAR_VALUE(sigma_sq);
+        res[j * size + i] = sigma_sq[0];
       }
     }
     // \cond
@@ -49,16 +48,8 @@ static constexpr const char* gp_exp_quad_cov_kernel_code = STRINGIFY(
 /** \ingroup opencl_kernels
  * See the docs for \link kernels/gp_exp_quad_cov.hpp gp_exp_quad_cov() \endlink
  */
-const kernel_cl<in_buffer, out_buffer, double, double, int, int>
-    gp_exp_quad_cov("gp_exp_quad_cov",
-                    {scalar_params_by_value, gp_exp_quad_cov_kernel_code});
-
-/** \ingroup opencl_kernels
- * gp_exp_quad_cov with its scalar parameters passed as device scalars.
- */
 const kernel_cl<in_buffer, out_buffer, in_buffer, in_buffer, int, int>
-    gp_exp_quad_cov_scalar_cl("gp_exp_quad_cov", {scalar_params_buffer,
-                                                  gp_exp_quad_cov_kernel_code});
+    gp_exp_quad_cov("gp_exp_quad_cov", {gp_exp_quad_cov_kernel_code});
 
 // \cond
 static constexpr const char* gp_exp_quad_cov_cross_kernel_code = STRINGIFY(
@@ -81,9 +72,9 @@ static constexpr const char* gp_exp_quad_cov_cross_kernel_code = STRINGIFY(
      */
     __kernel void gp_exp_quad_cov_cross(
         const __global double* x1, const __global double* x2,
-        __global double* res, SCALAR_PARAM(sigma_sq),
-        SCALAR_PARAM(neg_half_inv_l_sq), const int size1, const int size2,
-        const int element_size) {
+        __global double* res, const __global double* sigma_sq,
+        const __global double* neg_half_inv_l_sq, const int size1,
+        const int size2, const int element_size) {
       const int i = get_global_id(0);
       const int j = get_global_id(1);
       if (i < size1 && j < size2) {
@@ -92,8 +83,7 @@ static constexpr const char* gp_exp_quad_cov_cross_kernel_code = STRINGIFY(
           double d = x1[i * element_size + k] - x2[j * element_size + k];
           sum += d * d;
         }
-        res[j * size1 + i] = SCALAR_VALUE(sigma_sq)
-                             * exp(SCALAR_VALUE(neg_half_inv_l_sq) * sum);
+        res[j * size1 + i] = sigma_sq[0] * exp(neg_half_inv_l_sq[0] * sum);
       }
     }
     // \cond
@@ -104,19 +94,10 @@ static constexpr const char* gp_exp_quad_cov_cross_kernel_code = STRINGIFY(
  * See the docs for \link kernels/gp_exp_quad_cov.hpp gp_exp_quad_cov_cross()
  * \endlink
  */
-const kernel_cl<in_buffer, in_buffer, out_buffer, double, double, int, int, int>
-    gp_exp_quad_cov_cross("gp_exp_quad_cov_cross",
-                          {scalar_params_by_value,
-                           gp_exp_quad_cov_cross_kernel_code});
-
-/** \ingroup opencl_kernels
- * gp_exp_quad_cov_cross with its scalar parameters passed as device scalars.
- */
 const kernel_cl<in_buffer, in_buffer, out_buffer, in_buffer, in_buffer, int,
                 int, int>
-    gp_exp_quad_cov_cross_scalar_cl("gp_exp_quad_cov_cross",
-                                    {scalar_params_buffer,
-                                     gp_exp_quad_cov_cross_kernel_code});
+    gp_exp_quad_cov_cross("gp_exp_quad_cov_cross",
+                          {gp_exp_quad_cov_cross_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

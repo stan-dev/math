@@ -1,7 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/prim.hpp>
 #include <stan/math/opencl/kernels/scalar_reduce.hpp>
-#include <stan/math/opencl/kernels/scalar_params.hpp>
 #include <stan/math/opencl/kernels/gp_exp_quad_cov.hpp>
 #include <stan/math/opencl/kernels/gp_exponential_cov.hpp>
 #include <stan/math/opencl/kernels/gp_matern32_cov.hpp>
@@ -54,19 +53,15 @@ TEST(ScalarClKernels, scalar_reduce_builds_as_opencl_1_2) {
       {stan::math::opencl_kernels::scalar_prod_op, scalar_reduce_kernel_code});
 }
 
-TEST(ScalarClKernels, scalar_param_kernels_build_as_opencl_1_2) {
+TEST(ScalarClKernels, gp_kernels_build_as_opencl_1_2) {
   namespace k = stan::math::opencl_kernels;
-  for (const char* prefix :
-       {k::scalar_params_by_value, k::scalar_params_buffer}) {
-    for (const char* code :
-         {k::gp_exp_quad_cov_kernel_code, k::gp_exp_quad_cov_cross_kernel_code,
-          k::gp_exponential_cov_kernel_code,
-          k::gp_exponential_cov_cross_kernel_code,
-          k::gp_matern32_cov_kernel_code, k::gp_matern32_cov_cross_kernel_code,
-          k::gp_matern52_cov_kernel_code,
-          k::gp_matern52_cov_cross_kernel_code}) {
-      build_cl12({prefix, code});
-    }
+  for (const char* code :
+       {k::gp_exp_quad_cov_kernel_code, k::gp_exp_quad_cov_cross_kernel_code,
+        k::gp_exponential_cov_kernel_code,
+        k::gp_exponential_cov_cross_kernel_code, k::gp_matern32_cov_kernel_code,
+        k::gp_matern32_cov_cross_kernel_code, k::gp_matern52_cov_kernel_code,
+        k::gp_matern52_cov_cross_kernel_code}) {
+    build_cl12({code});
   }
 }
 

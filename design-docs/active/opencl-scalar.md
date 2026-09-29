@@ -65,8 +65,8 @@ crossing is explicit and visible in the source.
   `select_events`, `assign_event` so it can be passed with
   `in_buffer` / `out_buffer` / `in_out_buffer` as `__global double*`.
 - GP covariance kernels (`gp_exp_quad_cov`, `gp_exponential_cov`,
-  `gp_matern32_cov`, `gp_matern52_cov`) gain pointer-parameter variants
-  for `ScalarCl<double>` hyperparameters. `fill_strict_tri` and
+  `gp_matern32_cov`, `gp_matern52_cov`) take their hyperparameters as
+  device buffers; host doubles are copied to the device before the launch. `fill_strict_tri` and
   `check_symmetric` take internal constants and are unchanged.
 
 ### Reduction
@@ -165,9 +165,11 @@ distributions migrate.
   operands.
 - `adjoint_results` reduces matrix-sized derivatives into `ScalarCl<var>`
   adjoints on the device.
-- Handwritten kernels with scalar parameters are written once with
-  `SCALAR_PARAM(name)` / `SCALAR_VALUE(name)` and compiled with the
-  `scalar_params_by_value` or `scalar_params_buffer` prefix (GP kernels).
+- The GP kernels take their scalar parameters only as device scalars
+  (`const __global double*`, read as `name[0]`). The host functions accept
+  host doubles or `ScalarCl<double>` and pass every scalar through
+  `opencl::internal::to_device_scalar`, which copies host doubles to the
+  device, so there is one kernel and one implementation per function.
 - Mixed operators `+ - * /` between device scalars and matrices, when an
   operand is autodiff, live in `stan::math::opencl` and forward to `add`,
   `subtract`, `multiply`, `divide`, `elt_divide`.
