@@ -53,8 +53,7 @@ struct neg_binomial_2_log_likelihood {
       auto log_eta = log(eta);
       auto lse = to_ref(log_sum_exp(theta_offset, log_eta));
 
-      return sum(
-                 binomial_coefficient_log(subtract(add(y_map, eta), 1.0),
+      return sum(binomial_coefficient_log(subtract(add(y_map, eta), 1.0),
                                           y_map))
              + sum(add(
                  // counts_per_group * (theta - log(eta + exp(theta)))
