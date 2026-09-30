@@ -3,23 +3,21 @@
 #include <test/unit/math/ad_tape_util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-#include <complex>
-#include <type_traits>
+
+// Eigen's `operator*` on `var` matrices is evaluated by Stan's free functions
+// (multiply, elt_multiply, scale_multiply, multiply_add). Each test checks
+// that an Eigen expression records the same nodes on the reverse-mode stack,
+// and has the same value, as the direct call to the function it should use.
 
 namespace {
 
 using stan::math::var;
-using stan::math::internal::is_stan_ad_product_hook_v;
-using cvar = std::complex<var>;
 template <typename S, int R = Eigen::Dynamic, int C = Eigen::Dynamic>
 using mat = Eigen::Matrix<S, R, C>;
 template <typename S>
 using vec = Eigen::Matrix<S, Eigen::Dynamic, 1>;
 template <typename S>
 using row_vec = Eigen::Matrix<S, 1, Eigen::Dynamic>;
-template <typename X, typename Y>
-using product_t = std::decay_t<decltype(std::declval<const X&>()
-                                        * std::declval<const Y&>())>;
 
 template <typename S>
 mat<S> make_mat(Eigen::Index rows, Eigen::Index cols, double offset) {
@@ -32,60 +30,25 @@ mat<S> make_mat(Eigen::Index rows, Eigen::Index cols, double offset) {
   return x;
 }
 
-template <typename Derived>
-var sum_of(const Eigen::MatrixBase<Derived>& x) {
-  var total = 0;
-  for (Eigen::Index j = 0; j < x.cols(); ++j) {
-    for (Eigen::Index i = 0; i < x.rows(); ++i) {
-      total += x.derived().coeff(i, j);
-    }
-  }
-  return total;
+/**
+ * Expect `via_eigen()` to record the same chain and nochain varis as
+ * `direct()` and to return the same values.
+ */
+template <typename Direct, typename ViaEigen>
+void expect_same_as_direct(const Direct& direct, const ViaEigen& via_eigen) {
+  const stan::test::tape_delta direct_delta;
+  const auto expected = direct();
+  const std::size_t direct_chain = direct_delta.chain();
+  const std::size_t direct_nochain = direct_delta.nochain();
+  const stan::test::tape_delta via_eigen_delta;
+  const auto actual = via_eigen();
+  EXPECT_EQ(via_eigen_delta.chain(), direct_chain);
+  EXPECT_EQ(via_eigen_delta.nochain(), direct_nochain);
+  EXPECT_MATRIX_NEAR(stan::math::value_of(actual),
+                     stan::math::value_of(expected), 1e-12);
 }
 
 }  // namespace
-
-TEST_F(AgradRev, eigen_product_hook_selects_var_products) {
-  EXPECT_TRUE((is_stan_ad_product_hook_v<product_t<mat<var>, mat<double>>>));
-  EXPECT_TRUE((is_stan_ad_product_hook_v<product_t<mat<double>, mat<var>>>));
-  EXPECT_TRUE((is_stan_ad_product_hook_v<product_t<mat<var>, mat<var>>>));
-  EXPECT_TRUE(
-      (is_stan_ad_product_hook_v<product_t<mat<var, 2, 2>, mat<var, 2, 2>>>));
-  EXPECT_TRUE((
-      is_stan_ad_product_hook_v<product_t<mat<var, 4, 4>, mat<double, 4, 4>>>));
-  EXPECT_TRUE((is_stan_ad_product_hook_v<product_t<mat<var>, vec<double>>>));
-  EXPECT_TRUE((is_stan_ad_product_hook_v<product_t<row_vec<var>, vec<var>>>));
-  EXPECT_TRUE((is_stan_ad_product_hook_v<product_t<vec<var>, row_vec<var>>>));
-  EXPECT_TRUE((is_stan_ad_product_hook_v<product_t<mat<cvar>, mat<var>>>));
-  EXPECT_TRUE((is_stan_ad_product_hook_v<
-               product_t<mat<std::complex<double>>, mat<cvar>>>));
-  EXPECT_TRUE(
-      (is_stan_ad_product_hook_v<
-          std::decay_t<decltype(std::declval<const mat<var>&>().lazyProduct(
-              std::declval<const mat<double>&>()))>>));
-  EXPECT_FALSE(
-      (is_stan_ad_product_hook_v<product_t<mat<double>, mat<double>>>));
-  EXPECT_FALSE((is_stan_ad_product_hook_v<
-                product_t<mat<double, 2, 2>, mat<double, 2, 2>>>));
-}
-
-TEST_F(AgradRev, eigen_product_hook_selects_var_cwise_products) {
-  using arr = Eigen::Array<var, Eigen::Dynamic, Eigen::Dynamic>;
-  using arr_d = Eigen::Array<double, Eigen::Dynamic, Eigen::Dynamic>;
-  EXPECT_TRUE((is_stan_ad_product_hook_v<product_t<arr, arr_d>>));
-  EXPECT_TRUE((is_stan_ad_product_hook_v<product_t<arr_d, arr>>));
-  EXPECT_TRUE((is_stan_ad_product_hook_v<product_t<arr, arr>>));
-  EXPECT_TRUE((is_stan_ad_product_hook_v<product_t<var, mat<double>>>));
-  EXPECT_TRUE((is_stan_ad_product_hook_v<product_t<mat<double>, var>>));
-  EXPECT_TRUE((is_stan_ad_product_hook_v<product_t<mat<var>, int>>));
-  EXPECT_TRUE((is_stan_ad_product_hook_v<product_t<double, mat<var>>>));
-  EXPECT_TRUE(
-      (is_stan_ad_product_hook_v<
-          std::decay_t<decltype(std::declval<const mat<var>&>().cwiseProduct(
-              std::declval<const mat<double>&>()))>>));
-  EXPECT_FALSE((is_stan_ad_product_hook_v<product_t<arr_d, arr_d>>));
-  EXPECT_FALSE((is_stan_ad_product_hook_v<product_t<double, mat<double>>>));
-}
 
 TEST_F(AgradRev, eigen_product_hook_double_products_unchanged) {
   const mat<double> a = make_mat<double>(3, 4, 0.2);
@@ -105,236 +68,154 @@ TEST_F(AgradRev, eigen_product_hook_double_products_unchanged) {
   EXPECT_EQ(stan::test::tape_size(), 0);
 }
 
-TEST_F(AgradRev, eigen_product_hook_matmul_one_callback) {
-  const Eigen::Index n = 5, k = 4, m = 3;
-  mat<var> a = make_mat<var>(n, k, 0.3);
-  const mat<double> b = make_mat<double>(k, m, -0.2);
-  stan::test::tape_delta delta;
-  mat<var> c = a * b;
-  EXPECT_EQ(delta.chain(), 1);
-  EXPECT_EQ(delta.nochain(), n * m);
-  const mat<double> expected = a.val() * b;
-  EXPECT_MATRIX_NEAR(c.val(), expected, 1e-12);
-  sum_of(c).grad();
-  // d sum(A * B) / dA = ones(n, m) * B^T
-  const mat<double> grad_a = mat<double>::Ones(n, m) * b.transpose();
-  EXPECT_MATRIX_NEAR(a.adj(), grad_a, 1e-12);
-}
-
-TEST_F(AgradRev, eigen_product_hook_matmul_var_var) {
-  const Eigen::Index n = 3, k = 4, m = 2;
-  mat<var> a = make_mat<var>(n, k, 0.3);
-  mat<var> b = make_mat<var>(k, m, -0.2);
-  stan::test::tape_delta delta;
-  mat<var> c = a * b;
-  EXPECT_EQ(delta.chain(), 1);
-  EXPECT_EQ(delta.nochain(), n * m);
-  sum_of(c).grad();
-  EXPECT_MATRIX_NEAR(a.adj(), mat<double>::Ones(n, m) * b.val().transpose(),
-                     1e-12);
-  EXPECT_MATRIX_NEAR(b.adj(), a.val().transpose() * mat<double>::Ones(n, m),
-                     1e-12);
-}
-
-TEST_F(AgradRev, eigen_product_hook_matmul_shapes) {
+TEST_F(AgradRev, eigen_product_hook_matrix_products_use_multiply) {
+  mat<var> a = make_mat<var>(5, 4, 0.3);
+  mat<var> b = make_mat<var>(4, 3, -0.2);
+  const mat<double> b_d = make_mat<double>(4, 3, -0.2);
   vec<var> v = make_mat<var>(4, 1, 0.1);
-  row_vec<var> rv = make_mat<var>(1, 4, 0.2);
-  const mat<double> a = make_mat<double>(3, 4, 0.3);
-  {
-    stan::test::tape_delta delta;
-    vec<var> av = a * v;
-    EXPECT_EQ(delta.chain(), 1);
-    EXPECT_EQ(delta.nochain(), 3);
-    EXPECT_MATRIX_NEAR(av.val(), a * v.val(), 1e-12);
-  }
-  {
-    stan::test::tape_delta delta;
-    var dot = (rv * v)(0, 0);
-    EXPECT_EQ(delta.chain(), 1);
-    EXPECT_EQ(delta.nochain(), 1);
-    EXPECT_NEAR(dot.val(), rv.val().dot(v.val()), 1e-12);
-  }
-  {
-    stan::test::tape_delta delta;
-    mat<var> outer = v * rv;
-    EXPECT_EQ(delta.chain(), 1);
-    EXPECT_EQ(delta.nochain(), 16);
-    EXPECT_MATRIX_NEAR(outer.val(), v.val() * rv.val(), 1e-12);
-  }
-  {
-    mat<var, 2, 2> f = make_mat<var>(2, 2, 0.4);
-    mat<double, 2, 2> g = make_mat<double>(2, 2, 0.1);
-    stan::test::tape_delta delta;
-    mat<var, 2, 2> fg = f * g;
-    mat<var, 2, 2> fg_lazy = f.lazyProduct(g);
-    EXPECT_EQ(delta.chain(), 2);
-    EXPECT_EQ(delta.nochain(), 8);
-    EXPECT_MATRIX_NEAR(fg.val(), f.val() * g, 1e-12);
-    EXPECT_MATRIX_NEAR(fg_lazy.val(), f.val() * g, 1e-12);
-  }
+  row_vec<var> rv = make_mat<var>(1, 5, 0.2);
+  expect_same_as_direct([&] { return stan::math::multiply(a, b); },
+                        [&] { return mat<var>(a * b); });
+  expect_same_as_direct([&] { return stan::math::multiply(a, b_d); },
+                        [&] { return mat<var>(a * b_d); });
+  expect_same_as_direct(
+      [&] { return stan::math::multiply(b_d.transpose(), a.transpose()); },
+      [&] { return mat<var>(b_d.transpose() * a.transpose()); });
+  expect_same_as_direct([&] { return stan::math::multiply(a, v); },
+                        [&] { return vec<var>(a * v); });
+  expect_same_as_direct([&] { return stan::math::multiply(v, rv); },
+                        [&] { return mat<var>(v * rv); });
+  expect_same_as_direct([&] { return stan::math::multiply(a, b); },
+                        [&] { return mat<var>(a.lazyProduct(b)); });
+  expect_same_as_direct(
+      [&] {
+        mat<var> c(5, 3);
+        c.noalias() = stan::math::multiply(a, b);
+        return c;
+      },
+      [&] {
+        mat<var> c(5, 3);
+        c.noalias() = a * b;
+        return c;
+      });
 }
 
-TEST_F(AgradRev, eigen_product_hook_assignment_forms) {
+TEST_F(AgradRev, eigen_product_hook_fixed_size_products_use_multiply) {
+  mat<var, 2, 2> f = make_mat<var>(2, 2, 0.4);
+  const mat<double, 2, 2> g = make_mat<double>(2, 2, 0.1);
+  mat<var, 4, 4> h = make_mat<var>(4, 4, -0.3);
+  expect_same_as_direct([&] { return stan::math::multiply(f, g); },
+                        [&] { return mat<var, 2, 2>(f * g); });
+  expect_same_as_direct([&] { return stan::math::multiply(h, h); },
+                        [&] { return mat<var, 4, 4>(h * h); });
+}
+
+TEST_F(AgradRev, eigen_product_hook_inner_product_uses_multiply) {
+  row_vec<var> rv = make_mat<var>(1, 4, 0.2);
+  vec<var> v = make_mat<var>(4, 1, 0.1);
+  const stan::test::tape_delta direct_delta;
+  const var expected = stan::math::multiply(rv, v);
+  const std::size_t direct_total = direct_delta.total();
+  const stan::test::tape_delta via_eigen_delta;
+  const var actual = (rv * v)(0, 0);
+  EXPECT_EQ(via_eigen_delta.total(), direct_total);
+  EXPECT_NEAR(actual.val(), expected.val(), 1e-12);
+}
+
+TEST_F(AgradRev, eigen_product_hook_cwise_products_use_elt_multiply) {
+  mat<var> x = make_mat<var>(4, 3, 0.3);
+  mat<var> y = make_mat<var>(4, 3, -0.4);
+  const mat<double> y_d = make_mat<double>(4, 3, -0.4);
+  expect_same_as_direct([&] { return stan::math::elt_multiply(x, y); },
+                        [&] { return mat<var>(x.array() * y.array()); });
+  expect_same_as_direct([&] { return stan::math::elt_multiply(x, y_d); },
+                        [&] { return mat<var>(x.cwiseProduct(y_d)); });
+}
+
+TEST_F(AgradRev, eigen_product_hook_scalar_products_use_multiply) {
+  const mat<double> a = make_mat<double>(3, 2, 0.1);
+  mat<var> a_v = make_mat<var>(3, 2, 0.1);
+  var s = 1.5;
+  expect_same_as_direct([&] { return stan::math::multiply(s, a); },
+                        [&] { return mat<var>(s * a); });
+  expect_same_as_direct([&] { return stan::math::multiply(s, a); },
+                        [&] { return mat<var>(a * s); });
+  expect_same_as_direct([&] { return stan::math::multiply(2.0, a_v); },
+                        [&] { return mat<var>(a_v * 2); });
+  expect_same_as_direct([&] { return stan::math::multiply(s, a_v); },
+                        [&] { return mat<var>((a_v.array() * s).matrix()); });
+}
+
+TEST_F(AgradRev, eigen_product_hook_scaled_products_use_scale_multiply) {
+  const mat<double> a = make_mat<double>(3, 4, 0.1);
+  mat<var> b = make_mat<var>(4, 2, -0.3);
+  var s = 0.7;
+  expect_same_as_direct([&] { return stan::math::scale_multiply(s, a, b); },
+                        [&] { return mat<var>(s * (a * b)); });
+  expect_same_as_direct([&] { return stan::math::scale_multiply(s, a, b); },
+                        [&] { return mat<var>((a * b) * s); });
+  expect_same_as_direct([&] { return stan::math::scale_multiply(s, a, b); },
+                        [&] { return mat<var>((s * a) * b); });
+  expect_same_as_direct([&] { return stan::math::scale_multiply(s, a, b); },
+                        [&] { return mat<var>(a * (b * s)); });
+}
+
+TEST_F(AgradRev, eigen_product_hook_assignments_use_multiply_add) {
   mat<var> a = make_mat<var>(3, 3, 0.3);
   mat<var> b = make_mat<var>(3, 3, -0.1);
   mat<var> c = make_mat<var>(3, 3, 0.05);
-  const mat<double> c0 = c.val();
-  {
-    stan::test::tape_delta delta;
-    mat<var> d(3, 3);
-    d.noalias() = a * b;
-    EXPECT_EQ(delta.chain(), 1);
-    EXPECT_EQ(delta.nochain(), 9);
-  }
-  {
-    stan::test::tape_delta delta;
-    c += a * b;
-    // one callback for the product plus one vari per coefficient for +=
-    EXPECT_EQ(delta.chain(), 1 + 9);
-    EXPECT_EQ(delta.nochain(), 9);
-    EXPECT_MATRIX_NEAR(c.val(), c0 + a.val() * b.val(), 1e-12);
-  }
-  {
-    // aliasing: the product is evaluated before the destination is written
-    mat<var> e = a;
-    e = e * b;
-    EXPECT_MATRIX_NEAR(e.val(), a.val() * b.val(), 1e-12);
-  }
+  expect_same_as_direct([&] { return stan::math::multiply_add(a, b, c); },
+                        [&] {
+                          mat<var> d = c;
+                          d.noalias() += a * b;
+                          return d;
+                        });
+  expect_same_as_direct([&] { return stan::math::multiply_add(a, b, c); },
+                        [&] { return mat<var>(c + a * b); });
+  expect_same_as_direct(
+      [&] { return stan::math::subtract(c, stan::math::multiply(a, b)); },
+      [&] {
+        mat<var> d = c;
+        d.noalias() -= a * b;
+        return d;
+      });
+  // Without noalias() Eigen assumes the product may alias the destination,
+  // so it evaluates the product into a temporary first and then adds it
+  // coefficient by coefficient.
+  expect_same_as_direct(
+      [&] {
+        mat<var> d = c;
+        d += mat<var>(stan::math::multiply(a, b));
+        return d;
+      },
+      [&] {
+        mat<var> d = c;
+        d += a * b;
+        return d;
+      });
 }
 
-TEST_F(AgradRev, eigen_product_hook_cwise_one_callback) {
-  const Eigen::Index n = 4;
-  vec<var> x = make_mat<var>(n, 1, 0.3);
-  vec<var> y = make_mat<var>(n, 1, -0.4);
-  stan::test::tape_delta delta;
-  vec<var> z = (x.array() * y.array()).matrix();
-  EXPECT_EQ(delta.chain(), 1);
-  EXPECT_EQ(delta.nochain(), n);
-  sum_of(z).grad();
-  EXPECT_MATRIX_NEAR(x.adj(), y.val(), 1e-12);
-  EXPECT_MATRIX_NEAR(y.adj(), x.val(), 1e-12);
+TEST_F(AgradRev, eigen_product_hook_aliasing) {
+  mat<var> a = make_mat<var>(3, 3, 0.3);
+  mat<var> b = make_mat<var>(3, 3, -0.1);
+  mat<var> e = a;
+  e = e * b;
+  EXPECT_MATRIX_NEAR(e.val(), a.val() * b.val(), 1e-12);
+  mat<var> x = make_mat<var>(3, 1, 0.2);
+  mat<var> x0 = x;
+  x = x.cwiseProduct(x);
+  EXPECT_MATRIX_NEAR(x.val(), x0.val().cwiseProduct(x0.val()), 1e-12);
 }
 
-TEST_F(AgradRev, eigen_product_hook_scalar_times_matrix) {
-  const mat<double> a = make_mat<double>(3, 2, 0.1);
-  var s = 1.5;
-  {
-    stan::test::tape_delta delta;
-    mat<var> c = s * a;
-    EXPECT_EQ(delta.chain(), 1);
-    EXPECT_EQ(delta.nochain(), 6);
-    EXPECT_MATRIX_NEAR(c.val(), 1.5 * a, 1e-12);
-    sum_of(c).grad();
-    EXPECT_NEAR(s.adj(), a.sum(), 1e-12);
-  }
-  stan::math::set_zero_all_adjoints();
-  mat<var> av = a;
-  {
-    stan::test::tape_delta delta;
-    mat<var> c = av * 2;
-    EXPECT_EQ(delta.chain(), 1);
-    EXPECT_EQ(delta.nochain(), 6);
-    sum_of(c).grad();
-    EXPECT_MATRIX_NEAR(av.adj(), mat<double>::Constant(3, 2, 2.0), 1e-12);
-  }
-}
-
-TEST_F(AgradRev, eigen_product_hook_scaled_products_fuse) {
+TEST_F(AgradRev, eigen_product_hook_gradients) {
   const Eigen::Index n = 3, k = 4, m = 2;
-  const mat<double> a = make_mat<double>(n, k, 0.1);
-  mat<var> b = make_mat<var>(k, m, -0.3);
-  var s = 0.7;
-  const mat<double> expected = 0.7 * (a * b.val());
-  {
-    stan::test::tape_delta delta;
-    mat<var> c = s * (a * b);
-    EXPECT_EQ(delta.chain(), 1);
-    EXPECT_EQ(delta.nochain(), n * m);
-    EXPECT_MATRIX_NEAR(c.val(), expected, 1e-12);
-    sum_of(c).grad();
-    EXPECT_NEAR(s.adj(), (a * b.val()).sum(), 1e-12);
-    EXPECT_MATRIX_NEAR(b.adj(), 0.7 * a.transpose() * mat<double>::Ones(n, m),
-                       1e-12);
-  }
-  {
-    stan::test::tape_delta delta;
-    mat<var> c = (a * b) * s;
-    EXPECT_EQ(delta.chain(), 1);
-    EXPECT_EQ(delta.nochain(), n * m);
-    EXPECT_MATRIX_NEAR(c.val(), expected, 1e-12);
-  }
-  {
-    stan::test::tape_delta delta;
-    mat<var> c = (s * a) * b;
-    EXPECT_EQ(delta.chain(), 1);
-    EXPECT_EQ(delta.nochain(), n * m);
-    EXPECT_MATRIX_NEAR(c.val(), expected, 1e-12);
-  }
-  {
-    stan::test::tape_delta delta;
-    mat<var> c = a * (b * s);
-    EXPECT_EQ(delta.chain(), 1);
-    EXPECT_EQ(delta.nochain(), n * m);
-    EXPECT_MATRIX_NEAR(c.val(), expected, 1e-12);
-  }
-  {
-    mat<var> d = make_mat<var>(n, m, 0.2);
-    stan::test::tape_delta delta;
-    mat<var> c = d + s * (a * b);
-    // one product callback plus one vari per coefficient for the sum
-    EXPECT_EQ(delta.chain(), 1 + n * m);
-    EXPECT_EQ(delta.nochain(), n * m);
-    EXPECT_MATRIX_NEAR(c.val(), d.val() + expected, 1e-12);
-  }
-}
-
-TEST_F(AgradRev, eigen_product_hook_scales_are_small) {
-  // every product callback captures its scalar factors by value, so they
-  // must not embed storage for the factors themselves
-  EXPECT_LE(sizeof(stan::math::internal::rev_product_scales<double>),
-            4 * sizeof(void*));
-  EXPECT_LE(
-      sizeof(stan::math::internal::rev_product_scales<std::complex<double>>),
-      5 * sizeof(void*));
-}
-
-TEST_F(AgradRev, eigen_product_hook_many_autodiff_scales) {
-  const mat<double> a = make_mat<double>(2, 3, 0.1);
-  const mat<double> b = make_mat<double>(3, 2, -0.2);
-  var s1 = 0.5, s2 = 2.0, s3 = -1.5;
-  mat<var> c = s1 * (s2 * a) * (b * s3);
-  const double scale = 0.5 * 2.0 * -1.5;
-  EXPECT_MATRIX_NEAR(c.val(), scale * (a * b), 1e-12);
-  sum_of(c).grad();
-  const double total = (a * b).sum();
-  EXPECT_NEAR(s1.adj(), 2.0 * -1.5 * total, 1e-12);
-  EXPECT_NEAR(s2.adj(), 0.5 * -1.5 * total, 1e-12);
-  EXPECT_NEAR(s3.adj(), 0.5 * 2.0 * total, 1e-12);
-}
-
-TEST_F(AgradRev, eigen_product_hook_complex_matmul) {
-  mat<cvar> a(2, 2);
-  a << cvar(1.0, 0.5), cvar(-0.3, 0.2), cvar(0.4, -1.0), cvar(2.0, 0.1);
-  mat<std::complex<double>> b(2, 1);
-  b << std::complex<double>(0.5, -0.25), std::complex<double>(1.5, 0.75);
-  stan::test::tape_delta delta;
-  mat<cvar> c = a * b;
-  EXPECT_EQ(delta.chain(), 1);
-  EXPECT_EQ(delta.nochain(), 4);
-  mat<std::complex<double>> a_val(2, 2);
-  for (Eigen::Index j = 0; j < 2; ++j) {
-    for (Eigen::Index i = 0; i < 2; ++i) {
-      a_val(i, j) = {a(i, j).real().val(), a(i, j).imag().val()};
-    }
-  }
-  const mat<std::complex<double>> expected = a_val * b;
-  for (Eigen::Index i = 0; i < 2; ++i) {
-    EXPECT_NEAR(c(i, 0).real().val(), expected(i, 0).real(), 1e-12);
-    EXPECT_NEAR(c(i, 0).imag().val(), expected(i, 0).imag(), 1e-12);
-  }
-  // d re(c_0) / d re(a_00) = re(b_0), d re(c_0) / d im(a_00) = -im(b_0)
-  c(0, 0).real().grad();
-  EXPECT_NEAR(a(0, 0).real().adj(), b(0).real(), 1e-12);
-  EXPECT_NEAR(a(0, 0).imag().adj(), -b(0).imag(), 1e-12);
-  EXPECT_NEAR(a(1, 0).real().adj(), 0.0, 1e-12);
+  mat<var> a = make_mat<var>(n, k, 0.3);
+  mat<var> b = make_mat<var>(k, m, -0.2);
+  var s = 0.5;
+  mat<var> c = s * (a * b);
+  stan::math::sum(c).grad();
+  const mat<double> ones = mat<double>::Ones(n, m);
+  EXPECT_NEAR(s.adj(), (a.val() * b.val()).sum(), 1e-12);
+  EXPECT_MATRIX_NEAR(a.adj(), 0.5 * ones * b.val().transpose(), 1e-12);
+  EXPECT_MATRIX_NEAR(b.adj(), 0.5 * a.val().transpose() * ones, 1e-12);
 }

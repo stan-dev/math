@@ -303,6 +303,29 @@ struct ternary_evaluator<
 #endif
 
 /**
+ * Coefficient-wise products and products with a scalar of `var` with `var`,
+ * `double` or `int` are computed by `elt_multiply`, `multiply` or
+ * `scale_multiply` (see stan/math/prim/meta/eigen_product_evaluator_hooks.hpp).
+ */
+#define STAN_REV_NO_TPARAMS()
+STAN_EIGEN_AD_CWISE_PRODUCT_EVALUATOR(STAN_REV_NO_TPARAMS, stan::math::var,
+                                      stan::math::var)
+STAN_EIGEN_AD_CWISE_PRODUCT_EVALUATOR(STAN_REV_NO_TPARAMS, stan::math::var,
+                                      double)
+STAN_EIGEN_AD_CWISE_PRODUCT_EVALUATOR(STAN_REV_NO_TPARAMS, double,
+                                      stan::math::var)
+STAN_EIGEN_AD_CWISE_PRODUCT_EVALUATOR(STAN_REV_NO_TPARAMS, stan::math::var, int)
+STAN_EIGEN_AD_CWISE_PRODUCT_EVALUATOR(STAN_REV_NO_TPARAMS, int, stan::math::var)
+
+/**
+ * Products assigned to (`=`, `+=`, `-=`) a destination with `var` scalars are
+ * computed by `multiply`, `scale_multiply`, `multiply_add` or `subtract` (see
+ * stan/math/prim/meta/eigen_product_evaluator_hooks.hpp).
+ */
+STAN_EIGEN_AD_PRODUCT_ASSIGNMENT(STAN_REV_NO_TPARAMS, stan::math::var)
+#undef STAN_REV_NO_TPARAMS
+
+/**
  * Enable linear access of inputs when using read_vi_val_adj.
  */
 template <typename EigVar, typename EigVari, typename EigDbl>
@@ -504,6 +527,5 @@ struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
 };
 }  // namespace internal
 }  // namespace Eigen
-#include <stan/math/rev/core/eigen_product_hooks.hpp>
 
 #endif

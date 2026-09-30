@@ -253,6 +253,5 @@ struct ternary_evaluator<
 }  // namespace internal
 
 }  // namespace Eigen
-#include <stan/math/fwd/core/eigen_product_hooks.hpp>
 
 #endif

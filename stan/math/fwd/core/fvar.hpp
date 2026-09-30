@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_FWD_CORE_FVAR_HPP
 #define STAN_MATH_FWD_CORE_FVAR_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
 #include <ostream>
@@ -256,16 +255,6 @@ struct fvar {
     return os << v.val_;
   }
 };
-
-namespace internal {
-/**
- * Eigen products of `fvar<T>` scalars are evaluated by Stan (see
- * stan/math/prim/meta/eigen_product_evaluator_hooks.hpp). Declared with
- * `fvar` itself so every translation unit that uses `fvar` agrees.
- */
-template <typename T>
-struct is_stan_ad_product_scalar<fvar<T>> : std::true_type {};
-}  // namespace internal
 
 }  // namespace math
 }  // namespace stan
