@@ -87,7 +87,7 @@ t_3 &= \frac{t_2}{t_1}
 ### Writing the function
 
 
-So now let's add the lpdf function in `stan/math/prim/dist/new_normal_lpdf.hpp`.
+So now let's add the lpdf function in `stan/math/prim/prob/new_normal_lpdf.hpp`.
 First we'll go over what we have to do before we start doing any math. We'll be
 breaking down Stan's current `normal_lpdf` function which you can find [here](https://github.com/stan-dev/math/blob/develop/stan/math/prim/prob/normal_lpdf.hpp).
 
@@ -98,13 +98,18 @@ breaking down Stan's current `normal_lpdf` function which you can find [here](ht
 /** \ingroup prob_dists
  * Docs describing the templates and arguments
  */
-template <bool propto, typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
-                                                      const T_loc& mu,
-                                                      const T_scale& sigma) {}
+template <bool propto, typename T_y, typename T_loc, typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale>* = nullptr>
+inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
+                                                      T_scale&& sigma) {}
 ```
 
 Each of the input arguments represent the inputs to the `Normal` function we wrote out above.
+The arguments are taken as forwarding references (`T_y&&`) so that temporaries
+can be moved into the function and passed along with `std::forward` instead of copied.
+The `require_*` template parameter keeps this overload from being chosen for
+OpenCL kernel generator expressions, which have their own implementation.
 The template parameters for univariate distributions are very general and they
 must work for all of Stan's scalar types
 `double`, `var`, and `fvar<T>` while accepting mixtures of scalars and vectors.
@@ -126,20 +131,22 @@ At the start of the function we need to take each argument, deduce whether
 it is an unevaluated Eigen expression, and extract the values from them and then
 convert them into `Eigen::Array` types. `ref_type_t` is the return type of `to_ref()`
 which is explained in the [getting started guide](@ref getting_started).
-`ret_type_if_t<>` will conditionally evaluate Eigen expressions if both the
-Eigen type passed is an Eigen expression _and_ the compile time conditional
-passed to the function is also `true`.
+`ref_type_if_not_constant_t<T>` will evaluate an Eigen expression only if `T`
+is an Eigen expression _and_ it holds autodiff types (it is not constant), since
+only then will the argument be read more than once. We also declare the name of
+the function, which is used in the error messages of the `check_*` functions.
 
 ```cpp
 // Making aliases for partials and unevaluated expressions
 using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
+using T_y_ref = ref_type_if_not_constant_t<T_y>;
+using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
+using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
+static constexpr const char* function = "normal_lpdf";
 // Evaluating unevaluated eigen expressions
-T_y_ref y_ref = y;
-T_mu_ref mu_ref = mu;
-T_sigma_ref sigma_ref = sigma;
+T_y_ref y_ref = std::forward<T_y>(y);
+T_mu_ref mu_ref = std::forward<T_loc>(mu);
+T_sigma_ref sigma_ref = std::forward<T_scale>(sigma);
 // Extracting values from arguments
 decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
 decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
@@ -152,7 +159,9 @@ decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
 Then we need to check that all the vector inputs sizes match, and then check
 that each of the inputs satisfies the conditions of the distribution. For the
 normal distribution we need to check that `y` does not contain nan values,
-`mu` is finite, and `sigma` is positive.
+`mu` is finite, and `sigma` is positive. In `normal_lpdf` the
+`check_consistent_sizes()` call comes before the arguments are forwarded into
+`y_ref`, `mu_ref` and `sigma_ref`, since it only needs their sizes.
 
 ```cpp
 check_consistent_sizes(function, "Random variable", y, "Location parameter",
@@ -160,10 +169,10 @@ check_consistent_sizes(function, "Random variable", y, "Location parameter",
 check_not_nan(function, "Random variable", y_val);
 check_finite(function, "Location parameter", mu_val);
 check_positive(function, "Scale parameter", sigma_val);
-if (size_zero(y, mu, sigma)) {
+if (size_zero(y_ref, mu_ref, sigma_ref)) {
   return 0.0;
 }
-if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+if constexpr (!include_summand<propto, T_y, T_loc, T_scale>::value) {
   return 0.0;
 }
 
@@ -184,36 +193,41 @@ Our goal is to calculate the partial adjoints using our stuff above, but we only
 want to bother ourselves to calculate adjoints of parameters
 which are not constant (`double`). There's some more technical bits to building
 the log joint probability, but those are all hidden away in the
-`operands_and_partials` class so we won't cover those here. For now you can take
-the evaluated inputs and pass them to the `operands_and_partials` class
+`partials_propagator` class so we won't cover those here. For now you can take
+the evaluated inputs and pass them to `make_partials_propagator()`
 
 ```cpp
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
-      y_ref, mu_ref, sigma_ref);
+  auto ops_partials = make_partials_propagator(y_ref, mu_ref, sigma_ref);
 ```
 
 This sets up each of the input operand's partials so that we only store and calculate
 the ones we need.
 
--------------------------------------
+#### The partials_propagator API
 
-On a side note it would be nice to have a helper function like `make_ops_partials`
-which would construct that class and then we could simply write
+`make_partials_propagator()` lives in `stan/math/prim/functor/partials_propagator.hpp`,
+with the reverse and forward mode specializations in
+`stan/math/rev/functor/partials_propagator.hpp` and
+`stan/math/fwd/functor/partials_propagator.hpp`. The object it returns has one
+edge per operand, in the order they were passed. The edges are accessed with
+free functions whose index is 0-based, so the first operand is edge 0.
 
-```cpp
-auto ops_partials = make_ops_partials(y_ref, mu_ref, sigma_ref);
-```
+- `partials<I>(ops_partials)` returns the partials of the `I`th operand. For a
+  scalar operand this is a scalar; for a container it is a container of the
+  same shape.
+- `partials_vec<I>(ops_partials)` returns the partials of the `I`th operand
+  when that operand is a `std::vector` of vectors or matrices, as in the
+  multivariate distributions (see `dirichlet_lpdf`). Index it with `[i]` to get
+  the partials of the `i`th element.
+- `edge<I>(ops_partials)` returns the whole edge for the rare cases where you
+  need more than its partials.
+- `ops_partials.build(logp)` returns the final value with the partials
+  attached, as a `double`, `var` or `fvar` depending on the operand types.
 
-This would let us also cleanup the aliases for the unevaluated Eigen expressions
-so we could use `to_ref_if()` such as
-
-```cpp
-decltype(auto) y_ref = to_ref_if<!is_constant<T_y>::value>(y);
-decltype(auto) mu_ref = to_ref_if<!is_constant<T_mu>::value>(mu);
-decltype(auto) sigma_ref = to_ref_if<!is_constant<T_sigma>::value>(sigma);
-```
-
---------------------------------------
+For operands which are constant (`double`) the edges are empty and writes to
+them compile away. Older code uses `operands_and_partials` with `edge1_`,
+`edge2_`, ... members. That class is legacy, so use `partials_propagator` in
+new code.
 
 
 There's two ways of doing the math, one using a simple loop and another utilizing
@@ -241,18 +255,18 @@ But with that now we can get the maximum size of the input arguments and run a
 loop calculating the partials for each input argument's values.
 
 ```cpp
-size_t N = max_size(y, mu, sigma);
+size_t N = max_size(y_ref, mu_ref, sigma_ref);
 // Stores the accumulated value from the lpdf from operands
 T_partials_return logp(0.0);
 constexpr double NEGATIVE_HALF = -0.5;
 // Include constant if user asked for them.
-if (include_summand<propto>::value) {
+if constexpr (include_summand<propto>::value) {
   logp += NEG_LOG_SQRT_TWO_PI * N;
 }
 for (size_t n = 0; n < N; n++) {
   // Do the intermediate calculations from above
   const T_partials_return y_dbl = y_vec.val(n);
-  const T_partials_return mu_dbl = mu_vec.val(n));
+  const T_partials_return mu_dbl = mu_vec.val(n);
   const T_partials_return inv_sigma = 1.0 / sigma_vec.val(n);
   const T_partials_return log_sigma = log(sigma_vec.val(n));
 
@@ -262,20 +276,20 @@ for (size_t n = 0; n < N; n++) {
       = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
 
   // Include constants if user asked for them.
-  if (include_summand<propto, T_scale>::value) {
+  if constexpr (include_summand<propto, T_scale>::value) {
     logp -= log_sigma;
   }
   logp += NEGATIVE_HALF * y_minus_mu_over_sigma_squared;
   // Add partial calculations to each edge
   T_partials_return scaled_diff = inv_sigma * y_minus_mu_over_sigma;
-  if (!is_constant<T_y>::value) {
-    ops_partials.edge1_.partials_[n] -= scaled_diff;
+  if constexpr (is_autodiff_v<T_y>) {
+    partials<0>(ops_partials)[n] -= scaled_diff;
   }
-  if (!is_constant<T_loc>::value) {
-    ops_partials.edge2_.partials_[n] += scaled_diff;
+  if constexpr (is_autodiff_v<T_loc>) {
+    partials<1>(ops_partials)[n] += scaled_diff;
   }
-  if (!is_constant<T_scale>::value) {
-    ops_partials.edge3_.partials_[n]
+  if constexpr (is_autodiff_v<T_scale>) {
+    partials<2>(ops_partials)[n]
         += -inv_sigma + inv_sigma * y_minus_mu_over_sigma_squared;
   }
 }
@@ -287,35 +301,35 @@ The `logp` is used to accumulate the log probability density function's value,
 where `propto` is used to decide whether or not that value should have constants
 added or dropped.
 
-The odd bits here are mostly the `if`s that include
-`include_summand<propto>` and `!is_constant_all<T_loc>`. We want to
+The odd bits here are mostly the `if constexpr`s that include
+`include_summand<propto>` and `is_autodiff_v<T_loc>`. We want to
 only compute the partials and accumulate the constants if those values are not
-constant (`double`), so we have an if statement here, which since the conditional
-is a type trait whose value is known at compile time we won't pay for any of these
-if they are constant. And the compiler will remove the ifs that are false during
-the dead code elimination phase of optimization.
+constant (`double`). Since the conditionals are type traits whose values are known
+at compile time, `if constexpr` discards the false branches before they are
+compiled, so we don't pay for any of them when the inputs are constant.
 
-We collect the partials for each of our inputs via their respective `edge*_`
-in the `operands_and_partials` class. The first argument will have `edge1_`, the
-second `edge2_` and so on. One important question to ask here is, what if the edge is a
-scalar? It seems odd that we are able to call `partials_[n]` when the operand can be
-either a vector or scalar. Under the hood, `operands_and_partials` wraps the partials for `Scalar` types
+We collect the partials for each of our inputs with `partials<I>(ops_partials)`,
+where `I` is the 0-based position of the operand passed to
+`make_partials_propagator()`. The first argument is `partials<0>`, the
+second `partials<1>` and so on. One important question to ask here is, what if the edge is a
+scalar? It seems odd that we are able to call `[n]` on the partials when the operand can be
+either a vector or scalar. Under the hood, `partials_propagator` wraps the partials for `Scalar` types
 in what's called a [`broadcast_array`](https://github.com/stan-dev/math/blob/develop/stan/math/prim/functor/broadcast_array.hpp)
 which has an overloaded `operator[]` for scalars such that it just simply returns back the partials scalar.
 Similarly, `broadcast_array` has an overloaded `operator=` which when assigning a vector to the partial the overloaded `operator=`
 will sum the vector before assigning it to the partial.
 
 ```cpp
-if (!is_constant<T_loc>::value) {
-  // pretend partials_ is a scalar and scaled_diff is a vector
-  ops_partials.edge2_.partials_ = scaled_diff;
+if constexpr (is_autodiff_v<T_loc>) {
+  // pretend the partials are a scalar and scaled_diff is a vector
+  partials<1>(ops_partials) = scaled_diff;
 }
 ```
 
 Finally once the loop is finished we call `ops_partials.build()` passing it
 the joint log probability value. For reverse mode this will place a callback
-on the callback stack that takes the edge for each `partial_` and accumulates
-them into operands adjoint.
+on the callback stack that takes the partials of each edge and accumulates
+them into the operands' adjoints.
 
 The for loop version is nice and simple, but there's a few things for performance
 that we can do better. For instance, in the for loop version we are constantly
@@ -336,36 +350,36 @@ we've used previously.
 ```cpp
   // Only evaluate inv_sigma here if it's going to be used more than once
   const auto& inv_sigma
-      = to_ref_if<!is_constant_all<T_y, T_scale, T_loc>::value>(inv(sigma_val));
+      = to_ref_if<is_any_autodiff_v<T_y, T_scale, T_loc>>(inv(sigma_val));
   const auto& y_scaled = to_ref((y_val - mu_val) * inv_sigma);
   // Only evaluate y_scaled_sq here if T_scale is not constant
   const auto& y_scaled_sq
-      = to_ref_if<!is_constant<T_scale>::value>(y_scaled * y_scaled);
+      = to_ref_if<is_autodiff_v<T_scale>>(y_scaled * y_scaled);
 
-  size_t N = max_size(y, mu, sigma);
+  size_t N = max_size(y_ref, mu_ref, sigma_ref);
   T_partials_return logp = -0.5 * sum(y_scaled_sq);
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * N;
   }
   // division by size of sigma is a trick to work with vectors and scalars
-  if (include_summand<propto, T_scale>::value) {
-    logp -= sum(log(sigma_val)) * N / size(sigma);
+  if constexpr (include_summand<propto, T_scale>::value) {
+    logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
 
-  if (!is_constant_all<T_y, T_scale, T_loc>::value) {
-    // Evaluate this if it's only used once
-    auto scaled_diff = to_ref_if<!is_constant<T_y>::value
-                                     + !is_constant<T_scale>::value
-                                     + !is_constant<T_loc>::value
-                                 >= 2>(inv_sigma * y_scaled);
-    if (!is_constant<T_y>::value) {
-      ops_partials.edge1_.partials_ = -scaled_diff;
+  if constexpr (is_any_autodiff_v<T_y, T_scale, T_loc>) {
+    // Evaluate this if it's used more than once
+    auto scaled_diff = to_ref_if<
+        is_autodiff_v<
+            T_y> + is_autodiff_v<T_scale> + is_autodiff_v<T_loc> >= 2>(
+        inv_sigma * y_scaled);
+    if constexpr (is_autodiff_v<T_y>) {
+      partials<0>(ops_partials) = -scaled_diff;
     }
-    if (!is_constant<T_scale>::value) {
-      ops_partials.edge3_.partials_ = inv_sigma * y_scaled_sq - inv_sigma;
+    if constexpr (is_autodiff_v<T_scale>) {
+      partials<2>(ops_partials) = inv_sigma * y_scaled_sq - inv_sigma;
     }
-    if (!is_constant<T_loc>::value) {
-      ops_partials.edge2_.partials_ = std::move(scaled_diff);
+    if constexpr (is_autodiff_v<T_loc>) {
+      partials<1>(ops_partials) = std::move(scaled_diff);
     }
   }
   return ops_partials.build(logp);
@@ -384,8 +398,8 @@ One odd piece of code here is
 
 ```cpp
 // division by size of sigma is a trick to work with vectors and scalars
-if (include_summand<propto, T_scale>::value) {
-  logp -= sum(log(sigma_val)) * N / size(sigma);
+if constexpr (include_summand<propto, T_scale>::value) {
+  logp -= sum(log(sigma_val)) * N / math::size(sigma);
 }
 ```
 
@@ -398,10 +412,10 @@ returned scalar from `sum()` by `N`, which we don't want if `sigma_val` is a vec
 So then we just divide by the `size()` of `sigma`, which for a scalar will be 1
 and for a vector will be `N`.
 
-It might be easier to see how this would look if Stan used C++17
+The same logic can also be written with an explicit `if constexpr` branch
 
 ```cpp
-if (include_summand<propto, T_scale>::value) {
+if constexpr (include_summand<propto, T_scale>::value) {
   if constexpr (is_vector<T_scale>::value) {
     logp -= sum(log(sigma_val));
   } else {
@@ -409,13 +423,6 @@ if (include_summand<propto, T_scale>::value) {
   }
 }
 ```
-
-----------------------------------------
-
-Side Note: We should make `size()` constexpr for scalars so then tricks like this
-let the compiler see we are doing division by 1 and will remove the operation.
-
-----------------------------------------
 
 But that's it, you can see the full `normal_lpdf` function [here](https://github.com/stan-dev/math/blob/develop/stan/math/prim/prob/normal_lpdf.hpp) in Stan that uses the Eigen version.
 
@@ -425,10 +432,10 @@ added so we have a default signature that does not require setting the `propto` 
 
 ```cpp
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
-                                                      const T_loc& mu,
-                                                      const T_scale& sigma) {
-  return normal_lpdf<false>(y, mu, sigma);
+inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
+                                                      T_scale&& sigma) {
+  return normal_lpdf<false>(std::forward<T_y>(y), std::forward<T_loc>(mu),
+                            std::forward<T_scale>(sigma));
 }
 ```
 

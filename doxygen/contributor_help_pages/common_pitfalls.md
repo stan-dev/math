@@ -389,24 +389,11 @@ This is because in the reverse mode we want to update the value of the `adj_` in
 
 ## Handy tricks
 
-### @ref stan::math::forward_as
+### Compile time branches with `if constexpr`
 
-In functions such as [Stan's distributions](https://github.com/stan-dev/math/blob/1bf96579de5ca3d06eafbc2eccffb228565b4607/stan/math/prim/prob/exponential_cdf.hpp#L64) you will see code which uses a little function called @ref stan::math::forward_as inside of if statements whose values are known at compile time.
+In functions such as Stan's distributions you will often need code where one branch only compiles for some of the argument types.
 In the following code, `one_m_exp` can be either an Eigen vector type or a scalar.
-
-```cpp
-T_partials_return cdf(1.0);
-if (is_vector<T_y>::value || is_vector<T_inv_scale>::value) {
-  cdf = forward_as<T_partials_array>(one_m_exp).prod();
-} else {
-  cdf = forward_as<T_partials_return>(one_m_exp);
-}
-```
-
-Since the if statements values are known at compile time, the compiler will always remove the unused side of the `if` during the dead code elimination pass.
-But the dead code elimination pass does not happen until all the code is instantiated and verified as compilable.
-So @ref stan::math::forward_as exists to trick the compiler into believing both sides of the `if` will compile.
-If we used C++17, the above would become
+Use [`if constexpr`](https://en.cppreference.com/w/cpp/language/if) with a type trait as the condition.
 
 ```cpp
 T_partials_return cdf(1.0);
@@ -417,9 +404,9 @@ if constexpr (is_vector<T_y>::value || is_vector<T_inv_scale>::value) {
 }
 ```
 
+With a plain `if`, both branches must compile for every instantiation even though the compiler removes the unused one later, so the scalar branch would fail to compile when `one_m_exp` is a vector and vice versa.
+`if constexpr` discards the false branch before it is instantiated, so only the branch that matches the types has to compile.
+The same applies to guarding partials in the distributions, e.g. `if constexpr (is_autodiff_v<T_y>) { ... }`.
 
-Where [`if constexpr`](https://en.cppreference.com/w/cpp/language/if) is run before any tests are done to verify the code can be compiled.
-
-Using `forward_as<TheTypeIWant>(the_obj)` will, when `the_obj` matches the type the user passes, simply pass back a reference to `the_obj`.
-But when `TheTypeIWant` and `the_obj` have different types it will throw a runtime error.
-This function should only be used inside of `if` statements like the above where the conditionals of the `if` are known at compile time.
+Older code used a helper called @ref stan::math::forward_as inside plain `if` statements to trick the compiler into believing both branches would compile.
+`forward_as` is no longer used in Stan Math and new code should use `if constexpr` instead.

@@ -1,0 +1,5 @@
+{
+  "env": {
+    "CLANGD_FLAGS": "-j=2"
+  }
+}

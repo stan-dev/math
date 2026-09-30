@@ -8,8 +8,7 @@ math functions exposed at the Stan language level are implemented here in C++.
 
 In the course of the Math library's existence, C++ has changed substantially.
 Math was originally written before C++11.
-It currently targets C++14.
-In the near future it will transition to C++17.
+It currently targets C++17.
 With this in mind, there are many different ways to write Math functions.
 This guide tries to document best practices, conventions which not all functions in Math follow, but should be followed for new code to keep the code from getting unwieldy (the old patterns will be updated eventually).
 
@@ -571,7 +570,7 @@ template <typename T, typename S>
 Eigen::Matrix<return_type_t<T, S>, Eigen::Dynamic, 1> atan2(T, S);
 ```
 
-Alternativly, with C++14 one can also delay deducing the return type with `auto` and the compiler can deduce the return type from the code (which would then internally use `return_type_t<T, S>`)
+Alternatively, since C++14 one can also delay deducing the return type with `auto` and the compiler can deduce the return type from the code (which would then internally use `return_type_t<T, S>`)
 
 ### Higher order autodiff
 

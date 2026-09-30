@@ -1,0 +1,9 @@
+# clangd settings for Stan Math. Generate compile_commands.json with
+# ./runClangd.py cdb
+CompileFlags:
+  Remove: [-Wno-class-memaccess, -flto*, -fno-fat-lto-objects]
+  Add: [-Wno-unknown-warning-option]
+Diagnostics:
+  UnusedIncludes: None
+Index:
+  StandardLibrary: No
