@@ -141,10 +141,19 @@ struct rev_product_operand<Scalar, true> {
   const auto& val() const { return val_; }
   template <typename G>
   void add_adjoint(const G& g) const {
-    const auto& g_ref = g.eval();
-    for (Eigen::Index j = 0; j < vars_.cols(); ++j) {
-      for (Eigen::Index i = 0; i < vars_.rows(); ++i) {
-        rev_product_add_adjoint(vars_.coeff(i, j), g_ref.coeff(i, j));
+    using g_scalar = typename Eigen::internal::traits<G>::Scalar;
+    if constexpr (std::is_same<Scalar, var>::value
+                  && std::is_same<g_scalar, double>::value) {
+      // a shallow copy of the arena map, whose adjoint view is writable
+      arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> vars
+          = vars_;
+      vars.adj() += g;
+    } else {
+      const auto& g_ref = g.eval();
+      for (Eigen::Index j = 0; j < vars_.cols(); ++j) {
+        for (Eigen::Index i = 0; i < vars_.rows(); ++i) {
+          rev_product_add_adjoint(vars_.coeff(i, j), g_ref.coeff(i, j));
+        }
       }
     }
   }
@@ -160,7 +169,7 @@ template <typename ValueT>
 struct rev_product_scales {
   // three peels (expression, left and right operand) of up to
   // max_peel_depth factors each
-  static constexpr int max_autodiff = 12;
+  static constexpr int max_autodiff = 3 * max_peel_depth;
   struct autodiff_scale {
     vari* re_;
     vari* im_;  // nullptr for a real scale
@@ -173,7 +182,9 @@ struct rev_product_scales {
     }
   };
   ValueT constant_{1.0};
-  autodiff_scale autodiff_[max_autodiff];
+  // allocated on the arena at the first autodiff factor, so a kernel's
+  // callback captures a pointer instead of storage for every factor
+  autodiff_scale* autodiff_{nullptr};
   int n_autodiff_{0};
 
   template <typename T, require_arithmetic_t<T>* = nullptr>
@@ -184,9 +195,9 @@ struct rev_product_scales {
   void push(const std::complex<T>& x) {
     constant_ *= std::complex<double>(x.real(), x.imag());
   }
-  void push(const var& x) { autodiff_[n_autodiff_++] = {x.vi_, nullptr}; }
+  void push(const var& x) { push_autodiff({x.vi_, nullptr}); }
   void push(const std::complex<var>& x) {
-    autodiff_[n_autodiff_++] = {x.real().vi_, x.imag().vi_};
+    push_autodiff({x.real().vi_, x.imag().vi_});
   }
 
   /** Product of every factor. */
@@ -221,6 +232,16 @@ struct rev_product_scales {
       }
     }
   }
+
+ private:
+  void push_autodiff(const autodiff_scale& s) {
+    if (autodiff_ == nullptr) {
+      autodiff_
+          = ChainableStack::instance_->memalloc_.alloc_array<autodiff_scale>(
+              max_autodiff);
+    }
+    autodiff_[n_autodiff_++] = s;
+  }
 };
 
 template <typename Result>
@@ -249,27 +270,20 @@ inline Result rev_product_make_result(
 }
 
 /**
- * Adjoints of a kernel result as a `double` or `std::complex<double>`
- * matrix.
+ * Adjoints of a kernel result as a lazy `double` or `std::complex<double>`
+ * expression.
  */
 template <typename ResScalar>
 inline auto rev_product_result_adjoints(
     const arena_matrix<
         Eigen::Matrix<ResScalar, Eigen::Dynamic, Eigen::Dynamic>>& res) {
-  using value_t = rev_product_value_t<ResScalar>;
-  Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> g(res.rows(),
-                                                           res.cols());
-  for (Eigen::Index j = 0; j < res.cols(); ++j) {
-    for (Eigen::Index i = 0; i < res.rows(); ++i) {
-      if constexpr (std::is_same<ResScalar, var>::value) {
-        g.coeffRef(i, j) = res.coeff(i, j).adj();
-      } else {
-        g.coeffRef(i, j) = value_t(res.coeff(i, j).real().adj(),
-                                   res.coeff(i, j).imag().adj());
-      }
-    }
+  if constexpr (std::is_same<ResScalar, var>::value) {
+    return res.adj();
+  } else {
+    return res.unaryExpr([](const ResScalar& z) {
+      return std::complex<double>(z.real().adj(), z.imag().adj());
+    });
   }
-  return g;
 }
 
 template <typename X>
@@ -298,7 +312,8 @@ inline Result rev_matmul(const Scales& scales, const XOp& x, const YOp& y) {
                                           res_arena);
   }
   reverse_pass_callback([res_arena, x, y, scales, sigma, unscaled]() {
-    const auto g = rev_product_result_adjoints(res_arena);
+    // evaluated once: both operand gradients are products with it
+    const auto g = rev_product_result_adjoints(res_arena).eval();
     const value_t sigma_conj = rev_product_conj(sigma);
     if constexpr (XOp::is_autodiff) {
       x.add_adjoint(sigma_conj * (g * y.val().adjoint()));

@@ -288,6 +288,30 @@ TEST_F(AgradRev, eigen_product_hook_scaled_products_fuse) {
   }
 }
 
+TEST_F(AgradRev, eigen_product_hook_scales_are_small) {
+  // every product callback captures its scalar factors by value, so they
+  // must not embed storage for the factors themselves
+  EXPECT_LE(sizeof(stan::math::internal::rev_product_scales<double>),
+            4 * sizeof(void*));
+  EXPECT_LE(
+      sizeof(stan::math::internal::rev_product_scales<std::complex<double>>),
+      5 * sizeof(void*));
+}
+
+TEST_F(AgradRev, eigen_product_hook_many_autodiff_scales) {
+  const mat<double> a = make_mat<double>(2, 3, 0.1);
+  const mat<double> b = make_mat<double>(3, 2, -0.2);
+  var s1 = 0.5, s2 = 2.0, s3 = -1.5;
+  mat<var> c = s1 * (s2 * a) * (b * s3);
+  const double scale = 0.5 * 2.0 * -1.5;
+  EXPECT_MATRIX_NEAR(c.val(), scale * (a * b), 1e-12);
+  sum_of(c).grad();
+  const double total = (a * b).sum();
+  EXPECT_NEAR(s1.adj(), 2.0 * -1.5 * total, 1e-12);
+  EXPECT_NEAR(s2.adj(), 0.5 * -1.5 * total, 1e-12);
+  EXPECT_NEAR(s3.adj(), 0.5 * 2.0 * total, 1e-12);
+}
+
 TEST_F(AgradRev, eigen_product_hook_complex_matmul) {
   mat<cvar> a(2, 2);
   a << cvar(1.0, 0.5), cvar(-0.3, 0.2), cvar(0.4, -1.0), cvar(2.0, 0.1);
