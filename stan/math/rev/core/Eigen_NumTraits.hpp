@@ -504,4 +504,6 @@ struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
 };
 }  // namespace internal
 }  // namespace Eigen
+#include <stan/math/rev/core/eigen_product_hooks.hpp>
+
 #endif

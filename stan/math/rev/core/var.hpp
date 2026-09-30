@@ -8,6 +8,7 @@
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/grad.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/meta/is_vari.hpp>
 #include <stan/math/rev/meta/arena_type.hpp>
@@ -1185,6 +1186,16 @@ class var_value<T, internal::require_matrix_var_value<T>> {
 
 // For backwards compatibility the default value is double
 using var = var_value<double>;
+
+namespace internal {
+/**
+ * Eigen products of `var` scalars are evaluated by Stan (see
+ * stan/math/prim/meta/eigen_product_evaluator_hooks.hpp). Declared with
+ * `var` itself so every translation unit that uses `var` agrees.
+ */
+template <>
+struct is_stan_ad_product_scalar<var> : std::true_type {};
+}  // namespace internal
 
 }  // namespace math
 

@@ -1,13 +1,9 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/ad_tape_util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
 namespace {
-
-std::size_t tape_size() {
-  const auto& stack = *stan::math::ChainableStack::instance_;
-  return stack.var_stack_.size() + stack.var_nochain_stack_.size();
-}
 
 // Nodes put on the reverse-mode tape by one forward-mode (fvar<var>) sweep
 // of a GLM log density, the sweep hessian_times_vector runs for every
@@ -27,10 +23,10 @@ std::size_t nodes_per_sweep(F&& f, int n, int k) {
   for (int i = 0; i < n; ++i) {
     alpha(i) = fvar<var>(var(0.1), 1.0);
   }
-  const std::size_t before = tape_size();
+  const stan::test::tape_delta delta;
   fvar<var> lp = f(x, alpha, beta);
   EXPECT_TRUE(std::isfinite(lp.val_.val()));
-  return tape_size() - before;
+  return delta.total();
 }
 
 }  // namespace

@@ -87,4 +87,6 @@
 
 }  // namespace Eigen
 
+#include <stan/math/prim/meta/eigen_product_evaluator_hooks.hpp>
+
 #endif
