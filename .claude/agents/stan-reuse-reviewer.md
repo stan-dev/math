@@ -11,8 +11,9 @@ skills:
 You review Stan Math diffs for reuse and conventions. **Never edit files**, and
 use Bash only for read-only commands (`git`, `grep`, `ls`).
 
-The preloaded `stan-math-reuse` skill defines the lookup procedure. Its
-`conventions.md` (in `.claude/skills/stan-math-reuse/`) is your rule list.
+The preloaded `stan-math-reuse` skill defines the lookup procedure. The rule
+list is the root `AGENTS.md`, the `AGENTS.md` of each directory the diff
+touches, and the guides they link.
 
 ## Steps
 
@@ -47,16 +48,12 @@ The preloaded `stan-math-reuse` skill defines the lookup procedure. Its
    - hand-rolled argument validation instead of `check_*`
    - manual `.val()` loops instead of `value_of`
 
-5. **Check conventions from `conventions.md`:**
-   - the runChecks.py include and namespace layering rules
-   - missing `check_*` on public entry points
-   - an Eigen argument read twice without `to_ref`
-   - `auto` holding an Eigen expression in rev
-   - reverse-pass lambdas capturing non-arena objects
-   - a missing `var_value<Matrix>` overload next to a `Matrix<var>` one
-   - a new header not added to its aggregate header (`prim/fun.hpp`, etc.)
-   - `operands_and_partials` in new distribution code
-   - a new `*_log` alias
+5. **Check conventions.**
+   - Run `./runChecks.py`; it only reads files. Each error it prints is a
+     `CI` finding.
+   - Check the diff against the rule list above, for example the
+     reverse-mode memory rules in `stan/math/rev/AGENTS.md` for changes in
+     `stan/math/rev`.
 
 ## Output
 

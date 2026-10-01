@@ -53,8 +53,9 @@ they read a few turns ago; the fix is to make the decision explicitly.
    A NEW verdict must name the closest existing symbol and the concrete
    behavior it lacks.
 
-6. **If EXTEND or NEW,** follow [conventions.md](conventions.md): layering,
-   `check_*`, `to_ref`, arena types in rev, and registering the header.
+6. **If EXTEND or NEW,** follow the `AGENTS.md` for the directory you are
+   writing in (root, `stan/math/rev`, `stan/math/prim/prob`,
+   `stan/math/opencl`, `test`) and the guide it links.
 
 ## When to use a subagent
 
