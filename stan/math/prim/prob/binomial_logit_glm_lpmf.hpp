@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/isfinite.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -102,7 +103,7 @@ inline return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
   if constexpr (T_x_rows == 1) {
     theta = (x_val * beta_val)(0, 0) + alpha_val;
   } else {
-    theta = (x_val * beta_val).array() + alpha_val;
+    theta = multiply(x_val, beta_val).array() + alpha_val;
   }
 
   constexpr bool gradients_calc = is_any_autodiff_v<T_beta, T_x, T_alpha>;
@@ -132,7 +133,8 @@ inline return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
       if constexpr (T_x_rows == 1) {
         edge<2>(ops_partials).partials_ = theta_derivative.sum() * x_val;
       } else {
-        partials<2>(ops_partials) = x_val.transpose() * theta_derivative;
+        partials<2>(ops_partials)
+            = multiply(x_val.transpose(), theta_derivative);
       }
     }
 
