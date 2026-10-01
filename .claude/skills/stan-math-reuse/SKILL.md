@@ -7,7 +7,7 @@ allowed-tools: Read Grep Glob LSP Bash(grep *) Bash(git grep *) Bash(ls *)
 
 # Stan Math reuse check
 
-Catalog status: !`test -d "${CLAUDE_PROJECT_DIR}/.agents/catalog" && ls "${CLAUDE_PROJECT_DIR}/.agents/catalog" || echo CATALOG_MISSING`
+clangd setup: !`test -f "${CLAUDE_PROJECT_DIR}/compile_commands.json" && echo "compile_commands.json present" || echo CDB_MISSING`
 
 Run this procedure **per task, immediately before writing code**, even if you
 explored the repo earlier in the session. Agents routinely rewrite helpers
@@ -21,20 +21,22 @@ they read a few turns ago; the fix is to make the decision explicitly.
 2. **Idiom guide.** Grep `doxygen/contributor_help_pages/idioms.md` with 2–3
    synonyms for the behavior, e.g.
    `grep -n -i -E "evaluate|expression" doxygen/contributor_help_pages/idioms.md`
-   (use plain `grep` for the idiom guide and the catalog; the catalog is
-   gitignored, so `git grep` never searches it)
 
-3. **Catalog slice.** Catalog lines are `name | header | signature | brief`.
-   - Grep the slice for the module, e.g. `.agents/catalog/prim-meta.md` for
-     traits or `.agents/catalog/rev-core.md` for callbacks and arena types.
-   - Always grep `.agents/catalog/prim-fun.md` too, since most functions have
-     a prim version.
-   - Search the brief column by behavior, not only by name:
-     `grep -i "log.*sum\|sum.*exp" .agents/catalog/prim-fun.md`
-   - `.agents/catalog/index.md` maps a name to every module that defines it.
-   - If the status above says `CATALOG_MISSING`, use the recipes in
-     [grep-fallback.md](grep-fallback.md). Tell the user once: "Run
-     `./runClangd.py catalog` to generate `.agents/catalog/`."
+3. **Look up candidates with the `LSP` tool.** Every operation needs a
+   `filePath`, `line` and `character`; for `workspaceSymbol` any header at
+   line 1, character 1 works.
+   - `workspaceSymbol` with a name fragment finds every match across modules,
+     e.g. `require_eigen` lists all the related aliases and `log_sum_exp`
+     lists the prim, rev, fwd and opencl overloads.
+   - `documentSymbol` on a candidate header lists every overload with its
+     parameter types; `hover` on one shows its full doc comment.
+   - Search by behavior in the doc comments:
+     `grep -rli "log of the sum" stan/math/prim/fun`
+   - If the LSP tool is missing or returns nothing, follow
+     [grep-fallback.md](grep-fallback.md). Results stay empty until clangd
+     has loaded its index, which happens after the first file is opened.
+   - If the status above says `CDB_MISSING`, tell the user once: "Run
+     `./runClangd.py cdb` so clangd has the right compile flags."
 
 4. **Check real usage.** For the top 1–3 candidates:
    - Run LSP findReferences, or `git grep -l <sym> -- stan/math | head` if LSP
@@ -56,8 +58,8 @@ they read a few turns ago; the fix is to make the decision explicitly.
 
 ## When to use a subagent
 
-- Do the lookup inline; it is a handful of greps over small files.
+- Do the lookup inline; it is a handful of LSP queries and greps.
 - Spawn an Explore subagent only when:
   - the need spans three or more modules, or
-  - the catalog is missing and the grep output would flood the context.
+  - there is no LSP and the grep output would flood the context.
 - Ask the subagent for `symbol | header | fit` lines, not source code.

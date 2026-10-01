@@ -6,10 +6,10 @@ Header-only C++17 automatic differentiation library. Most code lives in
 ## Reuse before you write
 - The library already has 1900+ headers. Most helpers and traits you might write already exist.
 - Before adding any function, overload, trait, `require_*` alias, struct or container loop under `stan/`, find what already exists:
-  1. Use an LSP if available to query for existing symbols.
   1. Check the idiom guide, `doxygen/contributor_help_pages/idioms.md` ("I need X, use Y").
-  2. Grep the API catalog in `.agents/catalog/` (one line per symbol: `name | header | signature | brief`). Generate the catalog with `./runClangd.py catalog`; it is gitignored and never committed.
-  3. Grep `stan/math/` for real call sites of the candidates.
+  2. With an LSP (clangd), search workspace symbols by name fragment (`require_eigen` lists every related alias), list a header's document symbols to see every overload, and hover for the full doc comment.
+  3. Without one, `ls stan/math/<module>/<dir>` lists functions by file name, and `grep -rli "<what it does>" stan/math/prim/fun` searches the doc comments by behavior.
+  4. Find real call sites of the candidates (LSP find-references, or `grep -rlw <name> stan/math`).
 - File names usually equal the function name (`prim/fun/foo.hpp` defines `foo`). Exceptions include `make_holder` (`prim/meta/holder.hpp`), `make_callback_var` (`rev/core/callback_vari.hpp`) and `arena_t` (`rev/meta/arena_type.hpp`). Type traits that end in `_t` will usually be in a file missing the `_t` such as `scalar_type.hpp` which has `scalar_type_t`.
 
 ## Layers

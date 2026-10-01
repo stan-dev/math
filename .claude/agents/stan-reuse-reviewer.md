@@ -2,9 +2,8 @@
 name: stan-reuse-reviewer
 description: Reviews the current branch's diff against develop for Stan Math duplication (new functions, traits, aliases or structs that already exist) and for Stan convention violations. Use after implementing, before opening a PR or running /code-review. Read-only.
 tools: Read, Grep, Glob, LSP, Bash
-model: sonnet
+model: opus
 effort: high
-maxTurns: 40
 skills:
   - stan-math-reuse
 ---
@@ -20,8 +19,8 @@ The preloaded `stan-math-reuse` skill defines the lookup procedure. Its
 1. **Find the diff.**
    - Base: `git merge-base origin/develop HEAD` (fall back to `develop` if
      `origin/develop` is missing).
-   - Run `git diff <base> --stat`, then `git diff <base> -- stan/`.
-   - Include uncommitted changes as well: `git diff HEAD -- stan/`.
+   - Run `git diff <base> --stat`, then `git diff <base> -- stan/ test/`.
+   - Include uncommitted changes as well: `git diff HEAD -- stan/ test/`.
 
 2. **Extract every addition:**
    - function and function-template definitions and new overloads
@@ -30,10 +29,12 @@ The preloaded `stan-math-reuse` skill defines the lookup procedure. Its
    - new header files
 
 3. **Look each one up** before judging it:
-   - Grep `doxygen/contributor_help_pages/idioms.md` and the matching
-     `.agents/catalog/<module>-<dir>.md` slice. `.agents/catalog/index.md`
-     lists every module that defines a name.
-   - If the catalog is missing, use the skill's `grep-fallback.md`.
+   - Grep `doxygen/contributor_help_pages/idioms.md`.
+   - Use LSP `workspaceSymbol` on the new name and on fragments of it (for
+     example `eigen_vector` for a new `is_eigen_vector_like`), and
+     `documentSymbol` on the headers it turns up to compare overloads.
+   - If LSP is unavailable or returns nothing, use the skill's
+     `grep-fallback.md`.
    - For each candidate, use LSP findReferences, or
      `git grep -l -w <sym> -- stan/math`, to confirm it is used the same way.
 

@@ -2,14 +2,15 @@
 
 This page maps common needs to the existing Stan Math symbol that already
 covers them. Search it before writing a new helper, trait or loop. Paths are
-relative to `stan/math/`. For the exact signatures of every symbol, generate the
-API catalog with `./runClangd.py catalog` and grep `.agents/catalog/`.
+relative to `stan/math/`. For the exact signatures of every overload, open the
+header or list its symbols with clangd.
 
 ### Types and metaprogramming (`prim/meta`)
 
 | Need | Use | Header |
 |---|---|---|
 | Restrict an overload to certain types | `require_*_t<T>* = nullptr`. The `_vt` suffix tests the value type, `_st` the scalar type (see @ref require_meta_doc) | `prim/meta/is_*.hpp`, `require_generics.hpp` |
+| Restrict an overload to Eigen column or row vectors | `require_eigen_col_vector_t<T>`, `require_eigen_row_vector_t<T>` (traits `is_eigen_col_vector`, `is_eigen_row_vector`) | `prim/meta/is_vector.hpp` |
 | Scalar type of a function's result | `return_type_t<T...>` | `prim/meta/return_type.hpp` |
 | `double`-based type to hold partials | `partials_return_t<T...>` | `prim/meta/partials_return_type.hpp` |
 | Innermost scalar of a container | `scalar_type_t<T>` | `prim/meta/scalar_type.hpp` |

@@ -1,9 +1,7 @@
-# Grep fallback (no catalog)
+# Grep fallback (no LSP)
 
-Use these when `.agents/catalog/` is missing. Generate the catalog with
-`./runClangd.py catalog`.
-
-All recipes are scoped to `stan/math` and run from the repo root. Replace `NAME`
+Use these when the `LSP` tool is unavailable or clangd has not finished
+indexing. All recipes are scoped to `stan/math` and run from the repo root. Replace `NAME`
 with the symbol or keyword. Add `| head` when output may be long.
 
 ## Where is a symbol defined?
