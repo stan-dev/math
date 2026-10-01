@@ -13,6 +13,8 @@ None of the generated files are ever committed. Call script with '-h' as an
 option to see a helpful message.
 """
 
+from __future__ import annotations
+
 import bisect
 import datetime
 import functools
@@ -21,15 +23,17 @@ import os
 import re
 import shlex
 import shutil
-import subprocess
 import sys
 import textwrap
 import time
-from argparse import ArgumentParser, RawTextHelpFormatter
+from argparse import ArgumentParser, Namespace, RawTextHelpFormatter
 from collections import defaultdict
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import Executor, ProcessPoolExecutor
+from dataclasses import dataclass, field
+from typing import Any, NamedTuple, TypedDict
 
-ROOT = os.path.dirname(os.path.abspath(__file__))
+from utils import ROOT, files_in_folder, run_command, stopErr
+
 MAX_JOBS = 16
 CDB_FILE = "compile_commands.json"
 CATALOG_DIR = os.path.join(".agents", "catalog")
@@ -57,8 +61,60 @@ KEEP_KINDS = {
     "VAR_DECL": "variable",
 }
 
+# The clang python bindings ship without type information, so their module
+# and cursor objects are typed as Any.
+CIndex = Any
+Cursor = Any
 
-def processCLIArgs():
+
+class Args(Namespace):
+    """Parsed command line. Options of other subcommands are absent."""
+
+    clean: bool
+    command: str | None
+    compiler: str
+    pin_system_includes: bool
+    opencl: bool
+    no_tests: bool
+    j: int
+    out: str
+    include_internal: bool
+    libclang: str | None
+    regex: bool
+
+
+class Decl(TypedDict):
+    """One declaration found in a header."""
+
+    name: str
+    header: str
+    offset: int
+    kind: str
+    namespace: str
+    signature: str
+    brief: str
+    usr: str
+    definition: bool
+
+
+class Job(NamedTuple):
+    """A translation unit to parse; see walk() for only."""
+
+    main_file: str
+    args: list[str]
+    only: str | None
+
+
+class TUResult(TypedDict):
+    """Declarations and reached headers of one parsed translation unit."""
+
+    file: str
+    decls: list[Decl]
+    seen: list[str]
+    fatal: list[str]
+
+
+def processCLIArgs() -> Args:
     """
     Define and process the command line interface to the runClangd.py script.
     """
@@ -107,12 +163,12 @@ def processCLIArgs():
         metavar="N",
         type=int,
         default=MAX_JOBS,
-        help="number of parallel parses (max %d)" % MAX_JOBS,
+        help=f"number of parallel parses (max {MAX_JOBS})",
     )
     cat_opts.add_argument(
         "--out",
         default=CATALOG_DIR,
-        help="catalog output directory (default: %s)" % CATALOG_DIR,
+        help=f"catalog output directory (default: {CATALOG_DIR})",
     )
     cat_opts.add_argument(
         "--include-internal",
@@ -155,7 +211,7 @@ def processCLIArgs():
         sub.add_parser(
             name, parents=parents, help=text, formatter_class=RawTextHelpFormatter
         )
-    args = parser.parse_args()
+    args = parser.parse_args(namespace=Args())
     if args.command is None and not args.clean:
         parser.print_help()
         sys.exit(1)
@@ -163,65 +219,32 @@ def processCLIArgs():
         if args.j < 1:
             stopErr("-j must be at least 1", 1)
         if args.j > MAX_JOBS:
-            print("capping -j %d at %d" % (args.j, MAX_JOBS))
+            print(f"capping -j {args.j} at {MAX_JOBS}")
             args.j = MAX_JOBS
     return args
 
 
-def stopErr(msg, returncode):
-    """Report an error message to stderr and exit with a given code."""
-    sys.stderr.write("%s\n" % msg)
-    sys.stderr.write("exit now (%s)\n" % time.strftime("%x %X %Z"))
-    sys.exit(returncode)
-
-
-def run(command):
-    """Run a command in the repo root and return its stdout; exit on failure."""
-    try:
-        proc = subprocess.run(
-            command,
-            cwd=ROOT,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True,
-        )
-    except OSError as e:
-        stopErr("cannot run %s: %s" % (command[0], e), 1)
-    if proc.returncode != 0:
-        stopErr(
-            "command failed: %s\n%s" % (" ".join(command), proc.stderr),
-            proc.returncode,
-        )
-    return proc.stdout
-
-
-def git_ok(*args):
+def git_ok(*args: str) -> bool:
     """True if the git command succeeds."""
-    proc = subprocess.run(
-        ["git"] + list(args),
-        cwd=ROOT,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
-    return proc.returncode == 0
+    return run_command(["git", *args], capture=True, check=False).returncode == 0
 
 
-def require_ignored(path):
+def require_ignored(path: str) -> None:
     """Abort unless git ignores path, so generated files are never committed."""
     if not git_ok("check-ignore", "-q", path):
-        stopErr("%s is not gitignored; refusing to generate it" % path, 1)
+        stopErr(f"{path} is not gitignored; refusing to generate it", 1)
 
 
-def clean():
+def clean() -> None:
     """Remove every path in GENERATED_PATHS that exists and git does not track."""
     for rel in GENERATED_PATHS:
         path = os.path.join(ROOT, rel)
         if not os.path.lexists(path):
             continue
         if git_ok("ls-files", "--error-unmatch", rel):
-            print("refusing to remove %s: it is tracked by git" % rel)
+            print(f"refusing to remove {rel}: it is tracked by git")
             continue
-        print("removing %s" % rel)
+        print(f"removing {rel}")
         if os.path.isdir(path) and not os.path.islink(path):
             shutil.rmtree(path)
         else:
@@ -232,25 +255,25 @@ def clean():
         os.rmdir(agents)
 
 
-def make_vars(names, opencl=False):
+def make_vars(names: list[str], opencl: bool = False) -> dict[str, list[str]]:
     """Read make variables through the print-% rule, so make/local is honored."""
     command = ["make", "-s"]
     if opencl:
         command.append("STAN_OPENCL=true")
     command += ["print-" + name for name in names]
-    values = {}
-    for line in run(command).splitlines():
+    values: dict[str, list[str]] = {}
+    for line in run_command(command, capture=True).stdout.splitlines():
         match = re.match(r"^(\w+) = ?(.*)$", line)
         if match and match.group(1) in names:
             values[match.group(1)] = shlex.split(match.group(2))
     missing = [name for name in names if name not in values]
     if missing:
-        stopErr("make did not print: %s" % ", ".join(missing), 1)
+        stopErr(f"make did not print: {', '.join(missing)}", 1)
     return values
 
 
-@functools.lru_cache(maxsize=None)
-def build_flags(opencl=False):
+@functools.cache
+def build_flags(opencl: bool = False) -> tuple[list[str], list[str]]:
     """Compiler flags for Stan headers and for gtest files."""
     v = make_vars(
         ["CXXFLAGS", "CPPFLAGS", "INC_GTEST", "CXXFLAGS_GTEST", "CPPFLAGS_GTEST"],
@@ -261,17 +284,13 @@ def build_flags(opencl=False):
     return base, gtest
 
 
-@functools.lru_cache(maxsize=None)
-def system_includes(compiler):
+@functools.cache
+def system_includes(compiler: str) -> list[str]:
     """-isystem flags for the dirs the compiler searches for <...> includes."""
-    proc = subprocess.run(
-        [compiler, "-E", "-v", "-x", "c++", os.devnull],
-        cwd=ROOT,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.PIPE,
-        universal_newlines=True,
+    proc = run_command(
+        [compiler, "-E", "-v", "-x", "c++", os.devnull], capture=True, check=False
     )
-    flags = []
+    flags: list[str] = []
     inside = False
     for line in proc.stderr.splitlines():
         if line.startswith("#include <...> search starts here"):
@@ -283,33 +302,32 @@ def system_includes(compiler):
     return flags
 
 
-def find_files(top, suffix):
-    """Sorted repo-relative '/' paths under top ending in suffix."""
-    found = []
-    for dirpath, _, filenames in os.walk(os.path.join(ROOT, top)):
-        rel_dir = os.path.relpath(dirpath, ROOT).replace(os.sep, "/")
-        found += [rel_dir + "/" + name for name in filenames if name.endswith(suffix)]
-    return sorted(found)
+def find_files(top: str, suffix: str) -> list[str]:
+    """
+    Sorted repo-relative '/' paths under top ending in suffix. top is
+    relative to ROOT, which main() makes the working directory.
+    """
+    return sorted(f.replace(os.sep, "/") for f in files_in_folder(top, suffix))
 
 
-def is_opencl_path(rel):
+def is_opencl_path(rel: str) -> bool:
     """True for files that only compile with STAN_OPENCL defined."""
     return rel.startswith(("stan/math/opencl/", "test/unit/math/opencl/"))
 
 
-def write_cdb(args):
+def write_cdb(args: Args) -> None:
     """Write compile_commands.json for every header and unit test."""
     require_ignored(CDB_FILE)
     start = time.time()
     pinned = system_includes(args.compiler) if args.pin_system_includes else []
 
-    def entry(rel, head, tail):
+    def entry(rel: str, head: list[str], tail: list[str]) -> dict[str, Any]:
         base, gtest = build_flags(args.opencl or is_opencl_path(rel))
         flags = base + (gtest if tail[0] == "-c" else [])
         return {
             "directory": ROOT,
             "file": os.path.join(ROOT, rel),
-            "arguments": [args.compiler] + head + flags + pinned + tail,
+            "arguments": [args.compiler, *head, *flags, *pinned, *tail],
         }
 
     headers = find_files("stan", ".hpp")
@@ -321,8 +339,8 @@ def write_cdb(args):
         json.dump(entries, f)
     os.replace(tmp, os.path.join(ROOT, CDB_FILE))
     print(
-        "wrote %s: %d headers, %d tests (%.1fs)"
-        % (CDB_FILE, len(headers), len(tests), time.time() - start)
+        f"wrote {CDB_FILE}: {len(headers)} headers, {len(tests)} tests"
+        f" ({time.time() - start:.1f}s)"
     )
     print("rerun after changing make/local or adding files.")
 
@@ -334,90 +352,122 @@ def write_cdb(args):
 ############################################################
 
 
-def llvm_config(flag):
-    """Output of llvm-config FLAG, or '' if llvm-config is unavailable."""
-    try:
-        return subprocess.run(
-            ["llvm-config", flag],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
-            universal_newlines=True,
-        ).stdout.strip()
-    except OSError:
-        return ""
-
-
-def load_clang(libclang=None):
+def load_clang(libclang: str | None = None) -> CIndex | None:
     """Import clang.cindex and check that libclang loads, or return None."""
     if libclang and os.path.isdir(libclang):
         sys.path.insert(0, libclang)
+    # The bindings live next to libclang and are often not importable until
+    # the llvm-config path below is added, so pyright may not resolve them.
     try:
-        import clang.cindex as cindex
+        from clang import cindex  # pyright: ignore[reportMissingImports]
     except ImportError:
-        prefix = llvm_config("--prefix")
+        prefix = run_command(
+            ["llvm-config", "--prefix"], capture=True, check=False
+        ).stdout.strip()
         if not prefix:
             return None
         sys.path.insert(0, os.path.join(prefix, "lib", "python3", "site-packages"))
         try:
-            import clang.cindex as cindex
+            from clang import cindex  # pyright: ignore[reportMissingImports]
         except ImportError:
             return None
     if libclang and os.path.isfile(libclang):
         cindex.Config.set_library_file(libclang)
     try:
         cindex.Index.create()
-    except Exception:
-        libdir = llvm_config("--libdir")
+    except cindex.LibclangError:
+        libdir = run_command(
+            ["llvm-config", "--libdir"], capture=True, check=False
+        ).stdout.strip()
         if not libdir:
             return None
         cindex.Config.loaded = False
         cindex.Config.set_library_path(libdir)
         try:
             cindex.Index.create()
-        except Exception:
+        except cindex.LibclangError:
             return None
     return cindex
 
 
-_worker = {}
+@dataclass
+class Worker:
+    """Per-process libclang state, set up by init_worker()."""
+
+    cindex: CIndex
+    index: Any
+    rel: dict[str, str | None] = field(default_factory=dict)
+    text: dict[str, str] = field(default_factory=dict)
 
 
-def init_worker(libclang):
+_worker: Worker | None = None
+
+
+def init_worker(libclang: str | None) -> None:
     """Load libclang once per worker process."""
+    global _worker
     cindex = load_clang(libclang)
-    _worker["cindex"] = cindex
-    _worker["index"] = cindex.Index.create()
-    _worker["rel"] = {}
-    _worker["text"] = {}
+    if cindex is None:
+        raise RuntimeError("libclang failed to load in a worker process")
+    _worker = Worker(cindex, cindex.Index.create())
 
 
-def rel_in_stan(name):
+def worker() -> Worker:
+    """This process's Worker."""
+    if _worker is None:
+        raise RuntimeError("init_worker() has not run in this process")
+    return _worker
+
+
+def rel_in_stan(name: str) -> str | None:
     """
     Repo-relative '/' path for a file libclang reports, or None if it is not
     under stan/. libclang reports -I . includes relative to the repo root.
     """
-    cache = _worker["rel"]
+    cache = worker().rel
     if name not in cache:
         rel = os.path.relpath(os.path.join(ROOT, name), ROOT).replace(os.sep, "/")
         cache[name] = rel if rel.startswith("stan/") else None
     return cache[name]
 
 
-def clip(text, width):
+def clip(text: str | None, width: int) -> str:
     """Collapse whitespace and shorten text to width for a one-line entry."""
     return textwrap.shorten(text or "", width, placeholder=" ...")
 
 
-def file_bytes(name):
-    """Contents of a file libclang reports, cached per worker."""
-    cache = _worker["text"]
+def file_text(name: str) -> str:
+    """
+    Contents of a file libclang reports, cached per worker. Decoded as
+    latin-1 so each byte is one character and libclang's byte offsets index
+    the text directly.
+    """
+    cache = worker().text
     if name not in cache:
         with open(os.path.join(ROOT, name), "rb") as f:
-            cache[name] = f.read()
+            cache[name] = f.read().decode("latin-1")
     return cache[name]
 
 
-def signature_of(cursor):
+def scan_to_body(text: str, i: int, end: int) -> int:
+    """
+    Index of the first '{' or ';' in text[i:end] outside parentheses and
+    brackets, or end if there is none.
+    """
+    depth = 0
+    while i < end:
+        c = text[i]
+        if c in "([":
+            depth += 1
+        elif c in ")]":
+            depth -= 1
+        elif depth <= 0 and c in "{;":
+            return i
+        i += 1
+    return end
+
+
+def signature_of(cursor: Cursor) -> tuple[str, bool]:
     """
     Declaration text up to the first '{' or ';' at depth 0, and whether it
     stopped at '{'. PARSE_SKIP_FUNCTION_BODIES makes is_definition() false
@@ -430,31 +480,21 @@ def signature_of(cursor):
     loc = cursor.location
     if start.file is None or loc.file is None or start.file.name != loc.file.name:
         return cursor.displayname, False
-    text = file_bytes(start.file.name)
-    depth = 0
-    i = start.offset
+    text = file_text(start.file.name)
     end = min(len(text), cursor.extent.end.offset + 1)
-    while i < end:
-        c = text[i : i + 1]
-        if c in (b"(", b"["):
-            depth += 1
-        elif c in (b")", b"]"):
-            depth -= 1
-        elif depth == 0 and c in (b"{", b";"):
-            break
-        i += 1
-    has_body = text[i : i + 1] == b"{"
-    sig = text[start.offset : i].decode("utf-8", "replace")
-    sig = re.sub(r"//[^\n]*|/\*.*?\*/", " ", sig, flags=re.S)
+    i = scan_to_body(text, start.offset, end)
+    has_body = text[i : i + 1] == "{"
+    sig = text[start.offset : i].encode("latin-1").decode("utf-8", "replace")
+    sig = re.sub(r"//[^\n]*|/\*.*?\*/", " ", sig, flags=re.DOTALL)
     return clip(sig, 400) or cursor.displayname, has_body
 
 
-def first_sentence(text):
+def first_sentence(text: str | None) -> str:
     """First sentence of a doc comment, with comment markers removed."""
     if not text:
         return ""
     text = re.sub(r"^\s*/\*[*!]?|\*/\s*$", "", text)
-    lines = []
+    lines: list[str] = []
     for line in text.splitlines():
         line = re.sub(r"^\s*(\*|///|//!)\s?", "", line).strip()
         if not line:
@@ -469,7 +509,9 @@ def first_sentence(text):
     return match.group(1) if match else text
 
 
-def walk(cursor, namespaces, only, out):
+def walk(
+    cursor: Cursor, namespaces: list[str], only: str | None, out: list[Decl]
+) -> None:
     """
     Collect declarations under a namespace cursor, recursing into namespaces.
     With only set, keep declarations whose header starts with it.
@@ -481,9 +523,9 @@ def walk(cursor, namespaces, only, out):
         rel = rel_in_stan(loc.file.name)
         if rel is None or (only and not rel.startswith(only)):
             continue
-        kind_name = child.kind.name
+        kind_name: str = child.kind.name
         if kind_name == "NAMESPACE":
-            walk(child, namespaces + [child.spelling], only, out)
+            walk(child, [*namespaces, child.spelling], only, out)
             continue
         kind = KEEP_KINDS.get(kind_name)
         if kind is None or not child.spelling:
@@ -494,56 +536,52 @@ def walk(cursor, namespaces, only, out):
                 continue
         signature, has_body = signature_of(child)
         out.append(
-            {
-                "name": child.spelling,
-                "header": rel,
-                "offset": loc.offset,
-                "kind": kind,
-                "namespace": "::".join(namespaces),
-                "signature": signature,
-                "brief": clip(
+            Decl(
+                name=child.spelling,
+                header=rel,
+                offset=loc.offset,
+                kind=kind,
+                namespace="::".join(namespaces),
+                signature=signature,
+                brief=clip(
                     child.brief_comment or first_sentence(child.raw_comment), 240
                 ),
-                "usr": child.get_usr(),
-                "definition": has_body
+                usr=child.get_usr(),
+                definition=has_body
                 or child.is_definition()
                 or kind in ("alias", "variable"),
-            }
+            )
         )
 
 
-def parse_tu(job):
-    """
-    Parse one translation unit and return its declarations.
-
-    job is (main_file, args, only); see walk() for only.
-    """
-    main_file, args, only = job
-    cindex = _worker["cindex"]
+def parse_tu(job: Job) -> TUResult:
+    """Parse one translation unit and return its declarations."""
+    w = worker()
+    cindex = w.cindex
     opts = (
         cindex.TranslationUnit.PARSE_SKIP_FUNCTION_BODIES
         | cindex.TranslationUnit.PARSE_INCOMPLETE
     )
     try:
-        tu = _worker["index"].parse(
-            os.path.join(ROOT, main_file), args=args, options=opts
+        tu = w.index.parse(
+            os.path.join(ROOT, job.main_file), args=job.args, options=opts
         )
     except cindex.TranslationUnitLoadError as e:
-        return {"file": main_file, "decls": [], "seen": [], "fatal": [str(e)]}
+        return TUResult(file=job.main_file, decls=[], seen=[], fatal=[str(e)])
     fatal = [str(d) for d in tu.diagnostics if d.severity >= cindex.Diagnostic.Fatal]
-    seen = {main_file}
+    seen = {job.main_file}
     for inc in tu.get_includes():
         rel = rel_in_stan(inc.include.name)
         if rel is not None:
             seen.add(rel)
-    decls = []
+    decls: list[Decl] = []
     for child in tu.cursor.get_children():
         if child.kind == cindex.CursorKind.NAMESPACE and child.spelling == "stan":
-            walk(child, ["stan"], only, decls)
-    return {"file": main_file, "decls": decls, "seen": sorted(seen), "fatal": fatal}
+            walk(child, ["stan"], job.only, decls)
+    return TUResult(file=job.main_file, decls=decls, seen=sorted(seen), fatal=fatal)
 
 
-def module_of(header):
+def module_of(header: str) -> str:
     """Catalog file stem for a header, e.g. prim-fun for stan/math/prim/fun/x.hpp."""
     parts = header.split("/")
     if len(parts) >= 5:
@@ -553,7 +591,7 @@ def module_of(header):
     return "math"
 
 
-def display_name(decl):
+def display_name(decl: Decl) -> str:
     """Name as grepped in the catalog: qualified only outside stan::math."""
     ns = decl["namespace"].split("::")
     ns = [n for n in ns if n and n != "internal"]
@@ -561,36 +599,40 @@ def display_name(decl):
         ns = ns[2:]
     elif ns[:1] == ["stan"]:
         ns = ns[1:]
-    return "::".join(ns + [decl["name"]])
+    return "::".join([*ns, decl["name"]])
 
 
-def catalog_libclang(args):
+def catalog_libclang(args: Args) -> list[Decl]:
     """Collect declarations for every header with libclang."""
     # Without the compiler's resource dir libclang may miss its builtin
     # headers (stddef.h) and silently turn unknown types into int.
     extra = [
         "-resource-dir",
-        run([args.compiler, "-print-resource-dir"]).strip(),
+        run_command(
+            [args.compiler, "-print-resource-dir"], capture=True
+        ).stdout.strip(),
         "-Wno-unknown-warning-option",
         "-w",
     ]
     if args.pin_system_includes:
         extra += system_includes(args.compiler)
 
-    def tu_args(opencl):
-        return ["-x", "c++"] + build_flags(opencl)[0] + extra
+    def tu_args(opencl: bool) -> list[str]:
+        return ["-x", "c++", *build_flags(opencl)[0], *extra]
 
-    def run_pass(pool, label, jobs):
+    def run_pass(
+        pool: Executor, label: str, jobs: list[Job]
+    ) -> tuple[list[TUResult], list[tuple[str, str]]]:
         t0 = time.time()
         chunksize = max(1, len(jobs) // (4 * args.j))
         results = list(pool.map(parse_tu, jobs, chunksize=chunksize))
-        print("%s pass: %d TUs (%.1fs)" % (label, len(jobs), time.time() - t0))
+        print(f"{label} pass: {len(jobs)} TUs ({time.time() - t0:.1f}s)")
         return results, [(r["file"], r["fatal"][0]) for r in results if r["fatal"]]
 
     # rev and prim come from mix.hpp, so the OpenCL TU only keeps opencl/.
     umbrella = [
-        ("stan/math/mix.hpp", tu_args(False), None),
-        ("stan/math/opencl/rev.hpp", tu_args(True), "stan/math/opencl/"),
+        Job("stan/math/mix.hpp", tu_args(False), None),
+        Job("stan/math/opencl/rev.hpp", tu_args(True), "stan/math/opencl/"),
     ]
     headers = find_files("stan", ".hpp")
     with ProcessPoolExecutor(
@@ -598,24 +640,27 @@ def catalog_libclang(args):
     ) as pool:
         results, failed = run_pass(pool, "umbrella", umbrella)
         if failed:
+            file, msg = failed[0]
             stopErr(
-                "fatal errors parsing %s:\n  %s\nif builtin headers are missing,"
-                " pass a --compiler matching libclang's version" % failed[0],
+                f"fatal errors parsing {file}:\n  {msg}\nif builtin headers are"
+                " missing, pass a --compiler matching libclang's version",
                 1,
             )
-        seen = set()
+        seen: set[str] = set()
         for res in results:
             seen.update(res["seen"])
         stragglers = [h for h in headers if h not in seen]
-        print("umbrella pass reached %d of %d headers" % (len(seen), len(headers)))
-        jobs = [(h, tu_args(is_opencl_path(h)), h) for h in stragglers]
+        print(f"umbrella pass reached {len(seen)} of {len(headers)} headers")
+        jobs = [Job(h, tu_args(is_opencl_path(h)), h) for h in stragglers]
         more, failed = run_pass(pool, "straggler", jobs)
         results += more
     if failed:
-        print("%d headers had fatal errors on their own; partial results kept:" % len(failed))
-        for f, msg in failed[:20]:
-            print("  %s: %s" % (f, msg))
-    decls = {}
+        print(
+            f"{len(failed)} headers had fatal errors on their own; partial results kept:"
+        )
+        for file, msg in failed[:20]:
+            print(f"  {file}: {msg}")
+    decls: dict[tuple[str, int], Decl] = {}
     for res in results:
         for d in res["decls"]:
             decls.setdefault((d["header"], d["offset"]), d)
@@ -628,11 +673,11 @@ REGEX_DECL = re.compile(
     r"(?:(?P<cls>struct|class)\s+(?P<cname>\w+)"
     r"|using\s+(?P<aname>\w+)\s*="
     r"|[\w:<>,\s\*&]+?\b(?P<fname>\w+)\s*\()",
-    re.M,
+    re.MULTILINE,
 )
 
 
-def scopes(text):
+def scopes(text: str) -> tuple[str, list[int], list[tuple[bool, bool]]]:
     """
     Blank out comments and string literals (keeping offsets), then return
     that code, the sorted offsets where a brace scan changes scope, and the
@@ -642,9 +687,9 @@ def scopes(text):
         r"//[^\n]*|/\*.*?\*/|R\"\((.*?)\)\"|\"(\\.|[^\"\\])*\"",
         lambda m: re.sub(r"[^\n]", " ", m.group(0)),
         text,
-        flags=re.S,
+        flags=re.DOTALL,
     )
-    stack = []
+    stack: list[str] = []
     offsets = [0]
     states = [(True, False)]
     last = 0
@@ -668,10 +713,10 @@ def scopes(text):
     return code, offsets, states
 
 
-def catalog_regex():
+def catalog_regex() -> list[Decl]:
     """Collect declarations with a regex scan, when libclang is unavailable."""
-    decls = []
-    doc = re.compile(r"/\*\*(.*?)\*/\s*$", re.S)
+    decls: list[Decl] = []
+    doc = re.compile(r"/\*\*(.*?)\*/\s*$", re.DOTALL)
     for rel in find_files("stan", ".hpp"):
         with open(os.path.join(ROOT, rel), errors="replace") as f:
             text = f.read()
@@ -683,38 +728,33 @@ def catalog_regex():
             at_ns, in_internal = states[bisect.bisect_right(offsets, m.start()) - 1]
             if not at_ns:
                 continue
-            kind = "class" if m.group("cname") else "alias" if m.group("aname") else "function"
+            if m.group("cname"):
+                kind = "class"
+            elif m.group("aname"):
+                kind = "alias"
+            else:
+                kind = "function"
             dm = doc.search(text[max(0, m.start() - 4000) : m.start()])
-            end = m.end()
-            depth = 0
-            while end < len(code):
-                c = code[end]
-                if c in "([":
-                    depth += 1
-                elif c in ")]":
-                    depth -= 1
-                elif depth <= 0 and c in "{;":
-                    break
-                end += 1
+            end = scan_to_body(code, m.end(), len(code))
             ns = ["stan", "math"] + (["internal"] if in_internal else [])
             brief = first_sentence("/**" + dm.group(1) + "*/") if dm else ""
             decls.append(
-                {
-                    "name": name,
-                    "header": rel,
-                    "offset": m.start(),
-                    "kind": kind,
-                    "namespace": "::".join(ns),
-                    "signature": clip(code[m.start() : end], 400),
-                    "brief": clip(brief + " [regex]", 240),
-                    "usr": "",
-                    "definition": True,
-                }
+                Decl(
+                    name=name,
+                    header=rel,
+                    offset=m.start(),
+                    kind=kind,
+                    namespace="::".join(ns),
+                    signature=clip(code[m.start() : end], 400),
+                    brief=clip(brief + " [regex]", 240),
+                    usr="",
+                    definition=True,
+                )
             )
     return decls
 
 
-def write_catalog(args):
+def write_catalog(args: Args) -> None:
     """Write the API catalog to args.out."""
     out_rel = os.path.relpath(os.path.abspath(args.out), ROOT)
     require_ignored(os.path.join(out_rel, "index.md"))
@@ -731,34 +771,38 @@ def write_catalog(args):
 
     # Drop forward declarations of things defined somewhere. The USR ties a
     # declaration to its definition; the regex scan has none.
-    def ident(d):
+    def ident(d: Decl) -> str | tuple[str, str]:
         return d["usr"] or (d["name"], d["kind"])
 
     defined = {ident(d) for d in decls if d["definition"]}
     decls = [d for d in decls if d["definition"] or ident(d) not in defined]
-    groups = defaultdict(list)
+    groups: defaultdict[tuple[str, str, str, str], list[Decl]] = defaultdict(list)
     for d in sorted(decls, key=lambda d: (d["header"], d["offset"])):
         internal = "internal" in d["namespace"].split("::")
         section = "internal" if internal and not args.include_internal else "public"
         key = (module_of(d["header"]), section, display_name(d), d["header"])
         groups[key].append(d)
-    lines = defaultdict(lambda: {"public": [], "internal": []})
-    index = defaultdict(set)
+    lines: defaultdict[str, dict[str, list[str]]] = defaultdict(
+        lambda: {"public": [], "internal": []}
+    )
+    index: defaultdict[str, set[str]] = defaultdict(set)
     for (module, section, name, header), ds in groups.items():
         chosen = next((d for d in ds if d["brief"]), ds[0])
         sig = chosen["signature"]
         if len(ds) > 1:
-            sig += " (x%d)" % len(ds)
+            sig += f" (x{len(ds)})"
         briefs = list(dict.fromkeys(d["brief"] for d in ds if d["brief"]))
         brief = clip(" / ".join(briefs[:3]), 240)
-        lines[module][section].append("%s | %s | %s | %s" % (name, header, sig, brief))
+        lines[module][section].append(f"{name} | {header} | {sig} | {brief}")
         if section == "public":
             index[name].add(module.replace("-", "/"))
-    sha = run(["git", "rev-parse", "--short", "HEAD"]).strip()
-    stamp = "Generated by ./runClangd.py catalog (%s) at %s from %s. Do not edit." % (
-        source,
-        datetime.date.today().isoformat(),
-        sha,
+    sha = run_command(
+        ["git", "rev-parse", "--short", "HEAD"], capture=True
+    ).stdout.strip()
+    today = datetime.datetime.now().astimezone().date().isoformat()
+    stamp = (
+        f"Generated by ./runClangd.py catalog ({source}) at {today} from {sha}."
+        " Do not edit."
     )
     out = os.path.join(ROOT, out_rel)
     tmp = out + ".tmp"
@@ -767,32 +811,34 @@ def write_catalog(args):
     os.makedirs(tmp)
     for module in sorted(lines):
         body = [
-            "# Stan Math API catalog: %s" % module.replace("-", "/"),
+            f"# Stan Math API catalog: {module.replace('-', '/')}",
             stamp,
             "Format: name | header | signature | brief",
             "",
         ]
         body += sorted(lines[module]["public"])
         if lines[module]["internal"]:
-            body += ["", "## internal", ""] + sorted(lines[module]["internal"])
+            body += ["", "## internal", "", *sorted(lines[module]["internal"])]
         with open(os.path.join(tmp, module + ".md"), "w") as f:
             f.write("\n".join(body) + "\n")
     with open(os.path.join(tmp, "index.md"), "w") as f:
-        f.write("# Stan Math API catalog index\n%s\n" % stamp)
-        f.write("Format: name: modules defining it (catalog file = module with / -> -)\n\n")
+        f.write(f"# Stan Math API catalog index\n{stamp}\n")
+        f.write(
+            "Format: name: modules defining it (catalog file = module with / -> -)\n\n"
+        )
         for name in sorted(index):
-            f.write("%s: %s\n" % (name, " ".join(sorted(index[name]))))
+            f.write(f"{name}: {' '.join(sorted(index[name]))}\n")
     if os.path.isdir(out):
         shutil.rmtree(out)
     os.replace(tmp, out)
     entries = sum(len(v["public"]) + len(v["internal"]) for v in lines.values())
     print(
-        "wrote %s: %d files, %d entries, %d names in index.md (%.1fs)"
-        % (out_rel, len(lines), entries, len(index), time.time() - start)
+        f"wrote {out_rel}: {len(lines)} files, {entries} entries,"
+        f" {len(index)} names in index.md ({time.time() - start:.1f}s)"
     )
 
 
-def main():
+def main() -> None:
     args = processCLIArgs()
     os.chdir(ROOT)
     if args.clean:

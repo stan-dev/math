@@ -42,7 +42,7 @@ catchError {
     runPod(image: image, cpus: 2) {
       stage('Verify changes') {
         runRemainingStages = params.run_all || filesChanged(
-            'stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format')
+            'stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'utils.py', 'makefile', 'Jenkinsfile', '.clang-format')
       }
 
       stage("Clang-format") {

@@ -9,26 +9,12 @@ from __future__ import print_function
 import os
 import sys
 import re
-import glob
 from collections import defaultdict
 
-winsfx = ".exe"
-testsfx = "_test.cpp"
+from utils import files_in_folder, testsfx
+
 testsfx_no_ext = "_test"
 
-
-def files_in_folder(folder):
-    """Returns a list of files in the folder and all
-    its subfolders recursively. The folder can be
-    written with wildcards as with the Unix find command.
-    """
-    files = []
-    for f in glob.glob(folder):
-        if os.path.isdir(f):
-            files.extend(files_in_folder(f + os.sep + "**"))
-        else:
-            files.append(f)
-    return files
 
 def check_non_unique_test_names():
     test_files = files_in_folder("test/unit/")
@@ -63,24 +49,25 @@ def check_non_unique_test_names():
         )
     return errors
 
-def grep_patterns(type, folder, patterns_and_messages, exclude_filters=[]):
+def grep_patterns(type, folder, patterns_and_messages, exclude_filters=[], suffix=""):
     """Checks the files in the provided folder for matches
     with any of the patterns. It returns an array of
     messages and the provided type with
     the line number. This check ignores comments.
     @param type: type or group of the check, listed with the error
     @param folder: folder in which to check for the pattern
-    @param patterns_and_messages: a list of patterns and messages that 
+    @param patterns_and_messages: a list of patterns and messages that
         are printed if the pattern is matched
     @param exclude_filter a list of files or folder that are excluded from
         the check
+    @param suffix: only check files whose names end in suffix
     """
     errors = []
     folder.replace("/", os.sep)
     exclude_files = []
     for excl in exclude_filters:
         exclude_files.extend(files_in_folder(excl))
-    files = files_in_folder(folder + os.sep + "**")
+    files = files_in_folder(folder + os.sep + "**", suffix)
     files = [x for x in files if x not in exclude_files]
     for filepath in files:
         if os.path.isfile(filepath):
@@ -143,44 +130,18 @@ def check_non_test_files_in_test():
 
 
 def check_rev_test_fixtures():
-    test_files = [
-        x for x in files_in_folder("test/unit/math/rev")
-        if os.path.isfile(x) and x.endswith(testsfx)
+    rev_fixture_checks = [
+        {
+            "pattern": r"\bTEST\(",
+            "message": "Reverse-mode tests in "
+            + "test/unit/math/rev must use a cleanup fixture. "
+            + "Replace raw TEST(...) with TEST_F(AgradRev, ...) "
+            + "or another approved fixture-based form.",
+        }
     ]
-    errors = []
-    for filepath in test_files:
-        line_num = 0
-        multi_line_comment = False
-        old_state_multi_line_comment = False
-        with open(filepath, "r") as f:
-            for line in f:
-                line_num += 1
-                if multi_line_comment:
-                    if re.search("\*/", line):
-                        multi_line_comment = False
-                else:
-                    if re.search("/\*", line):
-                        multi_line_comment = True
-                if not multi_line_comment or (
-                    multi_line_comment and not old_state_multi_line_comment
-                ):
-                    if (
-                        not re.search(r".*\bTEST\(.*\*/.*", line)
-                        and not re.search(r".*/\*.*\bTEST\(", line)
-                        and not re.search(r".*//.*\bTEST\(", line)
-                        and re.search(r"\bTEST\(", line)
-                    ):
-                        errors.append(
-                            filepath
-                            + " at line "
-                            + str(line_num)
-                            + ":\n\t[rev-tests] Reverse-mode tests in "
-                            + "test/unit/math/rev must use a cleanup fixture. "
-                            + "Replace raw TEST(...) with TEST_F(AgradRev, ...) "
-                            + "or another approved fixture-based form."
-                        )
-                old_state_multi_line_comment = multi_line_comment
-    return errors
+    return grep_patterns(
+        "rev-tests", "test/unit/math/rev", rev_fixture_checks, suffix=testsfx
+    )
 
 
 def main():

@@ -8,18 +8,14 @@ Call script with '-h' as an option to see a helpful message.
 
 from __future__ import print_function
 
-import glob
 import os
 import os.path
 import platform
 import re
-import subprocess
 import sys
-import time
 from argparse import ArgumentParser, RawTextHelpFormatter
 
-winsfx = ".exe"
-testsfx = "_test.cpp"
+from utils import ROOT, run_command, stopErr, test_files_in_folder, testsfx, winsfx
 
 allowed_paths_with_jumbo = [
     "test/unit/math/prim/",
@@ -151,13 +147,6 @@ def processCLIArgs():
     return parser.parse_args()
 
 
-def stopErr(msg, returncode):
-    """Report an error message to stderr and exit with a given code."""
-    sys.stderr.write("%s\n" % msg)
-    sys.stderr.write("exit now (%s)\n" % time.strftime("%x %X %Z"))
-    sys.exit(returncode)
-
-
 def isWin():
     return platform.system().lower().startswith(
         "windows"
@@ -180,19 +169,9 @@ def mungeName(name):
     return name
 
 
-def doCommand(command, exit_on_failure=True):
-    """Run command as a shell command and report/exit on errors."""
-    print("------------------------------------------------------------")
-    print("%s" % command)
-    p1 = subprocess.Popen(command, shell=True)
-    p1.wait()
-    if exit_on_failure and (not (p1.returncode is None) and not (p1.returncode == 0)):
-        stopErr("%s failed" % command, p1.returncode)
-
-
 def generateTests(j):
     """Generate all tests and pass along the j parameter to make."""
-    doCommand("make -j%d generate-tests -s" % (j or 1))
+    run_command("make -j%d generate-tests -s" % (j or 1), echo=True)
 
 
 def divide_chunks(l, n):
@@ -250,15 +229,11 @@ def cleanupJumboTests(paths):
 
 def makeTest(name, j):
     """Run the make command for a given single test."""
-    doCommand("make -j%d %s" % (j or 1, name))
+    run_command("make -j%d %s" % (j or 1, name), echo=True)
 
 
 def commandExists(command):
-    p = subprocess.Popen(
-        command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-    )
-    p.wait()
-    return p.returncode != 127
+    return run_command(command, capture=True, check=False).returncode != 127
 
 
 def runTest(name, run_all=False, mpi=False, j=1):
@@ -276,22 +251,7 @@ def runTest(name, run_all=False, mpi=False, j=1):
         else:
             j = 1
         command = "mpirun -np {} {}".format(j, command)
-    doCommand(command, not run_all)
-
-
-def test_files_in_folder(folder):
-    """Returns a list of test files (*_test.cpp) in the folder and all
-    its subfolders recursively. The folder can be written with
-    wildcards as with the Unix find command.
-    """
-    files = []
-    for f in glob.glob(folder):
-        if os.path.isdir(f):
-            files.extend(test_files_in_folder(f + os.sep + "**"))
-        else:
-            if f.endswith(testsfx):
-                files.append(f)
-    return files
+    run_command(command, echo=True, check=not run_all)
 
 
 def findTests(base_path, filter_names, do_jumbo=False):
@@ -323,11 +283,10 @@ def findTests(base_path, filter_names, do_jumbo=False):
 
 
 def findChangedTests(debug):
-    import subprocess
-
-    changed_files = subprocess.run(
+    changed_files = run_command(
         ["git", "diff", "--name-only", "--diff-filter=d", "origin/develop...HEAD"],
-        text=True, capture_output=True
+        capture=True,
+        check=False,
     ).stdout.splitlines()
     if debug:
         print("Changed files:", changed_files)
@@ -355,10 +314,6 @@ def findChangedTests(debug):
     return list(map(mungeName, changed_tests))
 
 
-def batched(tests):
-    return [tests[i : i + batchSize] for i in range(0, len(tests), batchSize)]
-
-
 def handleExpressionTests(tests, only_functions, n_test_files):
     expression_tests = False
     for n, i in list(enumerate(tests))[::-1]:
@@ -366,9 +321,8 @@ def handleExpressionTests(tests, only_functions, n_test_files):
             del tests[n]
             expression_tests = True
     if expression_tests:
-        HERE = os.path.dirname(os.path.realpath(__file__))
-        sys.path.append(os.path.join(HERE, "test"))
-        sys.path.append(os.path.join(HERE, "test/expressions"))
+        sys.path.append(os.path.join(ROOT, "test"))
+        sys.path.append(os.path.join(ROOT, "test/expressions"))
         import generate_expression_tests
 
         generate_expression_tests.main(only_functions, n_test_files)
@@ -383,13 +337,7 @@ def handleExpressionTests(tests, only_functions, n_test_files):
 
 def checkToolchainPathWindows():
     if isWin():
-        p1 = subprocess.Popen(
-            "where.exe make",
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True,
-        )
-        out, err = p1.communicate()
+        out = run_command("where.exe make", capture=True, check=False).stdout
         if re.search(r" |\(|\)", out):
             stopErr(
                 "The RTools toolchain is installed in a path with spaces or bracket. Please reinstall to a valid path.",
@@ -440,7 +388,7 @@ def main():
     try:
         # pass 1: make test executables
         if not inputs.test_only:
-            for batch in batched(tests):
+            for batch in divide_chunks(tests, batchSize):
                 if inputs.debug:
                     print("Test batch: ", batch)
                 makeTest(" ".join(batch), inputs.j)
