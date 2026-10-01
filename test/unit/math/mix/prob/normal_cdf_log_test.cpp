@@ -52,3 +52,16 @@ TEST_F(AgradRev, mathMixScalFun_normal_lcdf_branch_accuracy) {
   normal_lcdf_tail_test::expect_branch_accuracy(normal_lcdf_mix_test::fn,
                                                 normal_lcdf_mix_test::dir);
 }
+
+TEST_F(AgradRev, mathMixScalFun_normal_lcdf_infinite_endpoints) {
+  using stan::math::INFTY;
+  using stan::math::NEGATIVE_INFTY;
+  using stan::math::normal_lcdf;
+  using stan::math::var;
+  EXPECT_EQ(0, normal_lcdf(INFTY, 0.0, 1.0));
+  EXPECT_EQ(NEGATIVE_INFTY, normal_lcdf(NEGATIVE_INFTY, 0.0, 1.0));
+  var sigma = 1;
+  auto lp = normal_lcdf(INFTY, 0.0, sigma);
+  lp.grad();
+  EXPECT_EQ(0, sigma.adj());
+}

@@ -8,45 +8,27 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/opencl/prim/std_normal_lcdf.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
+namespace internal {
 
-/** \ingroup opencl
- * Returns the exp mod normal log cumulative density
- * function. Given containers of matching sizes, returns the log sum of
- * probabilities.
- *
- * @tparam T_y_cl type of scalar outcome
- * @tparam T_loc_cl type of location
- * @tparam T_scale_cl type of scale
- * @tparam T_inv_scale_cl type of inverse scale
- * @param y (Sequence of) scalar(s).
- * @param mu (Sequence of) location(s).
- * @param sigma (Sequence of) scale(s).
- * @param lambda (Sequence of) inverse scale(s).
- * @return The log of the product of densities.
- */
-template <typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
-          typename T_inv_scale_cl,
-          require_all_prim_or_rev_kernel_expression_t<
-              T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>* = nullptr,
-          require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl,
-                                        T_inv_scale_cl>* = nullptr>
+/** Same log-space formulation as the prim exp_mod_normal_lcdf_impl. */
+template <bool upper, typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
+          typename T_inv_scale_cl>
 inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>
-exp_mod_normal_lcdf(const T_y_cl& y, const T_loc_cl& mu,
-                    const T_scale_cl& sigma, const T_inv_scale_cl& lambda) {
-  static constexpr const char* function = "exp_mod_normal_lcdf(OpenCL)";
-  using T_partials_return
-      = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>;
+exp_mod_normal_lcdf_opencl_impl(const char* function, const T_y_cl& y,
+                                const T_loc_cl& mu, const T_scale_cl& sigma,
+                                const T_inv_scale_cl& lambda) {
+  constexpr double sign = upper ? -1.0 : 1.0;
   using std::isfinite;
   using std::isnan;
 
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
-                         mu, "Scale parameter", sigma);
-  const size_t N = max_size(y, mu, sigma);
+                         mu, "Scale parameter", sigma, "Inv_scale parameter",
+                         lambda);
+  const size_t N = max_size(y, mu, sigma, lambda);
   if (N == 0) {
     return 0.0;
   }
@@ -70,89 +52,47 @@ exp_mod_normal_lcdf(const T_y_cl& y, const T_loc_cl& mu,
   auto check_sigma_positive_finite
       = check_cl(function, "Scale parameter", sigma_val, "positive finite");
   auto sigma_positive_finite_expr = 0 < sigma_val && isfinite(sigma_val);
-  auto check_lambda_positive_finite
-      = check_cl(function, "Inv_cale parameter", lambda_val, "positive finite");
+  auto check_lambda_positive_finite = check_cl(function, "Inv_scale parameter",
+                                               lambda_val, "positive finite");
   auto lambda_positive_finite_expr = 0 < lambda_val && isfinite(lambda_val);
 
   auto any_y_neg_inf = colwise_max(cast<char>(y_val == NEGATIVE_INFTY));
   auto any_y_pos_inf = colwise_max(cast<char>(y_val == INFTY));
-  auto sigma_inv = elt_divide(1.0, sigma_val);
   auto diff = y_val - mu_val;
-  auto scaled_diff = elt_multiply(diff * INV_SQRT_TWO, sigma_inv);
+  auto z = elt_divide(diff, sigma_val);
   auto v = elt_multiply(lambda_val, sigma_val);
-  auto scaled_diff_diff = scaled_diff - v * INV_SQRT_TWO;
-  auto cdf_term_1 = 0.5 + 0.5 * erf(scaled_diff);
-  auto cdf_term_2_phi = 0.5 * (1.0 + erf(scaled_diff_diff));
-  auto log_exp_term = 0.5 * square(v) - elt_multiply(lambda_val, diff);
-  auto exp_term = exp(log_exp_term);
-  auto cdf_term_2 = elt_multiply(exp_term, cdf_term_2_phi);
-  auto cdf_n = cdf_term_1 - cdf_term_2;
-  auto use_stable = cdf_n <= 0.0 || !isfinite(cdf_n);
+  auto z_a = sign * z;
+  auto z_b = z - v;
+  auto log_a = math::std_normal_lcdf_impl(z_a);
+  auto log_b = 0.5 * square(v) - elt_multiply(lambda_val, diff)
+               + math::std_normal_lcdf_impl(z_b);
+  auto lp = [&]() {
+    if constexpr (upper) {
+      return fmax(log_a, log_b) + log1p_exp(-fabs(log_a - log_b));
+    } else {
+      return log_diff_exp(log_a, log_b);
+    }
+  }();
+  auto cdf_log_expr = colwise_sum(lp);
 
-  auto exp_term_2 = exp(-square(scaled_diff_diff));
-  auto deriv_1
-      = elt_multiply(elt_multiply(lambda_val, exp_term), cdf_term_2_phi);
-  auto deriv_2 = INV_SQRT_TWO_PI
-                 * elt_multiply(elt_multiply(exp_term, exp_term_2), sigma_inv);
-  auto deriv_3
-      = INV_SQRT_TWO_PI * elt_multiply(exp(-square(scaled_diff)), sigma_inv);
-  auto direct_cdf_log = log(cdf_n);
-  auto direct_y_deriv = elt_divide(deriv_1 - deriv_2 + deriv_3, cdf_n);
-  auto direct_mu_deriv = -direct_y_deriv;
-  auto direct_sigma_deriv = -elt_divide(
-      elt_multiply(deriv_1 - deriv_2, v)
-          + elt_multiply(deriv_3 - deriv_2, scaled_diff) * SQRT_TWO,
-      cdf_n);
-  auto direct_lambda_deriv = elt_divide(
-      elt_multiply(exp_term,
-                   INV_SQRT_TWO_PI * elt_multiply(sigma_val, exp_term_2)
-                       - elt_multiply(elt_multiply(v, sigma_val) - diff,
-                                      cdf_term_2_phi)),
-      cdf_n);
-
-  auto log_cdf_term_1 = std_normal_lcdf_scaled_impl(scaled_diff);
-  auto dlog_cdf_term_1 = std_normal_lcdf_dscaled_impl(scaled_diff);
-  auto log_cdf_term_2_phi = std_normal_lcdf_scaled_impl(scaled_diff_diff);
-  auto dlog_cdf_term_2_phi = std_normal_lcdf_dscaled_impl(scaled_diff_diff);
-  auto log_cdf_term_2 = log_exp_term + log_cdf_term_2_phi;
-  auto log_cdf_n = log_diff_exp(log_cdf_term_1, log_cdf_term_2);
-  auto cdf_term_1_weight = exp(log_cdf_term_1 - log_cdf_n);
-  auto cdf_term_2_weight = exp(log_cdf_term_2 - log_cdf_n);
-  auto scaled_diff_deriv
-      = elt_multiply(dlog_cdf_term_1, sigma_inv * INV_SQRT_TWO);
-  auto scaled_diff_diff_deriv
-      = elt_multiply(dlog_cdf_term_2_phi, sigma_inv * INV_SQRT_TWO);
-  auto stable_y_deriv
-      = elt_multiply(cdf_term_1_weight, scaled_diff_deriv)
-        - elt_multiply(cdf_term_2_weight, -lambda_val + scaled_diff_diff_deriv);
-  auto stable_mu_deriv = -stable_y_deriv;
-  auto stable_sigma_deriv
-      = elt_multiply(cdf_term_1_weight,
-                     -elt_multiply(dlog_cdf_term_1,
-                                   elt_multiply(scaled_diff, sigma_inv)))
-        - elt_multiply(
-            cdf_term_2_weight,
-            elt_multiply(lambda_val, v)
-                - elt_multiply(
-                    dlog_cdf_term_2_phi,
-                    elt_multiply(scaled_diff + v * INV_SQRT_TWO, sigma_inv)));
-  auto stable_lambda_deriv = -elt_multiply(
-      cdf_term_2_weight,
-      elt_multiply(v, sigma_val) - diff
-          - elt_multiply(dlog_cdf_term_2_phi, sigma_val * INV_SQRT_TWO));
-  auto cdf_log_expr
-      = colwise_sum(select(use_stable, log_cdf_n, direct_cdf_log));
-  auto y_deriv = select(use_stable, stable_y_deriv, direct_y_deriv);
-  auto mu_deriv = select(use_stable, stable_mu_deriv, direct_mu_deriv);
-  auto sigma_deriv = select(use_stable, stable_sigma_deriv, direct_sigma_deriv);
-  auto lambda_deriv
-      = select(use_stable, stable_lambda_deriv, direct_lambda_deriv);
+  auto w_b = -sign * exp(log_b - lp);
+  auto s_b = elt_multiply(w_b, std_normal_lcdf_derivative(z_b));
+  auto s = elt_divide(
+      sign * elt_multiply(exp(log_a - lp), std_normal_lcdf_derivative(z_a))
+          + s_b,
+      sigma_val);
+  auto q = elt_multiply(w_b, v) - s_b;
+  auto y_deriv = s - elt_multiply(w_b, lambda_val);
+  auto mu_deriv = -y_deriv;
+  auto sigma_deriv
+      = select(s == 0, 0.0, -elt_multiply(s, z)) + elt_multiply(lambda_val, q);
+  auto lambda_deriv = elt_multiply(sigma_val, q) - elt_multiply(w_b, diff);
 
   matrix_cl<char> any_y_neg_inf_cl;
   matrix_cl<char> any_y_pos_inf_cl;
   matrix_cl<double> cdf_log_cl;
-  matrix_cl<double> mu_deriv_cl;
   matrix_cl<double> y_deriv_cl;
+  matrix_cl<double> mu_deriv_cl;
   matrix_cl<double> sigma_deriv_cl;
   matrix_cl<double> lambda_deriv_cl;
 
@@ -166,15 +106,14 @@ exp_mod_normal_lcdf(const T_y_cl& y, const T_loc_cl& mu,
                     calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv),
                     calc_if<is_autodiff_v<T_inv_scale_cl>>(lambda_deriv));
 
-  if (from_matrix_cl(any_y_pos_inf_cl).maxCoeff()) {
-    return 0.0;
-  }
-
   if (from_matrix_cl(any_y_neg_inf_cl).maxCoeff()) {
-    return NEGATIVE_INFTY;
+    return upper ? 0.0 : NEGATIVE_INFTY;
+  }
+  if (from_matrix_cl(any_y_pos_inf_cl).maxCoeff()) {
+    return upper ? NEGATIVE_INFTY : 0.0;
   }
 
-  T_partials_return cdf_log = (from_matrix_cl(cdf_log_cl)).sum();
+  double cdf_log = sum(from_matrix_cl(cdf_log_cl));
 
   auto ops_partials
       = make_partials_propagator(y_col, mu_col, sigma_col, lambda_col);
@@ -192,6 +131,21 @@ exp_mod_normal_lcdf(const T_y_cl& y, const T_loc_cl& mu,
     partials<3>(ops_partials) = std::move(lambda_deriv_cl);
   }
   return ops_partials.build(cdf_log);
+}
+
+}  // namespace internal
+
+template <typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
+          typename T_inv_scale_cl,
+          require_all_prim_or_rev_kernel_expression_t<
+              T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>* = nullptr,
+          require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl,
+                                        T_inv_scale_cl>* = nullptr>
+inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>
+exp_mod_normal_lcdf(const T_y_cl& y, const T_loc_cl& mu,
+                    const T_scale_cl& sigma, const T_inv_scale_cl& lambda) {
+  return internal::exp_mod_normal_lcdf_opencl_impl<false>(
+      "exp_mod_normal_lcdf(OpenCL)", y, mu, sigma, lambda);
 }
 
 }  // namespace math
