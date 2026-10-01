@@ -16,7 +16,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the integral of f from a to b using adaptive Gauss-Kronrod (G21,K21)
+ * Return the integral of f from a to b using adaptive Gauss-Kronrod (G10,K21)
  * quadrature.
  *
  * @tparam F Type of f
@@ -57,7 +57,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_tol(
 
 /**
  * Compute the integral of the single variable function f from a to b using
- * adaptive Gauss-Kronrod (G21,K21) quadrature. a and b can be finite or
+ * adaptive Gauss-Kronrod (G10,K21) quadrature. a and b can be finite or
  * infinite.
  *
  * f should be compatible with reverse mode autodiff and have the signature:
