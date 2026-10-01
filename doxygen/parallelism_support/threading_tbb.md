@@ -12,17 +12,19 @@ In addition to making `stan-math` thread safe this also turns on parallel execut
 
 The Intel TBB library is used in stan-math since version 2.21.0. The Intel TBB library uses a threadpool internally and distributes work through a task-based approach. The tasks are dispatched to the threadpool via a the Intel TBB work-stealing scheduler. For example, whenever threading is enabled via `STAN_THREADS` the `map_rect` function in stan-math will use the `tbb::parallel_for` of the TBB. This will execute the work chunks given to `map_rect` with scheduling and thus load-balance CPU core utilization.
 
-By default stan-math builds only the main `tbb` library by defining the `makefile` variable
+The Intel TBB provides in addition to the main library memory allocators which are specifically designed to speedup threaded programs. On Linux and Windows stan-math builds and links the main `tbb` library together with these allocators by defining the `makefile` variable
+
+```
+TBB_LIBRARIES=tbb tbbmalloc tbbmalloc_proxy
+```
+
+On MacOS the default is to build only the main `tbb` library
 
 ```
 TBB_LIBRARIES=tbb
 ```
 
-The Intel TBB provides in addition to the main library memory allocators which are specifically designed to speedup threaded programs. These speedups have so far only been observed on MacOS systems for Stan programs such that on MacOS the default is set to
-
-```
-TBB_LIBRARIES=tbb tbbmalloc tbbmalloc_proxy
-```
+because on MacOS `tbbmalloc_proxy` registers a process-wide malloc zone which can crash host processes (such as Julia, Python, or R) that load a Stan model as a shared library. See [issue #3425](https://github.com/stan-dev/math/issues/3425) for details.
 
 Users may override the default choices by defining `TBB_LIBRARIES` in the `make/local` file manually. Please refer to the [pull request](https://github.com/stan-dev/math/pull/1376) which merged the Intel TBB for further details on the performance evaluations.
 
