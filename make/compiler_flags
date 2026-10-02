@@ -296,14 +296,14 @@ else
 CXXFLAGS_TBB ?= $(INC_DIR_OPT) $(TBB)/include
 endif
 
-# MacOS ld does not support --disable-new-dtags
-ifneq ($(OS),Darwin)
-  LDFLAGS_TBB_DTAGS ?= -Wl,--disable-new-dtags
-endif
-
 # Windows LLVM/Clang does not support -rpath, but is not needed on Windows anyway
 ifneq ($(OS), Windows_NT)
   LDFLAGS_TBB_RPATH ?= -Wl,-rpath,"$(TBB_LIB)"
+  # --disable-new-dtags only matters alongside -rpath; MacOS ld does not
+  # support it
+  ifneq ($(OS),Darwin)
+    LDFLAGS_TBB_DTAGS ?= -Wl,--disable-new-dtags
+  endif
 endif
 
 LDFLAGS_TBB ?= -Wl,-L,"$(TBB_LIB)" $(LDFLAGS_TBB_DTAGS) $(LDFLAGS_TBB_RPATH)
