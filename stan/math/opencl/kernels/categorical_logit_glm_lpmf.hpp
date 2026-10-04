@@ -70,7 +70,6 @@ static constexpr const char* categorical_logit_glm_kernel_code = STRINGIFY(
             lin_max = lin;
           }
         }
-        double alpha = alpha_global[gid];
         double sum_exp_lin = 0;
         for (int i = 0; i < N_classes; i++) {
           double lin = x_beta_global[i * N_instances + gid] + alpha_global[i];
@@ -82,7 +81,7 @@ static constexpr const char* categorical_logit_glm_kernel_code = STRINGIFY(
         inv_sum_exp_lin_global[gid] = inv_sum_exp_lin;
 
         class_idx = y_global[gid * is_y_vector] - 1;
-        if (class_idx < 0 || class_idx > N_classes) {
+        if (class_idx < 0 || class_idx >= N_classes) {
           logp = NAN;
         } else {
           logp = log(inv_sum_exp_lin) - lin_max
