@@ -43,7 +43,9 @@ static constexpr const char* cholesky_decompose_kernel_code = STRINGIFY(
           }
           A(j, j) = sqrt(A(j, j) - sum);
         }
-        barrier(CLK_LOCAL_MEM_FENCE);
+        // Work items read entries of A written by other work items, so the
+        // barriers need a global memory fence.
+        barrier(CLK_GLOBAL_MEM_FENCE);
         if (local_index < j) {
           A(local_index, j) = 0.0;
         } else if (local_index > j) {
@@ -52,7 +54,7 @@ static constexpr const char* cholesky_decompose_kernel_code = STRINGIFY(
             sum = sum + A(local_index, k) * A(j, k);
           A(local_index, j) = (A(local_index, j) - sum) / A(j, j);
         }
-        barrier(CLK_LOCAL_MEM_FENCE);
+        barrier(CLK_GLOBAL_MEM_FENCE);
       }
     }
     // \cond
