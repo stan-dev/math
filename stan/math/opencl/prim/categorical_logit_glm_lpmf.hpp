@@ -112,11 +112,10 @@ inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
   if (!std::isfinite(logp)) {
-    results(check_cl(function, "Vector of dependent variables", y_val,
-                     "between 1 and cols of beta"),
-            check_cl(function, "Intercept", alpha_val, "finite"))
-        = expressions(y_val >= 1 && y_val <= static_cast<int>(N_classes),
-                      isfinite(alpha_val));
+    check_cl(function, "Vector of dependent variables", y_val,
+             "between 1 and cols of beta")
+        = y_val >= 1 && y_val <= static_cast<int>(N_classes);
+    check_cl(function, "Intercept", alpha_val, "finite") = isfinite(alpha_val);
     check_cl(function, "Design matrix", x_val, "finite") = isfinite(x_val);
     check_cl(function, "Weight vector", beta_val, "finite")
         = isfinite(beta_val);
