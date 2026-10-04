@@ -104,6 +104,29 @@ TEST(ProbDistributionsCategoricalLogitGLM, error_checking) {
                std::domain_error);
 }
 
+TEST(ProbDistributionsCategoricalLogitGLM, error_checking_y_fewer_classes) {
+  int N = 3;
+  int M = 2;
+  int C = 2;
+
+  vector<int> y_value{0, 1, 2};
+  Matrix<double, Dynamic, Dynamic> x(N, M);
+  x << -12, 46, -42, 24, 25, 27;
+  Matrix<double, Dynamic, Dynamic> beta(M, C);
+  beta << 0.3, 2, 0.4, -0.1;
+  Matrix<double, Dynamic, 1> alpha(C, 1);
+  alpha << 0.3, -0.8;
+
+  matrix_cl<int> y_value_cl(y_value);
+  matrix_cl<double> x_cl(x);
+  matrix_cl<double> beta_cl(beta);
+  matrix_cl<double> alpha_cl(alpha);
+
+  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y_value_cl, x_cl,
+                                                      alpha_cl, beta_cl),
+               std::domain_error);
+}
+
 auto categorical_logit_glm_lpmf_functor
     = [](const auto& y, const auto& x, const auto& alpha, const auto& beta) {
         return stan::math::categorical_logit_glm_lpmf(y, x, alpha, beta);
