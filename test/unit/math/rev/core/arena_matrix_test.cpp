@@ -250,3 +250,32 @@ TEST_F(AgradRev, RevArenaMat_arena_matrix_move_test) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 1);
   stan::math::recover_memory();
 }
+
+TEST_F(AgradRev, RevArenaMat_arena_matrix_copy_allocates_once) {
+  using stan::math::arena_matrix;
+  using vec_v = Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1>;
+  auto& memalloc = stan::math::ChainableStack::instance_->memalloc_;
+  Eigen::VectorXd x(5);
+  x << 1, 2, 3, 4, 5;
+  vec_v x_v = x;
+  // The copy must be the only arena allocation between two 8-byte sentinels:
+  // it starts 8 bytes after the first and ends 8 + 5 * 8 = 48 bytes after it.
+  char* before = static_cast<char*>(memalloc.alloc(8));
+  arena_matrix<Eigen::VectorXd> a(x);
+  char* after = static_cast<char*>(memalloc.alloc(8));
+  EXPECT_EQ(8, reinterpret_cast<char*>(a.data()) - before);
+  EXPECT_EQ(48, after - before);
+  EXPECT_MATRIX_EQ(x, a);
+
+  before = static_cast<char*>(memalloc.alloc(8));
+  arena_matrix<Eigen::VectorXd> b(2 * x);
+  after = static_cast<char*>(memalloc.alloc(8));
+  EXPECT_EQ(48, after - before);
+  EXPECT_MATRIX_EQ(2 * x, b);
+
+  before = static_cast<char*>(memalloc.alloc(8));
+  arena_matrix<vec_v> c(x_v);
+  after = static_cast<char*>(memalloc.alloc(8));
+  EXPECT_EQ(48, after - before);
+  EXPECT_MATRIX_EQ(x, c.val());
+}
