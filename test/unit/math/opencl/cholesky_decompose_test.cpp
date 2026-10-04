@@ -30,9 +30,6 @@ TEST(MathMatrixOpenCL, cholesky_decompose_cpu_vs_cl_small) {
 }
 
 TEST(MathMatrixOpenCL, cholesky_decompose_cpu_vs_cl_one_work_group) {
-  // One call of the cholesky_decompose kernel with 200 work items, unless
-  // cholesky_min_L11_size is smaller. An AMD GPU returned a wrong factor from
-  // the kernel with more than 64 work items.
   int size = 200;
   stan::math::matrix_d m = stan::math::matrix_d::Random(size, size);
   stan::math::matrix_d m_pos_def
