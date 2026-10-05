@@ -3,6 +3,7 @@
 #include <stan/math/prim/fun/abs.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/pow.hpp>
+#include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/tgamma.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 
@@ -22,6 +23,14 @@ class AgradDistributionGeneralizedNormal : public AgradDistributionTest {
     parameters.push_back(param);
     log_prob.push_back(
         -0.57236494292470008707171367567652935582);  // expected log_prob
+
+    param[0] = 0.5;  // y
+    param[1] = 0.5;  // mu
+    param[2] = 2;    // alpha
+    param[3] = 2;    // beta
+    parameters.push_back(param);
+    log_prob.push_back(
+        -1.2655121234846453964889457971347059239);  // expected log_prob
 
     param[0] = 1;  // y
     param[1] = 0;  // mu
@@ -191,8 +200,14 @@ class AgradDistributionGeneralizedNormal : public AgradDistributionTest {
     if (at_zero)
       base += 1;
     auto pow_term = pow(base, beta);
-    if (at_zero)
-      pow_term = 0;
+    if (at_zero) {
+      // At beta == 2 the kernel is zero at the tie, but its curvature is not.
+      // Square the signed residual to retain derivatives lost by abs at zero.
+      if (stan::math::value_of_rec(beta) == 2)
+        pow_term = stan::math::square((y - mu) / alpha);
+      else
+        pow_term = 0;
+    }
     return -LOG_TWO - log(alpha) - lgamma(1.0 + inv(beta)) - pow_term;
   }
 };
