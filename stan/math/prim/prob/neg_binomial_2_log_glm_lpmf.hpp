@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -198,6 +199,9 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
       if constexpr (is_autodiff_v<T_beta>) {
         if constexpr (T_x_rows == 1) {
           edge<2>(ops_partials).partials_ = theta_derivative.sum() * x_val;
+        } else if constexpr (T_x::ColsAtCompileTime == 1) {
+          edge<2>(ops_partials).partials_[0]
+              = dot_product(x_val, theta_derivative);
         } else {
           edge<2>(ops_partials).partials_
               = multiply(x_val.transpose(), theta_derivative);

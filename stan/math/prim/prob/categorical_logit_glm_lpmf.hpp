@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/multiply.hpp>
+#include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
@@ -93,9 +94,8 @@ inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val).transpose();
 
   Array<T_partials_return, T_x_rows, Dynamic> lin;
-  if constexpr (T_x_rows == 1) {
-    // multiply of a row vector and a column vector is a dot product
-    lin = (x_val * beta_val).rowwise() + alpha_val_vec;
+  if constexpr (T_x_rows == 1 && T_beta::ColsAtCompileTime == 1) {
+    lin = dot_product(x_val, beta_val) + alpha_val_vec.array();
   } else {
     lin = multiply(x_val, beta_val).rowwise() + alpha_val_vec;
   }
@@ -139,10 +139,19 @@ inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
       for (int i = 1; i < N_instances; i++) {
         beta_y += beta_val.col(y_seq[i] - 1).array();
       }
-      edge<0>(ops_partials).partials_
-          = beta_y
-            - multiply(exp_lin.matrix(), beta_val.transpose()).array().colwise()
-                  * inv_sum_exp_lin * N_instances;
+      if constexpr (T_beta::RowsAtCompileTime == 1) {
+        edge<0>(ops_partials).partials_
+            = beta_y
+              - dot_product(exp_lin.matrix(), beta_val) * inv_sum_exp_lin
+                    * N_instances;
+      } else {
+        edge<0>(ops_partials).partials_
+            = beta_y
+              - multiply(exp_lin.matrix(), beta_val.transpose())
+                        .array()
+                        .colwise()
+                    * inv_sum_exp_lin * N_instances;
+      }
     } else {
       Array<T_beta_partials, Dynamic, Dynamic> beta_y(N_instances,
                                                       N_attributes);

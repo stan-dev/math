@@ -36,3 +36,17 @@ TEST_F(AgradRev, mathMixScalFun_normal_id_glm_lpdf) {
   stan::test::expect_ad(f2(beta, sigma[0]), y, x_rowvec, alpha);
   stan::test::expect_ad(f2(beta, sigma), y, x_rowvec, alpha[0]);
 }
+
+// x is a column vector: a design matrix with a single attribute
+TEST_F(AgradRev, mathMixScalFun_normal_id_glm_lpdf_x_column_vector) {
+  Eigen::VectorXd y = Eigen::VectorXd::Random(2);
+  auto f = [y](const auto& x, const auto& alpha, const auto& beta) {
+    return stan::math::normal_id_glm_lpdf(y, x, alpha, beta, 1.5);
+  };
+
+  Eigen::VectorXd x = Eigen::VectorXd::Random(2);
+  Eigen::VectorXd alpha = Eigen::VectorXd::Random(2);
+  Eigen::VectorXd beta = Eigen::VectorXd::Random(1);
+
+  stan::test::expect_ad(f, x, alpha, beta);
+}
