@@ -8,6 +8,7 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/rev/arena_type.hpp>
 #include <stan/math/opencl/rev/to_arena.hpp>
+#include <stan/math/prim/functor/broadcast_array.hpp>
 
 namespace stan {
 namespace math {

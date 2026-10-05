@@ -4,5 +4,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 
 #include <stan/math/rev/prob/std_normal_log_qf.hpp>
+#include <stan/math/rev/prob/student_t_qf.hpp>
 
 #endif

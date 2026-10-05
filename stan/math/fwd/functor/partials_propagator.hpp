@@ -7,7 +7,6 @@
 #include <stan/math/fwd/core/fvar.hpp>
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/functor/operands_and_partials.hpp>
-#include <stan/math/prim/functor/broadcast_array.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/functor/apply.hpp>

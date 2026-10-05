@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {
 namespace math {
@@ -27,7 +28,7 @@ template <typename Mat1, typename Mat2,
 inline Eigen::Matrix<return_type_t<Mat1, Mat2>, Mat1::RowsAtCompileTime, 1>
 rows_dot_product(const Mat1& v1, const Mat2& v2) {
   check_matching_dims("rows_dot_product", "v1", v1, "v2", v2);
-  return (v1.cwiseProduct(v2)).rowwise().sum();
+  return (to_ref(v1).cwiseProduct(to_ref(v2))).rowwise().sum();
 }
 
 }  // namespace math

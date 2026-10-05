@@ -3,12 +3,15 @@
 
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
 #include <stan/math/mix/functor/laplace_marginal_density.hpp>
+#include <stan/math/mix/meta.hpp>
 #include <stan/math/rev/fun/dot_product.hpp>
 #include <stan/math/rev/fun/exp.hpp>
-#include <stan/math/rev/fun/lgamma.hpp>
-#include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/fwd/fun/exp.hpp>
+#include <stan/math/rev/fun/sum.hpp>
+#include <stan/math/fwd/fun/sum.hpp>
 #include <stan/math/fwd/fun/lgamma.hpp>
+#include <stan/math/rev/fun/lgamma.hpp>
+#include <stan/math/prim/fun/add.hpp>
 
 namespace stan {
 namespace math {

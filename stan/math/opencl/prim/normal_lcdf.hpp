@@ -13,6 +13,7 @@
 namespace stan {
 namespace math {
 namespace internal {
+constexpr char normal_lcdf_opencl_func[] = "normal_lcdf(OpenCL)";
 const char opencl_normal_lcdf_impl[] = STRINGIFY(
     double x2 = normal_lcdf_scaled_diff * normal_lcdf_scaled_diff;
     double normal_lcdf_n = 0;
@@ -29,7 +30,7 @@ const char opencl_normal_lcdf_impl[] = STRINGIFY(
       if (isnan(normal_lcdf_n)) {
         normal_lcdf_n = 0;
       }
-    } else if (normal_lcdf_scaled_diff > -20.0) {
+    } else if (normal_lcdf_scaled_diff > -4.0) {
       // CDF(x) = 1/2 - 1/2erf(-x) = 1/2erfc(-x)
       normal_lcdf_n = log(erfc(-normal_lcdf_scaled_diff)) - M_LN2;
     } else if (10.0 * log(fabs(normal_lcdf_scaled_diff)) < log(DBL_MAX)) {
@@ -58,7 +59,8 @@ const char opencl_normal_lcdf_impl[] = STRINGIFY(
 // NOLINTBEGIN
 const char opencl_normal_lcdf_ldncdf_impl[] = STRINGIFY(
     double normal_ldncdf = 0.0; double t = 0.0; double t2 = 0.0;
-    double t4 = 0.0;
+    double t4 = 0.0; double normal_lcdf_exp_m_x2 = 0.0;
+    double normal_lcdf_inv_x2 = 0.0;
 
     // calculate using piecewise function
     // (due to instability / inaccuracy in the various approximations)
@@ -67,10 +69,15 @@ const char opencl_normal_lcdf_ldncdf_impl[] = STRINGIFY(
       t = 1.0 / (1.0 + 0.3275911 * normal_lcdf_deriv_scaled_diff);
       t2 = t * t;
       t4 = pow(t, 4);
+      // A&S 7.1.26 keeps exp(-x2) in the numerator, as R's pnorm do_del
+      // does; refs in stan/math/prim/prob/normal_lcdf.hpp
+      normal_lcdf_exp_m_x2 = exp(-x2);
       normal_ldncdf
-          = 0.5 * M_2_SQRTPI
-            / (exp(x2) - 0.254829592 + 0.284496736 * t - 1.421413741 * t2
-               + 1.453152027 * t2 * t - 1.061405429 * t4);
+          = 0.5 * M_2_SQRTPI * normal_lcdf_exp_m_x2
+            / (1.0
+               - normal_lcdf_exp_m_x2
+                     * (0.254829592 - 0.284496736 * t + 1.421413741 * t2
+                        - 1.453152027 * t2 * t + 1.061405429 * t4));
     } else if (normal_lcdf_deriv_scaled_diff > 2.5) {
       // in the trouble area where all of the standard numerical
       // approximations are unstable - bridge the gap using Taylor
@@ -114,6 +121,17 @@ const char opencl_normal_lcdf_ldncdf_impl[] = STRINGIFY(
       normal_ldncdf = 0.6245634904 - 0.9521866949 * t + 0.3986215682 * t2
                       + 0.04700850676 * t2 * t - 0.03478651979 * t4
                       - 0.01772675404 * t4 * t + 0.0006577254811 * pow(t, 6);
+    } else if (normal_lcdf_deriv_scaled_diff < -29.0) {
+      // asymptotic Mills ratio, DLMF 7.12.1; grows linearly as -2*scaled_diff,
+      // so no quadratic fit can track it. Same 1/x^2 series shape as R's pnorm
+      normal_lcdf_inv_x2 = 1.0 / x2;
+      normal_ldncdf
+          = -2.0 * normal_lcdf_deriv_scaled_diff
+            / (1.0
+               + normal_lcdf_inv_x2
+                     * (-0.5
+                        + normal_lcdf_inv_x2
+                              * (0.75 + normal_lcdf_inv_x2 * -1.875)));
     } else if (10.0 * log(fabs(normal_lcdf_deriv_scaled_diff)) < log(DBL_MAX)) {
       // approximation derived from Abramowitz and Stegun (1964) 7.1.26
       // use fact that erf(x)=-erf(-x)
@@ -128,11 +146,7 @@ const char opencl_normal_lcdf_ldncdf_impl[] = STRINGIFY(
                - 1.453152027 * t4 + 1.061405429 * t4 * t);
       // check if we need to add a correction term
       // (from cubic fit of residuals)
-      if (normal_lcdf_deriv_scaled_diff < -29.0) {
-        normal_ldncdf += 0.0015065154280332 * x2
-                         - 0.3993154819705530 * normal_lcdf_deriv_scaled_diff
-                         - 4.2919418242931700;
-      } else if (normal_lcdf_deriv_scaled_diff < -17.0) {
+      if (normal_lcdf_deriv_scaled_diff < -17.0) {
         normal_ldncdf += 0.0001263257217272 * x2 * normal_lcdf_deriv_scaled_diff
                          + 0.0123586859488623 * x2
                          - 0.0860505264736028 * normal_lcdf_deriv_scaled_diff
@@ -174,13 +188,14 @@ const char opencl_normal_lcdf_ldncdf_impl[] = STRINGIFY(
  * @return The log of the product of densities.
  */
 template <
-    typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
+    const char* func = internal::normal_lcdf_opencl_func, typename T_y_cl,
+    typename T_loc_cl, typename T_scale_cl,
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_loc_cl,
                                                 T_scale_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl>* = nullptr>
 inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_lcdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma) {
-  static constexpr const char* function = "normal_lcdf(OpenCL)";
+  static constexpr const char* function = func;
   using std::isfinite;
   using std::isnan;
 

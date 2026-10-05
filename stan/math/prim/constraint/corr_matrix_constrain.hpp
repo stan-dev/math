@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/constraint/corr_constrain.hpp>
 #include <stan/math/prim/fun/read_corr_matrix.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stdexcept>
 
 namespace stan {
@@ -40,9 +41,12 @@ template <typename T, require_eigen_col_vector_t<T>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
 corr_matrix_constrain(T&& x, Eigen::Index k) {
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
-  check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
-                   k_choose_2);
-  return read_corr_matrix(corr_constrain(std::forward<T>(x)), k);
+  decltype(auto) x_ref = to_ref(std::forward<T>(x));
+  check_size_match("cov_matrix_constrain", "x.size()", x_ref.size(),
+                   "k_choose_2", k_choose_2);
+  decltype(auto) cpc_ref
+      = to_ref(corr_constrain(std::forward<decltype(x_ref)>(x_ref)));
+  return read_corr_matrix(cpc_ref, k);
 }
 
 /**
@@ -72,9 +76,12 @@ template <typename T, typename Lp, require_eigen_col_vector_t<T>* = nullptr,
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
 corr_matrix_constrain(T&& x, Eigen::Index k, Lp& lp) {
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
-  check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
-                   k_choose_2);
-  return read_corr_matrix(corr_constrain(std::forward<T>(x), lp), k, lp);
+  decltype(auto) x_ref = to_ref(std::forward<T>(x));
+  check_size_match("cov_matrix_constrain", "x.size()", x_ref.size(),
+                   "k_choose_2", k_choose_2);
+  decltype(auto) cpc_ref
+      = to_ref(corr_constrain(std::forward<decltype(x_ref)>(x_ref), lp));
+  return read_corr_matrix(cpc_ref, k, lp);
 }
 
 /**

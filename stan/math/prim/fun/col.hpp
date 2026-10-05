@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_COL_HPP
 #define STAN_MATH_PRIM_FUN_COL_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 
@@ -21,9 +22,10 @@ namespace math {
  * @throw std::out_of_range if j is out of range.
  */
 template <typename T, require_matrix_t<T>* = nullptr>
-inline auto col(const T& m, size_t j) {
+inline auto col(T&& m, size_t j) {
   check_column_index("col", "j", m, j);
-  return m.col(j - 1);
+  return make_holder([j](auto&& m_) { return m_.col(j - 1); },
+                     std::forward<T>(m));
 }
 
 }  // namespace math

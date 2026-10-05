@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <boost/random/exponential_distribution.hpp>
@@ -39,6 +40,9 @@ inline typename VectorBuilder<true, double, T_shape, T_scale>::type pareto_rng(
   static constexpr const char* function = "pareto_rng";
   check_consistent_sizes(function, "Scale Parameter", y_min, "Shape parameter",
                          alpha);
+  if (size_zero(y_min, alpha)) {
+    return {};
+  }
   const auto& y_min_ref = to_ref(y_min);
   const auto& alpha_ref = to_ref(alpha);
   check_positive_finite(function, "Scale parameter", y_min_ref);

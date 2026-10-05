@@ -21,7 +21,7 @@ template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
 std::tuple<Eigen::Matrix<value_type_t<EigMat>, -1, -1>,
            Eigen::Matrix<base_type_t<EigMat>, -1, 1>,
            Eigen::Matrix<value_type_t<EigMat>, -1, -1>>
-svd(const EigMat& m) {
+svd(EigMat&& m) {
   if (unlikely(m.size() == 0)) {
     return std::make_tuple(Eigen::Matrix<value_type_t<EigMat>, -1, -1>(0, 0),
                            Eigen::Matrix<base_type_t<EigMat>, -1, 1>(0, 1),
@@ -29,7 +29,8 @@ svd(const EigMat& m) {
   }
 
   Eigen::JacobiSVD<Eigen::Matrix<value_type_t<EigMat>, -1, -1>> svd(
-      m, Eigen::ComputeThinU | Eigen::ComputeThinV);
+      to_ref(std::forward<EigMat>(m)),
+      Eigen::ComputeThinU | Eigen::ComputeThinV);
   return std::make_tuple(std::move(svd.matrixU()),
                          std::move(svd.singularValues()),
                          std::move(svd.matrixV()));

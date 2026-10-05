@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -40,6 +41,9 @@ discrete_range_rng(const T_lower& lower, const T_upper& upper, RNG& rng) {
   check_consistent_sizes(function, "Lower bound parameter", lower,
                          "Upper bound parameter", upper);
   check_greater_or_equal(function, "Upper bound parameter", upper, lower);
+  if (size_zero(upper, lower)) {
+    return {};
+  }
 
   scalar_seq_view<T_lower> lower_vec(lower);
   scalar_seq_view<T_upper> upper_vec(upper);

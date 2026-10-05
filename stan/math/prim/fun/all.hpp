@@ -34,8 +34,9 @@ constexpr inline bool all(T x) {
  */
 template <typename ContainerT,
           require_eigen_st<std::is_integral, ContainerT>* = nullptr>
-inline bool all(const ContainerT& x) {
-  return x.all();
+inline bool all(ContainerT&& x) {
+  return make_holder([](auto&& x_) { return x_.all(); },
+                     std::forward<ContainerT>(x));
 }
 
 // Forward-declaration for correct resolution of all(std::vector<std::tuple>)

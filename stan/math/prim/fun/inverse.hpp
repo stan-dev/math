@@ -29,6 +29,7 @@ inverse(const EigMat& m) {
   if (m.size() == 0) {
     return {};
   }
+
   return m.inverse();
 }
 

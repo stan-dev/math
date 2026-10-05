@@ -34,8 +34,9 @@ constexpr inline bool any(T x) {
  */
 template <typename ContainerT,
           require_eigen_st<std::is_integral, ContainerT>* = nullptr>
-inline bool any(const ContainerT& x) {
-  return x.any();
+inline bool any(ContainerT&& x) {
+  return make_holder([](auto&& x_) { return x_.any(); },
+                     std::forward<ContainerT>(x));
 }
 
 // Forward-declaration for correct resolution of any(std::vector<std::tuple>)

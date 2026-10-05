@@ -20,17 +20,16 @@ namespace math {
  */
 template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
           require_not_st_var<EigMat>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat>, -1, 1> eigenvalues_sym(
-    const EigMat& m) {
+inline Eigen::Matrix<value_type_t<EigMat>, -1, 1> eigenvalues_sym(EigMat&& m) {
   if (unlikely(m.size() == 0)) {
     return Eigen::Matrix<value_type_t<EigMat>, -1, 1>(0, 1);
   }
   using PlainMat = plain_type_t<EigMat>;
-  const PlainMat& m_eval = m;
-  check_symmetric("eigenvalues_sym", "m", m_eval);
+  decltype(auto) m_ref = to_ref(std::forward<EigMat>(m));
+  check_symmetric("eigenvalues_sym", "m", m_ref);
 
-  Eigen::SelfAdjointEigenSolver<PlainMat> solver(m_eval,
-                                                 Eigen::EigenvaluesOnly);
+  Eigen::SelfAdjointEigenSolver<PlainMat> solver(
+      std::forward<decltype(m_ref)>(m_ref), Eigen::EigenvaluesOnly);
   return solver.eigenvalues();
 }
 

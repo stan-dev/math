@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
@@ -43,6 +44,10 @@ inline typename VectorBuilder<true, double, T_shape1, T_shape2>::type beta_rng(
   static constexpr const char *function = "beta_rng";
   check_consistent_sizes(function, "First shape parameter", alpha,
                          "Second shape Parameter", beta);
+  if (size_zero(alpha, beta)) {
+    return {};
+  }
+
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
   check_positive_finite(function, "First shape parameter", alpha_ref);

@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <stan/math/prim/meta/require_helpers.hpp>
+#include <stan/math/prim/meta/conjunction.hpp>
 #include <tuple>
 #include <type_traits>
 
@@ -15,6 +16,13 @@ struct is_tuple_impl : std::false_type {};
 
 template <typename... Types>
 struct is_tuple_impl<std::tuple<Types...>> : std::true_type {};
+
+template <template <class...> class TypeCheck, typename T>
+struct all_tuple_elements : std::false_type {};
+
+template <template <class...> class TypeCheck, typename... Types>
+struct all_tuple_elements<TypeCheck, std::tuple<Types...>>
+    : math::conjunction<TypeCheck<std::decay_t<Types>>...> {};
 }  // namespace internal
 
 template <typename T>
@@ -31,6 +39,13 @@ constexpr bool is_tuple_v = is_tuple<T>::value;
 /*! @tparam T the type to check */
 template <typename T>
 using require_tuple_t = require_t<is_tuple<std::decay_t<T>>>;
+
+/*! \brief Require all elements of a tuple satisfy `TypeCheck` */
+/*! @tparam TypeCheck the type trait applied to each tuple element */
+/*! @tparam T the tuple type to check */
+template <template <class...> class TypeCheck, typename T>
+using require_all_tuple_elements_t
+    = require_t<internal::all_tuple_elements<TypeCheck, std::decay_t<T>>>;
 
 /*! \brief Require type does not satisfy @ref is_tuple */
 /*! @tparam T the type to check */

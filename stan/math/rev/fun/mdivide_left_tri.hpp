@@ -343,11 +343,11 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
 template <Eigen::UpLoType TriView, typename T1, typename T2,
           require_all_matrix_t<T1, T2> * = nullptr,
           require_any_var_matrix_t<T1, T2> * = nullptr>
-inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
+inline auto mdivide_left_tri(T1 &&A, T2 &&B) {
   using ret_val_type = plain_type_t<decltype(value_of(A) * value_of(B))>;
   using ret_type = var_value<ret_val_type>;
 
-  if (A.size() == 0) {
+  if (unlikely(A.size() == 0)) {
     return ret_type(ret_val_type(0, B.cols()));
   }
 
@@ -355,8 +355,8 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
   check_multiplicable("mdivide_left_tri", "A", A, "B", B);
 
   if constexpr (is_autodiff_v<T1> && is_autodiff_v<T2>) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A;
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    arena_t<T1> arena_A(std::forward<T1>(A));
+    arena_t<T2> arena_B(std::forward<T2>(B));
     auto arena_A_val = to_arena(arena_A.val());
 
     arena_t<ret_type> res
@@ -374,7 +374,7 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
 
     return ret_type(res);
   } else if constexpr (is_autodiff_v<T1>) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A;
+    arena_t<T1> arena_A(std::forward<T1>(A));
     auto arena_A_val = to_arena(arena_A.val());
 
     arena_t<ret_type> res

@@ -119,8 +119,8 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
   auto sw_val = to_ref(as_value_column_array_or_scalar(sw_ref));
   auto st0_val = to_ref(as_value_column_array_or_scalar(st0_ref));
 
-  if (!include_summand<propto, T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw,
-                       T_st0>::value) {
+  if constexpr (!include_summand<propto, T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw,
+                                 T_st0>::value) {
     return ret_t(0.0);
   }
 
@@ -269,7 +269,8 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
     // the value as deriv_t to edge1 and as -deriv_t to edge5
 
     // computation of derivatives and precision checks
-    if (!is_constant_all<T_y>::value || !is_constant_all<T_t0>::value) {
+    if constexpr (!is_constant_all<T_y>::value
+                  || !is_constant_all<T_t0>::value) {
       const T_partials_return deriv_t_7
           = -internal::wiener7_integrate_cdf<
                 GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF,
@@ -281,15 +282,15 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
                 maximal_evaluations_hcubature, absolute_error_hcubature,
                 relative_error_hcubature / 2)
             / ccdf;
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         partials<0>(ops_partials)[i] = deriv_t_7;
       }
-      if (!is_constant_all<T_t0>::value) {
+      if constexpr (!is_constant_all<T_t0>::value) {
         partials<2>(ops_partials)[i] = -deriv_t_7;
       }
     }
     T_partials_return deriv;
-    if (!is_constant_all<T_a>::value) {
+    if constexpr (!is_constant_all<T_a>::value) {
       partials<1>(ops_partials)[i]
           = internal::wiener7_integrate_cdf(
                 [&](auto&&... args) {
@@ -300,7 +301,7 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
                 relative_error_hcubature / 2)
             / ccdf;
     }
-    if (!is_constant_all<T_w>::value) {
+    if constexpr (!is_constant_all<T_w>::value) {
       partials<3>(ops_partials)[i]
           = internal::wiener7_integrate_cdf<GradientCalc::OFF,
                                             GradientCalc::ON>(
@@ -312,7 +313,7 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
                 relative_error_hcubature / 2)
             / ccdf;
     }
-    if (!is_constant_all<T_v>::value) {
+    if constexpr (!is_constant_all<T_v>::value) {
       partials<4>(ops_partials)[i]
           = internal::wiener7_integrate_cdf(
                 [&](auto&&... args) {
@@ -323,7 +324,7 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
                 relative_error_hcubature / 2)
             / ccdf;
     }
-    if (!is_constant_all<T_sv>::value) {
+    if constexpr (!is_constant_all<T_sv>::value) {
       if (sv_value == 0) {
         partials<5>(ops_partials)[i] = 0.0;
       } else {
@@ -339,7 +340,7 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
               / ccdf;
       }
     }
-    if (!is_constant_all<T_sw>::value) {
+    if constexpr (!is_constant_all<T_sw>::value) {
       if (sw_value == 0) {
         partials<6>(ops_partials)[i] = 0.0;
       } else {
@@ -367,7 +368,7 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
         partials<6>(ops_partials)[i] = deriv;
       }
     }
-    if (!is_constant_all<T_st0>::value) {
+    if constexpr (!is_constant_all<T_st0>::value) {
       if (st0_value == 0) {
         partials<7>(ops_partials)[i] = 0.0;
       } else if (y_value - (t0_value + st0_value) <= 0) {

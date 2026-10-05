@@ -43,6 +43,7 @@
 #include <stan/math/opencl/rev/elt_multiply.hpp>
 #include <stan/math/opencl/rev/erf.hpp>
 #include <stan/math/opencl/rev/erfc.hpp>
+#include <stan/math/opencl/rev/erfcx.hpp>
 #include <stan/math/opencl/rev/exp.hpp>
 #include <stan/math/opencl/rev/exp2.hpp>
 #include <stan/math/opencl/rev/expm1.hpp>

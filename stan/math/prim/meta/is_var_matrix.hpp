@@ -19,6 +19,8 @@ struct is_var_matrix
     : bool_constant<
           math::conjunction<is_var<T>, is_eigen<value_type_t<T>>>::value> {};
 
+template <typename T>
+inline constexpr bool is_var_matrix_v = is_var_matrix<std::decay_t<T>>::value;
 /*! \ingroup require_eigens_types */
 /*! \defgroup var_matrix_types var_matrix  */
 /*! \addtogroup var_matrix_types */

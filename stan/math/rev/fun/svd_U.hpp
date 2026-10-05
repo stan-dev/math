@@ -32,8 +32,8 @@ inline auto svd_U(const EigMat& m) {
   const int M = std::min(m.rows(), m.cols());
   auto arena_m = to_arena(m);
 
-  Eigen::JacobiSVD<Eigen::MatrixXd> svd(
-      arena_m.val(), Eigen::ComputeThinU | Eigen::ComputeThinV);
+  Eigen::JacobiSVD<promote_scalar_t<double, EigMat>> svd(
+      arena_m.val().eval(), Eigen::ComputeThinU | Eigen::ComputeThinV);
 
   auto arena_D = to_arena(svd.singularValues());
 
@@ -53,19 +53,19 @@ inline auto svd_U(const EigMat& m) {
   arena_t<ret_type> arena_U = svd.matrixU();
   auto arena_V = to_arena(svd.matrixV());
 
-  reverse_pass_callback([arena_m, arena_U, arena_D, arena_V,
-                         arena_Fp]() mutable {
-    Eigen::MatrixXd UUadjT = arena_U.val_op().transpose() * arena_U.adj_op();
-    arena_m.adj()
-        += .5 * arena_U.val_op()
-               * (arena_Fp.array() * (UUadjT - UUadjT.transpose()).array())
-                     .matrix()
-               * arena_V.transpose()
-           + (Eigen::MatrixXd::Identity(arena_m.rows(), arena_m.rows())
-              - arena_U.val_op() * arena_U.val_op().transpose())
-                 * arena_U.adj_op() * arena_D.asDiagonal().inverse()
-                 * arena_V.transpose();
-  });
+  reverse_pass_callback(
+      [arena_m, arena_U, arena_D, arena_V, arena_Fp]() mutable {
+        Eigen::MatrixXd UUadjT = arena_U.val().transpose() * arena_U.adj_op();
+        arena_m.adj()
+            += .5 * arena_U.val()
+                   * (arena_Fp.array() * (UUadjT - UUadjT.transpose()).array())
+                         .matrix()
+                   * arena_V.transpose()
+               + (Eigen::MatrixXd::Identity(arena_m.rows(), arena_m.rows())
+                  - arena_U.val() * arena_U.val().transpose())
+                     * arena_U.adj_op() * arena_D.asDiagonal().inverse()
+                     * arena_V.transpose();
+      });
 
   return ret_type(arena_U);
 }

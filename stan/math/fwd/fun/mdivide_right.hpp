@@ -118,7 +118,8 @@ mdivide_right(const EigMat1& A, const EigMat2& b) {
 
   Eigen::Matrix<T, R1, C2> A_mult_inv_b = mdivide_right(A, val_b);
 
-  return to_fvar(A_mult_inv_b, -A_mult_inv_b * mdivide_right(deriv_b, val_b));
+  return to_fvar(A_mult_inv_b,
+                 multiply(-A_mult_inv_b, mdivide_right(deriv_b, val_b)));
 }
 
 }  // namespace math

@@ -17,7 +17,7 @@ namespace math {
  * @return Number of columns.
  */
 template <typename T, require_matrix_t<T>* = nullptr>
-inline int64_t cols(const T& m) {
+inline Eigen::Index cols(const T& m) {
   return m.cols();
 }
 

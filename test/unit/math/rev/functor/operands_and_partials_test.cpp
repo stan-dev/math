@@ -11,7 +11,7 @@ TEST_F(AgradRev, PartialsVari_OperandsAndPartialsScal) {
 
   double d1;
   operands_and_partials<double> o3(d1);
-  EXPECT_EQ(16, sizeof(o3));
+  EXPECT_EQ(1, sizeof(o3));
 
   var v1 = var(0.0);
 
@@ -36,7 +36,7 @@ TEST_F(AgradRev, PartialsVari_OperandsAndPartialsVec) {
 
   vector_d d_vec(4);
   operands_and_partials<vector_d> o3(d_vec);
-  EXPECT_EQ(16, sizeof(o3));
+  EXPECT_EQ(1, sizeof(o3));
 
   vector_v v_vec(4);
   var v1 = var(0.0);
@@ -73,7 +73,7 @@ TEST_F(AgradRev, PartialsVari_OperandsAndPartialsStdVec) {
 
   std::vector<double> d_vec(4);
   operands_and_partials<std::vector<double>> o3(d_vec);
-  EXPECT_EQ(16, sizeof(o3));
+  EXPECT_EQ(1, sizeof(o3));
 
   std::vector<var> v_vec;
   var v1 = var(0.0);
@@ -111,7 +111,7 @@ TEST_F(AgradRev, PartialsVari_OperandsAndPartialsMat) {
   d_mat << 10.0, 20.0, 30.0, 40.0;
   operands_and_partials<matrix_d> o3(d_mat);
 
-  EXPECT_EQ(16, sizeof(o3));
+  EXPECT_EQ(1, sizeof(o3));
 
   matrix_v v_mat(2, 2);
   var v1 = var(0.0);
@@ -154,7 +154,7 @@ TEST_F(AgradRev, PartialsVari_OperandsAndPartialsMatMultivar) {
   d_mat_vec.push_back(d_mat);
   operands_and_partials<std::vector<matrix_d>> o3(d_mat_vec);
 
-  EXPECT_EQ(16, sizeof(o3));
+  EXPECT_EQ(1, sizeof(o3));
 
   matrix_v v_mat1(2, 2);
   var v1 = var(0.0);
@@ -219,7 +219,7 @@ TEST_F(AgradRev, PartialsVari_OperandsAndPartialsMultivar) {
   d_vec_vec.push_back(d_vec2);
   operands_and_partials<std::vector<vector_d>> o3(d_vec_vec);
 
-  EXPECT_EQ(16, sizeof(o3));
+  EXPECT_EQ(1, sizeof(o3));
 
   vector_v v_vec1(2);
   var v1 = var(0.0);
@@ -294,7 +294,7 @@ TEST_F(AgradRev, PartialsVari_OperandsAndPartialsMultivarMixed) {
 
   // 2 partials stdvecs, 4 pointers to edges, 2 pointers to operands
   // vecs
-  EXPECT_EQ(128, sizeof(o4));
+  EXPECT_EQ(120, sizeof(o4));
 
   std::vector<double> grad;
   var v = o4.build(10.0);
@@ -310,22 +310,10 @@ TEST_F(AgradRev, PartialsVari_OperandsAndPartialsMultivarMixed) {
   operands_and_partials<std::vector<vector_v>, std::vector<vector_d>, vector_d>
       o5(v_vec, d_vec_vec, d_vec2);
   o5.edge1_.partials_vec_[0] += d_vec1;
-  if (false) {
-    // the test here is to make things compile as this pattern to
-    // if-out things when terms are const is used in our functions
-    o5.edge3_.partials_vec_[0] += vector_d();
-    o5.edge3_.partials_vec_[0] -= vector_d();
-    o5.edge3_.partials_vec_[0](0) = 0;
-  }
 
   // the same needs to work for the nested case
   operands_and_partials<std::vector<vector_d>, std::vector<vector_d>, vector_v>
       o6(d_vec_vec, d_vec_vec, v_vec2);
-  if (false) {
-    // the test here is to make things compile as this pattern to
-    // if-out things when terms are const is used in our functions
-    o6.edge1_.partials_vec_[0] += d_vec1;
-  }
   o6.edge3_.partials_vec_[0] += d_vec2;
 }
 

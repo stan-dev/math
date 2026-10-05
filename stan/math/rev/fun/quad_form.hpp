@@ -278,7 +278,7 @@ inline var quad_form(const EigMat& A, const ColVec& B, bool symmetric = false) {
   auto* baseVari = new internal::quad_form_vari<
       value_type_t<EigMat>, EigMat::RowsAtCompileTime,
       EigMat::ColsAtCompileTime, value_type_t<ColVec>,
-      ColVec::RowsAtCompileTime, 1>(A, B, symmetric);
+      ColVec::RowsAtCompileTime, 1>(to_ref(A), to_ref(B), symmetric);
 
   return baseVari->impl_->C_(0, 0);
 }
@@ -309,7 +309,7 @@ template <typename Mat1, typename Mat2,
           require_not_col_vector_t<Mat2>* = nullptr,
           require_any_var_matrix_t<Mat1, Mat2>* = nullptr>
 inline auto quad_form(const Mat1& A, const Mat2& B, bool symmetric = false) {
-  return internal::quad_form_impl(A, B, symmetric);
+  return internal::quad_form_impl(to_ref(A), to_ref(B), symmetric);
 }
 
 /**

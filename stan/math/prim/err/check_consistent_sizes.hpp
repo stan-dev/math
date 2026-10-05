@@ -1,8 +1,10 @@
 #ifndef STAN_MATH_PRIM_ERR_CHECK_CONSISTENT_SIZES_HPP
 #define STAN_MATH_PRIM_ERR_CHECK_CONSISTENT_SIZES_HPP
 
+#include <stan/math/prim/err/check_matching_sizes.hpp>
 #include <stan/math/prim/err/invalid_argument.hpp>
 #include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/meta/is_container.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <algorithm>
 #include <sstream>
@@ -64,6 +66,34 @@ inline void check_consistent_sizes(const char* function, const char* name1,
                        "has size = ", msg_str.c_str());
     }();
   }
+}
+
+/**
+ * Check that the unnamed container inputs have the same size. Inputs are
+ * labeled `arg1`, `arg2`, and so on in error messages.
+ *
+ * @tparam T type of the first input
+ * @tparam Types types of the remaining inputs
+ * @param function function name (for error messages)
+ * @param x first input
+ * @param xs remaining inputs
+ * @throw `invalid_argument` if sizes are inconsistent
+ */
+template <typename T, typename... Types,
+          require_all_container_t<T, Types...>* = nullptr>
+inline void check_consistent_sizes(const char* function, T&& x, Types&&... xs) {
+  std::size_t arg_idx = 2;
+  (
+      [&](const auto& y) {
+        if (x.size() != y.size()) {
+          [&]() STAN_COLD_PATH {
+            const std::string name = "arg" + std::to_string(arg_idx);
+            check_matching_sizes(function, "arg1", x, name.c_str(), y);
+          }();
+        }
+        ++arg_idx;
+      }(xs),
+      ...);
 }
 
 }  // namespace math

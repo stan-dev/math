@@ -73,19 +73,18 @@ struct reduce_sum_impl {
                               msgs, std::forward<Args>(args)...);
     } else {
       return_type_t<Vec, Args...> sum = 0.0;
+      std::decay_t<Vec> sub_slice;
       for (size_t i = 0; i < (vmapped.size() + grainsize - 1) / grainsize;
            ++i) {
         size_t start = i * grainsize;
         size_t end = std::min((i + 1) * grainsize, vmapped.size()) - 1;
-
-        std::decay_t<Vec> sub_slice;
+        sub_slice.clear();
         sub_slice.reserve(end - start + 1);
+
         for (size_t i = start; i <= end; ++i) {
           sub_slice.emplace_back(vmapped[i]);
         }
-
-        sum += ReduceFunction()(std::forward<Vec>(sub_slice), start, end, msgs,
-                                std::forward<Args>(args)...);
+        sum += ReduceFunction()(sub_slice, start, end, msgs, args...);
       }
       return sum;
     }

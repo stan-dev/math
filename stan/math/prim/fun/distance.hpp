@@ -44,10 +44,10 @@ inline return_type_t<T1, T2> distance(const T1& x1, const T2& x2) {
  * size.
  */
 template <typename T1, typename T2, require_all_vector_t<T1, T2>* = nullptr>
-inline return_type_t<T1, T2> distance(const T1& x1, const T2& x2) {
+inline return_type_t<T1, T2> distance(T1&& x1, T2&& x2) {
   using std::sqrt;
   check_matching_sizes("distance", "x1", x1, "x2", x2);
-  return sqrt(squared_distance(x1, x2));
+  return sqrt(squared_distance(std::forward<T1>(x1), std::forward<T2>(x2)));
 }
 
 }  // namespace math

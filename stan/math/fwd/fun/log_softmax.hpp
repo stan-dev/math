@@ -5,51 +5,52 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/fun/softmax.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/log_softmax.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 
 namespace stan {
 namespace math {
 
 /**
- * Return the log softmax of the specified vector or container of vectors.
+ * Return the log softmax of each vector in a container of `fvar` values.
  *
- * @tparam T Type of input vector or matrix.
- * @param[in] x Unconstrained input vector.
- * @return Softmax of the input.
- * @throw std::domain_error If the input vector is size 0.
+ * @tparam T `std::vector` whose scalar type is `fvar`
+ * @param x container of vectors to transform
+ * @return container of log softmax results
  */
-template <typename T, require_vector_st<is_fvar, T>* = nullptr>
+template <typename T, require_std_vector_st<is_fvar, T>* = nullptr>
 inline auto log_softmax(T&& x) {
-  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& alpha) {
-    using T_alpha = decltype(alpha);
-    using T_fvar = value_type_t<T_alpha>;
-    using T_fvar_inner = typename T_fvar::Scalar;
-
-    auto&& alpha_ref = to_ref(std::forward<decltype(alpha)>(alpha));
-    Eigen::Matrix<T_fvar_inner, -1, 1> alpha_t = alpha_ref.val();
-    Eigen::Matrix<T_fvar_inner, -1, 1> softmax_alpha_t = softmax(alpha_t);
-
-    Eigen::Matrix<T_fvar, -1, 1> log_softmax_alpha(alpha_ref.size());
-    log_softmax_alpha.val() = log_softmax(alpha_t);
-    log_softmax_alpha.d().setZero();
-
-    for (int m = 0; m < alpha_ref.size(); ++m) {
-      T_fvar_inner negative_alpha_m_d_times_softmax_alpha_t_m
-          = -alpha_ref.coeff(m).d_ * softmax_alpha_t(m);
-      for (int k = 0; k < alpha_ref.size(); ++k) {
-        if (m == k) {
-          log_softmax_alpha(k).d_
-              += alpha_ref.coeff(m).d_
-                 + negative_alpha_m_d_times_softmax_alpha_t_m;
-        } else {
-          log_softmax_alpha(k).d_ += negative_alpha_m_d_times_softmax_alpha_t_m;
-        }
-      }
-    }
-
-    return log_softmax_alpha;
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& v) {
+    return log_softmax(std::forward<decltype(v)>(v));
   });
+}
+
+/**
+ * Return the log softmax of the specified vector of `fvar` values.
+ *
+ * @tparam Vec Eigen vector with `fvar` scalar
+ * @param x vector to transform
+ * @return log softmax of the vector, or an empty result if the input is empty
+ */
+template <typename Vec, require_eigen_vector_vt<is_fvar, Vec>* = nullptr>
+inline auto log_softmax(Vec&& x) {
+  using vec = std::decay_t<Vec>;
+  constexpr int Rows = vec::RowsAtCompileTime;
+  constexpr int Cols = vec::ColsAtCompileTime;
+  using T = typename value_type_t<vec>::Scalar;
+  decltype(auto) x_ref = to_ref(std::forward<Vec>(x));
+  if (x_ref.size() == 0) {
+    return Eigen::Matrix<fvar<T>, Rows, Cols>{};
+  }
+  const auto s = softmax(value_of(x_ref));
+  const auto d_in = x_ref.d();
+  const auto dot_sd = s.dot(d_in);
+  Eigen::Matrix<fvar<T>, Rows, Cols> result(x_ref.size());
+  result.val() = s.array().log().matrix();
+  result.d() = (d_in.array() - dot_sd).matrix();
+  return result;
 }
 
 }  // namespace math

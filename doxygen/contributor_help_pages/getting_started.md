@@ -660,9 +660,15 @@ The values of `x` have the same shape as `x`.
 
 ### Values and adjoint extensions to Eigen
 
-The matrix and vector autodiff types come with an extra `.val()` and `.adj()`, member functions called `.val_op()` and `.adj_op()`.
-These `*_op()` member functions are used as a workaround for a bug in Eigen where transpose expressions will be inaccessible because of an incorrect const reference.
-See [here](https://github.com/stan-dev/math/issues/2653) for the details and other information for when this workaround is needed.
+By default, `.val()` and `.adj()` return a `CwiseUnaryView` when the matrix/vector is non-`const`,
+and returns a `CwiseUnaryOp` when the matrix/vector is `const`. The exception is that
+calling `.val()` on a matrix/vector of `var` types will always return a `CwiseUnaryOp`, as the
+underlying value is always `const`.
+
+However, using a `CwiseUnaryView` in some Eigen operations (e.g., multiplication, transposition)
+can result in a compilation error. To workaround this, the `.val_op()` and `.adj_op()` member
+functions have been added to explicitly request a `CwiseUnaryOp` regardless of whether the
+matrix/vector is `const` or not.
 
 The member functions `.val()` and `.val_op()` return expressions that evaluate to the values
 of the autodiff matrix.

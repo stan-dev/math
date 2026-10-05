@@ -1,18 +1,18 @@
 #ifndef STAN_MATH_PRIM_FUN_SOFTMAX_HPP
 #define STAN_MATH_PRIM_FUN_SOFTMAX_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <cmath>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 
 namespace stan {
 namespace math {
 
 /**
- * Return the softmax of the specified vector.
+ * Return the softmax of the specified vector, or of each vector in a container.
  *
- * <p>
  * \f$
  * \mbox{softmax}(y)
  * = \frac{\exp(y)}
@@ -38,23 +38,33 @@ namespace math {
  * \end{array}
  * \f$
  *
- * @tparam ColVec type of elements in the vector
- * @param[in] v Vector to transform.
- * @return Unit simplex result of the softmax transform of the vector.
+ * @tparam Container type of input: an Eigen vector, `std::vector` of doubles,
+ *   or nested container whose scalar type is arithmetic
+ * @param x vector or container of vectors to transform
+ * @return softmax of the input, preserving the container structure; an empty
+ *   result if any input vector is empty
  */
-template <typename ColVec,
-          require_eigen_col_vector_vt<std::is_arithmetic, ColVec>* = nullptr>
-inline plain_type_t<ColVec> softmax(const ColVec& v) {
-  using std::exp;
-  if (v.size() == 0) {
-    return v;
-  }
-  const auto& v_ref = to_ref(v);
-  const auto theta = (v_ref.array() - v_ref.maxCoeff()).exp().eval();
-  return theta.array() / theta.sum();
+template <typename Container, require_st_arithmetic<Container>* = nullptr,
+          require_container_t<Container>* = nullptr,
+          require_not_t<bool_constant<
+              is_eigen<std::decay_t<Container>>::value
+              && !is_eigen_vector<std::decay_t<Container>>::value>>* = nullptr>
+inline auto softmax(Container&& x) {
+  return make_holder(
+      [](auto&& a) {
+        return apply_vector_unary<ref_type_t<Container>>::apply(
+            std::forward<decltype(a)>(a),
+            [](auto&& v) -> plain_type_t<decltype(v)> {
+              if (v.size() == 0) {
+                return v;
+              }
+              const auto theta = (v.array() - v.maxCoeff()).exp();
+              return (theta / theta.sum()).matrix();
+            });
+      },
+      to_ref(std::forward<Container>(x)));
 }
 
 }  // namespace math
 }  // namespace stan
-
 #endif

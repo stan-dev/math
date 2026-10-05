@@ -1,10 +1,16 @@
 #ifndef STAN_MATH_MIX_FUNCTOR_LAPLACE_LIKELIHOOD_HPP
 #define STAN_MATH_MIX_FUNCTOR_LAPLACE_LIKELIHOOD_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/mix/meta.hpp>
+#include <stan/math/rev/fun/grad.hpp>
+#include <stan/math/prim/functor/conditional_copy_and_promote.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/mix/functor/hessian_block_diag.hpp>
-#include <stan/math/mix/functor/conditional_copy_and_promote.hpp>
-#include <stan/math/prim/functor.hpp>
-#include <stan/math/prim/fun.hpp>
+#include <stan/math/mix/functor/hessian_times_vector.hpp>
+
+#include <tuple>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -367,7 +373,7 @@ template <typename F, typename Theta, typename TupleArgs, typename Stream,
           require_tuple_t<TupleArgs>* = nullptr>
 inline auto theta_grad(F&& f, Theta&& theta, TupleArgs&& ll_tup,
                        Stream* msgs = nullptr) {
-  return apply(
+  return stan::math::apply(
       [](auto&& f, auto&& theta, auto&& msgs, auto&&... args) {
         return internal::theta_grad(std::forward<decltype(f)>(f),
                                     std::forward<decltype(theta)>(theta), msgs,
@@ -382,7 +388,7 @@ template <typename F, typename Theta, typename TupleArgs, typename Stream,
           require_tuple_t<TupleArgs>* = nullptr>
 inline auto ll_arg_grad(F&& f, Theta&& theta, TupleArgs&& ll_tup,
                         Stream* msgs = nullptr) {
-  return apply(
+  return stan::math::apply(
       [](auto&& f, auto&& theta, auto&& msgs, auto&&... args) {
         return internal::ll_arg_grad(std::forward<decltype(f)>(f),
                                      std::forward<decltype(theta)>(theta), msgs,
@@ -397,7 +403,7 @@ template <typename F, typename Theta, typename TupleArgs, typename Stream,
           require_tuple_t<TupleArgs>* = nullptr>
 inline auto diagonal_hessian(F&& f, Theta&& theta, TupleArgs&& ll_tuple,
                              Stream* msgs) {
-  return apply(
+  return stan::math::apply(
       [](auto&& f, auto&& theta, auto* msgs, auto&&... args) {
         return internal::diagonal_hessian(
             std::forward<decltype(f)>(f), std::forward<decltype(theta)>(theta),
@@ -413,7 +419,7 @@ template <typename F, typename Theta, typename TupleArgs, typename Stream,
 inline auto block_hessian(F&& f, Theta&& theta,
                           const Eigen::Index hessian_block_size,
                           TupleArgs&& ll_tuple, Stream* msgs) {
-  return apply(
+  return stan::math::apply(
       [](auto&& f, auto&& theta, auto hessian_block_size, auto* msgs,
          auto&&... args) {
         return internal::block_hessian(
@@ -440,7 +446,7 @@ template <typename F, typename Theta, typename TupleArgs, typename Stream,
           require_tuple_t<TupleArgs>* = nullptr>
 inline auto log_likelihood(F&& f, Theta&& theta, TupleArgs&& ll_tup,
                            Stream* msgs) {
-  return apply(
+  return stan::math::apply(
       [](auto&& f, auto&& theta, auto&& msgs, auto&&... args) {
         return internal::log_likelihood(
             std::forward<decltype(f)>(f), std::forward<decltype(theta)>(theta),
@@ -468,7 +474,7 @@ template <typename F, typename Theta, typename TupleArgs, typename Stream,
           require_tuple_t<TupleArgs>* = nullptr>
 inline auto diff(F&& f, Theta&& theta, const Eigen::Index hessian_block_size,
                  TupleArgs&& ll_tuple, Stream* msgs) {
-  return apply(
+  return stan::math::apply(
       [](auto&& f, auto&& theta, auto hessian_block_size, auto* msgs,
          auto&&... args) {
         return internal::diff(
@@ -495,7 +501,7 @@ template <typename F, typename Theta, typename TupleArgs, typename Stream,
           require_tuple_t<TupleArgs>* = nullptr>
 inline Eigen::VectorXd third_diff(F&& f, Theta&& theta, TupleArgs&& ll_args,
                                   Stream* msgs) {
-  return apply(
+  return stan::math::apply(
       [](auto&& f, auto&& theta, auto&& msgs, auto&&... args) {
         return internal::third_diff(std::forward<decltype(f)>(f),
                                     std::forward<decltype(theta)>(theta), msgs,
@@ -525,7 +531,7 @@ template <typename F, typename Theta, typename AMat, typename TupleArgs,
           require_tuple_t<TupleArgs>* = nullptr>
 inline auto compute_s2(F&& f, Theta&& theta, AMat&& A, int hessian_block_size,
                        TupleArgs&& ll_args, Stream* msgs) {
-  return apply(
+  return stan::math::apply(
       [](auto&& f, auto&& theta, auto&& A, auto hessian_block_size, auto* msgs,
          auto&&... args) {
         return internal::compute_s2(
@@ -556,7 +562,7 @@ template <typename F, typename V_t, typename Theta, typename TupleArgs,
           require_eigen_vector_t<Theta>* = nullptr>
 inline auto diff_eta_implicit(F&& f, V_t&& v, Theta&& theta,
                               TupleArgs&& ll_args, Stream* msgs) {
-  return apply(
+  return stan::math::apply(
       [](auto&& f, auto&& v, auto&& theta, auto&& msgs, auto&&... args) {
         return internal::diff_eta_implicit(
             std::forward<decltype(f)>(f), std::forward<decltype(v)>(v),

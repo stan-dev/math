@@ -30,7 +30,7 @@ inline plain_type_t<T> stochastic_column_constrain(const T& y) {
   const auto M = y.cols();
   arena_t<T> arena_y = y;
 
-  arena_t<ret_type> arena_x = stochastic_column_constrain(arena_y.val_op());
+  arena_t<ret_type> arena_x = stochastic_column_constrain(arena_y.val());
 
   if (unlikely(N == 0 || M == 0)) {
     return arena_x;
@@ -39,7 +39,7 @@ inline plain_type_t<T> stochastic_column_constrain(const T& y) {
   reverse_pass_callback([arena_y, arena_x]() mutable {
     const auto M = arena_y.cols();
 
-    auto&& x_val = arena_x.val_op();
+    auto&& x_val = arena_x.val();
     auto&& x_adj = arena_x.adj_op();
 
     Eigen::VectorXd x_pre_softmax_adj(x_val.rows());
@@ -82,7 +82,7 @@ inline plain_type_t<T> stochastic_column_constrain(const T& y,
 
   double lp_val = 0;
   arena_t<ret_type> arena_x
-      = stochastic_column_constrain(arena_y.val_op(), lp_val);
+      = stochastic_column_constrain(arena_y.val(), lp_val);
   lp += lp_val;
 
   if (unlikely(N == 0 || M == 0)) {
@@ -92,7 +92,7 @@ inline plain_type_t<T> stochastic_column_constrain(const T& y,
   reverse_pass_callback([arena_y, arena_x, lp]() mutable {
     const auto M = arena_y.cols();
 
-    auto&& x_val = arena_x.val_op();
+    auto&& x_val = arena_x.val();
     auto&& x_adj = arena_x.adj_op();
 
     const auto x_val_rows = x_val.rows();

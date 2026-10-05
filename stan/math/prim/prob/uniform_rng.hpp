@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
@@ -41,6 +42,9 @@ inline typename VectorBuilder<true, double, T_alpha, T_beta>::type uniform_rng(
   static constexpr const char* function = "uniform_rng";
   check_consistent_sizes(function, "Lower bound parameter", alpha,
                          "Upper bound parameter", beta);
+  if (size_zero(alpha, beta)) {
+    return {};
+  }
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
   check_finite(function, "Lower bound parameter", alpha_ref);

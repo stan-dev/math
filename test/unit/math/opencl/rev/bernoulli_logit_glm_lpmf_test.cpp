@@ -117,6 +117,18 @@ TEST(ProbDistributionsBernoulliLogitGLM, opencl_matches_cpu_small_simple) {
       bernoulli_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
 }
 
+TEST(ProbDistributionsBernoulliLogitGLM, opencl_matches_cpu_upper_tail) {
+  vector<int> y{1};
+  Matrix<double, Dynamic, Dynamic> x(1, 1);
+  x << 1;
+  Matrix<double, Dynamic, 1> beta(1);
+  beta << 21;
+  double alpha = 0;
+
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      bernoulli_logit_glm_lpmf_functor, y, x, alpha, beta);
+}
+
 TEST(ProbDistributionsBernoulliLogitGLM, opencl_broadcast_y) {
   int N = 3;
   int M = 2;

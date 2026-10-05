@@ -5,6 +5,7 @@
 #include <stan/math/mix/functor/laplace_marginal_density.hpp>
 #include <stan/math/prim/prob/multi_normal_cholesky_rng.hpp>
 #include <stan/math/prim/prob/multi_normal_rng.hpp>
+#include <stan/math/prim/fun/cholesky_decompose.hpp>
 
 namespace stan {
 namespace math {
@@ -15,11 +16,19 @@ namespace math {
  *   theta ~ Normal(theta | 0, Sigma(phi, x))
  *   y ~ pi(y | theta, eta)
  *
- * returns a multivariate normal random variate sampled
+ * By default, returns a multivariate normal random variate sampled
  * from the Laplace approximation of p(theta_pred | y, phi, x_pred).
+ * If `ReturnMeanAndCovCholesky` is true, instead of drawing a sample this
+ * returns the posterior mean and the Cholesky factor of the posterior
+ * covariance of that same Laplace approximation, as a
+ * `std::tuple<Eigen::VectorXd, Eigen::MatrixXd>`.
  * Note that while the data is observed at x (train_tuple), the new samples
  * are drawn for covariates x_pred (pred_tuple).
  * To sample the "original" theta's, set pred_tuple = train_tuple.
+ * @tparam ReturnMeanAndCovCholesky If false (default), draw and return a
+ *   random variate from the approximate posterior. If true, return a tuple
+ *   containing the posterior mean and the lower-triangular Cholesky factor of
+ *   the posterior covariance instead of a sample.
  * @tparam LLFunc Type of likelihood function.
  * @tparam LLArgs Tuple of arguments types of likelihood function.
  * \laplace_common_template_args
@@ -31,13 +40,15 @@ namespace math {
  * \rng_arg
  * \msg_arg
  */
-template <typename LLFunc, typename LLArgs, typename CovarFun,
-          typename CovarArgs, bool InitTheta, typename RNG,
+template <bool ReturnMeanAndCovCholesky = false, typename LLFunc,
+          typename LLArgs, typename CovarFun, typename CovarArgs,
+          bool InitTheta, typename RNG,
           require_t<is_all_arithmetic_scalar<CovarArgs, LLArgs>>* = nullptr>
-inline Eigen::VectorXd laplace_base_rng(
-    LLFunc&& ll_fun, LLArgs&& ll_args, CovarFun&& covariance_function,
-    CovarArgs&& covar_args, const laplace_options<InitTheta>& options, RNG& rng,
-    std::ostream* msgs) {
+inline auto laplace_base_rng(LLFunc&& ll_fun, LLArgs&& ll_args,
+                             CovarFun&& covariance_function,
+                             CovarArgs&& covar_args,
+                             const laplace_options<InitTheta>& options,
+                             RNG& rng, std::ostream* msgs) {
   Eigen::MatrixXd covariance_train = stan::math::apply(
       [msgs, &covariance_function](auto&&... args) {
         return covariance_function(std::forward<decltype(args)>(args)..., msgs);
@@ -51,7 +62,12 @@ inline Eigen::VectorXd laplace_base_rng(
         = md_est.L.template triangularView<Eigen::Lower>().solve(
             md_est.W_r * covariance_train);
     Eigen::MatrixXd Sigma = covariance_train - V_dec.transpose() * V_dec;
-    return multi_normal_rng(std::move(mean_train), std::move(Sigma), rng);
+    if constexpr (ReturnMeanAndCovCholesky) {
+      Eigen::MatrixXd Sigma_chol = cholesky_decompose(Sigma);
+      return std::make_tuple(std::move(mean_train), std::move(Sigma_chol));
+    } else {
+      return multi_normal_rng(std::move(mean_train), std::move(Sigma), rng);
+    }
   } else {
     Eigen::MatrixXd Sigma
         = covariance_train
@@ -60,7 +76,12 @@ inline Eigen::VectorXd laplace_base_rng(
                    - md_est.W_r
                          * md_est.LU.solve(covariance_train * md_est.W_r))
                 * covariance_train;
-    return multi_normal_rng(std::move(mean_train), std::move(Sigma), rng);
+    if constexpr (ReturnMeanAndCovCholesky) {
+      Eigen::MatrixXd Sigma_chol = cholesky_decompose(Sigma);
+      return std::make_tuple(std::move(mean_train), std::move(Sigma_chol));
+    } else {
+      return multi_normal_rng(std::move(mean_train), std::move(Sigma), rng);
+    }
   }
 }
 

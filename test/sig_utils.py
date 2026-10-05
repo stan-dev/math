@@ -79,6 +79,7 @@ special_arg_values = {
     "corr_matrix_constrain": [None, 2],
     "corr_matrix_free": [1],
     "cov_matrix_constrain": [None, 1],
+    "cholesky_corr_free": [1.0],
     "cholesky_decompose": [pos_definite, None],
     "cholesky_corr_constrain": [None, 2],
     "cholesky_factor_constrain": [None, 1, 1],

@@ -16,10 +16,9 @@ inline auto cholesky_corr_free(const T& x) {
   using Eigen::Matrix;
   using std::sqrt;
 
-  check_square("cholesky_corr_free", "x", x);
-  // should validate lower-triangular, unit lengths
-
   const auto& x_ref = to_ref(x);
+  check_cholesky_factor_corr("cholesky_corr_free", "x", x_ref);
+
   int K = (x.rows() * (x.rows() - 1)) / 2;
   Matrix<value_type_t<T>, Dynamic, 1> z(K);
   int k = 0;

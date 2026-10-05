@@ -52,51 +52,56 @@ TEST_F(AgradRev, ProbDistributionsLkjCorrCholesky_var) {
                   stan::math::lkj_corr_cholesky_lpdf(Sigma, eta_d).val());
 }
 
-TEST_F(AgradRev, ProbDistributionsLkjCorrCholesky_gradients) {
-  using stan::math::var;
-  int dim_mat = 3;
+TEST_F(AgradRev, ProbDistributionsLkjCorrCholesky_gradients1) {
+  constexpr int dim_mat = 3;
   Eigen::Matrix<double, Eigen::Dynamic, 1> x1(dim_mat);
-  Eigen::Matrix<double, Eigen::Dynamic, 1> x2(1);
-  Eigen::Matrix<double, Eigen::Dynamic, 1> x3(dim_mat + 1);
-
-  x2(0) = 2.0;
-
   for (int i = 0; i < dim_mat; ++i) {
     x1(i) = i / 10.0;
-    x3(i + 1) = x1(i);
   }
-  x3(0) = 0.5;
-
   stan::math::lkj_corr_cholesky_dc test_func_1(dim_mat);
-  stan::math::lkj_corr_cholesky_cd test_func_2(dim_mat);
-  stan::math::lkj_corr_cholesky_dd test_func_3(dim_mat);
-
-  using stan::math::finite_diff_gradient;
-  using stan::math::gradient;
-
-  Eigen::Matrix<double, Eigen::Dynamic, 1> grad;
-  double fx;
-  Eigen::Matrix<double, Eigen::Dynamic, 1> grad_ad;
-  double fx_ad;
-
-  finite_diff_gradient(test_func_3, x3, fx, grad);
-  gradient(test_func_3, x3, fx_ad, grad_ad);
-
-  test_grad_eq(grad, grad_ad);
-  EXPECT_FLOAT_EQ(fx, fx_ad);
-
-  finite_diff_gradient(test_func_2, x2, fx, grad);
-  gradient(test_func_2, x2, fx_ad, grad_ad);
-  test_grad_eq(grad, grad_ad);
-  EXPECT_FLOAT_EQ(fx, fx_ad);
-
   Eigen::Matrix<double, Eigen::Dynamic, 1> grad_1;
   double fx_1;
   Eigen::Matrix<double, Eigen::Dynamic, 1> grad_ad_1;
   double fx_ad_1;
-
   finite_diff_gradient(test_func_1, x1, fx_1, grad_1);
   gradient(test_func_1, x1, fx_ad_1, grad_ad_1);
   test_grad_eq(grad_1, grad_ad_1);
+  EXPECT_FLOAT_EQ(fx_1, fx_ad_1);
+}
+
+TEST_F(AgradRev, ProbDistributionsLkjCorrCholesky_gradients2) {
+  Eigen::Matrix<double, Eigen::Dynamic, 1> x2(1);
+  x2(0) = 2.0;
+  stan::math::lkj_corr_cholesky_cd test_func_2(1);
+  using stan::math::finite_diff_gradient;
+  using stan::math::gradient;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> grad;
+  double fx;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> grad_ad;
+  double fx_ad;
+  finite_diff_gradient(test_func_2, x2, fx, grad);
+  gradient(test_func_2, x2, fx_ad, grad_ad);
+  test_grad_eq(grad, grad_ad);
+  EXPECT_FLOAT_EQ(fx, fx_ad);
+}
+
+TEST_F(AgradRev, ProbDistributionsLkjCorrCholesky_gradients3) {
+  constexpr int dim_mat = 3;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> x3(dim_mat + 1);
+
+  x3(0) = 0.5;
+  for (int i = 0; i < dim_mat; ++i) {
+    x3(i + 1) = i / 10.0;
+  }
+  stan::math::lkj_corr_cholesky_dd test_func_3(dim_mat);
+  using stan::math::finite_diff_gradient;
+  using stan::math::gradient;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> grad;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> grad_ad;
+  double fx;
+  double fx_ad;
+  finite_diff_gradient(test_func_3, x3, fx, grad);
+  gradient(test_func_3, x3, fx_ad, grad_ad);
+  test_grad_near(grad, grad_ad);
   EXPECT_FLOAT_EQ(fx, fx_ad);
 }

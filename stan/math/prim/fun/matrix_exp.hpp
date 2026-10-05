@@ -21,17 +21,17 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the input matrix
  * is not square.
  */
-template <typename T, typename = require_eigen_t<T>>
-inline plain_type_t<T> matrix_exp(const T& A_in) {
-  using std::exp;
-  const auto& A = A_in.eval();
+template <typename EigenMat, typename = require_eigen_t<EigenMat>>
+inline plain_type_t<EigenMat> matrix_exp(EigenMat&& A_in) {
+  decltype(auto) A = to_ref(std::forward<EigenMat>(A_in));
+  using T = std::decay_t<EigenMat>;
   check_square("matrix_exp", "input matrix", A);
   if constexpr (T::RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1) {
     plain_type_t<T> res;
     res << exp(A(0));
     return res;
   }
-  if (A_in.size() == 0) {
+  if (A.size() == 0) {
     return {};
   }
   return (A.cols() == 2

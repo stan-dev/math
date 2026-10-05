@@ -21,10 +21,10 @@ namespace math {
  * @return Trace of the matrix.
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
-inline auto trace(const T& m) {
-  arena_t<T> arena_m = m;
+inline auto trace(T&& m) {
+  arena_t<T> arena_m(std::forward<T>(m));
 
-  return make_callback_var(arena_m.val_op().trace(),
+  return make_callback_var(arena_m.val().trace(),
                            [arena_m](const auto& vi) mutable {
                              arena_m.adj().diagonal().array() += vi.adj();
                            });

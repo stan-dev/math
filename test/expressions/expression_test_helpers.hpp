@@ -323,17 +323,18 @@ auto bad_multiple_evaluations(const T& a) {
  */
 template <typename T>
 auto bad_wrong_value(const T& a) {
-  if (std::is_same<T, plain_type_t<T>>::value) {
+  if constexpr (std::is_same<T, plain_type_t<T>>::value) {
     return a(0, 0);
+  } else {
+    return a(0, 0) + 1;
   }
-
-  return a(0, 0) + 1;
 }
 
 template <typename T>
 auto bad_wrong_derivatives(const T& a) {
   operands_and_partials<ref_type_t<T>> ops(a);
-  if (!is_constant<T>::value && std::is_same<T, plain_type_t<T>>::value) {
+  if constexpr (!is_constant<T>::value
+                && std::is_same<T, plain_type_t<T>>::value) {
     ops.edge1_.partials_[0] = 1234;
   }
   return ops.build(0);

@@ -1,11 +1,14 @@
-#ifndef STAN_MATH_PRIM_META_BROADCAST_ARRAY_HPP
-#define STAN_MATH_PRIM_META_BROADCAST_ARRAY_HPP
+#ifndef STAN_MATH_PRIM_FUNCTOR_BROADCAST_ARRAY_HPP
+#define STAN_MATH_PRIM_FUNCTOR_BROADCAST_ARRAY_HPP
 
+#include <stan/math/prim/functor/broadcast_array_fwd.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_var_or_arithmetic.hpp>
 #include <stan/math/prim/meta/promote_scalar_type.hpp>
 #include <stan/math/prim/meta/ref_type.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <functional>
 #include <stdexcept>
 
 namespace stan {
@@ -13,14 +16,15 @@ namespace math {
 namespace internal {
 
 template <typename T>
-class broadcast_array {
+class broadcast_array<T, require_st_arithmetic<T>> {
  private:
-  T& prim_;
+  std::reference_wrapper<T> prim_;
 
  public:
-  explicit broadcast_array(T& prim) : prim_(prim) {}
+  template <typename TT>
+  explicit broadcast_array(TT&& prim) : prim_(std::forward<TT>(prim)) {}
 
-  T& operator[](int /*i*/) { return prim_; }
+  T& operator[](int /*i*/) { return prim_.get(); }
 
   /** \ingroup type_trait
    * Broadcast array can be assigned a scalar or a vector. If assigned a scalar,
@@ -29,7 +33,7 @@ class broadcast_array {
    */
   template <typename Y>
   void operator=(const Y& m) {
-    prim_ = sum(m);
+    prim_.get() = sum(m);
   }
 };
 
@@ -40,15 +44,15 @@ class empty_broadcast_array {
   /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
-  T& operator[](int /*i*/);
+  constexpr T& operator[](int /*i*/);
 
   /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
   template <typename Y>
-  void operator=(const Y& /*A*/);
+  constexpr void operator=(const Y& /*A*/);
   template <typename Y>
-  void add_write_event(Y&& /* event */);
+  constexpr void add_write_event(Y&& /* event */);
 };
 
 template <typename ViewElt, typename T>

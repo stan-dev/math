@@ -47,11 +47,12 @@ inline auto rep_matrix(const T& x, int m, int n) {
  * vector.
  * @tparam Vec An Eigen vector.
  * @param x An Eigen vector. For Row vectors the values are replicated rowwise.
- * and for column vectors the values are repliacated colwise.
+ * and for column vectors the values are replicated colwise.
  * @param n Number of rows or columns.
  */
 template <typename Vec, require_eigen_vector_t<Vec>* = nullptr>
-inline auto rep_matrix(const Vec& x, int n) {
+inline Eigen::Matrix<scalar_type_t<Vec>, -1, -1> rep_matrix(const Vec& x,
+                                                            int n) {
   if constexpr (is_eigen_row_vector<Vec>::value) {
     check_nonnegative("rep_matrix", "rows", n);
     return x.replicate(n, 1);

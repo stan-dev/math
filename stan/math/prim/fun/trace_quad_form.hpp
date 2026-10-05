@@ -23,12 +23,13 @@ namespace math {
  */
 template <typename EigMat1, typename EigMat2,
           require_all_eigen_vt<std::is_arithmetic, EigMat1, EigMat2>* = nullptr>
-inline return_type_t<EigMat1, EigMat2> trace_quad_form(const EigMat1& A,
-                                                       const EigMat2& B) {
+inline auto trace_quad_form(EigMat1&& A, EigMat2&& B) {
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
-  const auto& B_ref = to_ref(B);
-  return B_ref.cwiseProduct(A * B_ref).sum();
+  decltype(auto) B_ref = to_ref(std::forward<EigMat2>(B));
+  return make_holder(
+      [](auto&& A_, auto&& B_) { return B_.cwiseProduct(A_ * B_).sum(); },
+      std::forward<EigMat1>(A), std::forward<decltype(B_ref)>(B_ref));
 }
 
 }  // namespace math

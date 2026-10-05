@@ -4,7 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
-#include <stan/math/prim/functor/broadcast_array.hpp>
+#include <stan/math/prim/meta/plain_type.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <vector>
 #include <type_traits>
@@ -67,8 +67,7 @@ class partials_propagator<ReturnType, require_arithmetic_t<ReturnType>,
    * @param value the return value of the function we are compressing
    * @return the value with its derivative
    */
-  inline static double build(double value) noexcept { return value; }
-  std::tuple<internal::ops_partials_edge<double, std::decay_t<Ops>>...> edges_;
+  inline static constexpr double build(double value) noexcept { return value; }
 };
 
 }  // namespace internal

@@ -20,12 +20,13 @@ namespace math {
  */
 template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
           require_not_st_var<EigMat>* = nullptr>
-inline auto singular_values(const EigMat& m) {
+inline auto singular_values(EigMat&& m) {
   if (unlikely(m.size() == 0)) {
     return Eigen::Matrix<base_type_t<EigMat>, Eigen::Dynamic, 1>(0, 1);
   }
   return Eigen::JacobiSVD<Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic,
-                                        Eigen::Dynamic> >(m)
+                                        Eigen::Dynamic> >(
+             to_ref(std::forward<EigMat>(m)))
       .singularValues();
 }
 

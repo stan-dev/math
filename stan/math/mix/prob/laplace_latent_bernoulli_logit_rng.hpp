@@ -20,8 +20,8 @@ namespace math {
  * @tparam Mean type of the mean of the latent normal distribution
  * \laplace_common_template_args
  * @tparam RNG A valid boost rng type
- * @param[in] y Vector Vector of total number of trials with a positive outcome.
- * @param[in] n_samples Vector of number of trials.
+ * @param[in] y binary observations.
+ * @param[in] y_index group to which each observation belongs.
  * @param[in] mean the mean of the latent normal variable.
  * \laplace_common_args
  * @param[in] hessian_block_size Block size for the Hessian approximation with
@@ -33,7 +33,7 @@ namespace math {
 template <typename Mean, typename CovarFun, typename CovarArgs,
           typename OpsTuple, typename RNG>
 inline Eigen::VectorXd laplace_latent_tol_bernoulli_logit_rng(
-    const std::vector<int>& y, const std::vector<int>& n_samples, Mean&& mean,
+    const std::vector<int>& y, const std::vector<int>& y_index, Mean&& mean,
     int hessian_block_size, CovarFun&& covariance_function,
     CovarArgs&& covar_args, OpsTuple&& ops, RNG& rng, std::ostream* msgs) {
   auto options
@@ -41,7 +41,7 @@ inline Eigen::VectorXd laplace_latent_tol_bernoulli_logit_rng(
   options.hessian_block_size = hessian_block_size;
   return laplace_base_rng(
       bernoulli_logit_likelihood{},
-      std::forward_as_tuple(to_vector(y), n_samples, std::forward<Mean>(mean)),
+      std::forward_as_tuple(to_vector(y), y_index, std::forward<Mean>(mean)),
       std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), std::move(options), rng, msgs);
 }
@@ -58,8 +58,8 @@ inline Eigen::VectorXd laplace_latent_tol_bernoulli_logit_rng(
  * @tparam Mean type of the mean of the latent normal distribution
  * \laplace_common_template_args
  * @tparam RNG A valid boost rng type
- * @param[in] y Vector Vector of total number of trials with a positive outcome.
- * @param[in] n_samples Vector of number of trials.
+ * @param[in] y binary observations
+ * @param[in] y_index group to which each observation belongs.
  * @param[in] mean the mean of the latent normal variable.
  * \laplace_common_args
  * @param[in] hessian_block_size Block size for the Hessian approximation with
@@ -69,13 +69,13 @@ inline Eigen::VectorXd laplace_latent_tol_bernoulli_logit_rng(
  */
 template <typename Mean, typename CovarFun, typename CovarArgs, typename RNG>
 inline Eigen::VectorXd laplace_latent_bernoulli_logit_rng(
-    const std::vector<int>& y, const std::vector<int>& n_samples, Mean&& mean,
+    const std::vector<int>& y, const std::vector<int>& y_index, Mean&& mean,
     int hessian_block_size, CovarFun&& covariance_function,
     CovarArgs&& covar_args, RNG& rng, std::ostream* msgs) {
   auto options = laplace_options_default{hessian_block_size};
   return laplace_base_rng(
       bernoulli_logit_likelihood{},
-      std::forward_as_tuple(to_vector(y), n_samples, std::forward<Mean>(mean)),
+      std::forward_as_tuple(to_vector(y), y_index, std::forward<Mean>(mean)),
       std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), options, rng, msgs);
 }
