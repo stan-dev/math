@@ -72,15 +72,18 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(
     const auto nu_dbl = nu_vec.val(n);
     const auto q = nu_dbl / (t * t);
     const auto r = 1.0 / (1.0 + q);
+    // 1 - r = 1 / (1 + 1 / q) without the subtraction, which rounds to 0
+    // once q is below eps; equal to 1 at t = 0
+    const auto one_m_r = 1.0 / (1.0 + t * t / nu_dbl);
     const auto J = 2 * r * r * q / t;
     const auto betaNuHalf = beta(0.5, 0.5 * nu_dbl);
     double zJacobian = t > 0 ? -0.5 : 0.5;
 
     if (q < 2) {
-      auto z = inc_beta(0.5 * nu_dbl, 0.5, 1.0 - r);
+      auto z = inc_beta(0.5 * nu_dbl, 0.5, one_m_r);
       const auto Pn = t > 0 ? 1.0 - 0.5 * z : 0.5 * z;
       const auto d_ibeta
-          = pow(r, -0.5) * pow(1.0 - r, 0.5 * nu_dbl - 1) / betaNuHalf;
+          = pow(r, -0.5) * pow(one_m_r, 0.5 * nu_dbl - 1) / betaNuHalf;
 
       P *= Pn;
 
@@ -91,7 +94,7 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(
       if constexpr (is_autodiff_v<T_dof>) {
         // nu / 2 is the first shape of inc_beta here and 1 / 2 the second
         const auto g1 = grad_reg_inc_beta<GRAD_RIB::G1>(
-            0.5 * nu_dbl, 0.5, 1.0 - r, digamma(0.5 * nu_dbl), 0.0,
+            0.5 * nu_dbl, 0.5, one_m_r, digamma(0.5 * nu_dbl), 0.0,
             digamma(0.5 + 0.5 * nu_dbl), 0.0);
 
         partials<1>(ops_partials)[n]
@@ -112,12 +115,12 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(
       // 1 - I_r(1/2, nu/2) = I_{1-r}(nu/2, 1/2). Forming it as the
       // complement loses every digit once I_r(1/2, nu/2) rounds to 1,
       // which happens for every z below eps.
-      auto z = inc_beta(0.5 * nu_dbl, 0.5, 1.0 - r);
+      auto z = inc_beta(0.5 * nu_dbl, 0.5, one_m_r);
       zJacobian *= -1;
 
       const auto Pn = t > 0 ? 1.0 - 0.5 * z : 0.5 * z;
 
-      auto d_ibeta = pow(1.0 - r, 0.5 * nu_dbl - 1) * pow(r, -0.5) / betaNuHalf;
+      auto d_ibeta = pow(one_m_r, 0.5 * nu_dbl - 1) * pow(r, -0.5) / betaNuHalf;
 
       P *= Pn;
 
@@ -130,7 +133,7 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(
         // partial is d z / d (nu / 2) directly, which is the negative of the
         // second-shape partial of the unreflected call.
         const auto g1 = grad_reg_inc_beta<GRAD_RIB::G1>(
-            0.5 * nu_dbl, 0.5, 1.0 - r, digamma(0.5 * nu_dbl), 0.0,
+            0.5 * nu_dbl, 0.5, one_m_r, digamma(0.5 * nu_dbl), 0.0,
             digamma(0.5 + 0.5 * nu_dbl), 0.0);
 
         partials<1>(ops_partials)[n]
