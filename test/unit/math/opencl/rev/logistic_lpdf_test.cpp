@@ -100,6 +100,20 @@ TEST(ProbDistributionsLogistic, opencl_matches_cpu_small) {
       sigma.transpose().eval());
 }
 
+TEST(ProbDistributionsLogistic, opencl_matches_cpu_large_location) {
+  Eigen::VectorXd y(3);
+  y << 711, 712, 1e-14;
+  Eigen::VectorXd mu(3);
+  mu << 710, 710, 0;
+  Eigen::VectorXd sigma(3);
+  sigma << 1, 2, 1;
+
+  stan::math::test::compare_cpu_opencl_prim_rev(logistic_lpdf_functor, y, mu,
+                                                sigma);
+  stan::math::test::compare_cpu_opencl_prim_rev(logistic_lpdf_functor_propto, y,
+                                                mu, sigma);
+}
+
 TEST(ProbDistributionsLogistic, opencl_broadcast_y) {
   int N = 3;
 
