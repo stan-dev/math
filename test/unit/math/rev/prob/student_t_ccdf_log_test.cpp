@@ -27,6 +27,37 @@ void expect_student_t_lccdf(double y, double nu_in, double sigma_in,
   EXPECT_NEAR(dsigma, g[1], rtol * std::fabs(dsigma));
 }
 
+// f(y, nu, sigma) with location 0: the value, then the y, nu and sigma
+// gradients, against references (mpmath, 60 digits, two routes)
+template <typename F>
+void expect_student_t_fn(F f, double y_in, double nu_in, double sigma_in,
+                         const std::vector<double>& expected, double rtol) {
+  using stan::math::var;
+  var y = y_in;
+  var nu = nu_in;
+  var sigma = sigma_in;
+  var p = f(y, nu, sigma);
+  std::vector<var> x{y, nu, sigma};
+  std::vector<double> g;
+  p.grad(x, g);
+  EXPECT_NEAR(expected[0], p.val(), rtol * std::fabs(expected[0]))
+      << "y=" << y_in << " nu=" << nu_in;
+  for (int i = 0; i < 3; ++i) {
+    EXPECT_NEAR(expected[i + 1], g[i], rtol * std::fabs(expected[i + 1]))
+        << "gradient " << i << " y=" << y_in << " nu=" << nu_in;
+  }
+}
+
+const auto student_t_cdf_fn = [](auto& y, auto& nu, auto& sigma) {
+  return stan::math::student_t_cdf(y, nu, 0.0, sigma);
+};
+const auto student_t_lcdf_fn = [](auto& y, auto& nu, auto& sigma) {
+  return stan::math::student_t_lcdf(y, nu, 0.0, sigma);
+};
+const auto student_t_lccdf_fn = [](auto& y, auto& nu, auto& sigma) {
+  return stan::math::student_t_lccdf(y, nu, 0.0, sigma);
+};
+
 }  // namespace
 
 TEST_F(AgradRev, ProbDistributionsStudentT_lccdf_deep_tail) {
@@ -64,39 +95,37 @@ TEST_F(AgradRev, ProbDistributionsStudentT_lccdf_large_t) {
 TEST_F(AgradRev, ProbDistributionsStudentT_cdf_lcdf_large_t) {
   // stan-dev/math#2923: the reported case nu = 0.1 at y = -1e8, where the
   // cdf was exactly 0, its mirror at y = 1e8, where it was exactly 1, and
-  // the Cauchy lcdf at y = -1e10. Value, then the y, nu and sigma gradients;
-  // mpmath references at 60 digits, by two routes.
-  using stan::math::var;
-  auto check = [](auto f, double y_in, double nu_in, double sigma_in,
-                  std::vector<double> expected) {
-    var y = y_in;
-    var nu = nu_in;
-    var sigma = sigma_in;
-    var p = f(y, nu, sigma);
-    std::vector<var> x{y, nu, sigma};
-    std::vector<double> g;
-    p.grad(x, g);
-    EXPECT_NEAR(expected[0], p.val(), 1e-12 * std::fabs(expected[0]))
-        << "y=" << y_in << " nu=" << nu_in;
-    for (int i = 0; i < 3; ++i) {
-      EXPECT_NEAR(expected[i + 1], g[i], 1e-12 * std::fabs(expected[i + 1]))
-          << "gradient " << i << " y=" << y_in << " nu=" << nu_in;
-    }
-  };
-  auto cdf = [](auto& y, auto& nu, auto& sigma) {
-    return stan::math::student_t_cdf(y, nu, 0.0, sigma);
-  };
-  auto lcdf = [](auto& y, auto& nu, auto& sigma) {
-    return stan::math::student_t_lcdf(y, nu, 0.0, sigma);
-  };
-  check(cdf, -1e8, 0.1, 1.0,
-        {0.066150321787786709, 6.6150321787786714e-11, -1.3025679986240706,
-         0.0066150321787786714});
-  check(cdf, 1e8, 0.1, 1.0,
-        {0.93384967821221332, 6.6150321787786714e-11, 1.3025679986240706,
-         -0.0066150321787786714});
-  check(lcdf, -1e10, 1.0, 1.0,
-        {-24.170580815789858, 1e-10, -22.83270374938051, 1.0});
+  // the Cauchy lcdf at y = -1e10. Value, then the y, nu and sigma gradients.
+  expect_student_t_fn(student_t_cdf_fn, -1e8, 0.1, 1.0,
+                      {0.066150321787786709, 6.6150321787786714e-11,
+                       -1.3025679986240706, 0.0066150321787786714},
+                      1e-12);
+  expect_student_t_fn(student_t_cdf_fn, 1e8, 0.1, 1.0,
+                      {0.93384967821221332, 6.6150321787786714e-11,
+                       1.3025679986240706, -0.0066150321787786714},
+                      1e-12);
+  expect_student_t_fn(student_t_lcdf_fn, -1e10, 1.0, 1.0,
+                      {-24.170580815789858, 1e-10, -22.83270374938051, 1.0},
+                      1e-12);
+}
+
+TEST_F(AgradRev, ProbDistributionsStudentT_cdf_lccdf_near_zero) {
+  // q >= 2 with |t| small. The complement 1 - I_r(1/2, nu/2) and its nu
+  // gradient must be evaluated from r, not from 1 - r, which is close to 1
+  // here: from 1 - r the nu gradient had a relative error of 1e-3 at
+  // t = 1e-7. nu = 1 is Boost's arcsine case a = b = 1/2.
+  expect_student_t_fn(student_t_cdf_fn, -1e-7, 1.0, 1.0,
+                      {0.49999996816901138, 0.31830988618378747,
+                       -6.1480657060756583e-09, 3.1830988618378744e-08},
+                      1e-11);
+  expect_student_t_fn(student_t_lccdf_fn, 1e-3, 1.0, 1.0,
+                      {-0.69378400284838371, -0.63702467811884134,
+                       -0.00012303970872281812, 0.00063702467811884139},
+                      1e-11);
+  expect_student_t_fn(student_t_cdf_fn, -1e-5, 30.0, 1.0,
+                      {0.49999604367815115, 0.39563218487365676,
+                       -1.0983690983393141e-09, 3.9563218487365682e-06},
+                      1e-11);
 }
 
 TEST_F(AgradRev, ProbDistributionsStudentT_lccdf_branch_seam) {

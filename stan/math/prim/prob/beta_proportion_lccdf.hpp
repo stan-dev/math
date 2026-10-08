@@ -87,12 +87,11 @@ inline return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(
     const T_partials_return kappa_dbl = kappa_vec.val(n);
     const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;
     const T_partials_return kappa_mukappa_dbl = kappa_dbl - mukappa_dbl;
-    const T_partials_return betafunc_dbl = beta(mukappa_dbl, kappa_mukappa_dbl);
-    // The complement by the symmetry relation I_y(a, b) = I_{1-y}(b, a).
-    // Forming it as 1 - I_y(a, b) loses every digit once I_y(a, b) rounds
-    // to 1, which happens for every complement below eps.
-    const T_partials_return Pn
-        = inc_beta(kappa_mukappa_dbl, mukappa_dbl, 1 - y_dbl);
+    // The complement 1 - I_y(a, b), evaluated from the smaller of y and
+    // 1 - y. Forming it as a difference loses every digit once I_y(a, b)
+    // rounds to 1, which happens for every complement below eps.
+    const T_partials_return Pn = internal::inc_beta_complement(
+        mukappa_dbl, kappa_mukappa_dbl, y_dbl, 1.0 - y_dbl);
 
     ccdf_log += log(Pn);
 
@@ -109,19 +108,32 @@ inline return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(
 
     // the mu and kappa partials each need both shape partials
     if constexpr (is_any_autodiff_v<T_loc, T_prec>) {
-      // On the reflected arguments the two outputs are the derivatives of
-      // Pn itself: g1 with respect to kappa - mu kappa, g2 with respect to
-      // mu kappa.
-      const auto [g1, g2] = grad_reg_inc_beta<GRAD_RIB::BOTH>(
-          kappa_mukappa_dbl, mukappa_dbl, 1 - y_dbl,
-          digamma(kappa_mukappa_dbl), digamma(mukappa_dbl), digamma(kappa_dbl),
-          0.0);
+      // The derivatives with respect to a = mu kappa and b = kappa - mu kappa,
+      // from the same argument as the value
+      T_partials_return dPn_da = 0;
+      T_partials_return dPn_db = 0;
+      if (y_dbl <= 0.5) {
+        // the derivatives of I_y(a, b), which are those of -Pn
+        const auto [g1, g2] = grad_reg_inc_beta<GRAD_RIB::BOTH>(
+            mukappa_dbl, kappa_mukappa_dbl, y_dbl, digamma(mukappa_dbl),
+            digamma(kappa_mukappa_dbl), digamma(kappa_dbl), 0.0);
+        dPn_da = -g1;
+        dPn_db = -g2;
+      } else {
+        // on the reflected arguments, the derivatives of Pn itself
+        const auto [g1, g2] = grad_reg_inc_beta<GRAD_RIB::BOTH>(
+            kappa_mukappa_dbl, mukappa_dbl, 1 - y_dbl,
+            digamma(kappa_mukappa_dbl), digamma(mukappa_dbl),
+            digamma(kappa_dbl), 0.0);
+        dPn_da = g2;
+        dPn_db = g1;
+      }
       if constexpr (is_autodiff_v<T_loc>) {
-        partials<1>(ops_partials)[n] += kappa_dbl * (g2 - g1) * inv_Pn;
+        partials<1>(ops_partials)[n] += kappa_dbl * (dPn_da - dPn_db) * inv_Pn;
       }
       if constexpr (is_autodiff_v<T_prec>) {
         partials<2>(ops_partials)[n]
-            += (g2 * mu_dbl + g1 * (1 - mu_dbl)) * inv_Pn;
+            += (dPn_da * mu_dbl + dPn_db * (1 - mu_dbl)) * inv_Pn;
       }
     }
   }
