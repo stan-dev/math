@@ -17,11 +17,89 @@
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
+
+namespace internal {
+
+/**
+ * From this value of nu on, student_t_lpdf forms its nu terms with the
+ * asymptotic series below. Below it, the differences of two lgamma and of
+ * two digamma values lose about eps * lgamma(nu / 2), at most about 1e-14.
+ * For large nu that loss grows like eps * nu log(nu), and the result has no
+ * correct digits from about nu = 1e16. At nu = 40 the
+ * first omitted series term is below 1e-17 of the result.
+ */
+constexpr double student_t_series_min_nu = 40.0;
+
+/**
+ * Return lgamma((nu + 1) / 2) - lgamma(nu / 2) - log(nu) / 2, the part of
+ * the Student-t normalizing constant that depends on nu. For nu >= 40,
+ * with h = nu / 2, the asymptotic series
+ *
+ *   lgamma(h + 1/2) - lgamma(h) = log(h) / 2 - 1 / (8 h) + 1 / (192 h^3)
+ *       - 1 / (640 h^5) + 17 / (14336 h^7) - 31 / (18432 h^9) + O(h^-11)
+ *
+ * is used, in which log(h) / 2 - log(nu) / 2 = -log(2) / 2.
+ */
+struct student_t_nu_constant_fun {
+  template <typename T>
+  static inline T fun(const T& nu) {
+    if (value_of_rec(nu) < student_t_series_min_nu) {
+      const T half_nu = 0.5 * nu;
+      return lgamma(half_nu + 0.5) - lgamma(half_nu) - 0.5 * log(nu);
+    }
+    const T z = 2.0 / nu;
+    const T z2 = square(z);
+    return -0.5 * LOG_TWO
+           + z
+                 * (-0.125
+                    + z2
+                          * (1.0 / 192.0
+                             + z2
+                                   * (-1.0 / 640.0
+                                      + z2
+                                            * (17.0 / 14336.0
+                                               - z2 * (31.0 / 18432.0)))));
+  }
+};
+
+/**
+ * Return digamma((nu + 1) / 2) - digamma(nu / 2). For nu >= 40, with
+ * h = nu / 2, the derivative in h of the series above is used:
+ *
+ *   1 / (2 h) + 1 / (8 h^2) - 1 / (64 h^4) + 1 / (128 h^6)
+ *       - 119 / (14336 h^8) + 279 / (18432 h^10) + O(h^-12).
+ */
+struct student_t_nu_digamma_fun {
+  template <typename T>
+  static inline T fun(const T& nu) {
+    if (value_of_rec(nu) < student_t_series_min_nu) {
+      const T half_nu = 0.5 * nu;
+      return digamma(half_nu + 0.5) - digamma(half_nu);
+    }
+    const T z = 2.0 / nu;
+    const T z2 = square(z);
+    return z
+           * (0.5
+              + z
+                    * (0.125
+                       + z2
+                             * (-1.0 / 64.0
+                                + z2
+                                      * (1.0 / 128.0
+                                         + z2
+                                               * (-119.0 / 14336.0
+                                                  + z2 * (279.0 / 18432.0))))));
+  }
+};
+
+}  // namespace internal
 
 /** \ingroup prob_dists
  * The log of the Student-t density for the given y, nu, mean, and
@@ -107,8 +185,11 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(
     logp -= LOG_SQRT_PI * N;
   }
   if constexpr (include_summand<propto, T_dof>::value) {
-    logp += (sum(lgamma(half_nu + 0.5)) - sum(lgamma(half_nu))
-             - 0.5 * sum(log(nu_val)))
+    // lgamma(nu/2 + 1/2) - lgamma(nu/2) - log(nu)/2, by a series for large
+    // nu; see internal::student_t_nu_constant_fun
+    logp += sum(apply_scalar_unary<
+                internal::student_t_nu_constant_fun,
+                std::decay_t<decltype(nu_val)>>::apply(nu_val))
             * N / math::size(nu);
   }
   if constexpr (include_summand<propto, T_scale>::value) {
@@ -134,12 +215,13 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(
                 / (1 + square_y_scaled_over_nu)
             - 1);
     if constexpr (is_autodiff_v<T_dof>) {
-      const auto& digamma_half_nu_plus_half = digamma(half_nu + 0.5);
-      const auto& digamma_half_nu = digamma(half_nu);
+      // digamma(nu/2 + 1/2) - digamma(nu/2), by a series for large nu;
+      // see internal::student_t_nu_digamma_fun
+      const auto& digamma_nu_term
+          = apply_scalar_unary<internal::student_t_nu_digamma_fun,
+                               std::decay_t<decltype(nu_val)>>::apply(nu_val);
       edge<1>(ops_partials).partials_
-          = 0.5
-            * (digamma_half_nu_plus_half - digamma_half_nu - log1p_val
-               + rep_deriv / nu_val);
+          = 0.5 * (digamma_nu_term - log1p_val + rep_deriv / nu_val);
     }
     if constexpr (is_autodiff_v<T_scale>) {
       partials<3>(ops_partials) = rep_deriv / sigma_val;

@@ -6,13 +6,14 @@
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/columns_dot_self.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/digamma_diff.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/prim/fun/dot_self.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
+#include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/max_size_mvt.hpp>
 #include <stan/math/prim/fun/mdivide_left_tri.hpp>
@@ -147,12 +148,15 @@ inline return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
     matrix_partials_t L_deriv;
     const auto& half_nu
         = to_ref_if<include_summand<propto, T_dof>::value>(0.5 * nu_val);
+    // digamma(nu/2 + p/2) - digamma(nu/2) and lgamma(nu/2 + p/2) -
+    // lgamma(nu/2) without the cancellation for large nu; the second is
+    // lgamma(p/2) - lbeta(p/2, nu/2)
     const auto& digamma_vals = to_ref_if<is_autodiff_v<T_dof>>(
-        digamma(half_nu + 0.5 * num_dims) - digamma(half_nu));
+        digamma_diff(half_nu, 0.5 * num_dims));
 
     if constexpr (include_summand<propto, T_dof>::value) {
-      lp += lgamma(0.5 * nu_plus_dims) * size_vec;
-      lp += -lgamma(0.5 * nu_val) * size_vec;
+      lp += (lgamma(0.5 * num_dims) - lbeta(0.5 * num_dims, half_nu))
+            * size_vec;
       lp += -(0.5 * num_dims) * log(nu_val) * size_vec;
     }
 
@@ -315,8 +319,8 @@ inline return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
 
     if constexpr (is_autodiff_v<T_dof>) {
       T_partials_return half_nu = 0.5 * nu_val;
-      T_partials_return digamma_vals
-          = digamma(half_nu + 0.5 * size_y) - digamma(half_nu);
+      // digamma(nu/2 + p/2) - digamma(nu/2) without the cancellation
+      T_partials_return digamma_vals = digamma_diff(half_nu, 0.5 * size_y);
       T_partials_return G = dot_product(scaled_diff, y_val_minus_mu_val);
 
       partials<1>(ops_partials)
@@ -325,8 +329,8 @@ inline return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
     }
 
     if constexpr (include_summand<propto, T_dof>::value) {
-      lp += lgamma(0.5 * (nu_val + size_y));
-      lp += -lgamma(0.5 * nu_val);
+      // lgamma(nu/2 + p/2) - lgamma(nu/2) as lgamma(p/2) - lbeta(p/2, nu/2)
+      lp += lgamma(0.5 * size_y) - lbeta(0.5 * size_y, 0.5 * nu_val);
       lp += -0.5 * size_y * log(nu_val);
     }
 
