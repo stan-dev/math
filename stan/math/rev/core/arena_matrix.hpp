@@ -75,7 +75,7 @@ class arena_matrix<MatrixType, require_eigen_dense_base_t<MatrixType>>
       : Base::Map(ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
                       other.size()),
                   get_rows(other), get_cols(other)) {
-    *this = other;
+    Base::operator=(other);
   }
   /**
    * Overwrite the current arena_matrix with new memory and assign a matrix to
