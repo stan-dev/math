@@ -5,6 +5,14 @@
 #include <stan/math/prim/functor/hcubature.hpp>
 #include <stan/math/prim/prob/wiener5_lpdf.hpp>
 
+#include <array>
+#include <cmath>
+#include <limits>
+#include <sstream>
+#include <stdexcept>
+#include <utility>
+#include <vector>
+
 namespace stan {
 namespace math {
 namespace internal {
@@ -161,6 +169,355 @@ inline auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
   };
   return estimate_with_err_check<0, 8, GradW7, GradientCalc::ON>(
       functor, hcubature_err, args...);
+}
+
+constexpr int wiener7_num_partials = 8;
+constexpr int wiener7_rule_size = 15;
+
+// Plain double state is intentional: this fallback evaluates the density and
+// requested score integrals together, then supplies their ratios to the
+// partials propagator.
+struct wiener7_log_params {
+  double y;
+  double a;
+  double v;
+  double w;
+  double t0;
+  double sv;
+  double sw;
+  double st0;
+  double log_error;
+};
+
+struct wiener7_log_node {
+  double log_density = NEGATIVE_INFTY;
+  // y, a, t0, w, v, sv, sw, st0, matching make_partials_propagator below.
+  std::array<double, wiener7_num_partials> scores{};
+  bool valid = true;
+};
+
+struct wiener7_log_box {
+  Eigen::VectorXd lower;
+  Eigen::VectorXd upper;
+  std::array<double, wiener7_num_partials + 1> value{};
+  std::array<double, wiener7_num_partials + 1> error{};
+  double log_scale = NEGATIVE_INFTY;
+  int split_dimension = 0;
+  bool valid = true;
+};
+
+struct wiener7_log_integral {
+  double log_density = NEGATIVE_INFTY;
+  std::array<double, wiener7_num_partials> partials{};
+  std::array<double, wiener7_num_partials> partial_errors{};
+  double density_error = INFTY;
+  double gradient_error = INFTY;
+  int evaluations = 0;
+  bool converged = false;
+};
+
+struct wiener7_quadrature_point {
+  double point;
+  double high_weight;
+  double low_weight;
+};
+
+inline std::array<wiener7_quadrature_point, wiener7_rule_size>
+wiener7_quadrature_rule() {
+  std::array<wiener7_quadrature_point, wiener7_rule_size> rule;
+  rule[0] = {0.0, wd7[7], gwd7[3]};
+  for (int i = 0; i < 7; ++i) {
+    const double low_weight = i % 2 == 1 ? gwd7[i / 2] : 0.0;
+    rule[2 * i + 1] = {xd7[i], wd7[i], low_weight};
+    rule[2 * i + 2] = {-xd7[i], wd7[i], low_weight};
+  }
+  return rule;
+}
+
+inline wiener7_log_node wiener7_log_node_value(
+    const Eigen::VectorXd& x, const wiener7_log_params& params,
+    const std::array<bool, wiener7_num_partials>& active) {
+  wiener7_log_node result;
+  const bool has_sw = params.sw != 0.0;
+  const bool has_st0 = params.st0 != 0.0;
+  const double x_w = has_sw ? x[0] : 0.5;
+  const double x_t = has_st0 ? x[has_sw ? 1 : 0] : 0.0;
+  const double reaction_time = params.y - params.t0 - params.st0 * x_t;
+  if (reaction_time <= 0.0) {
+    return result;
+  }
+  const double relative_start = params.w + params.sw * (x_w - 0.5);
+  result.log_density = wiener5_density<GradientCalc::OFF>(
+      reaction_time, params.a, params.v, relative_start, params.sv,
+      params.log_error);
+  if (!std::isfinite(result.log_density)) {
+    result.valid = result.log_density == NEGATIVE_INFTY;
+    return result;
+  }
+
+  const bool needs_t = active[0] || active[2] || active[7];
+  const bool needs_w = active[3] || active[6];
+  double score_t = 0.0;
+  double score_w = 0.0;
+  if (needs_t) {
+    score_t = wiener5_grad_t<GradientCalc::OFF>(reaction_time, params.a,
+                                                params.v, relative_start,
+                                                params.sv, params.log_error);
+  }
+  if (needs_w) {
+    score_w = wiener5_grad_w<GradientCalc::OFF>(reaction_time, params.a,
+                                                params.v, relative_start,
+                                                params.sv, params.log_error);
+  }
+  result.scores[0] = score_t;
+  if (active[1]) {
+    result.scores[1] = wiener5_grad_a<GradientCalc::OFF>(
+        reaction_time, params.a, params.v, relative_start, params.sv,
+        params.log_error);
+  }
+  result.scores[2] = -score_t;
+  result.scores[3] = score_w;
+  if (active[4]) {
+    result.scores[4] = wiener5_grad_v<GradientCalc::OFF>(
+        reaction_time, params.a, params.v, relative_start, params.sv,
+        params.log_error);
+  }
+  if (active[5]) {
+    result.scores[5] = wiener5_grad_sv<GradientCalc::OFF>(
+        reaction_time, params.a, params.v, relative_start, params.sv,
+        params.log_error);
+  }
+  result.scores[6] = has_sw ? (x_w - 0.5) * score_w : 0.0;
+  result.scores[7] = has_st0 ? -x_t * score_t : 0.0;
+  for (int i = 0; i < wiener7_num_partials; ++i) {
+    if (active[i] && !std::isfinite(result.scores[i])) {
+      result.valid = false;
+    }
+  }
+  return result;
+}
+
+inline wiener7_log_box wiener7_log_integrate_box(
+    const Eigen::VectorXd& lower, const Eigen::VectorXd& upper,
+    const wiener7_log_params& params,
+    const std::array<bool, wiener7_num_partials>& active) {
+  wiener7_log_box box;
+  box.lower = lower;
+  box.upper = upper;
+  const int dim = lower.size();
+  const auto rule = wiener7_quadrature_rule();
+  const Eigen::VectorXd center = 0.5 * (lower + upper);
+  const Eigen::VectorXd half_width = 0.5 * (upper - lower);
+  const int number_nodes
+      = dim == 1 ? wiener7_rule_size : wiener7_rule_size * wiener7_rule_size;
+  std::vector<wiener7_log_node> nodes;
+  nodes.reserve(number_nodes);
+  std::vector<double> high_weights;
+  std::vector<double> low_weights;
+  high_weights.reserve(number_nodes);
+  low_weights.reserve(number_nodes);
+  std::array<std::vector<double>, 2> directional_weights;
+  directional_weights[0].reserve(number_nodes);
+  directional_weights[1].reserve(number_nodes);
+
+  for (int i = 0; i < wiener7_rule_size; ++i) {
+    const int second_size = dim == 1 ? 1 : wiener7_rule_size;
+    for (int j = 0; j < second_size; ++j) {
+      Eigen::VectorXd x = center;
+      x[0] += half_width[0] * rule[i].point;
+      if (dim == 2) {
+        x[1] += half_width[1] * rule[j].point;
+      }
+      auto node = wiener7_log_node_value(x, params, active);
+      box.valid = box.valid && node.valid;
+      box.log_scale = fmax(box.log_scale, node.log_density);
+      nodes.push_back(std::move(node));
+      const double high_second = dim == 1 ? 1.0 : rule[j].high_weight;
+      const double low_second = dim == 1 ? 1.0 : rule[j].low_weight;
+      high_weights.push_back(rule[i].high_weight * high_second);
+      low_weights.push_back(rule[i].low_weight * low_second);
+      directional_weights[0].push_back(rule[i].low_weight * high_second);
+      directional_weights[1].push_back(rule[i].high_weight * low_second);
+    }
+  }
+
+  // Each box has its own log scale, so neither a missed global pilot maximum
+  // nor a large difference between boxes can underflow the node evaluations.
+  if (!box.valid || !std::isfinite(box.log_scale)) {
+    box.valid = false;
+    return box;
+  }
+  std::array<double, wiener7_num_partials + 1> low_value{};
+  std::array<std::array<double, wiener7_num_partials + 1>, 2>
+      directional_value{};
+  for (int node_index = 0; node_index < number_nodes; ++node_index) {
+    const auto& node = nodes[node_index];
+    if (!std::isfinite(node.log_density)) {
+      continue;
+    }
+    const double scaled_density = exp(node.log_density - box.log_scale);
+    const double high_density = high_weights[node_index] * scaled_density;
+    const double low_density = low_weights[node_index] * scaled_density;
+    box.value[0] += high_density;
+    low_value[0] += low_density;
+    for (int d = 0; d < dim; ++d) {
+      directional_value[d][0]
+          += directional_weights[d][node_index] * scaled_density;
+    }
+    for (int k = 0; k < wiener7_num_partials; ++k) {
+      if (!active[k]) {
+        continue;
+      }
+      box.value[k + 1] += high_density * node.scores[k];
+      low_value[k + 1] += low_density * node.scores[k];
+      for (int d = 0; d < dim; ++d) {
+        directional_value[d][k + 1] += directional_weights[d][node_index]
+                                       * scaled_density * node.scores[k];
+      }
+    }
+  }
+
+  double volume = 1.0;
+  for (int d = 0; d < dim; ++d) {
+    volume *= fabs(half_width[d]);
+  }
+  double best_split_metric = -1.0;
+  for (int k = 0; k <= wiener7_num_partials; ++k) {
+    box.value[k] *= volume;
+    low_value[k] *= volume;
+    box.error[k] = fabs(box.value[k] - low_value[k]);
+  }
+  for (int d = 0; d < dim; ++d) {
+    double split_metric = 0.0;
+    for (int k = 0; k <= wiener7_num_partials; ++k) {
+      if (k > 0 && !active[k - 1]) {
+        continue;
+      }
+      directional_value[d][k] *= volume;
+      const double scale = fmax(fabs(box.value[k]), fabs(box.value[0]));
+      if (scale > 0.0) {
+        split_metric = fmax(
+            split_metric, fabs(box.value[k] - directional_value[d][k]) / scale);
+      }
+    }
+    if (split_metric > best_split_metric) {
+      best_split_metric = split_metric;
+      box.split_dimension = d;
+    }
+  }
+  box.valid = box.value[0] > 0.0 && std::isfinite(box.value[0]);
+  return box;
+}
+
+inline wiener7_log_integral wiener7_log_integrate(
+    const wiener7_log_params& params, const Eigen::VectorXd& lower,
+    const Eigen::VectorXd& upper, const int max_evaluations,
+    const double density_tolerance, const double gradient_tolerance,
+    const std::array<bool, wiener7_num_partials>& active) {
+  wiener7_log_integral result;
+  const int evaluations_per_box = lower.size() == 1
+                                      ? wiener7_rule_size
+                                      : wiener7_rule_size * wiener7_rule_size;
+  std::vector<wiener7_log_box> boxes;
+  boxes.push_back(wiener7_log_integrate_box(lower, upper, params, active));
+  result.evaluations = evaluations_per_box;
+
+  std::array<double, wiener7_num_partials + 1> total{};
+  std::array<double, wiener7_num_partials + 1> total_error{};
+  double total_scale = NEGATIVE_INFTY;
+  auto update_result = [&]() {
+    total.fill(0.0);
+    total_error.fill(0.0);
+    total_scale = NEGATIVE_INFTY;
+    for (const auto& box : boxes) {
+      if (!box.valid) {
+        return false;
+      }
+      total_scale = fmax(total_scale, box.log_scale);
+    }
+    for (const auto& box : boxes) {
+      const double scale = exp(box.log_scale - total_scale);
+      for (int k = 0; k <= wiener7_num_partials; ++k) {
+        total[k] += scale * box.value[k];
+        total_error[k] += scale * box.error[k];
+      }
+    }
+    if (!(total[0] > 0.0) || !std::isfinite(total[0])) {
+      return false;
+    }
+    result.log_density = total_scale + log(total[0]);
+    for (int k = 0; k < wiener7_num_partials; ++k) {
+      if (active[k]) {
+        result.partials[k] = total[k + 1] / total[0];
+      }
+    }
+    if (!(total[0] > total_error[0])) {
+      result.density_error = INFTY;
+      result.gradient_error = INFTY;
+      result.converged = false;
+      return true;
+    }
+    // Propagate the embedded-rule error estimates through N / D with an
+    // upper-bound formula. Gradients use the usual mixed absolute-relative
+    // tolerance.
+    const double density_margin = total[0] - total_error[0];
+    result.density_error = total_error[0] / density_margin;
+    result.gradient_error = 0.0;
+    for (int k = 0; k < wiener7_num_partials; ++k) {
+      if (!active[k]) {
+        continue;
+      }
+      const double ratio_error
+          = total_error[k + 1] / density_margin
+            + fabs(total[k + 1]) * total_error[0] / (total[0] * density_margin);
+      result.partial_errors[k] = ratio_error;
+      const double normalized_error
+          = ratio_error / fmax(1.0, fabs(result.partials[k]));
+      result.gradient_error = fmax(result.gradient_error, normalized_error);
+    }
+    result.converged = result.density_error <= density_tolerance
+                       && result.gradient_error <= gradient_tolerance;
+    return true;
+  };
+
+  while (update_result() && !result.converged
+         && result.evaluations + 2 * evaluations_per_box <= max_evaluations) {
+    int split_box = 0;
+    double largest_priority = -1.0;
+    for (int box_index = 0; box_index < boxes.size(); ++box_index) {
+      const auto& box = boxes[box_index];
+      const double scale = exp(box.log_scale - total_scale);
+      double priority = scale * box.error[0] / (density_tolerance * total[0]);
+      for (int k = 0; k < wiener7_num_partials; ++k) {
+        if (active[k]) {
+          const double gradient_scale = fmax(total[0], fabs(total[k + 1]));
+          priority
+              = fmax(priority, scale * box.error[k + 1]
+                                   / (gradient_tolerance * gradient_scale));
+        }
+      }
+      if (priority > largest_priority) {
+        largest_priority = priority;
+        split_box = box_index;
+      }
+    }
+    auto box = std::move(boxes[split_box]);
+    Eigen::VectorXd middle = box.lower;
+    middle[box.split_dimension]
+        = 0.5
+          * (box.lower[box.split_dimension] + box.upper[box.split_dimension]);
+    Eigen::VectorXd lower_upper = box.upper;
+    lower_upper[box.split_dimension] = middle[box.split_dimension];
+    Eigen::VectorXd upper_lower = box.lower;
+    upper_lower[box.split_dimension] = middle[box.split_dimension];
+    boxes[split_box]
+        = wiener7_log_integrate_box(box.lower, lower_upper, params, active);
+    boxes.push_back(
+        wiener7_log_integrate_box(upper_lower, box.upper, params, active));
+    result.evaluations += 2 * evaluations_per_box;
+  }
+  update_result();
+  return result;
 }
 }  // namespace internal
 
@@ -491,6 +848,66 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
             hcubature_err, params, dim, xmin, xmax,
             maximal_evaluations_hcubature, absolute_error_hcubature,
             relative_error_hcubature / 2);
+    if (!(density >= std::numeric_limits<double>::min()
+          && std::isfinite(density))) {
+      const internal::wiener7_log_params log_params{
+          y_value,  a_value,   v_value,
+          w_value,  t0_value,  sv_value,
+          sw_value, st0_value, log_error_absolute - LOG_TWO};
+      const std::array<bool, internal::wiener7_num_partials> active{
+          is_autodiff_v<T_y>,  is_autodiff_v<T_a>,  is_autodiff_v<T_t0>,
+          is_autodiff_v<T_w>,  is_autodiff_v<T_v>,  is_autodiff_v<T_sv>,
+          is_autodiff_v<T_sw>, is_autodiff_v<T_st0>};
+      const auto scaled_result = internal::wiener7_log_integrate(
+          log_params, xmin, xmax, maximal_evaluations_hcubature,
+          relative_error_hcubature / 2, error_bound, active);
+      if (!scaled_result.converged) {
+        [&]() STAN_COLD_PATH {
+          std::stringstream msg;
+          msg << function_name << ": log-scaled integration failed for "
+              << "observation " << i << " after " << scaled_result.evaluations
+              << " evaluations (density error " << scaled_result.density_error
+              << ", gradient error " << scaled_result.gradient_error
+              << ", partial errors [";
+          bool first_partial = true;
+          for (int k = 0; k < internal::wiener7_num_partials; ++k) {
+            if (active[k]) {
+              msg << (first_partial ? "" : ", ") << k << ": "
+                  << scaled_result.partial_errors[k];
+              first_partial = false;
+            }
+          }
+          msg << "])";
+          throw std::domain_error(msg.str());
+        }();
+      }
+      log_density += scaled_result.log_density;
+      if constexpr (is_autodiff_v<T_y>) {
+        partials<0>(ops_partials)[i] = scaled_result.partials[0];
+      }
+      if constexpr (is_autodiff_v<T_a>) {
+        partials<1>(ops_partials)[i] = scaled_result.partials[1];
+      }
+      if constexpr (is_autodiff_v<T_t0>) {
+        partials<2>(ops_partials)[i] = scaled_result.partials[2];
+      }
+      if constexpr (is_autodiff_v<T_w>) {
+        partials<3>(ops_partials)[i] = scaled_result.partials[3];
+      }
+      if constexpr (is_autodiff_v<T_v>) {
+        partials<4>(ops_partials)[i] = scaled_result.partials[4];
+      }
+      if constexpr (is_autodiff_v<T_sv>) {
+        partials<5>(ops_partials)[i] = scaled_result.partials[5];
+      }
+      if constexpr (is_autodiff_v<T_sw>) {
+        partials<6>(ops_partials)[i] = scaled_result.partials[6];
+      }
+      if constexpr (is_autodiff_v<T_st0>) {
+        partials<7>(ops_partials)[i] = scaled_result.partials[7];
+      }
+      continue;
+    }
     log_density += log(density);
     hcubature_err = log_error_absolute - log_error_derivative
                     + log(fabs(density)) + LOG_TWO + 1;

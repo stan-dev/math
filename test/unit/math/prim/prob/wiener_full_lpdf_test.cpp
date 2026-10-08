@@ -4,6 +4,7 @@
 #include <stan/math/rev.hpp>
 
 #include <gtest/gtest.h>
+#include <array>
 #include <vector>
 
 TEST(mathPrimScalProbWienerFullScal, valid) {
@@ -461,4 +462,46 @@ TEST(mathPrimCorrectValuesFiveParameterModel, wiener_lpdf) {
     EXPECT_NEAR(v.adj(), true_grad_v[i], err_tol);
     EXPECT_NEAR(sv.adj(), true_grad_sv[i], err_tol);
   }
+}
+
+TEST(mathPrimScalProbWienerFullPrecScal, underflowRegression3329) {
+  constexpr double y = 1e-6;
+  constexpr double a = 0.1;
+  constexpr double t0 = 0.0;
+  constexpr double w = 0.0001;
+  constexpr double v = -10.0;
+  constexpr double sv = 0.1;
+  constexpr double precision = 1e-8;
+
+  const std::array<std::pair<double, double>, 3> variability{
+      {{1e-8, 0.0}, {0.0, 0.001}, {1e-8, 0.001}}};
+  const std::array<double, 3> expected{
+      {-4982.6437525638557, -4998.0685384088783, -4998.0685384084609}};
+  for (size_t i = 0; i < variability.size(); ++i) {
+    const double log_density
+        = stan::math::wiener_lpdf(y, a, t0, w, v, sv, variability[i].first,
+                                  variability[i].second, precision);
+    EXPECT_NEAR(expected[i], log_density, precision);
+  }
+}
+
+TEST(mathPrimScalProbWienerFullPrecScal,
+     logScaledIntegrationReportsNonconvergence) {
+  const stan::math::internal::wiener7_log_params params{
+      1e-6,   0.1,   -10.0,
+      0.0001, 0.0,   0.1,
+      1e-8,   0.001, std::log(1e-12) - stan::math::LOG_TWO};
+  Eigen::VectorXd lower = Eigen::VectorXd::Zero(2);
+  Eigen::VectorXd upper = Eigen::VectorXd::Ones(2);
+  upper[1] = 0.001;
+  const std::array<bool, stan::math::internal::wiener7_num_partials> active{
+      true, true, true, true, true, true, true, true};
+  constexpr int max_evaluations = stan::math::internal::wiener7_rule_size
+                                  * stan::math::internal::wiener7_rule_size;
+
+  const auto result = stan::math::internal::wiener7_log_integrate(
+      params, lower, upper, max_evaluations, 1e-12, 1e-12, active);
+
+  EXPECT_FALSE(result.converged);
+  EXPECT_EQ(max_evaluations, result.evaluations);
 }
