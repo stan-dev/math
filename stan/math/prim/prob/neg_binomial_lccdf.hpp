@@ -124,9 +124,13 @@ inline return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
     if constexpr (is_autodiff_v<T_inv_scale>) {
       // inc_beta_ddz is the same density, evaluated without the product of
       // two powers over a beta function, each of which can underflow on
-      // its own.
-      partials<1>(ops_partials)[i]
-          -= d_dbl * inc_beta_ddz(alpha_dbl, n_dbl + 1.0, p_dbl) / Pi;
+      // its own. The density at p equals the reflected density at 1 - p;
+      // it is evaluated at whichever of the two is below 1/2, because
+      // inc_beta_ddz forms the complement of its argument internally.
+      const T_partials_return density
+          = beta_dbl < 1 ? inc_beta_ddz(alpha_dbl, n_dbl + 1.0, p_dbl)
+                         : inc_beta_ddz(n_dbl + 1.0, alpha_dbl, inv_beta_p1);
+      partials<1>(ops_partials)[i] -= d_dbl * density / Pi;
     }
   }
 

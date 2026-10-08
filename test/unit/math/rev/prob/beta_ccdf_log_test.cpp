@@ -82,6 +82,43 @@ TEST_F(AgradRev, ProbDistributionsNegBinomial_lccdf_deep_tail) {
   }
 }
 
+TEST_F(AgradRev, ProbDistributionsNegBinomial_lccdf_large_beta) {
+  // stan-dev/math#2031: at large beta, p = beta / (beta + 1) rounds towards
+  // 1. The complement is formed from 1 / (beta + 1); the density factor of
+  // the beta partial must be too, or it is 0 for n >= 1 once p rounds to 1
+  // (beta = 1e16, 1e18) and loses digits before that (beta = 1e8). The last
+  // two rows are controls on both sides of beta = 1. Value, then the alpha
+  // and beta gradients; mpmath references at 60 digits, by two routes.
+  using stan::math::var;
+  auto check = [](int n, double alpha_in, double beta_in, double expected,
+                  double dalpha, double dbeta) {
+    var alpha = alpha_in;
+    var beta = beta_in;
+    var lp = stan::math::neg_binomial_lccdf(n, alpha, beta);
+    std::vector<var> x{alpha, beta};
+    std::vector<double> g;
+    lp.grad(x, g);
+    EXPECT_NEAR(expected, lp.val(), 1e-12 * std::fabs(expected))
+        << "n=" << n << " beta=" << beta_in;
+    EXPECT_NEAR(dalpha, g[0], 1e-12 * std::fabs(dalpha))
+        << "n=" << n << " beta=" << beta_in;
+    EXPECT_NEAR(dbeta, g[1], 1e-12 * std::fabs(dbeta))
+        << "n=" << n << " beta=" << beta_in;
+  };
+  // the reported case, log1m_exp(-alpha * log1p(1 / beta))
+  check(0, 1.0, 1e18, -41.446531673892821, 1.0, -1.0000000000000001e-18);
+  check(1, 2.0, 1e18, -81.794451059117534, 0.83333333333333337,
+        -2.0000000000000001e-18);
+  check(1, 2.0, 1e16, -72.584110687141347, 0.83333333333333326,
+        -1.9999999999999997e-16);
+  check(3, 2.0, 1e8, -72.073285111375355, 1.2833333253333334,
+        -3.9999999520000002e-08);
+  check(5, 0.5, 1e-3, -0.08928900804336741, 0.48141786839236278,
+        -46.496417635081194);
+  check(5, 3.0, 2.0, -3.9290859049832054, 0.8864463205559171,
+        -1.7364341085271318);
+}
+
 TEST_F(AgradRev, ProbDistributionsBinomial_lccdf_deep_tail) {
   using stan::math::var;
   std::vector<int> n{500};
