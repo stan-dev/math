@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/beta.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
+#include <stan/math/prim/fun/inc_beta_ddz.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -99,13 +100,23 @@ inline return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = y_vec.val(n);
+
+    // Explicit results for extreme values
+    // The gradients are technically ill-defined, but treated as zero
+    if (y_dbl >= 1.0) {
+      return ops_partials.build(negative_infinity());
+    }
+
     const T_partials_return mu_dbl = mu_vec.val(n);
     const T_partials_return kappa_dbl = kappa_vec.val(n);
     const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;
     const T_partials_return kappa_mukappa_dbl = kappa_dbl - mukappa_dbl;
     const T_partials_return betafunc_dbl = beta(mukappa_dbl, kappa_mukappa_dbl);
-    const T_partials_return Pn
-        = 1 - inc_beta(mukappa_dbl, kappa_mukappa_dbl, y_dbl);
+    // The complement 1 - I_y(a, b), evaluated from the smaller of y and
+    // 1 - y. Forming it as a difference loses every digit once I_y(a, b)
+    // rounds to 1, which happens for every complement below eps.
+    const T_partials_return Pn = internal::inc_beta_complement(
+        mukappa_dbl, kappa_mukappa_dbl, y_dbl, 1.0 - y_dbl);
 
     ccdf_log += log(Pn);
 
@@ -113,25 +124,43 @@ inline return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(
         = is_constant_all<T_y, T_loc, T_prec>::value ? 0 : inv(Pn);
 
     if constexpr (is_autodiff_v<T_y>) {
-      partials<0>(ops_partials)[n] -= pow(1 - y_dbl, kappa_mukappa_dbl - 1)
-                                      * pow(y_dbl, mukappa_dbl - 1) * inv_Pn
-                                      / betafunc_dbl;
+      // inc_beta_ddz is the same density, evaluated without the product of
+      // two powers over a beta function, each of which can underflow on
+      // its own.
+      partials<0>(ops_partials)[n]
+          -= inc_beta_ddz(mukappa_dbl, kappa_mukappa_dbl, y_dbl) * inv_Pn;
     }
 
-    T_partials_return g1 = 0;
-    T_partials_return g2 = 0;
+    T_partials_return dPn_da = 0;
+    T_partials_return dPn_db = 0;
 
     if constexpr (is_any_autodiff_v<T_loc, T_prec>) {
-      grad_reg_inc_beta(g1, g2, mukappa_dbl, kappa_mukappa_dbl, y_dbl,
-                        digamma_mukappa[n], digamma_kappa_mukappa[n],
-                        digamma_kappa[n], betafunc_dbl);
+      // The derivatives with respect to a = mu kappa and b = kappa - mu kappa,
+      // from the same argument as the value
+      T_partials_return g1 = 0;
+      T_partials_return g2 = 0;
+      if (y_dbl <= 0.5) {
+        // the derivatives of I_y(a, b), which are those of -Pn
+        grad_reg_inc_beta(g1, g2, mukappa_dbl, kappa_mukappa_dbl, y_dbl,
+                          digamma_mukappa[n], digamma_kappa_mukappa[n],
+                          digamma_kappa[n], betafunc_dbl);
+        dPn_da = -g1;
+        dPn_db = -g2;
+      } else {
+        // on the reflected arguments, the derivatives of Pn itself
+        grad_reg_inc_beta(g1, g2, kappa_mukappa_dbl, mukappa_dbl, 1 - y_dbl,
+                          digamma_kappa_mukappa[n], digamma_mukappa[n],
+                          digamma_kappa[n], betafunc_dbl);
+        dPn_da = g2;
+        dPn_db = g1;
+      }
     }
     if constexpr (is_autodiff_v<T_loc>) {
-      partials<1>(ops_partials)[n] -= kappa_dbl * (g1 - g2) * inv_Pn;
+      partials<1>(ops_partials)[n] += kappa_dbl * (dPn_da - dPn_db) * inv_Pn;
     }
     if constexpr (is_autodiff_v<T_prec>) {
       partials<2>(ops_partials)[n]
-          -= (g1 * mu_dbl + g2 * (1 - mu_dbl)) * inv_Pn;
+          += (dPn_da * mu_dbl + dPn_db * (1 - mu_dbl)) * inv_Pn;
     }
   }
   return ops_partials.build(ccdf_log);

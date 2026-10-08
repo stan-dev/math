@@ -29,6 +29,64 @@ inline double inc_beta(double a, double b, double x) {
   return boost::math::ibeta(a, b, x, boost_policy_t<>());
 }
 
+namespace internal {
+
+/**
+ * Return the complement of the regularized incomplete beta function,
+ * 1 - I_x(a, b) = I_{1-x}(b, a), from both x and 1 - x.
+ *
+ * Boost forms 1 - x from its argument, so an argument close to 1 loses
+ * relative precision in 1 - x. This overload calls Boost with whichever
+ * of x and 1 - x is at most 1/2: ibetac(a, b, x) or ibeta(b, a, 1 - x).
+ * Both keep their relative precision when the complement is below eps.
+ *
+ * Below the mean a / (a + b), while I_x(a, b) is at most 1/2, the
+ * complement is formed as 1 - I_x(a, b), which then has full precision.
+ * This also avoids Boost's arcsine case a = b = 1/2, where ibetac
+ * evaluates asin(sqrt(1 - x)) and loses digits for small x.
+ *
+ * @param a first shape, a > 0
+ * @param b second shape, b > 0
+ * @param x argument, 0 <= x <= 1
+ * @param one_m_x 1 - x, computed by the caller without cancellation
+ * @return 1 - I_x(a, b)
+ */
+inline double inc_beta_complement(double a, double b, double x,
+                                  double one_m_x) {
+  check_not_nan("inc_beta_complement", "a", a);
+  check_not_nan("inc_beta_complement", "b", b);
+  check_not_nan("inc_beta_complement", "x", x);
+  if (x > 0.5) {
+    return boost::math::ibeta(b, a, one_m_x, boost_policy_t<>());
+  }
+  if (x < a / (a + b)) {
+    const double inc = boost::math::ibeta(a, b, x, boost_policy_t<>());
+    if (inc <= 0.5) {
+      return 1.0 - inc;
+    }
+  }
+  return boost::math::ibetac(a, b, x, boost_policy_t<>());
+}
+
+/**
+ * Return the complement of the regularized incomplete beta function for
+ * autodiff arguments, by the symmetry relation through inc_beta.
+ *
+ * @tparam T autodiff type
+ * @param a first shape, a > 0
+ * @param b second shape, b > 0
+ * @param x argument, 0 <= x <= 1; not used
+ * @param one_m_x 1 - x
+ * @return 1 - I_x(a, b)
+ */
+template <typename T>
+inline T inc_beta_complement(const T& a, const T& b, const T& x,
+                             const T& one_m_x) {
+  return inc_beta(b, a, one_m_x);
+}
+
+}  // namespace internal
+
 /**
  * Enables the vectorized application of the inc_beta function, when
  *  any arguments are containers.
