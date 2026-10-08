@@ -187,6 +187,7 @@
 #include <stan/math/prim/fun/log_mix.hpp>
 #include <stan/math/prim/fun/log_modified_bessel_first_kind.hpp>
 #include <stan/math/prim/fun/log_rising_factorial.hpp>
+#include <stan/math/prim/fun/log_rising_factorial_ratio.hpp>
 #include <stan/math/prim/fun/log_softmax.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/log_sum_exp_signed.hpp>
