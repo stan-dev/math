@@ -92,16 +92,19 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(
     const T_partials_return nu_dbl = nu_vec.val(n);
     const T_partials_return q = nu_dbl / (t * t);
     const T_partials_return r = 1.0 / (1.0 + q);
+    // 1 - r = 1 / (1 + 1 / q) without the subtraction, which rounds to 0
+    // once q is below eps; equal to 1 at t = 0
+    const T_partials_return one_m_r = 1.0 / (1.0 + t * t / nu_dbl);
     const T_partials_return J = 2 * r * r * q / t;
     const T_partials_return betaNuHalf = beta(0.5, 0.5 * nu_dbl);
     double zJacobian = t > 0 ? -0.5 : 0.5;
 
     if (q < 2) {
       T_partials_return z
-          = inc_beta(0.5 * nu_dbl, (T_partials_return)0.5, 1.0 - r);
+          = inc_beta(0.5 * nu_dbl, (T_partials_return)0.5, one_m_r);
       const T_partials_return Pn = t > 0 ? 1.0 - 0.5 * z : 0.5 * z;
       const T_partials_return d_ibeta
-          = pow(r, -0.5) * pow(1.0 - r, 0.5 * nu_dbl - 1) / betaNuHalf;
+          = pow(r, -0.5) * pow(one_m_r, 0.5 * nu_dbl - 1) / betaNuHalf;
 
       P *= Pn;
 
@@ -113,7 +116,7 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(
         T_partials_return g1 = 0;
         T_partials_return g2 = 0;
 
-        grad_reg_inc_beta(g1, g2, 0.5 * nu_dbl, (T_partials_return)0.5, 1.0 - r,
+        grad_reg_inc_beta(g1, g2, 0.5 * nu_dbl, (T_partials_return)0.5, one_m_r,
                           digammaNu_vec[n], digammaHalf,
                           digammaNuPlusHalf_vec[n], betaNuHalf);
 
@@ -136,13 +139,13 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(
       // complement loses every digit once I_r(1/2, nu/2) rounds to 1,
       // which happens for every z below eps.
       T_partials_return z
-          = inc_beta(0.5 * nu_dbl, (T_partials_return)0.5, 1.0 - r);
+          = inc_beta(0.5 * nu_dbl, (T_partials_return)0.5, one_m_r);
       zJacobian *= -1;
 
       const T_partials_return Pn = t > 0 ? 1.0 - 0.5 * z : 0.5 * z;
 
       T_partials_return d_ibeta
-          = pow(1.0 - r, 0.5 * nu_dbl - 1) * pow(r, -0.5) / betaNuHalf;
+          = pow(one_m_r, 0.5 * nu_dbl - 1) * pow(r, -0.5) / betaNuHalf;
 
       P *= Pn;
 
@@ -157,7 +160,7 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(
         // On the reflected arguments the first output is d z / d (nu / 2)
         // directly, which is the negative of the second output of the
         // unreflected call.
-        grad_reg_inc_beta(g1, g2, 0.5 * nu_dbl, (T_partials_return)0.5, 1.0 - r,
+        grad_reg_inc_beta(g1, g2, 0.5 * nu_dbl, (T_partials_return)0.5, one_m_r,
                           digammaNu_vec[n], digammaHalf,
                           digammaNuPlusHalf_vec[n], betaNuHalf);
 
