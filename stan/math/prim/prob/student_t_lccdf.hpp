@@ -137,13 +137,12 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lccdf(
       }
 
     } else {
-      // Same quantity as in the other branch, by the symmetry relation
-      // 1 - I_r(1/2, nu/2) = I_{1-r}(nu/2, 1/2). Forming it as the
-      // complement loses every digit once I_r(1/2, nu/2) rounds to 1,
-      // which happens for every z below eps, that is for every tail
-      // probability below about e^-37.
-      T_partials_return z
-          = inc_beta(0.5 * nu_dbl, (T_partials_return)0.5, one_m_r);
+      // Same quantity as in the other branch, 1 - I_r(1/2, nu/2), with the
+      // argument r <= 1/3. Forming it as a difference loses every digit once
+      // I_r(1/2, nu/2) rounds to 1, which happens for every z below eps,
+      // that is for every tail probability below about e^-37.
+      T_partials_return z = internal::inc_beta_complement(
+          (T_partials_return)0.5, 0.5 * nu_dbl, r, one_m_r);
       zJacobian *= -1;
 
       const T_partials_return Pn = t > 0 ? 0.5 * z : 1.0 - 0.5 * z;
@@ -162,15 +161,12 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lccdf(
         T_partials_return g1 = 0;
         T_partials_return g2 = 0;
 
-        // On the reflected arguments the first output is d z / d (nu / 2)
-        // directly, which is the negative of the second output of the
-        // unreflected call.
-        grad_reg_inc_beta(g1, g2, 0.5 * nu_dbl, (T_partials_return)0.5, one_m_r,
-                          digammaNu_vec[n], digammaHalf,
+        grad_reg_inc_beta(g1, g2, (T_partials_return)0.5, 0.5 * nu_dbl, r,
+                          digammaHalf, digammaNu_vec[n],
                           digammaNuPlusHalf_vec[n], betaNuHalf);
 
         partials<1>(ops_partials)[n]
-            -= zJacobian * (-d_ibeta * (r / t) * (r / t) - 0.5 * g1) / Pn;
+            -= zJacobian * (-d_ibeta * (r / t) * (r / t) + 0.5 * g2) / Pn;
       }
 
       if constexpr (is_autodiff_v<T_loc>) {
