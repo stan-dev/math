@@ -188,4 +188,68 @@ TEST(ProbDistributionsNegBinomial2, opencl_scalar_n_mu) {
       neg_binomial_2_lpmf_functor_propto, n, mu, phi);
 }
 
+TEST(muProbDistributionsNegBinomial2, opencl_large_shapes_reference) {
+  // The tests above compare OpenCL against the CPU and cannot see an error
+  // that both share. These are absolute references from mpmath at 90 digits,
+  // checked against 140 digits, as in
+  // test/unit/math/rev/prob/large_shapes_test.cpp. The difference
+  // digamma(n + phi) - digamma(phi) keeps no correct digits for large phi.
+  // The phi partial is compared as phi * d/dphi. The last row is a small
+  // phi where the plain difference is correct.
+  using stan::math::var;
+  struct TestValue {
+    int n;
+    double mu;
+    double phi;
+    double value;
+    double d_mu;
+    double d_phi;
+  };
+  const std::vector<TestValue> test_values = {
+      {57, 0x1.8000000000000p+1, 0x1.2a05f20000000p+33, -1.1677494780996510e+2,
+       1.7999999994600000e+1, -1.4294999940379000e-17},
+      {5, 0x1.9000000000000p+5, 0x1.2a05f20000000p+33, -3.5227376614641316e+1,
+       -8.9999999550000002e-1, -1.0099999929136667e-17},
+      {1, 0x1.8000000000000p+1, 0x1.2a05f20000000p+33, -1.9013877111818903,
+       -6.6666666646666667e-1, -1.4999999991000000e-20},
+      {0, 0x1.8000000000000p+1, 0x1.9000000000000p+6, -2.9558802241544403,
+       -9.7087378640776699e-1, -4.3258864931139302e-4},
+  };
+  auto expect_reference = [](const TestValue& t, const var& lp, double mu_adj,
+                             double phi_adj, const char* signature) {
+    EXPECT_NEAR(lp.val(), t.value, 1e-12 * std::max(1.0, std::fabs(t.value)))
+        << signature << ": n = " << t.n << ", mu = " << t.mu
+        << ", phi = " << t.phi;
+    EXPECT_NEAR(mu_adj, t.d_mu, 1e-11 * std::max(1.0, std::fabs(t.d_mu)))
+        << signature << ": n = " << t.n << ", mu = " << t.mu
+        << ", phi = " << t.phi;
+    const double gp = t.phi * t.d_phi;
+    EXPECT_NEAR(t.phi * phi_adj, gp, 1e-11 * std::max(1.0, std::fabs(gp)))
+        << signature << ": n = " << t.n << ", mu = " << t.mu
+        << ", phi = " << t.phi;
+  };
+  for (const auto& t : test_values) {
+    const std::vector<int> n{t.n};
+    stan::math::matrix_cl<int> n_cl(n);
+
+    Eigen::Matrix<var, Eigen::Dynamic, 1> mu(1);
+    mu << t.mu;
+    Eigen::Matrix<var, Eigen::Dynamic, 1> phi(1);
+    phi << t.phi;
+    auto mu_cl = stan::math::to_matrix_cl(mu);
+    auto phi_cl = stan::math::to_matrix_cl(phi);
+    var lp = stan::math::neg_binomial_2_lpmf(n_cl, mu_cl, phi_cl);
+    lp.grad();
+    expect_reference(t, lp, mu(0).adj(), phi(0).adj(), "vector");
+    stan::math::recover_memory();
+
+    var mu_s = t.mu;
+    var phi_s = t.phi;
+    var lp_s = stan::math::neg_binomial_2_lpmf(n_cl, mu_s, phi_s);
+    lp_s.grad();
+    expect_reference(t, lp_s, mu_s.adj(), phi_s.adj(), "scalar");
+    stan::math::recover_memory();
+  }
+}
+
 #endif

@@ -7,7 +7,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/digamma_diff.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
@@ -77,16 +77,17 @@ inline return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
   auto beta_pos_finite = beta_val > 0.0 && isfinite(beta_val);
 
   auto return_neg_inf = (n < 0 || n > N) + constant(0, N_size, 1);
-  auto lbeta_diff
-      = lbeta(n + alpha_val, N - n + beta_val) - lbeta(alpha_val, beta_val);
-  auto digamma_diff
-      = digamma(alpha_val + beta_val) - digamma(N + alpha_val + beta_val);
+  // lbeta(n + alpha, N - n + beta) - lbeta(alpha, beta) without the
+  // cancellation of the two lbeta values for large shapes
+  auto lbeta_diff = log_beta_ratio(alpha_val, beta_val, n, N - n);
   auto logp_expr = colwise_sum(static_select<include_summand<propto>::value>(
       binomial_coefficient_log(N, n) + lbeta_diff, lbeta_diff));
 
-  auto alpha_deriv = digamma(n + alpha_val) + digamma_diff - digamma(alpha_val);
-  auto beta_deriv
-      = digamma(N - n + beta_val) + digamma_diff - digamma(beta_val);
+  // Each partial is a sum of two digamma differences psi(x + k) - psi(x);
+  // digamma_diff forms them without cancellation
+  auto digamma_diff_total = digamma_diff(alpha_val + beta_val, N);
+  auto alpha_deriv = digamma_diff(alpha_val, n) - digamma_diff_total;
+  auto beta_deriv = digamma_diff(beta_val, N - n) - digamma_diff_total;
 
   matrix_cl<double> logp_cl;
   matrix_cl<int> return_neg_inf_cl;
