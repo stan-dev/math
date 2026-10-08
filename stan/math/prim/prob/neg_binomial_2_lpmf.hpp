@@ -4,7 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/digamma_diff.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
@@ -87,8 +87,7 @@ inline return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     auto log_term = select(mu_val < phi_val, log1p(-mu_val / mu_plus_phi),
                            log_phi - log_mu_plus_phi);
     partials<1>(ops_partials) = (mu_val - value_of(n_vec)) / mu_plus_phi
-                                + log_term - digamma(phi_val)
-                                + digamma(n_plus_phi);
+                                + log_term + digamma_diff(phi_val, n_vec);
   }
   return ops_partials.build(logp);
 }

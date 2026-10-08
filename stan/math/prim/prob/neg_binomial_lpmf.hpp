@@ -5,7 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/digamma_diff.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -60,18 +60,9 @@ inline return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(
   scalar_seq_view<T_n_ref> n_vec(n_ref);
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
   scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
-  size_t size_alpha = stan::math::size(alpha);
   size_t size_beta = stan::math::size(beta);
   size_t size_alpha_beta = max_size(alpha, beta);
   size_t max_size_seq_view = max_size(n, alpha, beta);
-
-  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_shape>
-      digamma_alpha(size_alpha);
-  if constexpr (is_autodiff_v<T_shape>) {
-    for (size_t i = 0; i < size_alpha; ++i) {
-      digamma_alpha[i] = digamma(alpha_vec.val(i));
-    }
-  }
 
   VectorBuilder<true, T_partials_return, T_inv_scale> log1p_inv_beta(size_beta);
   VectorBuilder<true, T_partials_return, T_inv_scale> log1p_beta(size_beta);
@@ -88,8 +79,8 @@ inline return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(
     for (size_t i = 0; i < size_alpha_beta; ++i) {
       const T_partials_return alpha_dbl = alpha_vec.val(i);
       const T_partials_return beta_dbl = beta_vec.val(i);
-      lambda_m_alpha_over_1p_beta[i]
-          = alpha_dbl / beta_dbl - alpha_dbl / (1 + beta_dbl);
+      // alpha / beta - alpha / (1 + beta), without the cancellation
+      lambda_m_alpha_over_1p_beta[i] = alpha_dbl / beta_dbl / (1 + beta_dbl);
     }
   }
 
@@ -106,8 +97,8 @@ inline return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(
     logp -= alpha_dbl * log1p_inv_beta[i] + n_vec[i] * log1p_beta[i];
 
     if constexpr (is_autodiff_v<T_shape>) {
-      partials<0>(ops_partials)[i] += digamma(alpha_dbl + n_vec[i])
-                                      - digamma_alpha[i] - log1p_inv_beta[i];
+      partials<0>(ops_partials)[i]
+          += digamma_diff(alpha_dbl, n_vec[i]) - log1p_inv_beta[i];
     }
     if constexpr (is_autodiff_v<T_inv_scale>) {
       partials<1>(ops_partials)[i]
