@@ -95,8 +95,9 @@ inline return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
   matrix_cl<double> beta_deriv_cl;
 
   results(check_N_nonnegative, check_alpha_pos_finite, check_beta_pos_finite,
-          logp_cl, alpha_deriv_cl, beta_deriv_cl)
+          logp_cl, return_neg_inf_cl, alpha_deriv_cl, beta_deriv_cl)
       = expressions(N_nonnegative, alpha_pos_finite, beta_pos_finite, logp_expr,
+                    return_neg_inf,
                     calc_if<is_autodiff_v<T_size1_cl>>(alpha_deriv),
                     calc_if<is_autodiff_v<T_size2_cl>>(beta_deriv));
 

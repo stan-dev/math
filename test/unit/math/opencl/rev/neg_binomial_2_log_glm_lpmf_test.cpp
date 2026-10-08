@@ -220,6 +220,40 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
       neg_binomial_2_log_glm_lpmf_functor_propto, y, x, alpha, beta, phi);
 }
 
+TEST(ProbDistributionsNegBinomial2LogGLM, opencl_matches_cpu_mixed_alpha_phi) {
+  // A scalar alpha with a vector phi, and a vector alpha with a scalar phi.
+  // N = 153 needs more than one work group.
+  for (int N : {3, 153}) {
+    int M = 2;
+    // deterministic values, so that the random inputs of the later tests do
+    // not change
+    vector<int> y(N);
+    Matrix<double, Dynamic, Dynamic> x(N, M);
+    Matrix<double, Dynamic, 1> alpha_vec(N, 1);
+    Matrix<double, Dynamic, 1> phi_vec(N, 1);
+    for (int i = 0; i < N; i++) {
+      y[i] = (i * 7) % 13;
+      x(i, 0) = std::sin(0.7 * i);
+      x(i, 1) = std::cos(1.3 * i);
+      alpha_vec(i) = 0.5 * std::sin(0.3 * i);
+      phi_vec(i) = 0.1 + 0.05 * (i % 29);
+    }
+    Matrix<double, Dynamic, 1> beta(M, 1);
+    beta << 0.3, -0.2;
+    double alpha = 0.3;
+    double phi = 13.2;
+
+    stan::math::test::compare_cpu_opencl_prim_rev(
+        neg_binomial_2_log_glm_lpmf_functor, y, x, alpha, beta, phi_vec);
+    stan::math::test::compare_cpu_opencl_prim_rev(
+        neg_binomial_2_log_glm_lpmf_functor_propto, y, x, alpha, beta, phi_vec);
+    stan::math::test::compare_cpu_opencl_prim_rev(
+        neg_binomial_2_log_glm_lpmf_functor, y, x, alpha_vec, beta, phi);
+    stan::math::test::compare_cpu_opencl_prim_rev(
+        neg_binomial_2_log_glm_lpmf_functor_propto, y, x, alpha_vec, beta, phi);
+  }
+}
+
 TEST(ProbDistributionsNegBinomial2LogGLM, opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
