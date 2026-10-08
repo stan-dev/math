@@ -26,3 +26,17 @@ TEST_F(AgradRev, mathMixScalFun_poisson_log_glm_lpmf) {
   stan::test::expect_ad(f(y), x_rowvec, alpha, beta);
   stan::test::expect_ad(f(y), x_rowvec, alpha[0], beta);
 }
+
+// x is a column vector: a design matrix with a single attribute
+TEST_F(AgradRev, mathMixScalFun_poisson_log_glm_lpmf_x_column_vector) {
+  std::vector<int> y{0, 2};
+  auto f = [y](const auto& x, const auto& alpha, const auto& beta) {
+    return stan::math::poisson_log_glm_lpmf(y, x, alpha, beta);
+  };
+
+  Eigen::VectorXd x = Eigen::VectorXd::Random(2);
+  Eigen::VectorXd alpha = Eigen::VectorXd::Random(2);
+  Eigen::VectorXd beta = Eigen::VectorXd::Random(1);
+
+  stan::test::expect_ad(f, x, alpha, beta);
+}
