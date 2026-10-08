@@ -66,6 +66,7 @@
 #include <stan/math/prim/fun/diag_pre_multiply.hpp>
 #include <stan/math/prim/fun/diagonal.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/digamma_diff.hpp>
 #include <stan/math/prim/fun/dims.hpp>
 #include <stan/math/prim/fun/distance.hpp>
 #include <stan/math/prim/fun/divide.hpp>
