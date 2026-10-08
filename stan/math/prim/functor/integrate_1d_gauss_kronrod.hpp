@@ -29,7 +29,7 @@ constexpr int INTEGRATE_1D_GAUSS_KRONROD_MAX_DEPTH = 15;
 
 /**
  * Integrate a single variable function f from a to b using Boost's adaptive
- * Gauss-Kronrod (G21,K21) quadrature, with QUADPACK-style mixed convergence
+ * Gauss-Kronrod (G10,K21) quadrature, with QUADPACK-style mixed convergence
  * criterion. The integration succeeds (returns the Boost estimate Q)
  * whenever
  *   error <= max(relative_tolerance * L1, absolute_tolerance)
@@ -41,9 +41,18 @@ constexpr int INTEGRATE_1D_GAUSS_KRONROD_MAX_DEPTH = 15;
  * checking accumulated floating-point round-off against itself (this
  * happens routinely in nested integrate_1d_gauss_kronrod calls when the
  * outer integration probes the deep tail of the integrand and every
- * inner evaluation sees an essentially-zero integrand). Setting it to
- * zero (the default) reproduces the strict pure-relative-tolerance
- * behaviour of integrate_1d.
+ * inner evaluation sees an essentially-zero integrand).
+ *
+ * absolute_tolerance is applied twice, in the same units: as a floor on
+ * refinement inside Boost's adaptive recursion (a panel whose error already
+ * sits below the floor is not bisected, which is what bounds the work in the
+ * round-off regime above) and as the floor on the convergence test below.
+ *
+ * Setting it to zero (the default) reproduces the strict
+ * pure-relative-tolerance behaviour of integrate_1d. Note that zero is
+ * Boost's sentinel for "derive the refinement budget from the root panel's
+ * own relative target", so a positive but negligible absolute_tolerance
+ * removes that derived budget and can refine slightly MORE than zero does.
  *
  * The signature for f should be:
  *   double f(double x, double xc)
@@ -86,7 +95,7 @@ inline double integrate_gk(const F& f, double a, double b,
   const unsigned int depth
       = max_depth < 0 ? 0u : static_cast<unsigned int>(max_depth);
   double Q = gauss_kronrod<double, INTEGRATE_1D_GAUSS_KRONROD_ORDER>::integrate(
-      f_wrap, a, b, depth, relative_tolerance, &error, &L1);
+      f_wrap, a, b, depth, relative_tolerance, &error, &L1, absolute_tolerance);
 
   // QUADPACK-style mixed convergence: throw only if the Boost error
   // exceeds both the relative-tolerance target (rel_tol * L1) and the
@@ -106,7 +115,7 @@ inline double integrate_gk(const F& f, double a, double b,
 
 /**
  * Compute the integral of the single variable function f from a to b to within
- * a specified relative tolerance using adaptive Gauss-Kronrod (G21,K21)
+ * a specified relative tolerance using adaptive Gauss-Kronrod (G10,K21)
  * quadrature. a and b can be finite or infinite.
  *
  * @tparam F type of function to integrate
@@ -147,7 +156,7 @@ inline double integrate_1d_gauss_kronrod_tol(const F& f, double a, double b,
 
 /**
  * Compute the integral of the single variable function f from a to b using
- * adaptive Gauss-Kronrod (G21,K21) quadrature. a and b can be finite or
+ * adaptive Gauss-Kronrod (G10,K21) quadrature. a and b can be finite or
  * infinite.
  *
  * The signature for f should be:
