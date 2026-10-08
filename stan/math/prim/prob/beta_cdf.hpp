@@ -4,9 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
-#include <stan/math/prim/fun/inc_beta_dda.hpp>
-#include <stan/math/prim/fun/inc_beta_ddb.hpp>
 #include <stan/math/prim/fun/inc_beta_ddz.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -72,26 +71,24 @@ inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
     }
   }
 
-  VectorBuilder<is_autodiff_v<T_scale_succ>, T_partials_return, T_scale_succ>
+  // grad_reg_inc_beta computes both shape derivatives in one pass and needs
+  // all three digamma values, so they are built when either shape is
+  // autodiff.
+  constexpr bool need_shape_grads
+      = is_any_autodiff_v<T_scale_succ, T_scale_fail>;
+  VectorBuilder<need_shape_grads, T_partials_return, T_scale_succ>
       digamma_alpha(size_alpha);
-  if constexpr (is_autodiff_v<T_scale_succ>) {
+  VectorBuilder<need_shape_grads, T_partials_return, T_scale_fail> digamma_beta(
+      size_beta);
+  VectorBuilder<need_shape_grads, T_partials_return, T_scale_succ, T_scale_fail>
+      digamma_sum(size_alpha_beta);
+  if constexpr (need_shape_grads) {
     for (size_t n = 0; n < size_alpha; n++) {
       digamma_alpha[n] = digamma(alpha_vec.val(n));
     }
-  }
-
-  VectorBuilder<is_autodiff_v<T_scale_fail>, T_partials_return, T_scale_fail>
-      digamma_beta(size_beta);
-  if constexpr (is_autodiff_v<T_scale_fail>) {
     for (size_t n = 0; n < size_beta; n++) {
       digamma_beta[n] = digamma(beta_vec.val(n));
     }
-  }
-
-  VectorBuilder<is_any_autodiff_v<T_scale_succ, T_scale_fail>,
-                T_partials_return, T_scale_succ, T_scale_fail>
-      digamma_sum(size_alpha_beta);
-  if constexpr (is_any_autodiff_v<T_scale_succ, T_scale_fail>) {
     for (size_t n = 0; n < size_alpha_beta; n++) {
       digamma_sum[n] = digamma(alpha_vec.val(n) + beta_vec.val(n));
     }
@@ -119,17 +116,17 @@ inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
           += inc_beta_ddz(alpha_dbl, beta_dbl, y_dbl) * inv_Pn;
     }
 
-    if constexpr (is_autodiff_v<T_scale_succ>) {
-      partials<1>(ops_partials)[n]
-          += inc_beta_dda(alpha_dbl, beta_dbl, y_dbl, digamma_alpha[n],
-                          digamma_sum[n])
-             * inv_Pn;
-    }
-    if constexpr (is_autodiff_v<T_scale_fail>) {
-      partials<2>(ops_partials)[n]
-          += inc_beta_ddb(alpha_dbl, beta_dbl, y_dbl, digamma_beta[n],
-                          digamma_sum[n])
-             * inv_Pn;
+    if constexpr (need_shape_grads) {
+      T_partials_return g1 = 0;
+      T_partials_return g2 = 0;
+      grad_reg_inc_beta(g1, g2, alpha_dbl, beta_dbl, y_dbl, digamma_alpha[n],
+                        digamma_beta[n], digamma_sum[n], T_partials_return(0));
+      if constexpr (is_autodiff_v<T_scale_succ>) {
+        partials<1>(ops_partials)[n] += g1 * inv_Pn;
+      }
+      if constexpr (is_autodiff_v<T_scale_fail>) {
+        partials<2>(ops_partials)[n] += g2 * inv_Pn;
+      }
     }
   }
 
