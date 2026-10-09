@@ -900,13 +900,27 @@ struct LUSolver {
    * @brief Compute log determinant from LU factorization.
    *
    * @note This uses the diagonal of the combined LU matrix produced by Eigen
-   * (equivalently the diagonal of U). It does not account for the sign of the
-   * permutation; callers assume `det(B) > 0` in the Laplace correction.
+   * (equivalently the diagonal of U). B = I + Sigma * W is not symmetric, so
+   * with partial pivoting the diagonal of U can have negative entries also
+   * when `det(B) > 0`. The sign of `det(B)` is the sign of the permutation
+   * times the signs of the diagonal entries of U.
    *
-   * @return Sum of log of the LU diagonal entries.
+   * @return log(det(B)) = sum(log(abs(diag(U))))
+   * @throws std::domain_error if `det(B)` is not positive. Then
+   * `Sigma^-1 + W` is not positive definite at the final iterate, for example
+   * at a saddle point, and the Laplace approximation is not defined.
    */
   double compute_log_determinant() const {
-    return lu.matrixLU().diagonal().array().log().sum();
+    const auto& u_diag = lu.matrixLU().diagonal();
+    const bool odd_sign = (lu.permutationP().determinant() < 0)
+                          != ((u_diag.array() < 0.0).count() % 2 == 1);
+    if (odd_sign || (u_diag.array() == 0.0).any()) {
+      throw std::domain_error(
+          "laplace_marginal_density: det(I + Sigma * W) is not positive at "
+          "the final iterate, so the negative Hessian of the log density is "
+          "not positive definite there (for example at a saddle point).");
+    }
+    return u_diag.array().abs().log().sum();
   }
 
   /**
