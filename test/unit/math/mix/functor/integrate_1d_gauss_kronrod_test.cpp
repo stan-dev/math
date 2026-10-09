@@ -25,3 +25,20 @@ TEST(mixFunctor, integrate1DGaussKronrod) {
   // a correctness issue in the integrate_1d_gauss_kronrod wrapper, and so
   // the NaN-input case is intentionally omitted here.
 }
+
+// A positive absolute_tolerance must not disturb higher-order autodiff. The
+// integrand is scaled to 1e-6 so the refinement floor is actually reached,
+// which is the regime where abs_tol changes how many panels are evaluated.
+TEST(mixFunctor, integrate1DGaussKronrodPositiveAbsoluteTolerance) {
+  auto f = [](const auto& theta, const auto& lb, const auto& ub) {
+    auto func = [](const auto& x, const auto& xc, std::ostream* msgs,
+                   const auto& theta) {
+      return 1e-6 * theta * stan::math::sin(7.0 * x);
+    };
+    std::ostringstream* msgs = nullptr;
+    return stan::math::integrate_1d_gauss_kronrod_tol(func, lb, ub, 1e-8, 1e-10,
+                                                      5, msgs, theta);
+  };
+
+  stan::test::expect_ad(f, 0.75, 0.0, 1.0);
+}

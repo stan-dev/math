@@ -12,7 +12,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the integral of f from a to b using adaptive Gauss-Kronrod (G21,K21)
+ * Return the integral of f from a to b using adaptive Gauss-Kronrod (G10,K21)
  * quadrature, with tangents computed via finite differences over the
  * integrand parameters.
  *
@@ -64,7 +64,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_tol(
 }
 
 /**
- * Return the integral of f from a to b using adaptive Gauss-Kronrod (G21,K21)
+ * Return the integral of f from a to b using adaptive Gauss-Kronrod (G10,K21)
  * quadrature, with tangents computed via finite differences over the
  * integrand parameters.
  *

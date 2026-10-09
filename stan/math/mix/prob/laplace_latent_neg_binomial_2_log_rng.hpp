@@ -28,7 +28,8 @@ namespace math {
  * @tparam RNG A valid boost rng type
  * @param[in] y Observed counts.
  * @param[in] y_index Index indicating which group each observation belongs to.
- * @param[in] eta Overdisperison parameter.
+ * @param[in] eta the overdispersion parameter: a scalar shared by all
+ *            groups, or a vector with one entry per group.
  * @param[in] mean The mean of the latent normal variable.
  * \laplace_common_args
  * @param[in] hessian_block_size Block size for the Hessian approximation with
@@ -72,7 +73,8 @@ inline Eigen::VectorXd laplace_latent_tol_neg_binomial_2_log_rng(
  * @tparam RNG A valid boost rng type
  * @param[in] y Observed counts.
  * @param[in] y_index Index indicating which group each observation belongs to.
- * @param[in] eta Overdisperison parameter.
+ * @param[in] eta the overdispersion parameter: a scalar shared by all
+ *            groups, or a vector with one entry per group.
  * @param[in] mean The mean of the latent normal variable.
  * \laplace_common_args
  * @param[in] hessian_block_size Block size for the Hessian approximation with
