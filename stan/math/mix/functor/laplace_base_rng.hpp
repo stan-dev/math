@@ -56,7 +56,7 @@ inline auto laplace_base_rng(LLFunc&& ll_fun, LLArgs&& ll_args,
       std::forward<CovarArgs>(covar_args));
   auto md_est = internal::laplace_marginal_density_est(
       ll_fun, std::forward<LLArgs>(ll_args), covariance_train, options, msgs);
-  Eigen::VectorXd mean_train = covariance_train * md_est.theta_grad;
+  Eigen::VectorXd mean_train = md_est.theta;
   Eigen::MatrixXd Sigma;
   if (md_est.solver_used == 1) {
     Eigen::MatrixXd V_dec
