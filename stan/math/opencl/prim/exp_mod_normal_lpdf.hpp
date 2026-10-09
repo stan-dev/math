@@ -40,8 +40,6 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>
 exp_mod_normal_lpdf(const T_y_cl& y, const T_loc_cl& mu,
                     const T_scale_cl& sigma, const T_inv_scale_cl& lambda) {
   static constexpr const char* function = "exp_mod_normal_lpdf(OpenCL)";
-  using T_partials_return
-      = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>;
   using std::isfinite;
   using std::isnan;
 
@@ -52,8 +50,9 @@ exp_mod_normal_lpdf(const T_y_cl& y, const T_loc_cl& mu,
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y_cl, T_loc_cl, T_scale_cl,
-                       T_inv_scale_cl>::value) {
+  if constexpr (propto
+                && !is_any_autodiff_v<T_y_cl, T_loc_cl, T_scale_cl,
+                                      T_inv_scale_cl>) {
     return 0.0;
   }
 
@@ -90,8 +89,8 @@ exp_mod_normal_lpdf(const T_y_cl& y, const T_loc_cl& mu,
   auto logp1_expr
       = elt_multiply(lambda_val, mu_minus_y_expr + 0.5 * lambda_sigma_sq_expr)
         + math::std_normal_lcdf_impl(z_expr);
-  auto logp_expr = colwise_sum(
-      static_select<include_summand<propto, T_inv_scale_cl>::value>(
+  auto logp_expr
+      = colwise_sum(static_select<(!propto || is_autodiff_v<T_inv_scale_cl>)>(
           logp1_expr + log(lambda_val), logp1_expr));
 
   auto slope_expr = std_normal_lcdf_derivative(z_expr);
@@ -121,8 +120,6 @@ exp_mod_normal_lpdf(const T_y_cl& y, const T_loc_cl& mu,
                     calc_if<is_autodiff_v<T_scale_cl>>(deriv_sigma_expr),
                     calc_if<is_autodiff_v<T_inv_scale_cl>>(deriv_lambda_expr));
 
-  T_partials_return logp = sum(from_matrix_cl(logp_cl));
-
   auto ops_partials
       = make_partials_propagator(y_col, mu_col, sigma_col, lambda_col);
   if constexpr (is_autodiff_v<T_y_cl>) {
@@ -137,7 +134,7 @@ exp_mod_normal_lpdf(const T_y_cl& y, const T_loc_cl& mu,
   if constexpr (is_autodiff_v<T_inv_scale_cl>) {
     partials<3>(ops_partials) = std::move(lambda_deriv_cl);
   }
-  return ops_partials.build(logp);
+  return ops_partials.build(sum(from_matrix_cl(logp_cl)));
 }
 
 }  // namespace math

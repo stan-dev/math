@@ -18,6 +18,7 @@
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/fun/std_normal_lcdf_impl.hpp>
 #include <cmath>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -28,12 +29,13 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale,
               T_y, T_loc, T_scale, T_inv_scale>* = nullptr>
 inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     T_y&& y, T_loc&& mu, T_scale&& sigma, T_inv_scale&& lambda) {
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
   using T_lambda_ref = ref_type_if_not_constant_t<T_inv_scale>;
   static constexpr const char* function = "exp_mod_normal_lpdf";
+  constexpr bool any_autodiff
+      = is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>;
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma, "Inv_scale parameter",
                          lambda);
@@ -56,35 +58,34 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
   if (size_zero(y_ref, mu_ref, sigma_ref, lambda_ref)) {
     return 0.0;
   }
-  if constexpr (!include_summand<propto, T_y, T_loc, T_scale,
-                                 T_inv_scale>::value) {
+  if constexpr (propto
+                && !is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>) {
     return 0.0;
   }
 
-  const auto& inv_sigma
-      = to_ref_if<is_any_autodiff_v<T_y, T_loc>>(inv(sigma_val));
-  const auto& sigma_sq = to_ref_if<is_autodiff_v<T_scale>>(square(sigma_val));
-  const auto& lambda_sigma_sq = to_ref(lambda_val * sigma_sq);
-  const auto& mu_minus_y = to_ref(mu_val - y_val);
+  auto inv_sigma = inv(sigma_val);
+  auto sigma_sq = square(sigma_val);
+  auto lambda_sigma_sq = lambda_val * sigma_sq;
+  auto mu_minus_y = mu_val - y_val;
   // log(erfc(t) / 2) = log Phi(-sqrt(2) t) cancels the log(1/2) constant.
-  const auto& z = to_ref(-(mu_minus_y + lambda_sigma_sq) * inv_sigma);
-  const auto [values, slopes] = internal::std_normal_lcdf_value_grad<
-      is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>>(z);
+  auto z = -(mu_minus_y + lambda_sigma_sq) * inv_sigma;
 
   size_t N = max_size(y_ref, mu_ref, sigma_ref, lambda_ref);
-  T_partials_return logp(0.0);
-  if constexpr (include_summand<propto, T_inv_scale>::value) {
-    logp += sum(log(lambda_val)) * N / math::size(lambda_ref);
-  }
-  logp += sum(lambda_val * (mu_minus_y + 0.5 * lambda_sigma_sq) + values);
-
-  auto ops_partials
-      = make_partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref);
-
-  if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>) {
+  auto log_density = lambda_val * (mu_minus_y + 0.5 * lambda_sigma_sq);
+  auto log_inv_scale = [&]() {
+    if constexpr (!propto || is_autodiff_v<T_inv_scale>) {
+      return sum(log(lambda_val)) * N / math::size(lambda_ref);
+    } else {
+      return 0.0;
+    }
+  }();
+  if constexpr (any_autodiff) {
+    const auto [values, slopes] = internal::std_normal_lcdf_value_grad<true>(z);
+    auto logp = sum(std::move(log_density) + values);
+    auto ops_partials
+        = make_partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref);
     if constexpr (is_any_autodiff_v<T_y, T_loc>) {
-      const auto& deriv = to_ref_if<is_all_autodiff_v<T_y, T_loc>>(
-          lambda_val - slopes * inv_sigma);
+      auto deriv = lambda_val - slopes * inv_sigma;
       if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials) = -deriv;
       }
@@ -101,9 +102,20 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
       partials<3>(ops_partials)
           = inv(lambda_val) + lambda_sigma_sq + mu_minus_y - slopes * sigma_val;
     }
+    if constexpr (!propto || is_autodiff_v<T_inv_scale>) {
+      return ops_partials.build(std::move(logp) + std::move(log_inv_scale));
+    } else {
+      return ops_partials.build(std::move(logp));
+    }
+  } else {
+    const auto values = internal::std_normal_lcdf_value_grad<false>(z);
+    auto logp = sum(std::move(log_density) + values);
+    if constexpr (!propto) {
+      return std::move(logp) + std::move(log_inv_scale);
+    } else {
+      return logp;
+    }
   }
-
-  return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>

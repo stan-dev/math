@@ -21,10 +21,10 @@ namespace internal {
 template <bool reflect, typename T_y, typename T_loc, typename T_scale>
 inline return_type_t<T_y, T_loc, T_scale> lognormal_lcdf_impl(
     const char* function, T_y&& y, T_loc&& mu, T_scale&& sigma) {
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
+  constexpr bool any_autodiff = is_any_autodiff_v<T_y, T_loc, T_scale>;
   constexpr double sign = reflect ? -1.0 : 1.0;
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
@@ -47,14 +47,10 @@ inline return_type_t<T_y, T_loc, T_scale> lognormal_lcdf_impl(
     return ops_partials.build(reflect ? 0.0 : NEGATIVE_INFTY);
   }
 
-  const auto& z = to_ref(sign * (log(y_val) - mu_val) / sigma_val);
-  const auto [values, slopes] = internal::std_normal_lcdf_value_grad<
-      is_any_autodiff_v<T_y, T_loc, T_scale>>(z);
-  const T_partials_return cdf_log = sum(values);
-  if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
-    const auto& scaled_slope = to_ref_if<
-        (is_autodiff_v<T_y> + is_autodiff_v<T_loc> + is_autodiff_v<T_scale>)
-        >= 2>(slopes / sigma_val);
+  auto z = sign * (log(y_val) - mu_val) / sigma_val;
+  if constexpr (any_autodiff) {
+    const auto [values, slopes] = internal::std_normal_lcdf_value_grad<true>(z);
+    auto scaled_slope = slopes / sigma_val;
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = sign * scaled_slope / y_val;
     }
@@ -65,8 +61,11 @@ inline return_type_t<T_y, T_loc, T_scale> lognormal_lcdf_impl(
       partials<2>(ops_partials)
           = select(scaled_slope == 0, 0.0, -scaled_slope * z);
     }
+    return ops_partials.build(sum(values));
+  } else {
+    const auto values = internal::std_normal_lcdf_value_grad<false>(z);
+    return sum(values);
   }
-  return ops_partials.build(cdf_log);
 }
 
 }  // namespace internal

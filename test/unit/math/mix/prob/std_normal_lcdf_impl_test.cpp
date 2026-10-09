@@ -29,7 +29,7 @@ TEST_F(AgradRev, std_normal_extreme_tail_derivatives) {
         {-row[1], row[2], -row[3]});
     check_tail_derivatives(
         [](const auto& z) {
-          return internal::std_normal_lcdf_value_grad<false>(z).first;
+          return internal::std_normal_lcdf_value_grad<false>(z);
         },
         row[0], {row[1], row[2], row[3]});
   }

@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/prob/std_normal_lcdf.hpp>
+#include <stan/math/prim/fun/std_normal_lcdf_impl.hpp>
 
 namespace stan {
 namespace math {

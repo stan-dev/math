@@ -16,17 +16,18 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/fun/std_normal_lcdf_impl.hpp>
+#include <utility>
 
 namespace stan {
 namespace math {
 namespace internal {
 
 template <bool upper, typename T_a, typename T_b>
-inline auto exp_mod_normal_log_combine(const T_a& a, const T_b& b) {
+inline auto exp_mod_normal_log_combine(T_a&& a, T_b&& b) {
   if constexpr (upper) {
-    return log_sum_exp(a, b);
+    return log_sum_exp(std::forward<T_a>(a), std::forward<T_b>(b));
   } else {
-    return log_diff_exp(a, b);
+    return log_diff_exp(std::forward<T_a>(a), std::forward<T_b>(b));
   }
 }
 
@@ -39,7 +40,6 @@ template <bool upper, typename T_y, typename T_loc, typename T_scale,
 inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
     const char* function, T_y&& y, T_loc&& mu, T_scale&& sigma,
     T_inv_scale&& lambda) {
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
@@ -68,37 +68,31 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
     return 0;
   }
 
-  auto ops_partials
-      = make_partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref);
   if (any(y_val == NEGATIVE_INFTY)) {
-    return ops_partials.build(upper ? 0.0 : NEGATIVE_INFTY);
+    return upper ? 0.0 : NEGATIVE_INFTY;
   }
   if (any(y_val == INFTY)) {
-    return ops_partials.build(upper ? NEGATIVE_INFTY : 0.0);
+    return upper ? NEGATIVE_INFTY : 0.0;
   }
 
-  const auto& diff = to_ref(y_val - mu_val);
-  const auto& z = to_ref(diff / sigma_val);
-  const auto& v = to_ref(lambda_val * sigma_val);
-  const auto [log_a, slope_a]
-      = internal::std_normal_lcdf_value_grad<any_autodiff>(sign * z);
-  const auto [log_phi_b, slope_b]
-      = internal::std_normal_lcdf_value_grad<any_autodiff>(z - v);
-  const auto& log_b = to_ref_if<any_autodiff>(0.5 * square(v)
-                                              - lambda_val * diff + log_phi_b);
-  const auto& lp = to_ref_if<any_autodiff>(
-      exp_mod_normal_log_combine<upper>(log_a, log_b));
-  const T_partials_return cdf_log = sum(lp);
-
+  auto diff = y_val - mu_val;
+  auto z = diff / sigma_val;
+  auto v = lambda_val * sigma_val;
+  auto log_b_offset = 0.5 * square(v) - lambda_val * diff;
   if constexpr (any_autodiff) {
+    auto ops_partials
+        = make_partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref);
+    const auto [log_a, slope_a]
+        = internal::std_normal_lcdf_value_grad<true>(sign * z);
+    const auto [log_phi_b, slope_b]
+        = internal::std_normal_lcdf_value_grad<true>(z - v);
+    auto log_b = std::move(log_b_offset) + log_phi_b;
+    auto lp = exp_mod_normal_log_combine<upper>(log_a, log_b);
     // Weights of the two terms in the total; the second is signed.
-    const auto& w_b = to_ref(-sign * exp(log_b - lp));
-    const auto& s_b = to_ref(w_b * slope_b);
-    const auto& s = to_ref_if<
-        (is_autodiff_v<T_y> + is_autodiff_v<T_loc> + is_autodiff_v<T_scale>)
-        >= 2>((sign * exp(log_a - lp) * slope_a + s_b) / sigma_val);
-    const auto& q
-        = to_ref_if<is_all_autodiff_v<T_scale, T_inv_scale>>(w_b * v - s_b);
+    auto w_b = eval(-sign * exp(log_b - lp));
+    auto s_b = w_b * slope_b;
+    auto s = eval((sign * exp(log_a - lp) * slope_a + s_b) / sigma_val);
+    auto q = w_b * v - s_b;
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = s - w_b * lambda_val;
     }
@@ -111,8 +105,14 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
     if constexpr (is_autodiff_v<T_inv_scale>) {
       partials<3>(ops_partials) = sigma_val * q - w_b * diff;
     }
+    return ops_partials.build(sum(std::move(lp)));
+  } else {
+    const auto log_a = internal::std_normal_lcdf_value_grad<false>(sign * z);
+    const auto log_phi_b = internal::std_normal_lcdf_value_grad<false>(z - v);
+    auto log_b = std::move(log_b_offset) + log_phi_b;
+    auto lp = exp_mod_normal_log_combine<upper>(log_a, log_b);
+    return sum(std::move(lp));
   }
-  return ops_partials.build(cdf_log);
 }
 
 }  // namespace internal

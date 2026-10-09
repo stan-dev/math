@@ -43,8 +43,6 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma,
     const T_shape_cl& alpha) {
   static constexpr const char* function = "skew_normal_lpdf(OpenCL)";
-  using T_partials_return
-      = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>;
   using std::isfinite;
   using std::isnan;
 
@@ -55,8 +53,9 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y_cl, T_loc_cl, T_scale_cl,
-                       T_shape_cl>::value) {
+  if constexpr (propto
+                && !is_any_autodiff_v<T_y_cl, T_loc_cl, T_scale_cl,
+                                      T_shape_cl>) {
     return 0.0;
   }
 
@@ -89,11 +88,11 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
   auto log_erfc_alpha_z = LOG_TWO + std_normal_lcdf_impl(alpha_z);
 
   auto logp1 = log_erfc_alpha_z;
-  auto logp2 = static_select<include_summand<propto, T_scale_cl>::value>(
+  auto logp2 = static_select<(!propto || is_autodiff_v<T_scale_cl>)>(
       logp1 - log(sigma_val), logp1);
   auto logp_expr = colwise_sum(
-      static_select<
-          include_summand<propto, T_y_cl, T_loc_cl, T_scale_cl>::value>(
+      static_select<(!propto
+                     || is_any_autodiff_v<T_y_cl, T_loc_cl, T_scale_cl>)>(
           logp2 - 0.5 * square(y_minus_mu_over_sigma), logp2));
 
   auto deriv_logerf = std_normal_lcdf_derivative(alpha_z);
@@ -122,12 +121,6 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
                     calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv),
                     calc_if<is_autodiff_v<T_shape_cl>>(alpha_deriv));
 
-  T_partials_return logp = sum(from_matrix_cl(logp_cl));
-
-  if constexpr (include_summand<propto>::value) {
-    logp -= HALF_LOG_TWO_PI * N;
-  }
-
   auto ops_partials
       = make_partials_propagator(y_col, mu_col, sigma_col, alpha_col);
 
@@ -143,7 +136,12 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
   if constexpr (is_autodiff_v<T_shape_cl>) {
     partials<3>(ops_partials) = std::move(alpha_deriv_cl);
   }
-  return ops_partials.build(logp);
+  auto logp = sum(from_matrix_cl(logp_cl));
+  if constexpr (!propto) {
+    return ops_partials.build(std::move(logp) - HALF_LOG_TWO_PI * N);
+  } else {
+    return ops_partials.build(std::move(logp));
+  }
 }
 
 }  // namespace math

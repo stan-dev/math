@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_PROB_STD_NORMAL_LCCDF_HPP
 #define STAN_MATH_PRIM_PROB_STD_NORMAL_LCCDF_HPP
 
-#include <stan/math/prim/prob/std_normal_lcdf.hpp>
+#include <stan/math/prim/fun/std_normal_lcdf_impl.hpp>
 
 namespace stan {
 namespace math {

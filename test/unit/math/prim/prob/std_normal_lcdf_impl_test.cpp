@@ -1,6 +1,7 @@
 #include <stan/math/prim/prob/std_normal_lcdf.hpp>
 #include <gtest/gtest.h>
 #include <array>
+#include <utility>
 
 TEST(ProbStdNormal, scalar_tail_kernel) {
   // High-precision references: input, log Phi(input), and its slope.
@@ -25,7 +26,7 @@ TEST(ProbStdNormal, scalar_tail_kernel) {
     EXPECT_NEAR(row[2], result.second, 1e-12 * std::abs(row[2]));
     EXPECT_DOUBLE_EQ(
         result.first,
-        stan::math::internal::std_normal_lcdf_value_grad<false>(row[0]).first);
+        stan::math::internal::std_normal_lcdf_value_grad<false>(row[0]));
   }
 }
 
@@ -40,20 +41,24 @@ TEST(ProbStdNormal, vectorized_tail_kernel) {
       -0.46875 * stan::math::SQRT_TWO, -0.01, 0, 0.01,
       0.46875 * stan::math::SQRT_TWO, 1, 3, 6, 20, 30, 37, 37.1, 38, 38.5, 40,
       50, 1e150, 1e308;
-  const auto result = std_normal_lcdf_value_grad<true>(z);
-  const auto values = std_normal_lcdf_value_grad<false>(z);
-  for (Eigen::Index i = 0; i < z.size(); ++i) {
-    SCOPED_TRACE(z[i]);
-    const auto scalar = std_normal_lcdf_value_grad<true>(z[i]);
-    if (std::isfinite(scalar.first)) {
-      EXPECT_NEAR(scalar.first, result.first[i],
-                  std::abs(scalar.first) * 1e-12 + 1e-323);
-    } else {
-      EXPECT_EQ(scalar.first, result.first[i]);
+  // Check both short and large inputs against the scalar kernel.
+  for (const Eigen::ArrayXd& zs : {z, Eigen::ArrayXd(z.replicate(8, 1))}) {
+    SCOPED_TRACE(zs.size());
+    const auto result = std_normal_lcdf_value_grad<true>(zs);
+    const auto values = std_normal_lcdf_value_grad<false>(zs);
+    for (Eigen::Index i = 0; i < zs.size(); ++i) {
+      SCOPED_TRACE(zs[i]);
+      const auto scalar = std_normal_lcdf_value_grad<true>(zs[i]);
+      if (std::isfinite(scalar.first)) {
+        EXPECT_NEAR(scalar.first, result.first[i],
+                    std::abs(scalar.first) * 1e-12 + 1e-323);
+      } else {
+        EXPECT_EQ(scalar.first, result.first[i]);
+      }
+      EXPECT_EQ(result.first[i], values[i]);
+      EXPECT_NEAR(scalar.second, result.second[i],
+                  std::abs(scalar.second) * 1e-12 + 1e-323);
     }
-    EXPECT_EQ(result.first[i], values.first[i]);
-    EXPECT_NEAR(scalar.second, result.second[i],
-                std::abs(scalar.second) * 1e-12 + 1e-323);
   }
 }
 
@@ -64,4 +69,25 @@ TEST(ProbStdNormal, integer_vectors) {
               1e-14);
   EXPECT_NEAR(std_normal_lcdf(z), std_normal_lcdf(std::vector<int>{-1, 0, 1}),
               1e-14);
+}
+
+TEST(ProbStdNormal, value_only_storage) {
+  using stan::math::internal::std_normal_lcdf_value_grad;
+  Eigen::ArrayXd z(3);
+  z << -1, 0, 1;
+  const Eigen::ArrayXd original = z;
+  const Eigen::ArrayXd expected = std_normal_lcdf_value_grad<true>(z).first;
+
+  EXPECT_TRUE(std_normal_lcdf_value_grad<false>(z).isApprox(expected));
+  EXPECT_TRUE((z == original).all());
+  EXPECT_TRUE(std_normal_lcdf_value_grad<false>(z.segment(0, 3))
+                  .isApprox(expected));
+  EXPECT_TRUE((z == original).all());
+  EXPECT_TRUE(std_normal_lcdf_value_grad<false>(z + 0).isApprox(expected));
+  EXPECT_TRUE((z == original).all());
+
+  const auto* buffer = z.data();
+  const auto values = std_normal_lcdf_value_grad<false>(std::move(z));
+  EXPECT_EQ(buffer, values.data());
+  EXPECT_TRUE(values.isApprox(expected));
 }

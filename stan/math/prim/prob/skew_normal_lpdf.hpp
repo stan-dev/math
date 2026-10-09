@@ -18,6 +18,7 @@
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/fun/std_normal_lcdf_impl.hpp>
 #include <cmath>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -28,12 +29,12 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale,
               T_y, T_loc, T_scale, T_shape>* = nullptr>
 inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     T_y&& y, T_loc&& mu, T_scale&& sigma, T_shape&& alpha) {
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
   using T_alpha_ref = ref_type_if_not_constant_t<T_shape>;
   static constexpr const char* function = "skew_normal_lpdf";
+  constexpr bool any_autodiff = is_any_autodiff_v<T_y, T_loc, T_scale, T_shape>;
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma, "Shape parameter",
                          alpha);
@@ -55,49 +56,64 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
   if (size_zero(y_ref, mu_ref, sigma_ref, alpha_ref)) {
     return 0.0;
   }
-  if constexpr (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
+  if constexpr (propto && !is_any_autodiff_v<T_y, T_loc, T_scale, T_shape>) {
     return 0.0;
   }
 
-  auto ops_partials
-      = make_partials_propagator(y_ref, mu_ref, sigma_ref, alpha_ref);
-
-  const auto& inv_sigma
-      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(inv(sigma_val));
-  const auto& z = to_ref((y_val - mu_val) * inv_sigma);
-  const auto& az = to_ref(alpha_val * z);
-  const auto [values, slopes] = internal::std_normal_lcdf_value_grad<
-      is_any_autodiff_v<T_y, T_loc, T_scale, T_shape>>(az);
+  auto inv_sigma = inv(sigma_val);
+  auto z = (y_val - mu_val) * inv_sigma;
+  auto az = alpha_val * z;
 
   size_t N = max_size(y_ref, mu_ref, sigma_ref, alpha_ref);
-  T_partials_return logp = N * LOG_TWO + sum(values);
-  if constexpr (include_summand<propto>::value) {
-    logp -= HALF_LOG_TWO_PI * N;
-  }
-  if constexpr (include_summand<propto, T_scale>::value) {
-    logp -= sum(log(sigma_val)) * N / math::size(sigma_ref);
-  }
-  if constexpr (include_summand<propto, T_y, T_loc, T_scale>::value) {
-    logp -= sum(square(z)) * 0.5 * N / max_size(y_ref, mu_ref, sigma_ref);
-  }
-  if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
-    const auto& score = to_ref_if<
-        (is_autodiff_v<T_y> + is_autodiff_v<T_loc> + is_autodiff_v<T_scale>)
-        >= 2>((slopes * alpha_val - z) * inv_sigma);
-    if constexpr (is_autodiff_v<T_y>) {
-      partials<0>(ops_partials) = score;
+  auto log_normalizer = N * (propto ? LOG_TWO : LOG_TWO - HALF_LOG_TWO_PI);
+  if constexpr (any_autodiff) {
+    const auto [values, slopes]
+        = internal::std_normal_lcdf_value_grad<true>(az);
+    auto ops_partials
+        = make_partials_propagator(y_ref, mu_ref, sigma_ref, alpha_ref);
+    if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
+      auto score = (slopes * alpha_val - z) * inv_sigma;
+      if constexpr (is_autodiff_v<T_y>) {
+        partials<0>(ops_partials) = score;
+      }
+      if constexpr (is_autodiff_v<T_loc>) {
+        partials<1>(ops_partials) = -score;
+      }
+      if constexpr (is_autodiff_v<T_scale>) {
+        partials<2>(ops_partials) = -score * z - inv_sigma;
+      }
     }
-    if constexpr (is_autodiff_v<T_loc>) {
-      partials<1>(ops_partials) = -score;
+    if constexpr (is_autodiff_v<T_shape>) {
+      partials<3>(ops_partials) = slopes * z;
     }
-    if constexpr (is_autodiff_v<T_scale>) {
-      partials<2>(ops_partials) = -score * z - inv_sigma;
+    auto log_cdf = sum(values);
+    if constexpr (!propto || is_any_autodiff_v<T_y, T_loc, T_scale>) {
+      auto quadratic
+          = sum(square(z)) * 0.5 * N / max_size(y_ref, mu_ref, sigma_ref);
+      if constexpr (!propto || is_autodiff_v<T_scale>) {
+        auto log_scale = sum(log(sigma_val)) * N / math::size(sigma_ref);
+        return ops_partials.build(std::move(log_cdf) + std::move(log_normalizer)
+                                  - std::move(log_scale)
+                                  - std::move(quadratic));
+      } else {
+        return ops_partials.build(std::move(log_cdf) + std::move(log_normalizer)
+                                  - std::move(quadratic));
+      }
+    } else {
+      return ops_partials.build(std::move(log_cdf) + std::move(log_normalizer));
+    }
+  } else {
+    const auto values = internal::std_normal_lcdf_value_grad<false>(az);
+    if constexpr (!propto) {
+      auto log_scale = sum(log(sigma_val)) * N / math::size(sigma_ref);
+      auto quadratic
+          = sum(square(z)) * 0.5 * N / max_size(y_ref, mu_ref, sigma_ref);
+      return sum(values) + std::move(log_normalizer) - std::move(log_scale)
+             - std::move(quadratic);
+    } else {
+      return 0.0;
     }
   }
-  if constexpr (is_autodiff_v<T_shape>) {
-    partials<3>(ops_partials) = slopes * z;
-  }
-  return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>

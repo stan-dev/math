@@ -27,7 +27,7 @@ namespace math {
  */
 inline double Phi(double x) {
   check_not_nan("Phi", "x", x);
-  return exp(internal::std_normal_lcdf_value_grad<false>(x).first);
+  return exp(internal::std_normal_lcdf_value_grad<false>(x));
 }
 
 /**
