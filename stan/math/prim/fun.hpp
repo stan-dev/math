@@ -66,6 +66,7 @@
 #include <stan/math/prim/fun/diag_pre_multiply.hpp>
 #include <stan/math/prim/fun/diagonal.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/digamma_diff.hpp>
 #include <stan/math/prim/fun/dims.hpp>
 #include <stan/math/prim/fun/distance.hpp>
 #include <stan/math/prim/fun/divide.hpp>
@@ -186,6 +187,7 @@
 #include <stan/math/prim/fun/log_mix.hpp>
 #include <stan/math/prim/fun/log_modified_bessel_first_kind.hpp>
 #include <stan/math/prim/fun/log_rising_factorial.hpp>
+#include <stan/math/prim/fun/log_rising_factorial_ratio.hpp>
 #include <stan/math/prim/fun/log_softmax.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/log_sum_exp_signed.hpp>

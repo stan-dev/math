@@ -4,7 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/digamma_diff.hpp>
+#include <stan/math/prim/fun/log_rising_factorial_ratio.hpp>
 #include <stan/math/prim/fun/hypergeometric_3F2.hpp>
 #include <stan/math/prim/fun/grad_F32.hpp>
 #include <stan/math/prim/fun/lbeta.hpp>
@@ -99,42 +100,40 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_lccdf(
         std::initializer_list<a_t>{1.0, b_plus_n + 1.0, r_plus_n + 1.0},
         std::initializer_list<b_t>{n_dbl + 2.0, a_plus_r + b_plus_n + 1.0},
         1.0);
-    auto C = lgamma(r_plus_n + 1.0) + lbeta(a_plus_r, b_plus_n + 1.0)
-             - lgamma(r_dbl) - lbeta(alpha_dbl, beta_dbl) - lgamma(n_dbl + 2.0);
+    // C is the log pmf at n + 1; formed from lgamma and lbeta directly it
+    // cancels for large parameters
+    const T_partials_return k = n_dbl + 1.0;
+    const T_partials_return C = internal::beta_neg_binomial_log_pmf(
+        k, T_partials_return(r_dbl), T_partials_return(alpha_dbl),
+        T_partials_return(beta_dbl));
     log_ccdf += C + stan::math::log(F);
 
     if constexpr (is_any_autodiff_v<T_r, T_alpha, T_beta>) {
-      auto digamma_n_r_alpha_beta = digamma(a_plus_r + b_plus_n + 1.0);
       T_partials_return dF[6];
       grad_F32<false, is_autodiff_v<T_beta>, is_autodiff_v<T_r>, false, true,
                false>(dF, 1.0, b_plus_n + 1.0, r_plus_n + 1.0, n_dbl + 2.0,
                       a_plus_r + b_plus_n + 1.0, 1.0, precision, max_steps);
-
-      if constexpr (is_autodiff_v<T_r> || is_autodiff_v<T_alpha>) {
-        auto digamma_r_alpha = digamma(a_plus_r);
-        if constexpr (is_autodiff_v<T_r>) {
-          partials<0>(ops_partials)[i]
-              += digamma(r_plus_n + 1)
-                 + (digamma_r_alpha - digamma_n_r_alpha_beta)
-                 + (dF[2] + dF[4]) / F - digamma(r_dbl);
-        }
-        if constexpr (is_autodiff_v<T_alpha>) {
-          partials<1>(ops_partials)[i] += digamma_r_alpha
-                                          - digamma_n_r_alpha_beta + dF[4] / F
-                                          - digamma(alpha_dbl);
-        }
+      // the partials of C as differences digamma(x + d) - digamma(x)
+      const T_partials_return alpha_plus_beta = alpha_dbl + beta_dbl;
+      const T_partials_return dpsi_r_plus_ab_k
+          = digamma_diff(r_dbl + alpha_plus_beta, k);
+      if constexpr (is_autodiff_v<T_r>) {
+        partials<0>(ops_partials)[i]
+            += digamma_diff(r_dbl, k) - dpsi_r_plus_ab_k
+               - digamma_diff(a_plus_r, beta_dbl) + (dF[2] + dF[4]) / F;
       }
-
-      if constexpr (is_autodiff_v<T_alpha> || is_autodiff_v<T_beta>) {
-        auto digamma_alpha_beta = digamma(alpha_dbl + beta_dbl);
+      if constexpr (is_any_autodiff_v<T_alpha, T_beta>) {
+        const T_partials_return dpsi_ab_r
+            = digamma_diff(alpha_plus_beta, r_dbl);
         if constexpr (is_autodiff_v<T_alpha>) {
-          partials<1>(ops_partials)[i] += digamma_alpha_beta;
+          partials<1>(ops_partials)[i] += digamma_diff(alpha_dbl, r_dbl)
+                                          - dpsi_ab_r - dpsi_r_plus_ab_k
+                                          + dF[4] / F;
         }
         if constexpr (is_autodiff_v<T_beta>) {
-          partials<2>(ops_partials)[i]
-              += digamma(b_plus_n + 1) - digamma_n_r_alpha_beta
-                 + (dF[1] + dF[4]) / F
-                 - (digamma(beta_dbl) - digamma_alpha_beta);
+          partials<2>(ops_partials)[i] += digamma_diff(beta_dbl, k)
+                                          - dpsi_r_plus_ab_k - dpsi_ab_r
+                                          + (dF[1] + dF[4]) / F;
         }
       }
     }

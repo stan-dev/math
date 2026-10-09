@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/digamma_diff.hpp>
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
@@ -72,11 +73,11 @@ inline return_type_t<T_n_cl, T_shape_cl, T_inv_scale_cl> neg_binomial_lpmf(
       function, "Inverse scale parameter", beta_val, "positive finite");
   auto beta_positive_finite = 0 < beta_val && isfinite(beta_val);
 
-  auto digamma_alpha = digamma(alpha_val);
   auto log1p_inv_beta = log1p(elt_divide(1.0, beta_val));
   auto log1p_beta = log1p(beta_val);
+  // alpha / beta - alpha / (1 + beta), without the cancellation
   auto lambda_m_alpha_over_1p_beta
-      = elt_divide(alpha_val, beta_val) - elt_divide(alpha_val, 1.0 + beta_val);
+      = elt_divide(elt_divide(alpha_val, beta_val), 1.0 + beta_val);
 
   auto logp1
       = -elt_multiply(alpha_val, log1p_inv_beta) - elt_multiply(n, log1p_beta);
@@ -86,7 +87,9 @@ inline return_type_t<T_n_cl, T_shape_cl, T_inv_scale_cl> neg_binomial_lpmf(
               + binomial_coefficient_log(n + alpha_val - 1.0, alpha_val - 1.0),
           logp1));
 
-  auto alpha_deriv = digamma(alpha_val + n) - digamma_alpha - log1p_inv_beta;
+  // digamma_diff replaces digamma(alpha + n) - digamma(alpha), which loses
+  // all accuracy for large alpha
+  auto alpha_deriv = digamma_diff(alpha_val, n) - log1p_inv_beta;
   auto beta_deriv = lambda_m_alpha_over_1p_beta - elt_divide(n, beta_val + 1.0);
 
   matrix_cl<double> logp_cl;

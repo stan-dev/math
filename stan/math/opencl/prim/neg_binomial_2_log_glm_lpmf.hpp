@@ -13,7 +13,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/eval.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -124,18 +124,25 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
   const bool need_theta_derivative_sum
       = need_theta_derivative && !is_alpha_vector;
   matrix_cl<double> theta_derivative_sum_cl(wgs, 1);
-  const bool need_phi_derivative_sum = !is_alpha_vector;
-  const bool need_phi_derivative
-      = is_autodiff_v<T_phi_cl> || need_phi_derivative_sum;
+  const bool need_phi_derivative = is_autodiff_v<T_phi_cl>;
+  const bool need_phi_derivative_sum = need_phi_derivative && !is_phi_vector;
   matrix_cl<double> phi_derivative_cl(
       need_phi_derivative ? (need_phi_derivative_sum ? wgs : N) : 0, 1);
-  const bool need_logp1 = include_summand<propto>::value;
-  const bool need_logp2
-      = include_summand<propto, T_phi_cl>::value && is_phi_vector;
-  const bool need_logp3
-      = include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl>::value;
-  const bool need_logp4 = include_summand<propto, T_phi_cl>::value
-                          && (is_y_vector || is_phi_vector);
+  // binomial_coefficient_log(y + phi - 1, y) is computed in the kernel if it
+  // differs between instances, and below otherwise
+  const bool need_logp_phi = include_summand<propto, T_phi_cl>::value
+                             && (is_y_vector || is_phi_vector);
+  // Under propto, the kernel (or the code below, for a scalar y or phi)
+  // removes -lgamma(y + 1) (in binomial_coefficient_log), phi log(phi) for
+  // data phi, and y theta for data x, alpha and beta.
+  const bool need_add_lgamma_y1 = !include_summand<propto>::value
+                                  && include_summand<propto, T_phi_cl>::value
+                                  && is_y_vector;
+  const bool need_sub_phi_log_phi = !include_summand<propto>::value
+                                    && !include_summand<propto, T_phi_cl>::value
+                                    && is_phi_vector;
+  const bool need_sub_y_theta
+      = !include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl>::value;
   matrix_cl<double> logp_cl(wgs, 1);
 
   try {
@@ -145,7 +152,8 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
         y_val_cl, x_val, alpha_val_cl, beta_val, phi_val_cl, N, M, is_y_vector,
         is_alpha_vector, is_phi_vector, need_theta_derivative,
         need_theta_derivative_sum, need_phi_derivative, need_phi_derivative_sum,
-        need_logp1, need_logp2, need_logp3, need_logp4);
+        need_logp_phi, need_add_lgamma_y1, need_sub_phi_log_phi,
+        need_sub_y_theta);
   } catch (const cl::Error& e) {
     check_opencl_error(function, e);
   }
@@ -167,12 +175,18 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
         = isfinite(phi_val) && phi_val > 0;
   }
 
-  if constexpr (include_summand<propto, T_phi_cl>::value && !is_phi_vector) {
-    logp += N * (multiply_log(phi_val, phi_val) - lgamma(phi_val));
-  }
   if constexpr (include_summand<propto, T_phi_cl>::value && !is_y_vector
                 && !is_phi_vector) {
-    logp += lgamma(y_val + phi_val) * N;
+    logp += N * binomial_coefficient_log(y_val + phi_val - 1, y_val);
+  }
+  if constexpr (!include_summand<propto>::value
+                && include_summand<propto, T_phi_cl>::value && !is_y_vector) {
+    logp += N * lgamma(y_val + 1.0);
+  }
+  if constexpr (!include_summand<propto>::value
+                && !include_summand<propto, T_phi_cl>::value
+                && !is_phi_vector) {
+    logp -= N * multiply_log(phi_val, phi_val);
   }
 
   auto ops_partials = make_partials_propagator(x, alpha, beta, phi);

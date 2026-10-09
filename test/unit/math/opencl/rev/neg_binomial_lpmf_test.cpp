@@ -173,4 +173,70 @@ TEST(muProbDistributionsNegBinomial, opencl_matches_cpu_big) {
       beta.transpose().eval());
 }
 
+TEST(muProbDistributionsNegBinomial, opencl_large_shapes_reference) {
+  // The tests above compare OpenCL against the CPU and cannot see an error
+  // that both share. These are absolute references from mpmath at 90 digits,
+  // checked against 140 digits, as in
+  // test/unit/math/rev/prob/large_shapes_test.cpp. The difference
+  // digamma(alpha + n) - digamma(alpha) keeps no correct digits for alpha
+  // near 1e15. The partials are compared as x * d/dx. The last row is a
+  // small shape where the plain difference is correct.
+  using stan::math::var;
+  struct TestValue {
+    int n;
+    double alpha;
+    double beta;
+    double value;
+    double d_alpha;
+    double d_beta;
+  };
+  const std::vector<TestValue> test_values = {
+      {3, 0x1.c6bf526340000p+49, 0x1.2f2a36ecd5555p+48, -1.4959226032237274,
+       1.3124999999999966e-30, 5.6249999999999838e-31},
+      {1, 0x1.c6bf526340000p+49, 0x1.2f2a36ecd5555p+48, -1.9013877113318889,
+       -1.9999999999999957e-15, 5.9999999999999829e-15},
+      {50, 0x1.c6bf526340000p+49, 0x1.2309ce5400000p+44, -2.8766166803657541,
+       2.4999999999998758e-29, 0.0},
+      {0, 0x1.9000000000000p+6, 0x1.0aaaaaaaaaaabp+5, -2.9558802241544401,
+       -2.9558802241544401e-2, 8.7378640776699017e-2},
+  };
+  auto expect_reference = [](const TestValue& t, const var& lp,
+                             double alpha_adj, double beta_adj,
+                             const char* signature) {
+    EXPECT_NEAR(lp.val(), t.value, 1e-12 * std::max(1.0, std::fabs(t.value)))
+        << signature << ": n = " << t.n << ", alpha = " << t.alpha
+        << ", beta = " << t.beta;
+    const double ga = t.alpha * t.d_alpha;
+    EXPECT_NEAR(t.alpha * alpha_adj, ga, 1e-11 * std::max(1.0, std::fabs(ga)))
+        << signature << ": n = " << t.n << ", alpha = " << t.alpha
+        << ", beta = " << t.beta;
+    const double gb = t.beta * t.d_beta;
+    EXPECT_NEAR(t.beta * beta_adj, gb, 1e-11 * std::max(1.0, std::fabs(gb)))
+        << signature << ": n = " << t.n << ", alpha = " << t.alpha
+        << ", beta = " << t.beta;
+  };
+  for (const auto& t : test_values) {
+    const std::vector<int> n{t.n};
+    stan::math::matrix_cl<int> n_cl(n);
+
+    Eigen::Matrix<var, Eigen::Dynamic, 1> alpha(1);
+    alpha << t.alpha;
+    Eigen::Matrix<var, Eigen::Dynamic, 1> beta(1);
+    beta << t.beta;
+    auto alpha_cl = stan::math::to_matrix_cl(alpha);
+    auto beta_cl = stan::math::to_matrix_cl(beta);
+    var lp = stan::math::neg_binomial_lpmf(n_cl, alpha_cl, beta_cl);
+    lp.grad();
+    expect_reference(t, lp, alpha(0).adj(), beta(0).adj(), "vector");
+    stan::math::recover_memory();
+
+    var alpha_s = t.alpha;
+    var beta_s = t.beta;
+    var lp_s = stan::math::neg_binomial_lpmf(n_cl, alpha_s, beta_s);
+    lp_s.grad();
+    expect_reference(t, lp_s, alpha_s.adj(), beta_s.adj(), "scalar");
+    stan::math::recover_memory();
+  }
+}
+
 #endif

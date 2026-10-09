@@ -3,7 +3,12 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/kernels/device_functions/binomial_coefficient_log.hpp>
 #include <stan/math/opencl/kernels/device_functions/digamma.hpp>
+#include <stan/math/opencl/kernels/device_functions/digamma_diff.hpp>
+#include <stan/math/opencl/kernels/device_functions/lbeta.hpp>
+#include <stan/math/opencl/kernels/device_functions/lgamma_stirling.hpp>
+#include <stan/math/opencl/kernels/device_functions/lgamma_stirling_diff.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1p_exp.hpp>
 
 namespace stan {
@@ -46,14 +51,18 @@ static constexpr const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
      * @param need_phi_derivative whether phi_derivative needs to be computed
      * @param need_phi_derivative_sum whether phi_derivative_sum needs to be
      * computed
-     * @param need_logp1 interpreted as boolean - whether first part logp_global
-     * needs to be computed
-     * @param need_logp2 interpreted as boolean - whether second part
-     * logp_global needs to be computed
-     * @param need_logp3 interpreted as boolean - whether third part logp_global
-     * needs to be computed
-     * @param need_logp4 interpreted as boolean - whether fourth part
-     * logp_global needs to be computed
+     * @param need_logp_phi interpreted as boolean - whether the term
+     * binomial_coefficient_log(y + phi - 1, y) of logp_global needs to be
+     * computed
+     * @param need_add_lgamma_y1 interpreted as boolean - whether to add
+     * lgamma(y + 1), which propto drops but binomial_coefficient_log
+     * contains
+     * @param need_sub_phi_log_phi interpreted as boolean - whether to
+     * subtract phi log(phi), which propto drops for data phi but the
+     * log1p_exp terms contain
+     * @param need_sub_y_theta interpreted as boolean - whether to subtract
+     * y theta, which propto drops for data x, alpha and beta but the
+     * log1p_exp terms contain
      */
     __kernel void neg_binomial_2_log_glm(
         __global double* logp_global, __global double* theta_derivative_global,
@@ -65,8 +74,8 @@ static constexpr const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
         const int is_alpha_vector, const int is_phi_vector,
         const int need_theta_derivative, const int need_theta_derivative_sum,
         const int need_phi_derivative, const int need_phi_derivative_sum,
-        const int need_logp1, const int need_logp2, const int need_logp3,
-        const int need_logp4) {
+        const int need_logp_phi, const int need_add_lgamma_y1,
+        const int need_sub_phi_log_phi, const int need_sub_y_theta) {
       const int gid = get_global_id(0);
       const int lid = get_local_id(0);
       const int lsize = get_local_size(0);
@@ -91,28 +100,25 @@ static constexpr const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
         }
         theta += alpha[gid * is_alpha_vector];
         double log_phi = log(phi);
-        double logsumexp_theta_logphi;
-        if (theta > log_phi) {
-          logsumexp_theta_logphi = theta + log1p_exp(log_phi - theta);
-        } else {
-          logsumexp_theta_logphi = log_phi + log1p_exp(theta - log_phi);
-        }
+        // log1p(mu / phi) with mu = exp(theta)
+        double log1p_exp_theta_m_log_phi = log1p_exp(theta - log_phi);
         double y_plus_phi = y + phi;
-        if (need_logp1) {
-          logp -= lgamma(y + 1);
+        // The log pmf is lchoose(y + phi - 1, y) - y log1p(phi / mu)
+        // - phi log1p(mu / phi). Formed from lgamma(phi), lgamma(y + phi)
+        // and phi log(phi), the terms cancel for large phi
+        logp
+            -= y * log1p_exp(log_phi - theta) + phi * log1p_exp_theta_m_log_phi;
+        if (need_logp_phi) {
+          logp += binomial_coefficient_log(y_plus_phi - 1, y);
         }
-        if (need_logp2) {
-          logp -= lgamma(phi);
-          if (phi != 0) {
-            logp += phi * log(phi);
-          }
+        if (need_add_lgamma_y1) {
+          logp += lgamma(y + 1);
         }
-        logp -= y_plus_phi * logsumexp_theta_logphi;
-        if (need_logp3) {
-          logp += y * theta;
+        if (need_sub_phi_log_phi) {
+          logp -= phi * log_phi;
         }
-        if (need_logp4) {
-          logp += lgamma(y_plus_phi);
+        if (need_sub_y_theta) {
+          logp -= y * theta;
         }
         double theta_exp = exp(theta);
         theta_derivative = y - theta_exp * y_plus_phi / (theta_exp + phi);
@@ -120,9 +126,11 @@ static constexpr const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
           theta_derivative_global[gid] = theta_derivative;
         }
         if (need_phi_derivative) {
-          phi_derivative = 1 - y_plus_phi / (theta_exp + phi) + log_phi
-                           - logsumexp_theta_logphi + digamma(y_plus_phi)
-                           - digamma(phi);
+          // 1 - (y + phi) / (mu + phi) and log(phi) - log(mu + phi) are
+          // formed without cancellation, and digamma_diff replaces
+          // digamma(y + phi) - digamma(phi)
+          phi_derivative = (theta_exp - y) / (theta_exp + phi)
+                           - log1p_exp_theta_m_log_phi + digamma_diff(phi, y);
           if (!need_phi_derivative_sum) {
             phi_derivative_global[gid] = phi_derivative;
           }
@@ -196,10 +204,14 @@ static constexpr const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
 const kernel_cl<out_buffer, out_buffer, out_buffer, out_buffer, in_buffer,
                 in_buffer, in_buffer, in_buffer, in_buffer, int, int, int, int,
                 int, int, int, int, int, int, int, int, int>
-    neg_binomial_2_log_glm("neg_binomial_2_log_glm",
-                           {digamma_device_function, log1p_exp_device_function,
-                            neg_binomial_2_log_glm_kernel_code},
-                           {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 64}});
+    neg_binomial_2_log_glm(
+        "neg_binomial_2_log_glm",
+        {digamma_device_function, digamma_diff_device_function,
+         log1p_exp_device_function, lgamma_stirling_device_function,
+         lgamma_stirling_diff_device_function, lbeta_device_function,
+         binomial_coefficient_log_device_function,
+         neg_binomial_2_log_glm_kernel_code},
+        {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 64}});
 
 }  // namespace opencl_kernels
 }  // namespace math

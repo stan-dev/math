@@ -3,6 +3,9 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
+#include <algorithm>
+#include <cmath>
+#include <string>
 #include <vector>
 
 using Eigen::Array;
@@ -217,6 +220,40 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
       neg_binomial_2_log_glm_lpmf_functor_propto, y, x, alpha, beta, phi);
 }
 
+TEST(ProbDistributionsNegBinomial2LogGLM, opencl_matches_cpu_mixed_alpha_phi) {
+  // A scalar alpha with a vector phi, and a vector alpha with a scalar phi.
+  // N = 153 needs more than one work group.
+  for (int N : {3, 153}) {
+    int M = 2;
+    // deterministic values, so that the random inputs of the later tests do
+    // not change
+    vector<int> y(N);
+    Matrix<double, Dynamic, Dynamic> x(N, M);
+    Matrix<double, Dynamic, 1> alpha_vec(N, 1);
+    Matrix<double, Dynamic, 1> phi_vec(N, 1);
+    for (int i = 0; i < N; i++) {
+      y[i] = (i * 7) % 13;
+      x(i, 0) = std::sin(0.7 * i);
+      x(i, 1) = std::cos(1.3 * i);
+      alpha_vec(i) = 0.5 * std::sin(0.3 * i);
+      phi_vec(i) = 0.1 + 0.05 * (i % 29);
+    }
+    Matrix<double, Dynamic, 1> beta(M, 1);
+    beta << 0.3, -0.2;
+    double alpha = 0.3;
+    double phi = 13.2;
+
+    stan::math::test::compare_cpu_opencl_prim_rev(
+        neg_binomial_2_log_glm_lpmf_functor, y, x, alpha, beta, phi_vec);
+    stan::math::test::compare_cpu_opencl_prim_rev(
+        neg_binomial_2_log_glm_lpmf_functor_propto, y, x, alpha, beta, phi_vec);
+    stan::math::test::compare_cpu_opencl_prim_rev(
+        neg_binomial_2_log_glm_lpmf_functor, y, x, alpha_vec, beta, phi);
+    stan::math::test::compare_cpu_opencl_prim_rev(
+        neg_binomial_2_log_glm_lpmf_functor_propto, y, x, alpha_vec, beta, phi);
+  }
+}
+
 TEST(ProbDistributionsNegBinomial2LogGLM, opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
@@ -236,5 +273,188 @@ TEST(ProbDistributionsNegBinomial2LogGLM, opencl_matches_cpu_big) {
       neg_binomial_2_log_glm_lpmf_functor, y, x, alpha, beta, phi);
   stan::math::test::compare_cpu_opencl_prim_rev(
       neg_binomial_2_log_glm_lpmf_functor_propto, y, x, alpha, beta, phi);
+}
+
+TEST(ProbDistributionsNegBinomial2LogGLM, opencl_large_shapes_reference) {
+  // The tests above compare OpenCL against the CPU and cannot see an error
+  // that both share. These are absolute references from mpmath at 90 digits,
+  // checked against 140 digits, as in
+  // test/unit/math/rev/prob/large_shapes_test.cpp. The
+  // value formed from lgamma(phi), lgamma(y + phi) and phi log(phi), and
+  // the phi partial formed from digamma(y + phi) - digamma(phi), keep no
+  // correct digits for phi near 1e15. One attribute; the phi partial is
+  // compared as phi * d/dphi. The last row is a small phi where the plain
+  // differences are correct.
+  struct TestValue {
+    vector<int> y;
+    vector<double> x;
+    double alpha;
+    double beta;
+    double phi;
+    double value;
+    double d_alpha;
+    double d_beta;
+    double d_phi;
+  };
+  const vector<double> x5{0.5, -0.25, 1.25, 0.0, 2.0};
+  const vector<TestValue> test_values = {
+      {{0},
+       {0.5},
+       1.0,
+       0.75,
+       0x1.c6bf526340000p+49,
+       -3.9550767229205693,
+       -3.9550767229205615,
+       -1.9775383614602807,
+       -7.8213159420940446e-30},
+      {{5},
+       {0.5},
+       1.0,
+       0.75,
+       0x1.c6bf526340000p+49,
+       -1.8675684657026251,
+       1.0449232770794187,
+       5.2246163853970937e-1,
+       1.9540676725087929e-30},
+      {{0},
+       {0.5},
+       -0x1.999999999999ap-3,
+       0.75,
+       0x1.37807ed5e8000p+50,
+       -1.1912462166123576,
+       -1.1912462166123571,
+       -5.9562310830617854e-1,
+       -3.7803493755481261e-31},
+      {{2, 4, 3, 5, 6},
+       x5,
+       1.0,
+       0.75,
+       0x1.c6bf526340000p+49,
+       -1.3267966555421410e+1,
+       -8.0507631204932393,
+       -1.8705862362560038e+1,
+       -2.2918189242185528e-29},
+      {{0, 1, 5, 3, 57},
+       x5,
+       1.0,
+       0.75,
+       0x1.c6bf526340000p+49,
+       -5.5025862739499810e+1,
+       3.7949236879506146e+1,
+       8.5544137637438705e+1,
+       -9.8183556706826074e-28},
+      {{2, 4, 3, 5, 6},
+       x5,
+       1.0,
+       0.75,
+       0x1.d1a94a2000000p+39,
+       -1.3267966555398514e+1,
+       -8.0507631203930684,
+       -1.8705862362370543e+1,
+       -2.2918189241713975e-23},
+      {{0},
+       {0.5},
+       1.0,
+       0.75,
+       0x1.9000000000000p+6,
+       -3.8788665246722319,
+       -3.8046018026251338,
+       -1.9023009013125669,
+       -7.4264722047098149e-4},
+      {{0, 1, 5, 3, 57},
+       x5,
+       1.0,
+       0.75,
+       0x1.9000000000000p+6,
+       -4.7240731087544224e+1,
+       3.3378922648644250e+1,
+       7.6036039699167587e+1,
+       -6.2120571346832957e-2},
+  };
+  auto expect_reference = [](const TestValue& t, const var& lp,
+                             double alpha_adj, double beta_adj, double phi_adj,
+                             const char* signature) {
+    const std::string where = std::string(signature)
+                              + ": y[0] = " + std::to_string(t.y[0])
+                              + ", N = " + std::to_string(t.y.size())
+                              + ", phi = " + std::to_string(t.phi);
+    EXPECT_NEAR(lp.val(), t.value, 1e-12 * std::max(1.0, std::fabs(t.value)))
+        << where;
+    EXPECT_NEAR(alpha_adj, t.d_alpha,
+                1e-11 * std::max(1.0, std::fabs(t.d_alpha)))
+        << where;
+    EXPECT_NEAR(beta_adj, t.d_beta, 1e-11 * std::max(1.0, std::fabs(t.d_beta)))
+        << where;
+    const double gp = t.phi * t.d_phi;
+    EXPECT_NEAR(t.phi * phi_adj, gp, 1e-11 * std::max(1.0, std::fabs(gp)))
+        << where;
+  };
+  for (const auto& t : test_values) {
+    const int N = t.y.size();
+    Matrix<double, Dynamic, Dynamic> x(N, 1);
+    for (int i = 0; i < N; ++i) {
+      x(i, 0) = t.x[i];
+    }
+    matrix_cl<int> y_cl(t.y);
+    matrix_cl<double> x_cl(x);
+
+    // y vector, alpha and phi scalars: the kernel sums the phi partial
+    {
+      var alpha = t.alpha;
+      Matrix<var, Dynamic, 1> beta(1);
+      beta << t.beta;
+      var phi = t.phi;
+      auto beta_cl = stan::math::to_matrix_cl(beta);
+      var lp = stan::math::neg_binomial_2_log_glm_lpmf(y_cl, x_cl, alpha,
+                                                       beta_cl, phi);
+      lp.grad();
+      expect_reference(t, lp, alpha.adj(), beta(0).adj(), phi.adj(),
+                       "scalar alpha and phi");
+      stan::math::recover_memory();
+    }
+
+    // alpha and phi vectors: the kernel computes the value term and the phi
+    // partial of each instance
+    {
+      Matrix<var, Dynamic, 1> alpha(N);
+      Matrix<var, Dynamic, 1> beta(1);
+      beta << t.beta;
+      Matrix<var, Dynamic, 1> phi(N);
+      for (int i = 0; i < N; ++i) {
+        alpha(i) = t.alpha;
+        phi(i) = t.phi;
+      }
+      auto alpha_cl = stan::math::to_matrix_cl(alpha);
+      auto beta_cl = stan::math::to_matrix_cl(beta);
+      auto phi_cl = stan::math::to_matrix_cl(phi);
+      var lp = stan::math::neg_binomial_2_log_glm_lpmf(y_cl, x_cl, alpha_cl,
+                                                       beta_cl, phi_cl);
+      lp.grad();
+      double alpha_adj = 0;
+      double phi_adj = 0;
+      for (int i = 0; i < N; ++i) {
+        alpha_adj += alpha(i).adj();
+        phi_adj += phi(i).adj();
+      }
+      expect_reference(t, lp, alpha_adj, beta(0).adj(), phi_adj,
+                       "vector alpha and phi");
+      stan::math::recover_memory();
+    }
+
+    // y, alpha and phi scalars: the value term is computed on the host
+    if (N == 1) {
+      var alpha = t.alpha;
+      Matrix<var, Dynamic, 1> beta(1);
+      beta << t.beta;
+      var phi = t.phi;
+      auto beta_cl = stan::math::to_matrix_cl(beta);
+      var lp = stan::math::neg_binomial_2_log_glm_lpmf(t.y[0], x_cl, alpha,
+                                                       beta_cl, phi);
+      lp.grad();
+      expect_reference(t, lp, alpha.adj(), beta(0).adj(), phi.adj(),
+                       "scalar y, alpha and phi");
+      stan::math::recover_memory();
+    }
+  }
 }
 #endif
