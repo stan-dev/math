@@ -79,6 +79,12 @@ inline void grad_F32(T1* g, const T2& a1, const T3& a2, const T4& a3,
   }
   std::array<T1, 6> term{0};
   for (int k = 0; k <= max_steps; ++k) {
+    // A numerator parameter that has reached zero ends the series (a
+    // polynomial). Stop before the ratio, which is 0 / 0 when a denominator
+    // parameter reaches zero at the same k.
+    if (a1 + k == 0 || a2 + k == 0 || a3 + k == 0) {
+      return;
+    }
     T1 p = (a1 + k) * (a2 + k) * (a3 + k) / ((b1 + k) * (b2 + k) * (1 + k));
     if (p == 0) {
       return;

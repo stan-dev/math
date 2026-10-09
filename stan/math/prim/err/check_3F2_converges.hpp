@@ -66,8 +66,14 @@ inline void check_3F2_converges(const char* function, const T_a1& a1,
     num_terms = floor(fabs(value_of_rec(a3)));
   }
 
-  bool is_undefined = (is_nonpositive_integer(b1) && fabs(b1) <= num_terms)
-                      || (is_nonpositive_integer(b2) && fabs(b2) <= num_terms);
+  // A denominator parameter b = -m (m a nonnegative integer) is a pole from
+  // term m + 1 on, because (b)_k is zero for k > m. A polynomial ends at
+  // term num_terms, so there b is a pole only if m < num_terms.
+  auto is_pole = [&](const auto& b) {
+    return is_nonpositive_integer(b)
+           && (is_polynomial ? fabs(b) < num_terms : fabs(b) <= num_terms);
+  };
+  bool is_undefined = is_pole(b1) || is_pole(b2);
 
   if (is_polynomial && !is_undefined) {
     return;

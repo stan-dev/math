@@ -28,10 +28,17 @@ TEST(MathPrimScalFun, F32_short_polynomial) {
       -0.08000000000000007,
       stan::math::hypergeometric_3F2({1.0, 12.0, -1.0}, {10.0, 1.0}, .9), 1e-8);
 }
+// terminate by zero numerator at k = 1; the denominator (b2)_k is zero only
+// from k = 2 on, so the polynomial is defined
+TEST(MathPrimScalFun, F32_short_polynomial_denominator_equal_numerator) {
+  EXPECT_NEAR(
+      2.2, stan::math::hypergeometric_3F2({1.0, 12.0, -1.0}, {10.0, -1.0}, 1.0),
+      1e-14);
+}
 // at pole, should throw
 TEST(MathPrimScalFun, F32_short_polynomial_undef) {
   EXPECT_THROW(
-      stan::math::hypergeometric_3F2({1.0, 12.0, -1.0}, {10.0, -1.0}, 1.0),
+      stan::math::hypergeometric_3F2({1.0, 12.0, -2.0}, {10.0, -1.0}, 1.0),
       std::domain_error);
 }
 // converge, single sign flip via numerator
@@ -55,4 +62,37 @@ TEST(MathPrimScalFun, F32_double_sign_flip) {
   EXPECT_NEAR(
       1.06593846110441323674,
       stan::math::hypergeometric_3F2({1.0, -.5, -4.5}, {10.0, 1.0}, 0.3), 1e-8);
+}
+
+// The tests below use z = 1 and sum(b) <= sum(a). The reference values are
+// the exact finite sums.
+
+// terminate by zero numerator at k = 6, with large a2 and b2
+TEST(MathPrimScalFun, F32_polynomial_large_parameters) {
+  EXPECT_NEAR(17.62967394122564,
+              stan::math::hypergeometric_3F2({1.0, 302.30333970, -6.0},
+                                             {5.0, -151.75306521}, 1.0),
+              1e-12);
+}
+// a numerator parameter equal to zero: only the first term is not zero
+TEST(MathPrimScalFun, F32_zero_numerator) {
+  EXPECT_EQ(1.0, stan::math::hypergeometric_3F2({1.0, 302.30333970, 0.0},
+                                                {5.0, -151.75306521}, 1.0));
+  EXPECT_EQ(1.0,
+            stan::math::hypergeometric_3F2({1.0, 101.0, 0.0}, {2.0, 0.5}, 1.0));
+}
+// terminate by zero numerator at k = 6; b2 = a3, so the denominator (b2)_k
+// is zero only from k = 7 on
+TEST(MathPrimScalFun, F32_polynomial_denominator_equal_numerator) {
+  EXPECT_NEAR(
+      14.118912760416667,
+      stan::math::hypergeometric_3F2({1.0, 6.5, -6.0}, {5.0, -6.0}, 1.0),
+      1e-12);
+}
+// terminate by zero numerator at k = 6, with sum(b) == sum(a)
+TEST(MathPrimScalFun, F32_polynomial_equal_parameter_sums) {
+  EXPECT_NEAR(
+      9.5967841682127396,
+      stan::math::hypergeometric_3F2({1.0, 4.5, -6.0}, {5.0, -5.5}, 1.0),
+      1e-12);
 }

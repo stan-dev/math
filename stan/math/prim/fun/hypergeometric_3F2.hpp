@@ -40,6 +40,13 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_3F2_infsum(
   int k = 0;
   const double log_precision = log(precision);
   while (k <= max_steps && log_t >= log_precision) {
+    // A numerator parameter that has reached zero makes this term and every
+    // later term zero: the series is a polynomial and has ended. Without
+    // this stop the sign below is 0 while the magnitude keeps growing, and
+    // 0 * inf gives NaN.
+    if ((value_of_rec(a_array) == 0.0).any()) {
+      return t_acc;
+    }
     // Replace zero values with 1 prior to taking the log so that we accumulate
     // 0.0 rather than -inf
     const auto& abs_apk = math::fabs((a_array == 0).select(1.0, a_array));
@@ -123,8 +130,9 @@ inline auto hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z) {
   check_3F2_converges("hypergeometric_3F2", a_ref[0], a_ref[1], a_ref[2],
                       b_ref[0], b_ref[1], z);
   // Boost's pFq throws convergence errors in some cases, fallback to naive
-  // infinite-sum approach (tests pass for these)
-  if (z == 1.0 && (sum(b_ref) - sum(a_ref)) < 0.0) {
+  // infinite-sum approach (tests pass for these). At z = 1 Boost also throws
+  // when sum(b) == sum(a), also for a terminating series.
+  if (z == 1.0 && (sum(b_ref) - sum(a_ref)) <= 0.0) {
     return internal::hypergeometric_3F2_infsum(a_ref, b_ref, z);
   }
   return hypergeometric_pFq(a_ref, b_ref, z);

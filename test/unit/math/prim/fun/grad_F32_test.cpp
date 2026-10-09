@@ -44,10 +44,22 @@ TEST(MathPrimScalFun, grad_F32_converges_by_z) {
 //
 // }
 
+// terminate by zero numerator at k = 1; the denominator (b2)_k is zero only
+// from k = 2 on, so the polynomial is defined. The derivative with respect
+// to a3 is not checked: a3 is the integer that ends the series.
+TEST(MathPrimScalFun, grad_F32_short_polynomial_denominator_equal_numerator) {
+  std::vector<double> g = {1.2, 0.1, 0.0, -0.12, 1.2, 1.2};
+  double g_calc[6];
+  stan::math::grad_F32(g_calc, 1.0, 12.0, -1.0, 10.0, -1.0, 1.0);
+  for (int i : {0, 1, 3, 4, 5}) {
+    EXPECT_NEAR(g[i], g_calc[i], 1e-14);
+  }
+}
+
 // at pole, should throw
 TEST(MathPrimScalFun, grad_F32_short_polynomial_undef) {
   double g_calc[6];
-  EXPECT_THROW(stan::math::grad_F32(g_calc, 1.0, 12.0, -1.0, 10.0, -1.0, 1.0),
+  EXPECT_THROW(stan::math::grad_F32(g_calc, 1.0, 12.0, -2.0, 10.0, -1.0, 1.0),
                std::domain_error);
 }
 
@@ -104,6 +116,36 @@ TEST(MathPrimScalFun, grad_F32_double_sign_flip_2) {
   stan::math::grad_F32(g_calc, 1.0, -.5, -4.5, 10.0, 1.0, 0.3, 1e-10);
   for (int i = 0; i < 6; ++i)
     EXPECT_NEAR(g[i], g_calc[i], 1e-8);
+}
+
+// The tests below use z = 1 and terminate by zero numerator at k = 6. The
+// reference values are the derivatives of the exact finite sums. The
+// derivative with respect to a3 is not checked: a3 is the integer that ends
+// the series.
+
+// b2 = a3, so the denominator (b2)_k is zero only from k = 7 on
+TEST(MathPrimScalFun, grad_F32_polynomial_denominator_equal_numerator) {
+  std::vector<double> g
+      = {26.180979740203373,  6.4919047619047619, 0.0,
+         -8.0448964404555225, 15.921514834449405, 52.373725818452381};
+  double g_calc[6];
+  stan::math::grad_F32(g_calc, 1.0, 6.5, -6.0, 5.0, -6.0, 1.0);
+  for (int i : {0, 1, 3, 4, 5}) {
+    EXPECT_NEAR(g[i], g_calc[i], 1e-12 * std::fabs(g[i]));
+  }
+}
+
+// a2 and b2 are large
+TEST(MathPrimScalFun, grad_F32_polynomial_large_parameters) {
+  std::vector<double> g
+      = {29.010777844568475, 0.16148712923118207, 0.0,
+         -8.114218400390939, 0.32571439023403243, 49.018778179540667};
+  double g_calc[6];
+  stan::math::grad_F32(g_calc, 1.0, 302.30333970, -6.0, 5.0, -151.75306521,
+                       1.0);
+  for (int i : {0, 1, 3, 4, 5}) {
+    EXPECT_NEAR(g[i], g_calc[i], 1e-12 * std::fabs(g[i]));
+  }
 }
 
 //

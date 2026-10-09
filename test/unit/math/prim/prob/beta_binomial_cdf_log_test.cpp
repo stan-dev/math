@@ -35,12 +35,8 @@ TEST(ProbBetaBinomial, lcdf_matches_mathematica) {
   double alpha = 3.0;
   double beta = 1.0;
 
-  //  EXPECT_NEAR(
-  //    -0.5500463,
-  //    (stan::math::beta_binomial_lcdf(n, N, alpha, beta)), 1e-8);
-  // FIXME: this point _should_ be defined for the beta_binomial_lcdf
-  // to be defined over its full parameter range but the power-series
-  // is not defined. Leaving the test in place with the current behavior.
-  EXPECT_THROW(stan::math::beta_binomial_lcdf(n, N, alpha, beta),
-               std::domain_error);
+  // log(15 / 26), computed to more digits than the Mathematica value
+  // -0.5500463
+  EXPECT_NEAR(-0.55004633691927198,
+              stan::math::beta_binomial_lcdf(n, N, alpha, beta), 1e-12);
 }
