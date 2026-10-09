@@ -96,3 +96,31 @@ TEST(MathPrimScalFun, F32_polynomial_equal_parameter_sums) {
       stan::math::hypergeometric_3F2({1.0, 4.5, -6.0}, {5.0, -5.5}, 1.0),
       1e-12);
 }
+// a1 = -1 ends the series at k = 1, before (b1)_k is zero from k = 3 on; the
+// larger non-positive integer a2 = -5 does not matter
+TEST(MathPrimScalFun, F32_polynomial_smallest_numerator_ends) {
+  EXPECT_NEAR(
+      -0.25,
+      stan::math::hypergeometric_3F2({-1.0, -5.0, 1.0}, {-2.0, 1.0}, 0.5),
+      1e-15);
+}
+// the sign of z enters every term of the sum
+TEST(MathPrimScalFun, F32_infsum_negative_z) {
+  Eigen::VectorXd a(3);
+  a << 1.0, 2.0, -3.0;
+  Eigen::VectorXd b(2);
+  b << 4.0, 5.0;
+  EXPECT_NEAR(204.0 / 175.0,
+              stan::math::internal::hypergeometric_3F2_infsum(a, b, -0.5),
+              1e-15);
+}
+// the sum throws when the steps run out before the end of the series
+TEST(MathPrimScalFun, F32_infsum_max_steps) {
+  Eigen::VectorXd a(3);
+  a << 1.0, 4.5, -6.0;
+  Eigen::VectorXd b(2);
+  b << 5.0, -5.5;
+  EXPECT_THROW(
+      stan::math::internal::hypergeometric_3F2_infsum(a, b, 1.0, 1e-6, 3),
+      std::domain_error);
+}

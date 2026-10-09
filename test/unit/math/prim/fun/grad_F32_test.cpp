@@ -148,6 +148,19 @@ TEST(MathPrimScalFun, grad_F32_polynomial_large_parameters) {
   }
 }
 
+// a1 = -1 ends the series at k = 1, before (b1)_k is zero from k = 3 on; the
+// larger non-positive integer a2 = -5 does not matter. The series is
+// 1 + a1 a2 a3 z / (b1 b2). The derivative with respect to a1 is not
+// checked: a1 is the integer that ends the series.
+TEST(MathPrimScalFun, grad_F32_polynomial_smallest_numerator_ends) {
+  std::vector<double> g = {0.0, 0.25, -1.25, -0.625, 1.25, -2.5};
+  double g_calc[6];
+  stan::math::grad_F32(g_calc, -1.0, -5.0, 1.0, -2.0, 1.0, 0.5);
+  for (int i : {1, 2, 3, 4, 5}) {
+    EXPECT_NEAR(g[i], g_calc[i], 1e-15);
+  }
+}
+
 //
 // m = {
 //  {1.0, 1.0, 1.0, 1.0, 1.0, 0.6, 1e-10},

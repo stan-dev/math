@@ -68,9 +68,10 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_3F2_infsum(
     b_array += 1.0;
     a_signs = sign(value_of_rec(a_array));
     b_signs = sign(value_of_rec(b_array));
-    t_sign = a_signs.prod() * b_signs.prod() * t_sign;
+    t_sign = z_sign * a_signs.prod() * b_signs.prod() * t_sign;
   }
-  if (k == max_steps) {
+  // The loop ends with k = max_steps + 1 when the steps run out
+  if (k > max_steps) {
     throw_domain_error("hypergeometric_3F2", "k (internal counter)", max_steps,
                        "exceeded  iterations, hypergeometric function did not ",
                        "converge.");
