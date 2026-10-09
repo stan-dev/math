@@ -162,3 +162,30 @@ TEST_F(AgradRev, ProbDistributionsBetaBinomial_lcdf_mirror_alpha_one) {
     stan::math::recover_memory();
   }
 }
+
+// a cdf far below 1: beta_binomial_cdf must not form it as the complement
+// of the upper tail, which rounds to 0
+TEST_F(AgradRev, ProbDistributionsBetaBinomial_cdf_small) {
+  using stan::math::var;
+  // n, N, alpha, beta, cdf, d/dalpha, d/dbeta
+  const std::vector<std::array<double, 7>> points
+      = {{0, 117, 300.0, 300.0, 8.1475432021262664e-32, -1.4525622365169557e-32,
+          1.2342679116106887e-32},
+         {1, 10, 1e4, 0.1, 5.2292970409674409e-32, -4.7040109793376876e-35,
+          6.5758879077878958e-31},
+         {4, 10, 1e4, 0.1, 3.133010009882612e-21, -1.8786628411897913e-24,
+          3.8056360838721468e-20}};
+  for (const auto& p : points) {
+    var alpha = p[2];
+    var beta = p[3];
+    var cdf = stan::math::beta_binomial_cdf(
+        static_cast<int>(p[0]), static_cast<int>(p[1]), alpha, beta);
+    std::vector<var> vars = {alpha, beta};
+    std::vector<double> grad;
+    cdf.grad(vars, grad);
+    EXPECT_NEAR(p[4], cdf.val(), 1e-12 * std::fabs(p[4]));
+    EXPECT_NEAR(p[5], grad[0], 1e-12 * std::fabs(p[5]));
+    EXPECT_NEAR(p[6], grad[1], 1e-12 * std::fabs(p[6]));
+    stan::math::recover_memory();
+  }
+}
