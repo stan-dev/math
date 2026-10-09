@@ -50,7 +50,7 @@ static constexpr const char* digamma_diff_device_function
             // from the smallest (exactly 1 / x for d = 1)
             if (d <= 8.0 && d == floor(d)) {
               double sum = 0.0;
-              for (int j = (int)d - 1; j >= 0; --j) {
+              for (int j = convert_int(d) - 1; j >= 0; --j) {
                 sum += 1.0 / (x + j);
               }
               return sum;

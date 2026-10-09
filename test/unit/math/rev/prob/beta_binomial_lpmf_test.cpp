@@ -43,7 +43,7 @@ std::vector<TestValue> testValues = {
 };
 }  // namespace beta_binomial_lpmf_rev_test_internal
 
-TEST(ProbDistributionsBetaBinomial, log_shape_gradients) {
+TEST_F(AgradRev, ProbDistributionsBetaBinomial_log_shape_gradients) {
   using beta_binomial_lpmf_rev_test_internal::TestValue;
   using beta_binomial_lpmf_rev_test_internal::testValues;
   using stan::math::var;
@@ -72,7 +72,7 @@ TEST(ProbDistributionsBetaBinomial, log_shape_gradients) {
   }
 }
 
-TEST(ProbDistributionsBetaBinomial, log_concentration_gradient) {
+TEST_F(AgradRev, ProbDistributionsBetaBinomial_log_concentration_gradient) {
   // alpha = beta = exp(lc) / 2, n = 57, N = 117. The
   // gradient in lc goes to 0 like 27 / exp(lc). develop returned 0 or
   // noise (-0.14 at lc = 32) from lc = 20 on, which made the log density a

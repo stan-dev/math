@@ -202,6 +202,7 @@ void eval(const std::string& tag, const std::vector<double>& a, double& value,
 }
 
 // clang-format off
+// NOLINTBEGIN(whitespace/line_length)
 const std::vector<TestCase> test_cases = {
     // neg_binomial_lpmf(n | alpha, beta): n, alpha, beta
     {"NB", {0x1.8000000000000p+1, 0x1.c6bf526340000p+49, 0x1.2f2a36ecd5555p+48}, -1.4959226032237274, {1.3124999999999966e-30, 5.6249999999999838e-31}},
@@ -303,10 +304,11 @@ const std::vector<TestCase> test_cases = {
     {"LBETA", {0x1.0000000000000p-1, 0x1.6bcc41e900000p+46}, -1.5545730708033618e+1, {-3.4199701327938063e+1, -5.0000000000000125e-15}},
     {"LBETA", {0x1.ba1a7a7909c76p-7, 0x1.f4f68d902030cp-6}, 4.6705195755596318, {-5.1474613897767773e+1, -1.0033990131067132e+1}},
 };
+// NOLINTEND
 // clang-format on
 }  // namespace large_shapes_test_internal
 
-TEST(ProbDistributions, large_shapes_value_and_log_scale_gradients) {
+TEST_F(AgradRev, ProbDistributions_large_shapes_value_and_log_scale_gradients) {
   using large_shapes_test_internal::eval;
   using large_shapes_test_internal::log_scale_args;
   using large_shapes_test_internal::test_cases;
@@ -332,7 +334,7 @@ TEST(ProbDistributions, large_shapes_value_and_log_scale_gradients) {
   }
 }
 
-TEST(ProbDistributions, lkj_corr_eta_gradient_at_one) {
+TEST_F(AgradRev, ProbDistributions_lkj_corr_eta_gradient_at_one) {
   // At eta == 1.0 exactly, develop returned the constant without its
   // derivative, so d/deta lost sum_k psi(eta + (K - 1) / 2) - psi(eta +
   // (K - 1 - k) / 2). eta = exp(0) = 1 is the value at the default
@@ -347,7 +349,7 @@ TEST(ProbDistributions, lkj_corr_eta_gradient_at_one) {
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributions, large_shapes_propto_dropped_terms) {
+TEST_F(AgradRev, ProbDistributions_large_shapes_propto_dropped_terms) {
   // full - propto must be the sum of the terms that propto drops, computed
   // here from their formulas. Some of these terms are inside a function
   // call: lgamma(n) in lbeta(n, alpha + 1), lgamma(y + 1) in lchoose.
