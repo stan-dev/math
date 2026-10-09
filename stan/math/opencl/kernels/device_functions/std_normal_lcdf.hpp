@@ -14,151 +14,104 @@ static constexpr const char* std_normal_lcdf_device_function
       "#ifndef STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_STD_NORMAL_LCDF\n"
       "#define "
       "STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_STD_NORMAL_LCDF\n" STRINGIFY(
-          /** \ingroup opencl_kernels
-           * Return the log standard normal cumulative distribution function
-           * evaluated from the scaled input `x / sqrt(2)`.
-           *
-           * @param scaled_y input scaled by `1 / sqrt(2)`
-           * @return log(Phi(x))
-           */
-          inline double std_normal_lcdf_scaled_impl(double scaled_y) {
-            double lcdf_n;
-            if (scaled_y > 0.0) {
-              // CDF(x) = 1/2 + 1/2 erf(x) = 1 - 1/2 erfc(x)
-              lcdf_n = log1p(-0.5 * erfc(scaled_y));
-              if (isnan(lcdf_n)) {
-                lcdf_n = 0;
-              }
-            } else if (scaled_y > -4.0) {
-              // CDF(x) = 1/2 - 1/2 erf(-x) = 1/2 erfc(-x)
-              lcdf_n = log(erfc(-scaled_y)) - M_LN2;
-            } else if (10.0 * log(fabs(scaled_y)) < log(DBL_MAX)) {
-              // Need direct approximation once erfc(-x) underflows.
-              const double x2 = scaled_y * scaled_y;
-              const double x4 = pow(scaled_y, 4);
-              const double x6 = pow(scaled_y, 6);
-              const double x8 = pow(scaled_y, 8);
-              const double x10 = pow(scaled_y, 10);
-              const double temp_p = 0.000658749161529837803157
-                                    + 0.0160837851487422766278 / x2
-                                    + 0.125781726111229246204 / x4
-                                    + 0.360344899949804439429 / x6
-                                    + 0.305326634961232344035 / x8
-                                    + 0.0163153871373020978498 / x10;
-              const double temp_q
-                  = -0.00233520497626869185443 - 0.0605183413124413191178 / x2
-                    - 0.527905102951428412248 / x4 - 1.87295284992346047209 / x6
-                    - 2.56852019228982242072 / x8 - 1.0 / x10;
-              lcdf_n = log(0.5 * M_2_SQRTPI + (temp_p / temp_q) / x2) - M_LN2
-                       - log(-scaled_y) - x2;
-            } else {
-              lcdf_n = -INFINITY;
+          // Cody (1969) rationals, sharing the CPU kernel's coefficients.
+          inline double std_normal_erf_small(double x) {
+            const double a[] = {3.16112374387056560, 1.13864154151050156e2,
+                                3.77485237685302021e2, 3.20937758913846947e3,
+                                1.85777706184603153e-1};
+            const double b[] = {2.36012909523441209e1, 2.44024637934444173e2,
+                                1.28261652607737228e3, 2.84423683343917062e3};
+            const double x2 = x * x;
+            double numerator = a[4] * x2;
+            double denominator = x2;
+            for (int i = 0; i < 3; ++i) {
+              numerator = (numerator + a[i]) * x2;
+              denominator = (denominator + b[i]) * x2;
             }
-            return lcdf_n;
+            return x * (numerator + a[3]) / (denominator + b[3]);
           }
 
-          /** \ingroup opencl_kernels
-           * Return the derivative of log standard normal cumulative
-           * distribution function with respect to the scaled input
-           * `x / sqrt(2)`.
-           *
-           * @param scaled_y input scaled by `1 / sqrt(2)`
-           * @return d / d(scaled_y) log(Phi(x))
-           */
-          inline double std_normal_lcdf_dscaled_impl(double scaled_y) {
-            double dnlcdf = 0.0;
-            double t = 0.0;
-            double t2 = 0.0;
-            double t4 = 0.0;
-            const double x2 = scaled_y * scaled_y;
-
-            if (scaled_y > 2.9) {
-              t = 1.0 / (1.0 + 0.3275911 * scaled_y);
-              t2 = t * t;
-              t4 = pow(t, 4);
-              // A&S 7.1.26 keeps exp(-x2) in the numerator, as R's pnorm
-              // does; refs in stan/math/prim/prob/std_normal_lcdf.hpp
-              const double exp_m_x2 = exp(-x2);
-              dnlcdf
-                  = 0.5 * M_2_SQRTPI * exp_m_x2
-                    / (1.0
-                       - exp_m_x2
-                             * (0.254829592 - 0.284496736 * t + 1.421413741 * t2
-                                - 1.453152027 * t2 * t + 1.061405429 * t4));
-            } else if (scaled_y > 2.5) {
-              t = scaled_y - 2.7;
-              t2 = t * t;
-              t4 = pow(t, 4);
-              dnlcdf = 0.0003849882382 - 0.002079084702 * t
-                       + 0.005229340880 * t2 - 0.008029540137 * t2 * t
-                       + 0.008232190507 * t4 - 0.005692364250 * t4 * t
-                       + 0.002399496363 * pow(t, 6);
-            } else if (scaled_y > 2.1) {
-              t = scaled_y - 2.3;
-              t2 = t * t;
-              t4 = pow(t, 4);
-              dnlcdf = 0.002846135439 - 0.01310032351 * t + 0.02732189391 * t2
-                       - 0.03326906904 * t2 * t + 0.02482478940 * t4
-                       - 0.009883071924 * t4 * t - 0.0002771362254 * pow(t, 6);
-            } else if (scaled_y > 1.5) {
-              t = scaled_y - 1.85;
-              t2 = t * t;
-              t4 = pow(t, 4);
-              dnlcdf = 0.01849212058 - 0.06876280470 * t + 0.1099906382 * t2
-                       - 0.09274533184 * t2 * t + 0.03543327418 * t4
-                       + 0.005644855518 * t4 * t - 0.01111434424 * pow(t, 6);
-            } else if (scaled_y > 0.8) {
-              t = scaled_y - 1.15;
-              t2 = t * t;
-              t4 = pow(t, 4);
-              dnlcdf = 0.1585747034 - 0.3898677543 * t + 0.3515963775 * t2
-                       - 0.09748053605 * t2 * t - 0.04347986191 * t4
-                       + 0.02182506378 * t4 * t + 0.01074751427 * pow(t, 6);
-            } else if (scaled_y > 0.1) {
-              t = scaled_y - 0.45;
-              t2 = t * t;
-              t4 = pow(t, 4);
-              dnlcdf = 0.6245634904 - 0.9521866949 * t + 0.3986215682 * t2
-                       + 0.04700850676 * t2 * t - 0.03478651979 * t4
-                       - 0.01772675404 * t4 * t + 0.0006577254811 * pow(t, 6);
-            } else if (scaled_y < -29.0) {
-              // asymptotic Mills ratio, DLMF 7.12.1; grows linearly as
-              // -2*scaled_y, same 1/x^2 series shape as R's pnorm uses
-              const double inv_x2 = 1.0 / x2;
-              dnlcdf
-                  = -2.0 * scaled_y
-                    / (1.0
-                       + inv_x2 * (-0.5 + inv_x2 * (0.75 + inv_x2 * -1.875)));
-            } else if (10.0 * log(fabs(scaled_y)) < log(DBL_MAX)) {
-              t = 1.0 / (1.0 - 0.3275911 * scaled_y);
-              t2 = t * t;
-              t4 = pow(t, 4);
-              dnlcdf
-                  = M_2_SQRTPI
-                    / (0.254829592 * t - 0.284496736 * t2 + 1.421413741 * t2 * t
-                       - 1.453152027 * t4 + 1.061405429 * t4 * t);
-              if (scaled_y < -17.0) {
-                dnlcdf += 0.0001263257217272 * x2 * scaled_y
-                          + 0.0123586859488623 * x2
-                          - 0.0860505264736028 * scaled_y - 1.252783383752970;
-              } else if (scaled_y < -7.0) {
-                dnlcdf += 0.000471585349920831 * x2 * scaled_y
-                          + 0.0296839305424034 * x2
-                          + 0.207402143352332 * scaled_y + 0.425316974683324;
-              } else if (scaled_y < -3.9) {
-                dnlcdf += -0.0006972280656443 * x2 * scaled_y
-                          + 0.0068218494628567 * x2
-                          + 0.0585761964460277 * scaled_y + 0.1034397670201370;
-              } else if (scaled_y < -2.1) {
-                dnlcdf += -0.0018742199480885 * x2 * scaled_y
-                          - 0.0097119598291202 * x2
-                          - 0.0170137970924080 * scaled_y - 0.0100428567412041;
-              }
-            } else {
-              dnlcdf = INFINITY;
+          inline double std_normal_lcdf_tail_correction(double r) {
+            const double p[]
+                = {0.000658749161529837803157, 0.0160837851487422766278,
+                   0.125781726111229246204,    0.360344899949804439429,
+                   0.305326634961232344035,    0.0163153871373020978498};
+            const double q[]
+                = {-0.00233520497626869185443, -0.0605183413124413191178,
+                   -0.527905102951428412248,   -1.87295284992346047209,
+                   -2.56852019228982242072,    -1.0};
+            double numerator = p[5] * r + p[4];
+            double denominator = q[5] * r + q[4];
+            for (int i = 3; i >= 0; --i) {
+              numerator = numerator * r + p[i];
+              denominator = denominator * r + q[i];
             }
+            return (numerator / denominator) / (0.5 * M_2_SQRTPI);
+          }
 
-            return dnlcdf;
+          /** erfcx(x) = exp(x^2) erfc(x) for x >= 0.46875. */
+          inline double std_normal_erfcx(double x) {
+            if (x > 4.0) {
+              const double r = 1.0 / (x * x);
+              return (1.0 + r * std_normal_lcdf_tail_correction(r))
+                     * (0.5 * M_2_SQRTPI) / x;
+            }
+            const double c[] = {5.64188496988670089e-1, 8.88314979438837594,
+                                6.61191906371416295e1,  2.98635138197400131e2,
+                                8.81952221241769090e2,  1.71204761263407058e3,
+                                2.05107837782607147e3,  1.23033935479799725e3,
+                                2.15311535474403846e-8};
+            const double d[] = {1.57449261107098347e1, 1.17693950891312499e2,
+                                5.37181101862009858e2, 1.62138957456669019e3,
+                                3.29079923573345963e3, 4.36261909014324716e3,
+                                3.43936767414372164e3, 1.23033935480374942e3};
+            double numerator = c[8] * x;
+            double denominator = x;
+            for (int i = 0; i < 7; ++i) {
+              numerator = (numerator + c[i]) * x;
+              denominator = (denominator + d[i]) * x;
+            }
+            return (numerator + c[7]) / (denominator + d[7]);
+          }
+
+          /** Log Phi(x), with the original, unscaled argument. */
+          inline double std_normal_lcdf_impl(double x) {
+            if (x <= -4.0 * M_SQRT2) {
+              const double r = 2.0 / (x * x);
+              return -(0.5 * x) * x - log(-x) - 0.91893853320467274178
+                     + log1p(r * std_normal_lcdf_tail_correction(r));
+            }
+            const double s = fabs(x) * M_SQRT1_2;
+            if (s < 0.46875) {
+              const double e = std_normal_erf_small(s);
+              return log1p(x < 0.0 ? -e : e) - M_LN2;
+            }
+            const double erfcx = std_normal_erfcx(s);
+            if (x < 0.0) {
+              return -(0.5 * x) * x - M_LN2 + log(erfcx);
+            }
+            return log1p(-0.5 * exp(-(0.5 * x) * x) * erfcx);
+          }
+
+          /** Slope phi(x) / Phi(x) in the original units. */
+          inline double std_normal_lcdf_derivative(double x) {
+            if (x <= -4.0 * M_SQRT2) {
+              const double r = 2.0 / (x * x);
+              return -x / (1.0 + r * std_normal_lcdf_tail_correction(r));
+            }
+            const double s = fabs(x) * M_SQRT1_2;
+            if (s < 0.46875) {
+              const double e = std_normal_erf_small(s);
+              return (0.5 * M_SQRT2 * M_2_SQRTPI) * exp(-s * s)
+                     / (x < 0.0 ? 1.0 - e : 1.0 + e);
+            }
+            const double erfcx = std_normal_erfcx(s);
+            if (x < 0.0) {
+              return (0.5 * M_SQRT2 * M_2_SQRTPI) / erfcx;
+            }
+            const double density = exp(-(0.5 * x) * x);
+            return (0.5 * M_SQRT1_2 * M_2_SQRTPI) * density
+                   / (1.0 - 0.5 * density * erfcx);
           }) "\n#endif\n";  // NOLINT
 // \endcond
 
