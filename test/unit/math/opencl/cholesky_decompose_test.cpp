@@ -29,6 +29,20 @@ TEST(MathMatrixOpenCL, cholesky_decompose_cpu_vs_cl_small) {
   EXPECT_MATRIX_NEAR(m1, m1_res, 1e-8);
 }
 
+TEST(MathMatrixOpenCL, cholesky_decompose_cpu_vs_cl_one_work_group) {
+  int size = 200;
+  stan::math::matrix_d m = stan::math::matrix_d::Random(size, size);
+  stan::math::matrix_d m_pos_def
+      = m * m.transpose() + size * Eigen::MatrixXd::Identity(size, size);
+
+  stan::math::matrix_cl<double> m_cl(m_pos_def);
+  stan::math::matrix_d m_res = stan::math::cholesky_decompose(m_pos_def);
+
+  stan::math::opencl::cholesky_decompose(m_cl);
+
+  EXPECT_MATRIX_NEAR(m_res, stan::math::from_matrix_cl(m_cl), 1e-8);
+}
+
 namespace {
 inline void cholesky_decompose_test(int size) {
   stan::math::matrix_d m1 = stan::math::matrix_d::Random(size, size);
