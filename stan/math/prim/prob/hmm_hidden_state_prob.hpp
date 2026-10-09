@@ -29,6 +29,10 @@ namespace math {
  * of a state sequence given parameters and an observation sequence,
  * p(x | y, theta),
  * because it only computes marginals on a state-by-state basis.
+ * Each column of log_omegas is shifted by its maximum before it is
+ * exponentiated, and the forward and backward passes are normalized at
+ * every step, so the result neither underflows nor overflows for long
+ * sequences or for log densities of large magnitude.
  *
  * @tparam T_omega type of the log likelihood matrix
  * @tparam T_Gamma type of the transition matrix
@@ -51,7 +55,15 @@ inline Eigen::MatrixXd hmm_hidden_state_prob(const T_omega& log_omegas,
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
-  Eigen::MatrixXd omegas = value_of(log_omegas).array().exp();
+  // Subtract the maximum of each column before exponentiating, so that
+  // omegas neither underflows nor overflows. The hidden state probabilities
+  // are invariant to a positive factor on each column of omegas.
+  ref_type_t<decltype(value_of(log_omegas))> log_omegas_dbl
+      = value_of(log_omegas);
+  Eigen::MatrixXd omegas
+      = (log_omegas_dbl.rowwise() - log_omegas_dbl.colwise().maxCoeff())
+            .array()
+            .exp();
   ref_type_t<decltype(value_of(rho))> rho_dbl = value_of(rho);
   ref_type_t<decltype(value_of(Gamma))> Gamma_dbl = value_of(Gamma);
   hmm_check(log_omegas, Gamma_dbl, rho_dbl, "hmm_hidden_state_prob");
@@ -60,9 +72,12 @@ inline Eigen::MatrixXd hmm_hidden_state_prob(const T_omega& log_omegas,
   alphas.col(0) = omegas.col(0).cwiseProduct(rho_dbl);
   alphas.col(0) /= alphas.col(0).maxCoeff();
 
-  for (int n = 0; n < n_transitions; ++n)
+  // Forward pass with running normalization
+  for (int n = 0; n < n_transitions; ++n) {
     alphas.col(n + 1)
         = omegas.col(n + 1).cwiseProduct(Gamma_dbl.transpose() * alphas.col(n));
+    alphas.col(n + 1) /= alphas.col(n + 1).maxCoeff();
+  }
 
   // Backward pass with running normalization
   Eigen::VectorXd beta = Eigen::VectorXd::Ones(n_states);
