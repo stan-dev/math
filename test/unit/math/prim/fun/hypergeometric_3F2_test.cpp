@@ -124,3 +124,20 @@ TEST(MathPrimScalFun, F32_infsum_max_steps) {
       stan::math::internal::hypergeometric_3F2_infsum(a, b, 1.0, 1e-6, 3),
       std::domain_error);
 }
+// terminate by zero numerator at k = 116; the terms fall below 1e-6 before
+// the end of the series, so the sum must not stop at an absolute tolerance
+TEST(MathPrimScalFun, F32_polynomial_small_terms) {
+  EXPECT_NEAR(
+      3.1748878200738662,
+      stan::math::hypergeometric_3F2({1.0, 1.1, -116.0}, {2.0, -125.0}, 1.0),
+      1e-13);
+}
+// all terms are positive; the term after 1 is about 2e-21, and the sum is
+// about 6e36, so the sum must not stop at a small term
+TEST(MathPrimScalFun, F32_polynomial_small_term_before_large_terms) {
+  const double F = 5.7668140904936036e+36;
+  EXPECT_NEAR(F,
+              stan::math::hypergeometric_3F2({1e-23, 300.0, -100.0},
+                                             {1.0, -150.5}, 1.0),
+              1e-13 * F);
+}

@@ -161,6 +161,32 @@ TEST(MathPrimScalFun, grad_F32_polynomial_smallest_numerator_ends) {
   }
 }
 
+// terminate by zero numerator at k = 116; the terms fall below 1e-6 before
+// the end of the series, so the sum must not stop at an absolute tolerance
+TEST(MathPrimScalFun, grad_F32_polynomial_small_terms) {
+  std::vector<double> g
+      = {4.4789990965505127,  4.2105041895611112,  0.0,
+         -2.8590213153488275, 0.10966400496285045, 12.978200050704774};
+  double g_calc[6];
+  stan::math::grad_F32(g_calc, 1.0, 1.1, -116.0, 2.0, -125.0, 1.0);
+  for (int i : {0, 1, 3, 4, 5}) {
+    EXPECT_NEAR(g[i], g_calc[i], 1e-13 * std::fabs(g[i]));
+  }
+}
+
+// all terms are positive; the term after 1 is about 2e-21, and the sum is
+// about 6e36. With only the derivatives in a2 and b2 requested, their first
+// terms are small too, so the sum must not stop at a small term.
+TEST(MathPrimScalFun, grad_F32_polynomial_small_term_before_large_terms) {
+  const double dF_da2 = 1.4427627588420411e+36;
+  const double dF_db2 = 4.7972504951249748e+36;
+  double g_calc[6];
+  stan::math::grad_F32<false, true, false, false, true, false>(
+      g_calc, 1e-23, 300.0, -100.0, 1.0, -150.5, 1.0);
+  EXPECT_NEAR(dF_da2, g_calc[1], 1e-12 * dF_da2);
+  EXPECT_NEAR(dF_db2, g_calc[4], 1e-12 * dF_db2);
+}
+
 //
 // m = {
 //  {1.0, 1.0, 1.0, 1.0, 1.0, 0.6, 1e-10},
