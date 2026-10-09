@@ -1,6 +1,7 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
+#include <array>
 #include <cmath>
 #include <vector>
 
@@ -134,4 +135,30 @@ TEST_F(AgradRev, ProbDistributionsBetaBinomial_lccdf_terminating_series) {
       [](int n, int N, const auto& alpha, const auto& beta) {
         return stan::math::beta_binomial_lccdf(n, N, alpha, beta);
       });
+}
+
+// alpha = 1 and a small cdf: beta_binomial_lcdf uses the mirrored series,
+// which has a denominator parameter equal to the numerator parameter that
+// ends the series
+TEST_F(AgradRev, ProbDistributionsBetaBinomial_lcdf_mirror_alpha_one) {
+  using stan::math::var;
+  // n, N, alpha, beta, lcdf, d/dalpha, d/dbeta
+  const std::vector<std::array<double, 7>> points
+      = {{0, 117, 1.0, 0.1, -7.0656133635977173, -5.1910469886639266,
+          9.9914602903501275},
+         {0, 1000, 1.0, 0.01, -11.512935464920229, -7.4691506484692035,
+          99.999000009999898}};
+  for (const auto& p : points) {
+    var alpha = p[2];
+    var beta = p[3];
+    var lcdf = stan::math::beta_binomial_lcdf(
+        static_cast<int>(p[0]), static_cast<int>(p[1]), alpha, beta);
+    std::vector<var> vars = {alpha, beta};
+    std::vector<double> grad;
+    lcdf.grad(vars, grad);
+    EXPECT_NEAR(p[4], lcdf.val(), 1e-12 * std::fabs(p[4]));
+    EXPECT_NEAR(p[5], grad[0], 1e-12 * std::fabs(p[5]));
+    EXPECT_NEAR(p[6], grad[1], 1e-12 * std::fabs(p[6]));
+    stan::math::recover_memory();
+  }
 }
