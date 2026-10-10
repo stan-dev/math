@@ -22,9 +22,8 @@
 //
 // For each function the first rows are points where develop was wrong by
 // more than 100 times the tolerance, and the last row is a point at a small
-// shape where develop was correct. The cdfs of beta_binomial and
-// beta_neg_binomial are limited by the tolerance of their 3F2 series, so
-// their tolerances are larger.
+// shape where develop was correct. The cdfs of beta_binomial are limited by
+// the tolerance of their 3F2 series, so their tolerances are larger.
 
 namespace large_shapes_test_internal {
 
@@ -37,8 +36,7 @@ struct TestCase {
 
 // (value, gradient) tolerance factors, applied as tol * max(1, |reference|)
 std::pair<double, double> tolerances(const std::string& tag) {
-  if (tag == "BBC" || tag == "BBLC" || tag == "BBLCC" || tag == "BNBC"
-      || tag == "BNBLCC") {
+  if (tag == "BBC" || tag == "BBLC" || tag == "BBLCC") {
     return {1e-6, 1e-4};
   }
   return {1e-12, 1e-11};
