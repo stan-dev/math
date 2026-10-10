@@ -5,6 +5,9 @@
 #include <test/unit/math/rev/util.hpp>
 
 #include <gtest/gtest.h>
+#include <algorithm>
+#include <array>
+#include <cmath>
 #include <vector>
 
 // CHECK THAT ALL VALID SCALAR TYPES ARE ACCEPTED
@@ -398,5 +401,49 @@ TEST_F(AgradRev, mathRevCorrectValues_wiener_lccdf_unnorm) {
     EXPECT_NEAR(sv.adj(), true_grad_sv[i], err_tol);
     EXPECT_NEAR(sw.adj(), true_grad_sw[i], err_tol);
     EXPECT_NEAR(st0.adj(), true_grad_st0[i], err_tol);
+  }
+}
+
+TEST_F(AgradRev, ProbWienerFull_underflowRegression3329) {
+  using stan::math::var;
+  const std::array<double, 8> values{1e-6,  0.1, 0.0,  0.0001,
+                                     -10.0, 0.1, 1e-8, 0.001};
+  std::array<var, 8> args{values[0], values[1], values[2], values[3],
+                          values[4], values[5], values[6], values[7]};
+
+  var log_density
+      = stan::math::wiener_lpdf(args[0], args[1], args[2], args[3], args[4],
+                                args[5], args[6], args[7], 1e-8);
+  log_density.grad();
+
+  EXPECT_NEAR(-4998.0685384084609, log_density.val(), 1e-8);
+
+  const auto evaluate = [](const std::array<double, 8>& x) {
+    return stan::math::wiener_lpdf(x[0], x[1], x[2], x[3], x[4], x[5], x[6],
+                                   x[7], 1e-8);
+  };
+  const std::array<double, 8> steps{1e-12, 1e-7, 1e-12,  1e-8,
+                                    1e-5,  1e-6, 2.5e-9, 1e-7};
+  for (size_t i = 0; i < args.size(); ++i) {
+    std::array<double, 8> lower = values;
+    std::array<double, 8> upper = values;
+    double finite_difference;
+    if (i == 2) {
+      std::array<double, 8> upper_twice = values;
+      upper[i] += steps[i];
+      upper_twice[i] += 2.0 * steps[i];
+      finite_difference = (-3.0 * evaluate(values) + 4.0 * evaluate(upper)
+                           - evaluate(upper_twice))
+                          / (2.0 * steps[i]);
+    } else {
+      lower[i] -= steps[i];
+      upper[i] += steps[i];
+      finite_difference
+          = (evaluate(upper) - evaluate(lower)) / (2.0 * steps[i]);
+    }
+    const double tolerance
+        = i == 6 ? 5e-3 : 5e-5 * std::max(1.0, std::fabs(finite_difference));
+    EXPECT_NEAR(finite_difference, args[i].adj(), tolerance)
+        << "argument " << i;
   }
 }
