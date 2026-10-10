@@ -3,21 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/beta.hpp>
-#include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/digamma_diff.hpp>
-#include <stan/math/prim/fun/log_rising_factorial_ratio.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/hypergeometric_3F2.hpp>
-#include <stan/math/prim/fun/grad_F32.hpp>
-#include <stan/math/prim/fun/lbeta.hpp>
-#include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/fun/scalar_seq_view.hpp>
-#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
-#include <cmath>
+#include <stan/math/prim/prob/beta_binomial_lcdf.hpp>
 
 namespace stan {
 namespace math {
@@ -26,6 +14,10 @@ namespace math {
  * Returns the CDF of the Beta-Binomial distribution with given population
  * size, prior success, and prior failure parameters. Given containers of
  * matching sizes, returns the product of probabilities.
+ *
+ * The CDF is the exponential of `beta_binomial_lcdf`, which computes a small
+ * probability from the mirrored series instead of the complement of the
+ * upper tail.
  *
  * @tparam T_n type of success parameter
  * @tparam T_N type of population size parameter
@@ -45,8 +37,6 @@ inline return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n,
                                                          const T_N& N,
                                                          const T_size1& alpha,
                                                          const T_size2& beta) {
-  using T_partials_return = partials_return_t<T_n, T_N, T_size1, T_size2>;
-  using std::exp;
   using T_N_ref = ref_type_t<T_N>;
   using T_alpha_ref = ref_type_t<T_size1>;
   using T_beta_ref = ref_type_t<T_size2>;
@@ -68,90 +58,7 @@ inline return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n,
   check_positive_finite(function, "Second prior sample size parameter",
                         beta_ref);
 
-  T_partials_return P(1.0);
-  auto ops_partials = make_partials_propagator(alpha_ref, beta_ref);
-
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_N_ref> N_vec(N_ref);
-  scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
-  scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
-  size_t max_size_seq_view = max_size(n, N, alpha, beta);
-
-  // Explicit return for extreme values
-  // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::math::size(n); i++) {
-    if (n_vec.val(i) < 0) {
-      return ops_partials.build(0.0);
-    }
-  }
-
-  for (size_t i = 0; i < max_size_seq_view; i++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
-    if (n_vec.val(i) >= N_vec.val(i)) {
-      continue;
-    }
-
-    const T_partials_return n_dbl = n_vec.val(i);
-    const T_partials_return N_dbl = N_vec.val(i);
-    const T_partials_return alpha_dbl = alpha_vec.val(i);
-    const T_partials_return beta_dbl = beta_vec.val(i);
-    const T_partials_return N_minus_n = N_dbl - n_dbl;
-    const T_partials_return mu = alpha_dbl + n_dbl + 1;
-    const T_partials_return nu = beta_dbl + N_minus_n - 1;
-    const T_partials_return one = 1;
-
-    const T_partials_return F = hypergeometric_3F2({one, mu, 1 - N_minus_n},
-                                                   {n_dbl + 2, 1 - nu}, one);
-
-    // lbeta(nu, mu) - lbeta(alpha, beta) without the cancellation for large
-    // shapes
-    T_partials_return C
-        = internal::log_beta_ratio(
-              alpha_dbl, beta_dbl, n_dbl + 1, N_minus_n - 1,
-              internal::log_beta_ratio_denominator(alpha_dbl, beta_dbl))
-          - lbeta(N_minus_n, n_dbl + 2);
-    C = F * exp(C) / (N_dbl + 1);
-
-    const T_partials_return Pi = 1 - C;
-
-    P *= Pi;
-
-    // digamma(alpha + beta) - digamma(mu + nu), mu + nu = alpha + beta + N
-    T_partials_return digammaDiff
-        = is_constant_all<T_size1, T_size2>::value
-              ? 0
-              : -digamma_diff(alpha_dbl + beta_dbl, N_dbl);
-
-    T_partials_return dF[6];
-    if constexpr (is_any_autodiff_v<T_size1, T_size2>) {
-      grad_F32(dF, one, mu, 1 - N_minus_n, n_dbl + 2, 1 - nu, one);
-    }
-    if constexpr (is_autodiff_v<T_size1>) {
-      const T_partials_return g
-          = -C * (digamma_diff(alpha_dbl, n_dbl + 1) + digammaDiff + dF[1] / F);
-      partials<0>(ops_partials)[i] += g / Pi;
-    }
-    if constexpr (is_autodiff_v<T_size2>) {
-      const T_partials_return g
-          = -C
-            * (digamma_diff(beta_dbl, N_minus_n - 1) + digammaDiff - dF[4] / F);
-      partials<1>(ops_partials)[i] += g / Pi;
-    }
-  }
-
-  if constexpr (is_autodiff_v<T_size1>) {
-    for (size_t i = 0; i < stan::math::size(alpha); ++i) {
-      partials<0>(ops_partials)[i] *= P;
-    }
-  }
-  if constexpr (is_autodiff_v<T_size2>) {
-    for (size_t i = 0; i < stan::math::size(beta); ++i) {
-      partials<1>(ops_partials)[i] *= P;
-    }
-  }
-
-  return ops_partials.build(P);
+  return exp(beta_binomial_lcdf(n, N_ref, alpha_ref, beta_ref));
 }
 
 }  // namespace math

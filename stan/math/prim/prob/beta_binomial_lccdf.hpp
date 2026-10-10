@@ -123,7 +123,8 @@ inline return_type_t<T_size1, T_size2> beta_binomial_lccdf(
 
     T_partials_return dF[6];
     if constexpr (is_any_autodiff_v<T_size1, T_size2>) {
-      grad_F32(dF, one, mu, -N_dbl + n_dbl + 1, n_dbl + 2, 1 - nu, one);
+      grad_F32<false, true, false, false, true, false>(
+          dF, one, mu, -N_dbl + n_dbl + 1, n_dbl + 2, 1 - nu, one);
     }
     if constexpr (is_autodiff_v<T_size1>) {
       partials<0>(ops_partials)[i]
