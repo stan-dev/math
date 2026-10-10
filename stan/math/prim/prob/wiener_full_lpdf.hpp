@@ -848,19 +848,28 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
             hcubature_err, params, dim, xmin, xmax,
             maximal_evaluations_hcubature, absolute_error_hcubature,
             relative_error_hcubature / 2);
-    if (!(density >= std::numeric_limits<double>::min()
-          && std::isfinite(density))) {
+    const double density_value = value_of_rec(density);
+    if (!(density_value >= std::numeric_limits<double>::min()
+          && std::isfinite(density_value))) {
       const internal::wiener7_log_params log_params{
-          y_value,  a_value,   v_value,
-          w_value,  t0_value,  sv_value,
-          sw_value, st0_value, log_error_absolute - LOG_TWO};
+          value_of_rec(y_value),
+          value_of_rec(a_value),
+          value_of_rec(v_value),
+          value_of_rec(w_value),
+          value_of_rec(t0_value),
+          value_of_rec(sv_value),
+          value_of_rec(sw_value),
+          value_of_rec(st0_value),
+          value_of_rec(log_error_absolute) - LOG_TWO};
       const std::array<bool, internal::wiener7_num_partials> active{
           is_autodiff_v<T_y>,  is_autodiff_v<T_a>,  is_autodiff_v<T_t0>,
           is_autodiff_v<T_w>,  is_autodiff_v<T_v>,  is_autodiff_v<T_sv>,
           is_autodiff_v<T_sw>, is_autodiff_v<T_st0>};
+      const Eigen::VectorXd log_xmin = value_of_rec(xmin);
+      const Eigen::VectorXd log_xmax = value_of_rec(xmax);
       const auto scaled_result = internal::wiener7_log_integrate(
-          log_params, xmin, xmax, maximal_evaluations_hcubature,
-          relative_error_hcubature / 2, error_bound, active);
+          log_params, log_xmin, log_xmax, maximal_evaluations_hcubature,
+          value_of_rec(relative_error_hcubature) / 2, error_bound, active);
       if (!scaled_result.converged) {
         [&]() STAN_COLD_PATH {
           std::stringstream msg;
