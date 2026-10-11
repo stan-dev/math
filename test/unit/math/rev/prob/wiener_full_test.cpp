@@ -408,18 +408,23 @@ TEST_F(AgradRev, ProbWienerFull_density_below_smallest_double) {
    * d/dst0 = -1 / st0 and d/dy = -d/dt0 = p5(y - t0) / F5(y - t0). The
    * references for log(F5 / st0) and p5 / F5 are from Boost Gauss-Kronrod
    * quadrature of the 5-parameter density, scaled by its largest value.
-   * d/dsw is O(sw) as sw -> 0; before the fix of the sw integration
-   * limits it was -1/sw = -1e8.
+   * d/dsw (sw = 1e-8) is O(sw) as sw -> 0. Its reference is
+   * int (w' - w) / sw dp5/dw' / int p5 over the box, by adaptive
+   * Gauss-Kronrod quadrature (differentiation under the integral). Before
+   * the fix of the sw integration limits d/dsw was -1/sw = -1e8; with the
+   * end-point form (integral) / density - 1 / sw its error was up to 0.5.
    */
   using stan::math::var;
   const double a = 0.1, t0 = 0.0, w = 1e-4, v = -10.0, sv = 0.1, st0 = 1e-3;
-  // y, log(F5(y) / st0), p5(y) / F5(y)
-  const std::vector<std::vector<double>> refs
-      = {{1e-6, -4998.0685384088774, 4999186937.1439915},
-         {3e-6, -1665.4275870208894, 555376585.70015228},
-         {5.5435493922668729e-06, -901.03029980710346, 162610279.12970507},
-         {7.5356592945287405e-06, -662.74912830365952, 87982443.012321636},
-         {3e-05, -166.59848075414246, 5538827.1596829286}};
+  // y, log(F5(y) / st0), p5(y) / F5(y), d/dsw at sw = 1e-8
+  const std::vector<std::vector<double>> refs = {
+      {1e-6, -4998.0685384088774, 4999186937.1439915, 0.083341666361125277},
+      {3e-6, -1665.4275870208894, 555376585.70015228, 0.0092735554080942972},
+      {5.5435493922668729e-06, -901.03029980710346, 162610279.12970507,
+       0.0027270180916692255},
+      {7.5356592945287405e-06, -662.74912830365952, 87982443.012321636,
+       0.0014831386423082942},
+      {3e-05, -166.59848075414246, 5538827.1596829286, 0.00010898610669626657}};
   for (const auto& ref : refs) {
     for (double sw_value : {0.0, 1e-8}) {
       for (double precision : {1e-4, 1e-8}) {
@@ -438,10 +443,7 @@ TEST_F(AgradRev, ProbWienerFull_density_below_smallest_double) {
         if (sw_value == 0) {
           EXPECT_EQ(sw.adj(), 0);
         } else {
-          // d/dsw = (sw derivative integral) / density - 1 / sw: with
-          // sw = 1e-8 a relative integration error e gives an error of about
-          // e / sw, so only check that it is not -1 / sw.
-          EXPECT_LT(std::fabs(sw.adj()), 1.0);
+          EXPECT_NEAR(sw.adj(), ref[3], precision < 1e-6 ? 1e-8 : 1e-6);
         }
         stan::math::recover_memory();
       }

@@ -158,12 +158,24 @@ inline double wiener7_log_shift(double y, double a, double v, double w,
 }
 
 /**
+ * Factor by which wiener7_integrate() multiplies the functor result. SW and
+ * ST0 give the gradients of sw and st0 by differentiation under the
+ * integral: the integrand depends on sw through w + sw (x_w - 0.5) and on
+ * st0 through y - t0 - st0 x_t.
+ */
+enum class Wiener7Weight { NONE, SW, ST0 };
+
+/**
  * Implementation function for preparing arguments and functor to be passed
  * to the hcubature() function for calculating wiener7 parameters via
  * integration
  *
  * @tparam GradSW Whether the gradient of sw is computed
  * @tparam GradW7 Whether the gradient of w is computed in the full model
+ * @tparam Weight Factor of the functor result: none; (x_w - 0.5) for the
+ * gradient of sw, with the functor results at w +- sw (x_w - 0.5)
+ * subtracted (x_w in [0.5, 1]); -x_t for the gradient of st0 (x_w, x_t: the
+ * integration variables of sw and st0)
  * @tparam Wiener7FunctorT Type of functor
  * @tparam T_err Type of error in hcubature
  * @tparam Targs... Types of arguments in parameter pack
@@ -174,7 +186,8 @@ inline double wiener7_log_shift(double y, double a, double v, double w,
  * @return Wiener7 density or gradient calculated by integration
  */
 template <GradientCalc GradSW, GradientCalc GradW7 = GradientCalc::OFF,
-          typename Wiener7FunctorT, typename T_err, typename... TArgs>
+          Wiener7Weight Weight = Wiener7Weight::NONE, typename Wiener7FunctorT,
+          typename T_err, typename... TArgs>
 inline auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
                               T_err&& hcubature_err, TArgs&&... args) {
   const auto functor = [&wiener7_functor](auto&&... integration_args) {
@@ -193,9 +206,24 @@ inline auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
             return ret_t(0.0);
           } else {
             const auto new_w = w + sw_val * (x_vec[0] - 0.5);
-            return ret_t(conditionally_grad_sw<GradSW>(
+            const auto value = conditionally_grad_sw<GradSW>(
                 wiener7_functor, y - new_t0, a, v, new_w, sv, sw, log_error,
-                log_shift));
+                log_shift);
+            if constexpr (Weight == Wiener7Weight::SW) {
+              // x_w in [0.5, 1]: the integrand on [0, 1] folded at 0.5. Its
+              // odd part cancels at each node, not in the sum over nodes,
+              // and the integrand is not 0 on the center line x_w = 0.5.
+              const auto mirror_w = w - sw_val * (x_vec[0] - 0.5);
+              return ret_t((x_vec[0] - 0.5)
+                           * (value
+                              - conditionally_grad_sw<GradSW>(
+                                  wiener7_functor, y - new_t0, a, v, mirror_w,
+                                  sv, sw, log_error, log_shift)));
+            } else if constexpr (Weight == Wiener7Weight::ST0) {
+              return ret_t(-x_vec[(sw_val != 0) ? 1 : 0] * value);
+            } else {
+              return ret_t(value);
+            }
           }
         },
         integration_args...);
@@ -626,6 +654,23 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     if constexpr (is_autodiff_v<T_sw>) {
       if (sw_value == 0) {
         partials<6>(ops_partials)[i] = 0;
+      } else if (st0_value != 0 && sw_value < 1e-3) {
+        // For small sw the end-point form below, (integral over the st0
+        // variable) / density - 1 / sw, multiplies the errors of two
+        // separate integrations by 1 / sw. Use differentiation under the
+        // integral instead (one more 2-D integral).
+        Eigen::Matrix<T_partials_return, -1, 1> xmin_sw = xmin;
+        xmin_sw[0] = 0.5;
+        partials<6>(ops_partials)[i]
+            = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::ON,
+                                          internal::Wiener7Weight::SW>(
+                  [](auto&&... args) {
+                    return internal::wiener5_grad_w<GradientCalc::ON>(args...);
+                  },
+                  hcubature_err, params, dim, xmin_sw, xmax,
+                  maximal_evaluations_hcubature, absolute_error_hcubature,
+                  relative_error_hcubature / 2)
+              / density;
       } else {
         if (st0_value == 0) {
           derivative = internal::estimate_with_err_check<
@@ -653,6 +698,18 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
         partials<7>(ops_partials)[i] = 0;
       } else if (y_value - (t0_value + st0_value) <= 0) {
         partials<7>(ops_partials)[i] = -1 / st0_value;
+      } else if (sw_value != 0 && st0_value < 1e-3) {
+        // Differentiation under the integral, as for sw above.
+        partials<7>(ops_partials)[i]
+            = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF,
+                                          internal::Wiener7Weight::ST0>(
+                  [](auto&&... args) {
+                    return internal::wiener5_grad_t<GradientCalc::ON>(args...);
+                  },
+                  hcubature_err, params, dim, xmin, xmax,
+                  maximal_evaluations_hcubature, absolute_error_hcubature,
+                  relative_error_hcubature / 2)
+              / density;
       } else {
         const T_partials_return t0_st0 = t0_value + st0_value;
         if (sw_value == 0) {
