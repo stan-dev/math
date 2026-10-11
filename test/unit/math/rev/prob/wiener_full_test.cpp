@@ -400,3 +400,41 @@ TEST_F(AgradRev, mathRevCorrectValues_wiener_lccdf_unnorm) {
     EXPECT_NEAR(st0.adj(), true_grad_st0[i], err_tol);
   }
 }
+
+TEST_F(AgradRev, ProbWienerFull_sw_gradient_st0_beyond_y) {
+  /* d/dsw when st0 > y - t0. The integral over the st0 variable must use the
+   * limits of that variable, [0, (y - t0) / st0], not [0, 1]: with [0, 1]
+   * the quadrature nodes miss the support if (y - t0) / st0 < 0.004, and
+   * d/dsw = -1 / sw. The references are the 5-parameter density averaged
+   * over the box by adaptive Gauss-Kronrod quadrature, and the gradients
+   * from the weighted 5-parameter gradients and the end-point formulas
+   * d/dsw = -1/sw + (G(w + sw/2) + G(w - sw/2)) / (2 J) and
+   * d/dst0 = -1/st0 (st0 > y - t0).
+   */
+  using stan::math::var;
+  // y, a, t0, w, v, sv, sw, st0
+  const std::vector<std::vector<double>> points
+      = {{0.501, 0.5, 0.5, 0.5, 1.0, 0.5, 0.2, 0.3},
+         {0.501, 0.5, 0.5, 0.3, -1.0, 0.5, 0.1, 0.3}};
+  // value, then d/dy, d/da, d/dt0, d/dw, d/dv, d/dsv, d/dsw, d/dst0
+  const std::vector<std::vector<double>> refs
+      = {{-23.72203172192728, 21439.651877785887, -85.330940582416858,
+          -21439.651877785887, 104.16367572856434, 0.20369451548936232,
+          0.020277897748002094, 47.08183786536835, -3.3333333333333335},
+         {-57.294953191342536, 54282.626135080958, -217.73468386330191,
+          -54282.626135080958, 165.94975734995256, 0.32888822649013677,
+          0.053597130002326632, 72.974882133158005, -3.3333333333333335}};
+  for (size_t i = 0; i < points.size(); ++i) {
+    std::vector<var> x(points[i].begin(), points[i].end());
+    var lp = stan::math::wiener_lpdf(x[0], x[1], x[2], x[3], x[4], x[5], x[6],
+                                     x[7]);
+    lp.grad();
+    EXPECT_NEAR(lp.val(), refs[i][0], 1e-6);
+    for (size_t k = 0; k < x.size(); ++k) {
+      EXPECT_NEAR(x[k].adj(), refs[i][k + 1],
+                  1e-6 * std::fmax(1.0, std::fabs(refs[i][k + 1])))
+          << "point " << i << ", argument " << k;
+    }
+    stan::math::recover_memory();
+  }
+}

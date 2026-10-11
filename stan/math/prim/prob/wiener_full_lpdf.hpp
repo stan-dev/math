@@ -570,10 +570,13 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
               hcubature_err, y_value - t0_value, a_value, v_value, w_value,
               sv_value, sw_value, log_error_absolute - LOG_TWO);
         } else {
+          // integrate over the st0 variable only, within its limits
+          const Eigen::Matrix<T_partials_return, -1, 1> xmin_st0 = xmin.tail(1);
+          const Eigen::Matrix<T_partials_return, -1, 1> xmax_st0 = xmax.tail(1);
           derivative = internal::wiener7_integrate<GradientCalc::ON,
                                                    GradientCalc::OFF>(
               [](auto&&... args) { return internal::wiener7_grad_sw(args...); },
-              hcubature_err, params, 1, xmin, xmax,
+              hcubature_err, params, 1, xmin_st0, xmax_st0,
               maximal_evaluations_hcubature, absolute_error_hcubature,
               relative_error_hcubature / 2);
         }
