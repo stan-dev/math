@@ -441,6 +441,9 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   const T_partials_return absolute_error_hcubature = 0.0;
   // eps_rel(Integration)
   const T_partials_return relative_error_hcubature = .9 * error_bound;
+  // eps_rel(Integration) of the density: at most that of the density, 1e-6
+  const T_partials_return relative_error_density
+      = fmin(relative_error_hcubature, .9e-6);
   const T_partials_return log_error_absolute = log(1e-12);
   const int maximal_evaluations_hcubature = 6000;
   T_partials_return log_density = 0.0;
@@ -490,7 +493,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
             },
             hcubature_err, params, dim, xmin, xmax,
             maximal_evaluations_hcubature, absolute_error_hcubature,
-            relative_error_hcubature / 2);
+            relative_error_density / 2);
     log_density += log(density);
     hcubature_err = log_error_absolute - log_error_derivative
                     + log(fabs(density)) + LOG_TWO + 1;
