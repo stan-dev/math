@@ -247,9 +247,14 @@ inline wiener7_log_node wiener7_log_node_value(
     return result;
   }
   const double relative_start = params.w + params.sw * (x_w - 0.5);
+  // Make the series tolerance relative to its prefactor when that factor is
+  // below one; otherwise small densities and their scores truncate too soon.
+  const double log_error = params.log_error
+                           + fmin(0.0, wiener5_compute_log_error_term(
+                                           reaction_time, params.a, params.v,
+                                           relative_start, params.sv));
   result.log_density = wiener5_density<GradientCalc::OFF>(
-      reaction_time, params.a, params.v, relative_start, params.sv,
-      params.log_error);
+      reaction_time, params.a, params.v, relative_start, params.sv, log_error);
   if (!std::isfinite(result.log_density)) {
     result.valid = result.log_density == NEGATIVE_INFTY;
     return result;
@@ -262,30 +267,30 @@ inline wiener7_log_node wiener7_log_node_value(
   if (needs_t) {
     score_t = wiener5_grad_t<GradientCalc::OFF>(reaction_time, params.a,
                                                 params.v, relative_start,
-                                                params.sv, params.log_error);
+                                                params.sv, log_error);
   }
   if (needs_w) {
     score_w = wiener5_grad_w<GradientCalc::OFF>(reaction_time, params.a,
                                                 params.v, relative_start,
-                                                params.sv, params.log_error);
+                                                params.sv, log_error);
   }
   result.scores[0] = score_t;
   if (active[1]) {
     result.scores[1] = wiener5_grad_a<GradientCalc::OFF>(
         reaction_time, params.a, params.v, relative_start, params.sv,
-        params.log_error);
+        log_error);
   }
   result.scores[2] = -score_t;
   result.scores[3] = score_w;
   if (active[4]) {
     result.scores[4] = wiener5_grad_v<GradientCalc::OFF>(
         reaction_time, params.a, params.v, relative_start, params.sv,
-        params.log_error);
+        log_error);
   }
   if (active[5]) {
     result.scores[5] = wiener5_grad_sv<GradientCalc::OFF>(
         reaction_time, params.a, params.v, relative_start, params.sv,
-        params.log_error);
+        log_error);
   }
   result.scores[6] = has_sw ? (x_w - 0.5) * score_w : 0.0;
   result.scores[7] = has_st0 ? -x_t * score_t : 0.0;

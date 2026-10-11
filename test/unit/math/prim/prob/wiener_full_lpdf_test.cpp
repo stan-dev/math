@@ -486,6 +486,32 @@ TEST(mathPrimScalProbWienerFullPrecScal, underflowRegression3329) {
 }
 
 TEST(mathPrimScalProbWienerFullPrecScal,
+     logScaledNodeUsesRelativeSeriesTolerance) {
+  const stan::math::internal::wiener7_log_params params{
+      3.0, 3.0, -4.0, 0.1, 0.0, 0.0, 0.0, 0.0, std::log(1e-12)};
+  const Eigen::VectorXd x = Eigen::VectorXd::Zero(1);
+  const std::array<bool, stan::math::internal::wiener7_num_partials> active{
+      true, true, true, true, true, true, false, false};
+
+  const auto node
+      = stan::math::internal::wiener7_log_node_value(x, params, active);
+
+  EXPECT_NEAR(-38.699512995035121, node.log_density, 1e-10);
+  const std::array<double, stan::math::internal::wiener7_num_partials>
+      expected_scores{-8.5021097351560204,
+                      -3.2624471963546275,
+                      8.5021097351560204,
+                      21.697496903138553,
+                      14.699999999999999,
+                      0.0,
+                      0.0,
+                      0.0};
+  for (size_t i = 0; i < expected_scores.size(); ++i) {
+    EXPECT_NEAR(expected_scores[i], node.scores[i], 1e-10) << "score " << i;
+  }
+}
+
+TEST(mathPrimScalProbWienerFullPrecScal,
      logScaledIntegrationReportsNonconvergence) {
   const stan::math::internal::wiener7_log_params params{
       1e-6,   0.1,   -10.0,
