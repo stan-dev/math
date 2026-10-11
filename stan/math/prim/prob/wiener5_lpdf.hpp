@@ -666,7 +666,7 @@ inline auto wiener5_grad_sv(const T_y& y, const T_a& a, const T_v& v,
  * @param err argument to replace
  */
 template <size_t NestedIndex, typename Scalar1, typename Scalar2>
-inline void assign_err(Scalar1 arg, Scalar2 err) {
+inline void assign_err(Scalar1& arg, Scalar2 err) {
   arg = err;
 }
 
@@ -709,7 +709,8 @@ template <int ErrIndex, size_t NestedIndex = 0,
 inline auto estimate_with_err_check(F&& functor, T_err&& log_err,
                                     ArgsTupleT&&... args_tuple) {
   auto result = functor(args_tuple...);
-  auto log_fabs_result = LogResult ? log(fabs(result)) : fabs(result);
+  // With LogResult == false the result is already on the log scale.
+  auto log_fabs_result = LogResult ? log(fabs(result)) : result;
   if (log_fabs_result < log_err) {
     log_fabs_result = is_inf(log_fabs_result) ? 0 : log_fabs_result;
     auto err_args_tuple = std::make_tuple(args_tuple...);
@@ -859,6 +860,10 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     log_density += l_density;
 
     const auto new_est_err = l_density + log_error_derivative - LOG_FOUR;
+    // The series tolerance of the gradient functions is absolute (for the
+    // derivative of the density). Where the density is below 1, make it
+    // relative to the density, or the series stop too early.
+    const auto log_error_gradient = log_error_absolute + fmin(0.0, l_density);
 
     // computation of derivatives and precision checks
     // computation of derivative for t and precision check in order to give
@@ -870,7 +875,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
               return internal::wiener5_grad_t<GradientCalc::OFF>(args...);
             },
             new_est_err, y_value - t0_value, a_value, v_value, w_value,
-            sv_value, log_error_absolute);
+            sv_value, log_error_gradient);
 
     // computation of derivatives and precision checks
     if constexpr (is_autodiff_v<T_y>) {
@@ -884,7 +889,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                 return internal::wiener5_grad_a<GradientCalc::OFF>(args...);
               },
               new_est_err, y_value - t0_value, a_value, v_value, w_value,
-              sv_value, log_error_absolute);
+              sv_value, log_error_gradient);
     }
     if constexpr (is_autodiff_v<T_t0>) {
       partials<2>(ops_partials)[i] = -deriv_y;
@@ -897,7 +902,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                 return internal::wiener5_grad_w<GradientCalc::OFF>(args...);
               },
               new_est_err, y_value - t0_value, a_value, v_value, w_value,
-              sv_value, log_error_absolute);
+              sv_value, log_error_gradient);
     }
     if constexpr (is_autodiff_v<T_v>) {
       partials<4>(ops_partials)[i]
