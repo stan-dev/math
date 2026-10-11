@@ -166,6 +166,53 @@ TEST(StanMath_hcubature_prim, test1) {
                    20000, 0.0, reqRelError_3, 0.999998);
 }
 
+TEST(StanMath_hcubature_prim, split_box_counted_once) {
+  // A step at 0.5. The first box fails the tolerance. After one split, each
+  // half is integrated exactly and every error estimate is 0. A box that has
+  // been split must not be split again: its integral would be counted twice.
+  using stan::math::hcubature;
+  const auto step = [](const auto& x) {
+    stan::scalar_seq_view<std::decay_t<decltype(x)>> x_vec(x);
+    return x_vec[0] > 0.5 ? 1.0 : 0.0;
+  };
+  for (int dim : {1, 2}) {
+    const Eigen::VectorXd a = Eigen::VectorXd::Zero(dim);
+    const Eigen::VectorXd b = Eigen::VectorXd::Ones(dim);
+    EXPECT_NEAR(hcubature(step, std::make_tuple(), dim, a, b, 6000, 0.0, 1e-6),
+                0.5, 1e-12)
+        << "dim = " << dim;
+  }
+}
+
+TEST(StanMath_hcubature_prim, stops_at_tolerance) {
+  // The loop must stop when the summed error estimate meets the tolerance,
+  // not run to max_eval.
+  using stan::math::hcubature;
+  int n_evals = 0;
+  const auto f_sqrt = [&n_evals](const auto& x) {
+    ++n_evals;
+    stan::scalar_seq_view<std::decay_t<decltype(x)>> x_vec(x);
+    return std::sqrt(x_vec[0]);
+  };
+  const Eigen::VectorXd a{{0.0}};
+  const Eigen::VectorXd b{{1.0}};
+  EXPECT_NEAR(hcubature(f_sqrt, std::make_tuple(), 1, a, b, 100000, 0.0, 1e-8),
+              2.0 / 3.0, 1e-8);
+  EXPECT_LT(n_evals, 2000);
+
+  n_evals = 0;
+  const auto f_gauss = [&n_evals](const auto& x, double sigma) {
+    ++n_evals;
+    return hcubature_test::f4(x, sigma);
+  };
+  const Eigen::VectorXd a_2{{0.0, 0.0}};
+  const Eigen::VectorXd b_2{{1.0, 1.0}};
+  EXPECT_NEAR(
+      hcubature(f_gauss, std::make_tuple(0.1), 2, a_2, b_2, 100000, 0.0, 1e-6),
+      1.0, 1e-6);
+  EXPECT_LT(n_evals, 20000);
+}
+
 TEST(StanMath_hcubature_prim, test_issue_3075) {
   // test for regressions against issue
   // https://github.com/stan-dev/math/issues/3075
