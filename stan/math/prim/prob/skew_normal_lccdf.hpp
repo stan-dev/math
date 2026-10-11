@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_PROB_SKEW_NORMAL_LCCDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/minus.hpp>
 #include <stan/math/prim/prob/skew_normal_lcdf.hpp>
 
 namespace stan {
@@ -33,8 +33,7 @@ template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
 inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lccdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
   return internal::skew_normal_lcdf_impl<internal::skew_normal_lccdf_func>(
-      -as_array_or_scalar(y), -as_array_or_scalar(mu), sigma,
-      -as_array_or_scalar(alpha));
+      minus(y), minus(mu), sigma, minus(alpha));
 }
 
 }  // namespace math
