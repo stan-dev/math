@@ -23,16 +23,24 @@
 
 namespace stan {
 namespace math {
+namespace internal {
+constexpr char skew_normal_lcdf_func[] = "skew_normal_lcdf";
 
-template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lcdf(
+/**
+ * Log of the skew normal cdf. The template argument `func` is the function
+ * name in error messages, so that `skew_normal_lccdf` can call this
+ * implementation with reflected arguments.
+ */
+template <const char* func, typename T_y, typename T_loc, typename T_scale,
+          typename T_shape>
+inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lcdf_impl(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
   using T_alpha_ref = ref_type_if_not_constant_t<T_shape>;
-  static constexpr const char* function = "skew_normal_lcdf";
+  static constexpr const char* function = func;
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma, "Shape parameter",
                          alpha);
@@ -99,6 +107,28 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lcdf(
     }
   }
   return ops_partials.build(cdf_log);
+}
+}  // namespace internal
+
+/** \ingroup prob_dists
+ * Returns the log of the skew normal cumulative distribution function.
+ *
+ * @tparam T_y type of the random variable
+ * @tparam T_loc type of the location parameter
+ * @tparam T_scale type of the scale parameter
+ * @tparam T_shape type of the shape parameter
+ * @param y random variable
+ * @param mu location parameter
+ * @param sigma scale parameter
+ * @param alpha shape parameter
+ * @return The log of the skew normal cdf evaluated at the specified
+ *   arguments. If given containers, the log of the product of the cdfs.
+ */
+template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
+inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lcdf(
+    const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
+  return internal::skew_normal_lcdf_impl<internal::skew_normal_lcdf_func>(
+      y, mu, sigma, alpha);
 }
 
 }  // namespace math
