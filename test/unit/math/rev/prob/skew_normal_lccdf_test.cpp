@@ -1,5 +1,6 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <test/unit/math/rev/prob/skew_normal_cdf_test_helpers.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
@@ -8,14 +9,11 @@
 
 namespace skew_normal_lccdf_test {
 
-struct ref_row {
-  double y, mu, sigma, alpha;
-  double lccdf, d_y, d_mu, d_sigma, d_alpha;
-};
+using skew_normal_cdf_test::ref_row;
 
 // References: mpmath at 40 digits. The tail probability is computed twice,
 // from the Owen's T integral without subtraction and from the integral of
-// the density over the upper tail; the two agree to at least 38 digits.
+// the density over the tail; the two agree to at least 38 digits.
 // A partial below the double range is written as 0.
 
 // Upper tail. Computing the tail as 1 - Phi(z) loses all digits from
@@ -33,6 +31,15 @@ const std::vector<ref_row> upper_tail = {
   {35.0, 0.0, 1.0, 0.1, -616.28218427221583, -35.028438615296751, 35.028438615296751, 1225.9953515353863, 0.030273094099071228},
 };
 
+// Short tail of the ccdf, z > 0 and alpha < 0: 1 - Phi(z) + 2 T(z, alpha)
+// cancels there, for alpha |z| >= 6 to all digits.
+const std::vector<ref_row> short_tail = {
+  {1.0, 0.0, 1.0, -10.0, -58.591263384976217, -102.94417817175902, 102.94417817175902, 102.94417817175902, 10.292474347248229},
+  {1.5, 0.0, 1.0, -5.0, -36.122320271091644, -40.271258082380923, 40.271258082380923, 60.406887123571384, 11.816464401459614},
+  {40.0, 0.0, 1.0, -0.1, -814.28589778635187, -40.44750446065164, 40.44750446065164, 1617.9001784260656, 169.22303349079141},
+  {6.0, 1.0, 0.5, -3.0, -509.15419733250449, -200.39876451091412, 200.39876451091412, 2003.9876451091412, 300.93140657945882},
+};
+
 // Bulk and the side where the ccdf is close to 1.
 const std::vector<ref_row> bulk = {
   {0.5, 0.0, 1.0, -3.0, -5.0562417512463643, -7.3854067902549387, 7.3854067902549387, 3.6927033951274694, 1.4317919510486336},
@@ -44,38 +51,37 @@ const std::vector<ref_row> bulk = {
 
 constexpr double rel_tol = 1e-12;
 
-void expect_row(const ref_row& r) {
-  using stan::math::var;
-  var y = r.y;
-  var mu = r.mu;
-  var sigma = r.sigma;
-  var alpha = r.alpha;
-  var lp = stan::math::skew_normal_lccdf(y, mu, sigma, alpha);
-  std::vector<var> x{y, mu, sigma, alpha};
-  std::vector<double> g;
-  lp.grad(x, g);
-  const double ref[5] = {r.lccdf, r.d_y, r.d_mu, r.d_sigma, r.d_alpha};
-  const double got[5] = {lp.val(), g[0], g[1], g[2], g[3]};
-  const char* name[5] = {"value", "d_y", "d_mu", "d_sigma", "d_alpha"};
-  for (int i = 0; i < 5; ++i) {
-    EXPECT_NEAR(got[i], ref[i], rel_tol * std::fabs(ref[i]))
-        << name[i] << " at y = " << r.y << ", mu = " << r.mu
-        << ", sigma = " << r.sigma << ", alpha = " << r.alpha;
+struct lccdf_functor {
+  template <typename T1, typename T2, typename T3, typename T4>
+  auto operator()(const T1& y, const T2& mu, const T3& sigma,
+                  const T4& alpha) const {
+    return stan::math::skew_normal_lccdf(y, mu, sigma, alpha);
   }
-  stan::math::recover_memory();
-}
+};
 
 }  // namespace skew_normal_lccdf_test
 
 TEST_F(AgradRev, ProbDistributionsSkewNormal_lccdf_upper_tail) {
+  using skew_normal_lccdf_test::lccdf_functor;
   for (const auto& r : skew_normal_lccdf_test::upper_tail) {
-    skew_normal_lccdf_test::expect_row(r);
+    skew_normal_cdf_test::expect_row(r, lccdf_functor(),
+                                     skew_normal_lccdf_test::rel_tol);
+  }
+}
+
+TEST_F(AgradRev, ProbDistributionsSkewNormal_lccdf_short_tail) {
+  using skew_normal_lccdf_test::lccdf_functor;
+  for (const auto& r : skew_normal_lccdf_test::short_tail) {
+    skew_normal_cdf_test::expect_row(r, lccdf_functor(),
+                                     skew_normal_lccdf_test::rel_tol);
   }
 }
 
 TEST_F(AgradRev, ProbDistributionsSkewNormal_lccdf_bulk) {
+  using skew_normal_lccdf_test::lccdf_functor;
   for (const auto& r : skew_normal_lccdf_test::bulk) {
-    skew_normal_lccdf_test::expect_row(r);
+    skew_normal_cdf_test::expect_row(r, lccdf_functor(),
+                                     skew_normal_lccdf_test::rel_tol);
   }
 }
 
@@ -97,7 +103,7 @@ TEST_F(AgradRev, ProbDistributionsSkewNormal_lccdf_vectorized_tail) {
   double d_mu = 0;
   double d_sigma = 0;
   for (int i = 0; i < 3; ++i) {
-    value += upper_tail[i].lccdf;
+    value += upper_tail[i].value;
     d_mu += upper_tail[i].d_mu;
     d_sigma += upper_tail[i].d_sigma;
     EXPECT_NEAR(g[i], upper_tail[i].d_y,
