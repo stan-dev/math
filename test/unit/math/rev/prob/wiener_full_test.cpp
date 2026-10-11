@@ -401,6 +401,54 @@ TEST_F(AgradRev, mathRevCorrectValues_wiener_lccdf_unnorm) {
   }
 }
 
+TEST_F(AgradRev, ProbWienerFull_density_below_smallest_double) {
+  /* Densities far below the smallest normal double (issue #3329). With
+   * st0 > y - t0 and sw -> 0, the density is F5(y - t0) / st0, where F5 is
+   * the distribution function of the 5-parameter model. Hence
+   * d/dst0 = -1 / st0 and d/dy = -d/dt0 = p5(y - t0) / F5(y - t0). The
+   * references for log(F5 / st0) and p5 / F5 are from Boost Gauss-Kronrod
+   * quadrature of the 5-parameter density, scaled by its largest value.
+   * d/dsw is O(sw) as sw -> 0; before the fix of the sw integration
+   * limits it was -1/sw = -1e8.
+   */
+  using stan::math::var;
+  const double a = 0.1, t0 = 0.0, w = 1e-4, v = -10.0, sv = 0.1, st0 = 1e-3;
+  // y, log(F5(y) / st0), p5(y) / F5(y)
+  const std::vector<std::vector<double>> refs
+      = {{1e-6, -4998.0685384088774, 4999186937.1439915},
+         {3e-6, -1665.4275870208894, 555376585.70015228},
+         {5.5435493922668729e-06, -901.03029980710346, 162610279.12970507},
+         {7.5356592945287405e-06, -662.74912830365952, 87982443.012321636},
+         {3e-05, -166.59848075414246, 5538827.1596829286}};
+  for (const auto& ref : refs) {
+    for (double sw_value : {0.0, 1e-8}) {
+      for (double precision : {1e-4, 1e-8}) {
+        var y = ref[0];
+        var t0_v = t0;
+        var sw = sw_value;
+        var st0_v = st0;
+        var lp = stan::math::wiener_lpdf(y, a, t0_v, w, v, sv, sw, st0_v,
+                                         precision);
+        lp.grad();
+        const double tol = precision < 1e-6 ? 1e-9 : 1e-5;
+        EXPECT_NEAR(lp.val(), ref[1], tol * 10);
+        EXPECT_NEAR(y.adj(), ref[2], tol * ref[2]);
+        EXPECT_NEAR(t0_v.adj(), -ref[2], tol * ref[2]);
+        EXPECT_FLOAT_EQ(st0_v.adj(), -1 / st0);
+        if (sw_value == 0) {
+          EXPECT_EQ(sw.adj(), 0);
+        } else {
+          // d/dsw = (sw derivative integral) / density - 1 / sw: with
+          // sw = 1e-8 a relative integration error e gives an error of about
+          // e / sw, so only check that it is not -1 / sw.
+          EXPECT_LT(std::fabs(sw.adj()), 1.0);
+        }
+        stan::math::recover_memory();
+      }
+    }
+  }
+}
+
 TEST_F(AgradRev, ProbWienerFull_sw_gradient_st0_beyond_y) {
   /* d/dsw when st0 > y - t0. The integral over the st0 variable must use the
    * limits of that variable, [0, (y - t0) / st0], not [0, 1]: with [0, 1]
@@ -437,4 +485,14 @@ TEST_F(AgradRev, ProbWienerFull_sw_gradient_st0_beyond_y) {
     }
     stan::math::recover_memory();
   }
+  // A density near the smallest normal double, sharply peaked in the st0
+  // direction: the 2-D integration error is 6.4e-4 here (same before the
+  // change), so the tolerance is looser.
+  var y = 0.200001;
+  var sw = 0.25;
+  var lp = stan::math::wiener_lpdf(y, 0.1, 0.2, 0.5, -30.0, 0.1, sw, 1e-3);
+  lp.grad();
+  EXPECT_NEAR(lp.val(), -708.03896211156052, 2e-3);
+  EXPECT_NEAR(sw.adj(), 1875.1599297689354, 2e-3 * 1875.16);
+  EXPECT_NEAR(y.adj(), 704621632.51963747, 2e-3 * 704621632.5);
 }

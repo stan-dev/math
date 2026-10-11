@@ -293,13 +293,16 @@ inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w,
  * @param sv The inter-trial variability of the drift rate
  * @param log_err The log error tolerance in the computation of the number
  * of terms for the infinite sums
+ * @param log_shift Subtracted from the log density before the
+ * natural-scale result is formed; not used on the log scale
  * @return density
  */
 template <bool NaturalScale = false, typename T_y, typename T_a, typename T_w,
           typename T_v, typename T_sv, typename T_err>
 inline auto wiener5_density(const T_y& y, const T_a& a, const T_v& v,
                             const T_w& w, const T_sv& sv,
-                            T_err log_err = log(1e-12)) noexcept {
+                            T_err log_err = log(1e-12),
+                            double log_shift = 0.0) noexcept {
   const auto log_error_term = wiener5_compute_log_error_term(y, a, v, w, sv);
   const auto log_error = (log_err - log_error_term);
   const auto n_terms_small_t
@@ -314,10 +317,10 @@ inline auto wiener5_density(const T_y& y, const T_a& a, const T_v& v,
   if (2 * n_terms_small_t <= n_terms_large_t) {
     auto log_density = log_error_term - 0.5 * LOG_TWO - LOG_SQRT_PI
                        - 1.5 * (log(y) - 2.0 * log(a)) + res;
-    return NaturalScale ? exp(log_density) : log_density;
+    return NaturalScale ? exp(log_density - log_shift) : log_density;
   } else {
     auto log_density = log_error_term + res + LOG_PI;
-    return NaturalScale ? exp(log_density) : log_density;
+    return NaturalScale ? exp(log_density - log_shift) : log_density;
   }
 }
 
@@ -340,13 +343,16 @@ inline auto wiener5_density(const T_y& y, const T_a& a, const T_v& v,
  * @param sv The inter-trial variability of the drift rate
  * @param log_err The log error tolerance in the computation of the number
  * of terms for the infinite sums
+ * @param log_shift Subtracted from the log density before the
+ * natural-scale result is formed; not used on the log scale
  * @return Gradient with respect to t
  */
 template <bool WrtLog = false, typename T_y, typename T_a, typename T_w,
           typename T_v, typename T_sv, typename T_err>
 inline auto wiener5_grad_t(const T_y& y, const T_a& a, const T_v& v,
                            const T_w& w, const T_sv& sv,
-                           T_err log_err = log(1e-12)) noexcept {
+                           T_err log_err = log(1e-12),
+                           double log_shift = 0.0) noexcept {
   const auto two_log_a = 2.0 * log(a);
   const auto log_y_asq = log(y) - two_log_a;
   const auto log_error_term = wiener5_compute_log_error_term(y, a, v, w, sv);
@@ -380,13 +386,13 @@ inline auto wiener5_grad_t(const T_y& y, const T_a& a, const T_v& v,
           + newsign
                 * exp(log_error_term - two_log_a - 1.5 * LOG_TWO - LOG_SQRT_PI
                       - 3.5 * log_y_asq + result - log_density);
-    return WrtLog ? ans * exp(log_density) : ans;
+    return WrtLog ? ans * exp(log_density - log_shift) : ans;
   } else {
     auto ans = density_part_one
                - newsign
                      * exp(log_error_term - two_log_a + 3.0 * LOG_PI - LOG_TWO
                            + result - log_density);
-    return WrtLog ? ans * exp(log_density) : ans;
+    return WrtLog ? ans * exp(log_density - log_shift) : ans;
   }
 }
 
@@ -409,13 +415,16 @@ inline auto wiener5_grad_t(const T_y& y, const T_a& a, const T_v& v,
  * @param sv The inter-trial variability of the drift rate
  * @param log_err The log error tolerance in the computation of the number
  * of terms for the infinite sums
+ * @param log_shift Subtracted from the log density before the
+ * natural-scale result is formed; not used on the log scale
  * @return Gradient with respect to a
  */
 template <bool WrtLog = false, typename T_y, typename T_a, typename T_w,
           typename T_v, typename T_sv, typename T_err>
 inline auto wiener5_grad_a(const T_y& y, const T_a& a, const T_v& v,
                            const T_w& w, const T_sv& sv,
-                           T_err log_err = log(1e-12)) noexcept {
+                           T_err log_err = log(1e-12),
+                           double log_shift = 0.0) noexcept {
   const auto two_log_a = 2.0 * log(a);
   const auto log_error_term = wiener5_compute_log_error_term(y, a, v, w, sv);
   const auto one_m_w = 1.0 - w;
@@ -446,13 +455,13 @@ inline auto wiener5_grad_a(const T_y& y, const T_a& a, const T_v& v,
                      * exp(-0.5 * LOG_TWO - LOG_SQRT_PI - 2.5 * log(y)
                            + 2.0 * two_log_a + log_error_term + result
                            - log_density);
-    return WrtLog ? ans * exp(log_density) : ans;
+    return WrtLog ? ans * exp(log_density - log_shift) : ans;
   } else {
     auto ans = density_part_one - 2.0 / a
                + newsign
                      * exp(log(y) + log_error_term - 3.0 * (log(a) - LOG_PI)
                            + result - log_density);
-    return WrtLog ? ans * exp(log_density) : ans;
+    return WrtLog ? ans * exp(log_density - log_shift) : ans;
   }
 }
 
@@ -475,16 +484,19 @@ inline auto wiener5_grad_a(const T_y& y, const T_a& a, const T_v& v,
  * @param sv The inter-trial variability of the drift rate
  * @param log_err The log error tolerance in the computation of the number
  * of terms for the infinite sums
+ * @param log_shift Subtracted from the log density before the
+ * natural-scale result is formed; not used on the log scale
  * @return Gradient with respect to v
  */
 template <bool WrtLog = false, typename T_y, typename T_a, typename T_w,
           typename T_v, typename T_sv, typename T_err>
 inline auto wiener5_grad_v(const T_y& y, const T_a& a, const T_v& v,
                            const T_w& w, const T_sv& sv,
-                           T_err log_err = log(1e-12)) noexcept {
+                           T_err log_err = log(1e-12),
+                           double log_shift = 0.0) noexcept {
   auto ans = (a * (1 - w) - v * y) / (1.0 + square(sv) * y);
   if constexpr (WrtLog) {
-    return ans * wiener5_density<true>(y, a, v, w, sv, log_err);
+    return ans * wiener5_density<true>(y, a, v, w, sv, log_err, log_shift);
   } else {
     return ans;
   }
@@ -509,13 +521,16 @@ inline auto wiener5_grad_v(const T_y& y, const T_a& a, const T_v& v,
  * @param sv The inter-trial variability of the drift rate
  * @param log_err The log error tolerance in the computation of the number
  * of terms for the infinite sums
+ * @param log_shift Subtracted from the log density before the
+ * natural-scale result is formed; not used on the log scale
  * @return Gradient with respect to w
  */
 template <bool WrtLog = false, typename T_y, typename T_a, typename T_w,
           typename T_v, typename T_sv, typename T_err>
 inline auto wiener5_grad_w(const T_y& y, const T_a& a, const T_v& v,
                            const T_w& w, const T_sv& sv,
-                           T_err log_err = log(1e-12)) noexcept {
+                           T_err log_err = log(1e-12),
+                           double log_shift = 0.0) noexcept {
   using ret_t = return_type_t<T_y, T_a, T_w, T_v, T_sv, T_err>;
 
   const auto y_asq = y / square(a);
@@ -612,7 +627,7 @@ inline auto wiener5_grad_w(const T_y& y, const T_a& a, const T_v& v,
   const auto ans = pref_grad_w + series_grad_w;
 
   if constexpr (WrtLog) {
-    return ans * wiener5_density<true>(y, a, v, w, sv, log_err);
+    return ans * wiener5_density<true>(y, a, v, w, sv, log_err, log_shift);
   } else {
     return ans;
   }
@@ -637,13 +652,16 @@ inline auto wiener5_grad_w(const T_y& y, const T_a& a, const T_v& v,
  * @param sv The inter-trial variability of the drift rate
  * @param log_err The log error tolerance in the computation of the number
  * of terms for the infinite sums
+ * @param log_shift Subtracted from the log density before the
+ * natural-scale result is formed; not used on the log scale
  * @return Gradient with respect to sv
  */
 template <bool WrtLog = false, typename T_y, typename T_a, typename T_w,
           typename T_v, typename T_sv, typename T_err>
 inline auto wiener5_grad_sv(const T_y& y, const T_a& a, const T_v& v,
                             const T_w& w, const T_sv& sv,
-                            T_err log_err = log(1e-12)) noexcept {
+                            T_err log_err = log(1e-12),
+                            double log_shift = 0.0) noexcept {
   const auto one_plus_svsqr_y = 1.0 + square(sv) * y;
   const auto one_m_w = 1.0 - w;
   const auto neg_v = -v;
@@ -652,7 +670,9 @@ inline auto wiener5_grad_sv(const T_y& y, const T_a& a, const T_v& v,
                    + square(neg_v * y))
                   / square(one_plus_svsqr_y);
   const auto ans = sv * (t1 + t2);
-  return WrtLog ? ans * wiener5_density<true>(y, a, v, w, sv, log_err) : ans;
+  return WrtLog
+             ? ans * wiener5_density<true>(y, a, v, w, sv, log_err, log_shift)
+             : ans;
 }
 
 /**
