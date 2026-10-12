@@ -27,6 +27,20 @@ TEST_F(AgradRev, mathMixScalFun_bernoulli_logit_glm_lpmf) {
   stan::test::expect_ad(f(y), x_rowvec, alpha[0], beta);
 }
 
+// x is a column vector: a design matrix with a single attribute
+TEST_F(AgradRev, mathMixScalFun_bernoulli_logit_glm_lpmf_x_column_vector) {
+  std::vector<int> y{0, 1};
+  auto f = [y](const auto& x, const auto& alpha, const auto& beta) {
+    return stan::math::bernoulli_logit_glm_lpmf(y, x, alpha, beta);
+  };
+
+  Eigen::VectorXd x = Eigen::VectorXd::Random(2);
+  Eigen::VectorXd alpha = Eigen::VectorXd::Random(2);
+  Eigen::VectorXd beta = Eigen::VectorXd::Random(1);
+
+  stan::test::expect_ad(f, x, alpha, beta);
+}
+
 namespace bernoulli_logit_glm_test {
 // theta = alpha + x beta = J v with v = (alpha, beta), J = [I, x]. With
 // s = 2y - 1, t = s theta, p = inv_logit(t), q = 1 - p, the n-th summand is
