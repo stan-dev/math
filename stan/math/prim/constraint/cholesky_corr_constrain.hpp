@@ -3,7 +3,8 @@
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/log1m.hpp>
+#include <stan/math/prim/fun/dot_product.hpp>
+#include <stan/math/prim/fun/log_cosh.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/constraint/corr_constrain.hpp>
@@ -11,6 +12,33 @@
 
 namespace stan {
 namespace math {
+
+namespace internal {
+/**
+ * Return the coefficients `c` for which the log absolute Jacobian
+ * determinant of `cholesky_corr_constrain(y, K)` is
+ * `-sum_n c_n log(cosh(y_n))`.
+ *
+ * With `z = tanh(y)`, row `i` holds `z_m sqrt(prod_{l < m} (1 - z_l^2))` in
+ * column `m < i`. The Jacobian has a factor `1 - z_m^2` for each element
+ * and a factor `sqrt(prod_{l < j} (1 - z_l^2))` for each column
+ * `0 < j < i`. With `log(1 - z_m^2) = -2 log(cosh(y_m))`, the coefficient
+ * of element `m` of row `i` is `2 + (i - 1 - m) = i + 1 - m`.
+ *
+ * @param K number of rows of the Cholesky factor
+ * @return coefficients in the order of the unconstrained vector
+ */
+inline Eigen::VectorXd cholesky_corr_log_jacobian_coefficients(int K) {
+  Eigen::VectorXd c((K * (K - 1)) / 2);
+  int k = 0;
+  for (int i = 1; i < K; ++i) {
+    for (int m = 0; m < i; ++m) {
+      c.coeffRef(k++) = i + 1 - m;
+    }
+  }
+  return c;
+}
+}  // namespace internal
 
 template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
@@ -55,11 +83,13 @@ cholesky_corr_constrain(const EigVec& y, int K, Lp& lp) {
   int k_choose_2 = (K * (K - 1)) / 2;
   check_size_match("cholesky_corr_constrain", "y.size()", y.size(),
                    "k_choose_2", k_choose_2);
-  Matrix<T_scalar, Dynamic, 1> z = corr_constrain(y, lp);
+  Matrix<T_scalar, Dynamic, 1> z = corr_constrain(y);
   Matrix<T_scalar, Dynamic, Dynamic> x(K, K);
   if (K == 0) {
     return x;
   }
+  lp -= dot_product(internal::cholesky_corr_log_jacobian_coefficients(K),
+                    log_cosh(y));
   x.setZero();
   x.coeffRef(0, 0) = 1;
   int k = 0;
@@ -67,7 +97,6 @@ cholesky_corr_constrain(const EigVec& y, int K, Lp& lp) {
     x.coeffRef(i, 0) = z.coeff(k++);
     T_scalar sum_sqs = square(x.coeff(i, 0));
     for (int j = 1; j < i; ++j) {
-      lp += 0.5 * log1m(sum_sqs);
       x.coeffRef(i, j) = z.coeff(k++) * sqrt(1.0 - sum_sqs);
       sum_sqs += square(x.coeff(i, j));
     }
