@@ -80,8 +80,8 @@ TEST(ProbStdNormal, value_only_storage) {
 
   EXPECT_TRUE(std_normal_lcdf_value_grad<false>(z).isApprox(expected));
   EXPECT_TRUE((z == original).all());
-  EXPECT_TRUE(std_normal_lcdf_value_grad<false>(z.segment(0, 3))
-                  .isApprox(expected));
+  EXPECT_TRUE(
+      std_normal_lcdf_value_grad<false>(z.segment(0, 3)).isApprox(expected));
   EXPECT_TRUE((z == original).all());
   EXPECT_TRUE(std_normal_lcdf_value_grad<false>(z + 0).isApprox(expected));
   EXPECT_TRUE((z == original).all());
