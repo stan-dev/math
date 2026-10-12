@@ -125,4 +125,58 @@ TEST(OpenCLLubConstrain, prim_rev_values_large) {
                                                 b_scal, c_scal);
 }
 
+TEST(OpenCLLubConstrain, rev_derivatives_tails) {
+  using stan::math::from_matrix_cl;
+  using stan::math::matrix_cl;
+  using stan::math::to_matrix_cl;
+  using stan::math::var;
+  using stan::math::var_value;
+  // mpmath at 50 digits, lb = -2, ub = 3: dy/dx = 5 inv_logit(x) inv_logit(-x),
+  // dy/dlb = inv_logit(-x), dlogJ/dx = inv_logit(-x) - inv_logit(x)
+  Eigen::VectorXd x(7);
+  x << -37, -20, 0, 20, 30, 37, 40;
+  Eigen::VectorXd dx(7);
+  dx << 4.2665238128720322e-16, 1.0305768069709247e-8, 1.25,
+      1.0305768069709247e-8, 4.6788114844192117e-13, 4.2665238128720322e-16,
+      2.1241771276457945e-17;
+  Eigen::VectorXd dlb(7);
+  dlb << 9.9999999999999991e-1, 9.9999999793884638e-1, 0.5,
+      2.0611536181902036e-9, 9.357622968839299e-14, 8.5330476257440651e-17,
+      4.248354255291589e-18;
+  Eigen::VectorXd dlogj(7);
+  dlogj << 9.9999999999999983e-1, 9.9999999587769276e-1, 0.0,
+      -9.9999999587769276e-1, -9.9999999999981285e-1, -9.9999999999999983e-1,
+      -9.9999999999999999e-1;
+  Eigen::VectorXd lb = Eigen::VectorXd::Constant(7, -2.0);
+  Eigen::VectorXd ub = Eigen::VectorXd::Constant(7, 3.0);
+  for (bool use_lp : {false, true}) {
+    var_value<matrix_cl<double>> x_cl = to_matrix_cl(x);
+    var_value<matrix_cl<double>> lb_cl = to_matrix_cl(lb);
+    var_value<matrix_cl<double>> ub_cl = to_matrix_cl(ub);
+    var lp = 0;
+    var s
+        = use_lp
+              ? stan::math::sum(
+                  stan::math::lub_constrain(x_cl, lb_cl, ub_cl, lp))
+              : stan::math::sum(stan::math::lub_constrain(x_cl, lb_cl, ub_cl));
+    s.grad();
+    Eigen::VectorXd x_adj = from_matrix_cl(x_cl.adj());
+    Eigen::VectorXd lb_adj = from_matrix_cl(lb_cl.adj());
+    for (int i = 0; i < x.size(); ++i) {
+      EXPECT_NEAR(dx(i), x_adj(i), 1e-13 * dx(i)) << "dx at x = " << x(i);
+      EXPECT_NEAR(dlb(i), lb_adj(i), 1e-13 * dlb(i)) << "dlb at x = " << x(i);
+    }
+    if (use_lp) {
+      stan::math::set_zero_all_adjoints();
+      lp.grad();
+      x_adj = from_matrix_cl(x_cl.adj());
+      for (int i = 0; i < x.size(); ++i) {
+        EXPECT_NEAR(dlogj(i), x_adj(i), 1e-13 * std::fabs(dlogj(i)))
+            << "dlogJ/dx at x = " << x(i);
+      }
+    }
+    stan::math::recover_memory();
+  }
+}
+
 #endif
