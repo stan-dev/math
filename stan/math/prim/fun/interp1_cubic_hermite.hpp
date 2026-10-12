@@ -151,6 +151,19 @@ inline return_type_t<T, Coef, Knots> interp1_cubic_hermite_eval(
          + dx * (coef(i, 1) + dx * (coef(i, 2) + dx * coef(i, 3)));
 }
 
+// Forward to your actual implementation
+template <typename EigVecX, typename EigVecY>
+inline auto interp1_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
+                                      const EigVecY& dydxk, std::ostream* pstream__) {
+  return interp1_cubic_hermite_setup(xk, yk, dydxk); // calls your version without pstream
+}
+
+template <typename T, typename Coef, typename Knots>
+inline auto interp1_cubic_hermite_eval(const T& x, const std::tuple<Coef, Knots>& W,
+                                     std::ostream* pstream__) {
+  return interp1_cubic_hermite_eval(x, W); // calls your version without pstream
+}
+
 }  // namespace math
 }  // namespace stan
 
