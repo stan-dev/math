@@ -1,0 +1,9 @@
+This file documents changes done for the stan-math project
+
+- Added an `abs_tol` parameter to
+  `boost/math/quadrature/gauss_kronrod.hpp`'s public
+  `gauss_kronrod<Real, N>::integrate()`, and forwarded it to the five
+  `recursive_adaptive_integrate()` entry points in place of the hard-coded
+  `Real(0)`.
+
+  Used by `stan/math/prim/functor/integrate_1d_gauss_kronrod.hpp`.

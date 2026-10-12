@@ -39,15 +39,16 @@ struct poisson_log_likelihood {
     Eigen::VectorXd counts_per_group = Eigen::VectorXd::Zero(theta.size());
     Eigen::VectorXd n_per_group = Eigen::VectorXd::Zero(theta.size());
 
-    for (int i = 0; i < theta.size(); i++) {
+    double norm_constant = 0;
+    for (size_t i = 0; i < y_index.size(); i++) {
       counts_per_group(y_index[i] - 1) += y[i];
       n_per_group(y_index[i] - 1) += 1;
+      norm_constant -= lgamma(y[i] + 1.0);
     }
 
     auto theta_offset = to_ref(add(theta, mean));
 
-    return -sum(lgamma(add(counts_per_group, 1)))
-           + dot_product(theta_offset, counts_per_group)
+    return norm_constant + dot_product(theta_offset, counts_per_group)
            - dot_product(n_per_group, exp(theta_offset));
   }
 };

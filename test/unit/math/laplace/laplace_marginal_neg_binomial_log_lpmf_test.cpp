@@ -121,4 +121,107 @@ TEST_P(laplace_disease_map_test, laplace_marginal_neg_binomial_2_log_lpmf) {
 
 LAPLACE_INSTANTIATE_TEST_SUITE_P(laplace_disease_map_test);
 
+// Reference likelihood computed per observation with the prim lpmf,
+// indexing the dispersion by group when it is a vector.
+struct neg_binomial_2_log_obs_likelihood {
+  template <typename Theta, typename Eta, typename Mean>
+  auto operator()(const Theta& theta, const Eta& eta, const std::vector<int>& y,
+                  const std::vector<int>& y_index, const Mean& mean,
+                  std::ostream* /*pstream*/) const {
+    Eigen::Matrix<stan::return_type_t<Theta, Mean>, Eigen::Dynamic, 1>
+        theta_obs(y.size());
+    Eigen::Matrix<stan::scalar_type_t<Eta>, Eigen::Dynamic, 1> eta_obs(
+        y.size());
+    for (size_t i = 0; i < y.size(); ++i) {
+      theta_obs(i) = theta(y_index[i] - 1) + mean(y_index[i] - 1);
+      if constexpr (stan::is_stan_scalar<Eta>::value) {
+        eta_obs(i) = eta;
+      } else {
+        eta_obs(i) = eta(y_index[i] - 1);
+      }
+    }
+    return stan::math::neg_binomial_2_log_lpmf(y, theta_obs, eta_obs);
+  }
+};
+
+class laplace_marginal_neg_binomial_log_lpmf_grouped : public ::testing::Test {
+ protected:
+  const std::vector<int> y{1, 0, 5, 2, 7, 0};
+  const std::vector<int> y_index{1, 2, 3, 1, 2, 1};
+  const Eigen::VectorXd mean{{0.3, -0.2, 0.1}};
+  const std::vector<Eigen::VectorXd> x{
+      Eigen::VectorXd{{0.05100797, 0.16086164}},
+      Eigen::VectorXd{{-0.59823393, 0.98701425}},
+      Eigen::VectorXd{{0.31296868, -0.68926772}}};
+  const Eigen::VectorXd theta_0 = Eigen::VectorXd::Zero(3);
+  static constexpr double alpha = 1.6;
+  static constexpr double rho = 0.45;
+  static constexpr double tolerance = 1e-12;
+  static constexpr int max_num_steps = 1000;
+  static constexpr int hessian_block_size = 1;
+  static constexpr int solver = 1;
+  static constexpr int max_steps_line_search = 0;
+
+  template <typename Eta>
+  auto marginal(const Eta& eta) {
+    return stan::math::laplace_marginal_tol_neg_binomial_2_log_lpmf(
+        y, y_index, eta, mean, hessian_block_size,
+        stan::math::test::squared_kernel_functor{},
+        std::forward_as_tuple(x, alpha, rho),
+        std::make_tuple(theta_0, tolerance, max_num_steps, solver,
+                        max_steps_line_search, true),
+        nullptr);
+  }
+  template <typename Eta>
+  auto reference(const Eta& eta) {
+    return stan::math::laplace_marginal_tol<false>(
+        neg_binomial_2_log_obs_likelihood{},
+        std::forward_as_tuple(eta, y, y_index, mean), hessian_block_size,
+        stan::math::test::squared_kernel_functor{},
+        std::forward_as_tuple(x, alpha, rho),
+        std::make_tuple(theta_0, tolerance, max_num_steps, solver,
+                        max_steps_line_search, true),
+        nullptr);
+  }
+};
+
+// Scalar dispersion with more observations than latent variables.
+TEST_F(laplace_marginal_neg_binomial_log_lpmf_grouped, scalar_eta) {
+  constexpr double eta = 1.5;
+  EXPECT_NEAR(reference(eta), marginal(eta), 1e-6);
+}
+
+// A vector dispersion (one entry per group) must work and match the
+// per-observation reference. This is what stanc generates for the Stan
+// signature, which requires `vector eta`.
+TEST_F(laplace_marginal_neg_binomial_log_lpmf_grouped, vector_eta) {
+  const Eigen::VectorXd eta{{1.5, 2.5, 0.75}};
+  EXPECT_NEAR(reference(eta), marginal(eta), 1e-6);
+
+  // a constant vector dispersion agrees with the scalar version
+  const Eigen::VectorXd eta_rep = Eigen::VectorXd::Constant(3, 1.5);
+  EXPECT_NEAR(marginal(1.5), marginal(eta_rep), 1e-8);
+
+  // dispersion vector must have one entry per latent variable
+  const Eigen::VectorXd eta_bad = Eigen::VectorXd::Constant(2, 1.5);
+  EXPECT_THROW(marginal(eta_bad), std::invalid_argument);
+}
+
+// eta and mean must remain differentiable (autodiff arguments).
+TEST_F(laplace_marginal_neg_binomial_log_lpmf_grouped, vector_eta_ad) {
+  const Eigen::VectorXd eta{{1.5, 2.5, 0.75}};
+  constexpr stan::test::ad_tolerances tols{
+      stan::test::ad_gradient_tols{1e-8, 1e-3}};
+  auto f = [&](auto&& eta_arg, auto&& mean_arg) {
+    return stan::math::laplace_marginal_tol_neg_binomial_2_log_lpmf(
+        y, y_index, eta_arg, mean_arg, hessian_block_size,
+        stan::math::test::squared_kernel_functor{},
+        std::forward_as_tuple(x, alpha, rho),
+        std::make_tuple(theta_0, tolerance, max_num_steps, solver,
+                        max_steps_line_search, true),
+        nullptr);
+  };
+  stan::test::expect_ad<true>(tols, f, eta, mean);
+}
+
 }  // namespace
