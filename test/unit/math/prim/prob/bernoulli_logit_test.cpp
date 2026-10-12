@@ -65,20 +65,14 @@ TEST(ProbDistributionsBernoulliLogit, logitChiSquareGoodnessFitTest) {
   assert_chi_squared(counts, expected, 1e-6);
 }
 
-TEST(ProbDistributionsBernoulliLogit, cutoff) {
-  double cutoff = 20;
+TEST(ProbDistributionsBernoulliLogit, continuity) {
   for (int n = 0; n <= 1; ++n) {
-    for (int sign : {-1, 1}) {
-      double before_cutoff
-          = stan::math::bernoulli_logit_lpmf(n, sign * cutoff - 1e-14);
-      double after_cutoff
-          = stan::math::bernoulli_logit_lpmf(n, sign * cutoff + 1e-14);
-      double relative_error_at_cutoff = log(before_cutoff / after_cutoff);
-      EXPECT_NEAR(relative_error_at_cutoff, 0, 1e-8)
-          << "bernoulli_logit_lpmf changes too much around cutoff for n = " << n
-          << ", cutoff = " << (sign * cutoff)
-          << ", value at cutoff - 1e-14: " << before_cutoff
-          << ", value at cutoff + 1e-14: " << after_cutoff;
+    for (double theta : {-20.0, 0.0, 20.0}) {
+      double before = stan::math::bernoulli_logit_lpmf(n, theta - 1e-14);
+      double after = stan::math::bernoulli_logit_lpmf(n, theta + 1e-14);
+      EXPECT_NEAR(log(before / after), 0, 1e-8)
+          << "bernoulli_logit_lpmf changes too much around theta = " << theta
+          << " for n = " << n << ": " << before << ", " << after;
     }
   }
 }
