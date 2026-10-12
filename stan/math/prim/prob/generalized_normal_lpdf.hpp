@@ -61,9 +61,8 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
   constexpr bool scale_is_ad = is_autodiff_v<T_scale>;
   constexpr bool shape_is_ad = is_autodiff_v<T_shape>;
   static constexpr const char* function = "generalized_normal_lpdf";
-  check_consistent_sizes(function, "Random variable", y,
-                         "loc parameter", loc, "Scale parameter",
-                         scale, "Shape parameter", shape);
+  check_consistent_sizes(function, "Random variable", y, "loc parameter", loc,
+                         "Scale parameter", scale, "Shape parameter", shape);
   decltype(auto) y_ref = to_ref(std::forward<T_y>(y));
   decltype(auto) loc_ref = to_ref(std::forward<T_loc>(loc));
   decltype(auto) scale_ref = to_ref(std::forward<T_scale>(scale));
@@ -77,7 +76,8 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
   check_finite(function, "Location parameter", loc_val);
   check_positive_finite(function, "Scale parameter", scale_val);
 
-  // With beta = +inf this could be defined to be uniform, but we don't support that.
+  // With beta = +inf this could be defined to be uniform, but we don't support
+  // that.
   check_positive_finite(function, "Shape parameter", shape_val);
 
   if (size_zero(y_ref, loc_ref, scale_ref, shape_ref)) {
@@ -91,15 +91,13 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
     const size_t num_terms = max_size(y_ref, loc_ref, scale_ref, shape_ref);
 
     auto resid = (y_val - loc_val) / scale_val;
-    auto resid_is_zero
-        = as_array_or_scalar(value_of_rec(resid)) == 0;
+    auto resid_is_zero = as_array_or_scalar(value_of_rec(resid)) == 0;
     auto shape_eq_two = as_array_or_scalar(value_of_rec(shape_val)) == 2.0;
     // Replace zero bases with one so pow and multiply_log have finite tangents.
-    auto residual_base
-        = select(resid_is_zero, 1.0, abs(resid));
+    auto residual_base = select(resid_is_zero, 1.0, abs(resid));
     auto generic_kernel = as_array_or_scalar(pow(residual_base, shape_val));
-    auto normal_kernel = as_array_or_scalar(
-        promote_scalar<T_partials_return>(square(resid)));
+    auto normal_kernel
+        = as_array_or_scalar(promote_scalar<T_partials_return>(square(resid)));
 
     // At shape == 2 the square expression preserves the normal Hessian at
     // the tie, whereas the generic expression would inherit abs'(0) == 0.
@@ -116,14 +114,12 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
         auto residual_power = pow(residual_base, shape_val - 1);
         auto generic_loc_derivative
             = residual_sign * shape_val * residual_power * inverse_scale;
-        auto normal_loc_derivative
-            = as_array_or_scalar(promote_scalar<T_partials_return>(
-                2.0 * resid / scale_val));
-        auto loc_derivative
-            = select(resid_is_zero,
-                     select(shape_eq_two, normal_loc_derivative,
-                            T_partials_return(0.0)),
-                     generic_loc_derivative);
+        auto normal_loc_derivative = as_array_or_scalar(
+            promote_scalar<T_partials_return>(2.0 * resid / scale_val));
+        auto loc_derivative = select(
+            resid_is_zero,
+            select(shape_eq_two, normal_loc_derivative, T_partials_return(0.0)),
+            generic_loc_derivative);
         if constexpr (y_is_ad) {
           partials<0>(ops_partials) = -loc_derivative;
         }
