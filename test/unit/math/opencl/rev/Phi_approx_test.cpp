@@ -3,6 +3,8 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
+#include <test/unit/math/mix/fun/Phi_approx_tail_refs.hpp>
+#include <vector>
 
 auto Phi_approx_functor
     = [](const auto& a) { return stan::math::Phi_approx(a); };
@@ -16,28 +18,19 @@ TEST(OpenCL_Phi_approx, prim_rev_values_small) {
 /**
  * Device derivative in the tails against fixed references, which
  * `compare_cpu_opencl_prim_rev` cannot check: its relative tolerance floors
- * the denominator at 1. References by mpmath at 60 digits.
+ * the denominator at 1. References in Phi_approx_tail_refs.hpp.
  */
 TEST(OpenCL_Phi_approx, rev_tail_derivative_against_references) {
-  const int N = 8;
-  Eigen::VectorXd x(N);
-  x << -40, -10, -7, 1, 7, 8, 10, 40;
-  // at x = -40 and 40 the true value, about 4e-1987, underflows to 0
-  Eigen::VectorXd expected(N);
-  expected << 0.0, 5.934767576595731e-37, 5.126988948527854e-15,
-      0.2415281648469019, 5.126988948527854e-15, 8.691773531236095e-21,
-      5.934767576595731e-37, 0.0;
+  const Eigen::VectorXd x = stan::math::to_vector(Phi_approx_tail_refs::args());
+  const std::vector<double> expected = Phi_approx_tail_refs::derivs();
 
   stan::math::var_value<stan::math::matrix_cl<double>> x_cl(
       stan::math::to_matrix_cl(x));
   stan::math::sum(stan::math::Phi_approx(x_cl)).grad();
 
   const Eigen::VectorXd adj = stan::math::from_matrix_cl(x_cl.adj());
-  for (int i = 0; i < N; ++i) {
-    EXPECT_NEAR(
-        expected[i], adj[i],
-        1e-13 * std::fmax(expected[i], std::numeric_limits<double>::min()))
-        << "x = " << x[i];
+  for (int i = 0; i < x.size(); ++i) {
+    Phi_approx_tail_refs::expect_rel(expected[i], adj[i], x[i]);
   }
   stan::math::recover_memory();
 }
