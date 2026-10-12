@@ -2,10 +2,13 @@
 #define STAN_MATH_REV_CONSTRAINT_CORR_MATRIX_CONSTRAIN_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/dot_product.hpp>
+#include <stan/math/rev/fun/log_cosh.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/constraint/corr_constrain.hpp>
+#include <stan/math/prim/constraint/corr_matrix_constrain.hpp>
 #include <stan/math/prim/fun/read_corr_matrix.hpp>
 #include <stdexcept>
 
@@ -73,7 +76,9 @@ inline var_value<Eigen::MatrixXd> corr_matrix_constrain(const T& x,
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);
-  return read_corr_matrix(corr_constrain(x, lp), k, lp);
+  lp -= dot_product(internal::corr_matrix_log_jacobian_coefficients(k),
+                    log_cosh(x));
+  return read_corr_matrix(corr_constrain(x), k);
 }
 
 }  // namespace math

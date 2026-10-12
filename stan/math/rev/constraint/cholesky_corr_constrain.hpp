@@ -2,11 +2,13 @@
 #define STAN_MATH_REV_CONSTRAINT_CHOLESKY_CORR_CONSTRAIN_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/dot_product.hpp>
+#include <stan/math/rev/fun/log_cosh.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/constraint/cholesky_corr_constrain.hpp>
 #include <stan/math/prim/constraint/corr_constrain.hpp>
 #include <cmath>
 
@@ -102,18 +104,18 @@ inline var_value<Eigen::MatrixXd> cholesky_corr_constrain(
     return Eigen::MatrixXd();
   }
 
-  var_value<Eigen::VectorXd> z = corr_constrain(y, lp);
+  lp -= dot_product(internal::cholesky_corr_log_jacobian_coefficients(K),
+                    log_cosh(y));
+  var_value<Eigen::VectorXd> z = corr_constrain(y);
   arena_t<Eigen::MatrixXd> x_val = Eigen::MatrixXd::Zero(K, K);
 
   x_val.coeffRef(0, 0) = 1;
   int k = 0;
-  double lp_val = 0.0;
   for (int i = 1; i < K; ++i) {
     x_val.coeffRef(i, 0) = z.val().coeff(k);
     k++;
     double sum_sqs = square(x_val.coeff(i, 0));
     for (int j = 1; j < i; ++j) {
-      lp_val += 0.5 * log1m(sum_sqs);
       x_val.coeffRef(i, j) = z.val().coeff(k) * sqrt(1.0 - sum_sqs);
       k++;
       sum_sqs += square(x_val.coeff(i, j));
@@ -121,10 +123,9 @@ inline var_value<Eigen::MatrixXd> cholesky_corr_constrain(
     x_val.coeffRef(i, i) = sqrt(1.0 - sum_sqs);
   }
 
-  lp += lp_val;
   var_value<Eigen::MatrixXd> x = x_val;
 
-  reverse_pass_callback([z, K, x, lp]() mutable {
+  reverse_pass_callback([z, K, x]() mutable {
     size_t k = z.size();
     for (int i = K - 1; i > 0; --i) {
       double sum_sqs_val = 1.0 - square(x.val().coeffRef(i, i));
@@ -137,7 +138,6 @@ inline var_value<Eigen::MatrixXd> cholesky_corr_constrain(
         sum_sqs_adj += -0.5 * x.adj().coeffRef(i, j) * z.val().coeff(k)
                        / sqrt(1.0 - sum_sqs_val);
         z.adj().coeffRef(k) += x.adj().coeffRef(i, j) * sqrt(1.0 - sum_sqs_val);
-        sum_sqs_adj -= 0.5 * lp.adj() / (1 - sum_sqs_val);
       }
       x.adj().coeffRef(i, 0) += 2 * sum_sqs_adj * x.val().coeff(i, 0);
       k--;

@@ -83,6 +83,7 @@
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/prim/fun/erf.hpp>
 #include <stan/math/prim/fun/erfc.hpp>
+#include <stan/math/prim/fun/erfcx.hpp>
 #include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/exp2.hpp>
@@ -175,6 +176,7 @@
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
 #include <stan/math/prim/fun/log2.hpp>
+#include <stan/math/prim/fun/log_cosh.hpp>
 #include <stan/math/prim/fun/log_determinant.hpp>
 #include <stan/math/prim/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/fun/log_determinant_spd.hpp>
@@ -352,5 +354,6 @@
 #include <stan/math/prim/fun/zeros_int_array.hpp>
 #include <stan/math/prim/fun/zeros_row_vector.hpp>
 #include <stan/math/prim/fun/zeros_vector.hpp>
+#include <stan/math/prim/fun/zip_index.hpp>
 
 #endif

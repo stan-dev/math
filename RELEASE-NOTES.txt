@@ -1,6 +1,42 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v5.4.0 (16 September 2026)
+======================================================================
+
+ - Updated to Eigen 5.0.1. (#3271, #3338)
+ - Stan's vendored dependencies are now included with `-isystem` by default. (#3333)
+ - Added `integrate_1d_double_exponential` and `integrate_1d_gauss_kronrod`. (#3326)
+ - Added `laplace_latent_solve` and `laplace_latent_solve_tol` to return the posterior mean and Cholesky factor from the embedded Laplace approximation. (#3337, #3345)
+ - Added reshaping helpers for converting between matrices and arrays of Eigen vectors/row vectors. (#3312)
+ - RNGs now behave properly when given a size-0 input. (#3389)
+ - `softmax` and `log_softmax` now support `row_vector` and arrays of either. (#3313)
+ - Added missing checks to a few unconstraining functions used by initialization. (#3387)
+ - Updated `student_t_qf` to only returns column eigen vectors. (#3317)
+ - Fixed an issue with `reduce_sum` to allow it to take in tuples and tuples of tuples. (#3376)
+ - Fixed an issue with rep_matrix sometimes returning a row-major matrix. (#3342)
+ - Fixed `bernoulli_logit_lpmf` and `bernoulli_logit_glm_lpdf` upper-tail gradients. (#3397)
+ - Fixed an incorrect derivative of `wiener_lpdf` with respect to the relative starting point parameter `w`. (#3324)
+ - Added `map`, `mapN`, `row_map`, `col_map`, `row_mapN`, and `col_mapN` functors for elementwise and rowwise/columnwise mapping over std::vector and Eigen matrices. (#3346)
+ - Fixed a bug in `ordered_logistic_lpmf` and `ordered_logistic_glm_lpmf` higher order autodiff. (#3327)
+ - `log_softmax` now returns empty vector on empty input. (#3328)
+ - Fixed missing `#include` for `finite_diff_hessian_auto` (#3354)
+ - Updated `normal_lccdf` and `std_normal_lccdf` to use `normal_lcdf` and `std_normal_lcdf` implementations. (#3363)
+ - Removed extra std::forward in fwd/functor/reduce_sum loop. (#3323)
+ - Used `std::nth_element` to reduce algorithmic complexity of `quantile` implementation, support using Eigen containers for multiple `p`. (#3358)
+ - Fixed typo in `tuple_to_laplace_options` forwarding function. (#3330)
+ - Fixed documentation signatures for laplace functions with built-in bernoulli_logit likelihood. (#3355)
+ - Fixed `make_holder(...)` with `var_value<Matrix>` output to now eagerly execute. (#3334)
+ - Added `const coeffRef()` definitions for the `Holder` class to resolve downstream compilation errors. (#3352)
+ - Updated the `.val()` member function to always returns a `CwiseUnaryOp` when called with a `var` type. (#3351)
+ - Efficiency: use multiplication over std::pow for squaring. (#3373) (#3375)
+ - Removed dependency on `boost/optional` and `boost/lexical_cast`. (#3378)
+ - Fixed `reduce_sum_static` to only evaluates inputs once. (#3384)
+ - Fixed an issue with forward-mode `jacobian` for mappings R^n -> R^m with m != n. (#3386)
+ - Fixed use-after-move in `cholesky_decompose` and `columns_dot_product`. (#3390)
+ - Fixed an include issue with the QoS header on older Macs. (#3402)
+
+======================================================================
 v5.3.0 (19 May 2026)
 ======================================================================
 
@@ -120,7 +156,7 @@ v4.9.0 (3 June 2024)
  - Fixed several small floating-point accuracy issues with ARM64 platforms. (#3059)
  - The RNGs for the multinomial and multinomial_logit distributions now accept a zero total count, resulting in a zero integer vector. (#3061)
  - Fixed a data race in profiling in multiple threads. (#3066)
- - Backported SUNDIALS bugfix for hashmap integer overflow. (#3072) 
+ - Backported SUNDIALS bugfix for hashmap integer overflow. (#3072)
 
 ======================================================================
 v4.8.1 (23 January 2024)
@@ -408,14 +444,14 @@ v4.0.1 (17 February 2021)
 v4.0.0 (26 January 2021)
 ======================================================================
 
-New functions:  
+New functions:
 
     - Add `symmetrize_from_lower_tri(matrix m)` function to `stan::math`.(#2209)
     - Added the Moore-Penrose generalized inverse, available with the `generalized_inverse` function.(#2225)
     - Implement `svd_U` and `svd_V`, add gradients to `singular_values`.(#2286)
     - Added linspaced_int_array.(#2312)
-    
-Miscellaneous improvements and bugfixes:  
+
+Miscellaneous improvements and bugfixes:
 
     - Speedup `reduce_sum` parallelism.(#2162)
     - Make gradients for negative binomial and 2F1 function more robust for boundary values.(#2175)
@@ -434,7 +470,7 @@ Miscellaneous improvements and bugfixes:
     - Fix potential segfault when mixing reduce_sum() and print().(#2319)
     - Fixed a bug in dirichlet_lpdf and multi_normal_cholesky_lpdf, where function overloads that do broadcasting produced wrong derivatives. (#2331)
 
-Expressions:  
+Expressions:
 
 #2093, #2131, #2133, #2136, #2138, #2139, #2150, #2151, #2186, #2190, #2205
 
@@ -443,7 +479,7 @@ Expressions:
     - Removed the requirement for linear indexing from prim function
     - Improved expressions testing: No longer relying on an separate file of functions that do not support expressions
 
-OpenCL:  
+OpenCL:
 
 #2117, #2155, #2176, #2177, #2180, #2181, #2215, #2173, #2174, #2184, #2185, #2191, #2216, #2217, #2217, #2219, #2221, #2222, #2226, #2231, #2236, #2236, #2250, #2253, #2258, #2259, #2263, #2267, #2270, #2272, #2273, #2274, #2275, #2294, #2295, #2296, #2311, #2316
 
@@ -453,7 +489,7 @@ OpenCL:
     - Improved kernel generator: simplified writing of broadcasting tests, fixed a bug when using same operations on different sets of unique matrices, fixed `check_cl`, extended support for integer arguments, added support for kernel expressions returning a scalar, added compound assignment operators, made transpose kernel generator operation assignable.
     - Bugfixed `arena_matrix_cl` so it can be assigned a `matrix_cl`.(#2270)
 
-Varmat:  
+Varmat:
 
     - Added varmat implementations of cholesky_decompose, columns_dot_self, determinant, dot_self, inverse, log_determinant, matrix_power, multiply_lower_tri_self_transpose, and tcrossprod, add, operator+, operator-, quad_form, trace_quad_form, transpose (member function), variance, sd, log_softmax, log_sum_exp, divide, trace_gen_quad_form, dot_product, columns_dot_product, rows_dot_product, squared_distance, mdivide_left_spd, mdivide_left_tri, mdivide_left, log_determinant_spd, mdivide_left_ldlt, mdivide_right_ldlt, log_determinant_ldlt, trace_gen_inv_quad_form_ldlt, trace_inv_quad_form_ldlt (#2105, #2106, #2115, #2163, #2164, #2168, #2169, #2171, #2172, #2196, #2199, #2212, #2213, #2230, #2232, #2266, #2280, #2305)
     - Adds `var_value<Matrix>` overloads for array and column vector converters.(#2278)
@@ -473,7 +509,7 @@ v3.4.0 (26 October 2020)
  - Made binomial_lpmf work more reliably when the probability parameter is 0.0 or 1.0(#1988)
  - Fixed requires docs(#1990)
  - fixed doxygen documentation of `hmm_marginal`(#1994)
- - Vectorised binary scalar functions (#1987, #2002, #2005) 
+ - Vectorised binary scalar functions (#1987, #2002, #2005)
  - Added `reverse_pass_callback`, a simpler and faster alternative to `adj_jac_apply`. `dot_product` implementation that accepts pointers has been removed.(#2011)
  - Added missing implementations for the unary plus.(#2032)
  - Reduced some duplicate ODE test code(#2039)
@@ -487,18 +523,18 @@ v3.4.0 (26 October 2020)
  - The states returned by hmm_hidden_state_rng now live on {1, 2, ..., K}, rather than {0, 1, ..., K - 1}.(#2113)
  - Removed a duplicated check function.(#2126)
 
-var_value: 
+var_value:
  - Allowed `vari` to hold an Eigen type(#1952)
  - `operands_and_partials` now supports `var_value` operands.(#1970)
  - Added views for var_value<Eigen::Matrix> class(#2024)
  - Added functions for conversion between `var_value` and Eigen matrix of vars and a metaprogram that determines return type of a function that accepts a mixture of `var_value`s and Eigen matrices and propagates `var_value` if present.(#2047)
- - Adds softmax function for ˙var_value` matrices and testing scheme for checking array of structs vs struct of arrays matrix var implimentation.(#2050) 
+ - Adds softmax function for ˙var_value` matrices and testing scheme for checking array of structs vs struct of arrays matrix var implimentation.(#2050)
  - Adds views to `vari_value<Matrix>` types that allow for compound slicing expressions.(#2064)
  - Enabled assigning to blocks and other views into `var_value`.(#2065)
  - Adds multiplication function for var matrices and a test suite for checking the correctness of binary functions that accept var matrices as an input.(#2091)
  - Add var and var matrix specializtion elementwise product.(#2121)
- 
-Testing: 
+
+Testing:
   - Updated test values for pow() to fixed false positives in the testing framework(#2123)
   - Upgraded Google Test to v1.10.x.(#1995)
   - Added Google Benchmark as a test dependency.(#1995)
@@ -514,8 +550,8 @@ Building:
  - Improved error messaging on Windows if the C++ toolchain was installed in a folder with spaces.(#2009)
  - Added flags to suppress warnings when building TBB.(#1993)
  - Switched `/bin/bash` with `/usr/bin/env bash` in the makefiles.(#1998)
- 
-OpenCL backend: 
+
+OpenCL backend:
   - Added support for elementwise checks to kernel generator(#1977)
   - Removed `matrix_cl<var>` specialization.(#2021)
   - OpenCL implementation `normal_id_glm_lpdf` can also be used when derivatives of `x` or `y` are needed.(#2034)
@@ -647,7 +683,7 @@ Thanks to everyone who submitted and reviewed pull requests! The list of pull re
 |[mcol](https://github.com/mcol) : ([#1650](https://github.com/stan-dev/math/pull/1650))                                   |Add reverse                                                             |
 |[mcol](https://github.com/mcol) : ([#1636](https://github.com/stan-dev/math/pull/1636))                                   |Add row vector, array and int_array construction utilities              |
 |[t4c1](https://github.com/t4c1) : ([#1623](https://github.com/stan-dev/math/pull/1623))                                   |Add rowwise reductions to kernel generator                              |
-|[martinmodrak](https://github.com/martinmodrak) : ([#1575](https://github.com/stan-dev/math/pull/1575))                   |Additional tests for distributions      
+|[martinmodrak](https://github.com/martinmodrak) : ([#1575](https://github.com/stan-dev/math/pull/1575))                   |Additional tests for distributions
 |[martinmodrak](https://github.com/martinmodrak) : ([#1830](https://github.com/stan-dev/math/pull/1830))                   |More stable implementation of neg_binomial_2_log_lpmf                               |
 
 ## Fixes
@@ -709,7 +745,7 @@ Thanks to everyone who submitted and reviewed pull requests! The list of pull re
 |[martinmodrak](https://github.com/martinmodrak) : ([#1614](https://github.com/stan-dev/math/pull/1614))                   |Improved numerical stability of binomial_coefficient_log                            |
 |[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1567](https://github.com/stan-dev/math/pull/1567))                   |Cleanup the use of find in makefile                                                 |
 |[SteveBronder](https://github.com/SteveBronder) : ([#1525](https://github.com/stan-dev/math/pull/1525))                   |Generic var templates for operators and std::iterator_trait var/fvar specialization |
-|[martinmodrak](https://github.com/martinmodrak) : ([#1497](https://github.com/stan-dev/math/pull/1497))                   |Fixing negative binomial phi cutoff 
+|[martinmodrak](https://github.com/martinmodrak) : ([#1497](https://github.com/stan-dev/math/pull/1497))                   |Fixing negative binomial phi cutoff
 |[t4c1](https://github.com/t4c1) : ([#1796](https://github.com/stan-dev/math/pull/1796))                                   |Bugfix: make kernel generator wait for events on matrices               |
 |[mcol](https://github.com/mcol) : ([#1674](https://github.com/stan-dev/math/pull/1674))                                   |Document template parameters in /prim                                   |
 |[mcol](https://github.com/mcol) : ([#1668](https://github.com/stan-dev/math/pull/1668))                                   |Rename spaced_* to linspaced_*                                          |

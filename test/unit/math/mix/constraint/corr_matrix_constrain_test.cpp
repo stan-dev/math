@@ -117,3 +117,85 @@ TEST(mathMixMatFun, corr_matrix_constrain_lp) {
   stan::test::expect_ad_matvar(f2(4), x1);
   stan::test::expect_ad_matvar(f2(3), x2);
 }
+
+namespace corr_matrix_constrain_test {
+// the strictly lower triangular elements of the correlation matrix
+struct strict_lower_of_constrained {
+  int K;
+  template <typename T>
+  Eigen::Matrix<T, Eigen::Dynamic, 1> operator()(
+      const Eigen::Matrix<T, Eigen::Dynamic, 1>& y) const {
+    auto Omega = stan::math::corr_matrix_constrain(y, K);
+    Eigen::Matrix<T, Eigen::Dynamic, 1> v((K * (K - 1)) / 2);
+    int k = 0;
+    for (int j = 0; j < K; ++j) {
+      for (int i = j + 1; i < K; ++i) {
+        v(k++) = Omega(i, j);
+      }
+    }
+    return v;
+  }
+};
+}  // namespace corr_matrix_constrain_test
+
+// lp is log |det J| of the map from y to the strictly lower triangular
+// elements of the correlation matrix.
+TEST(mathMixMatFun, corr_matrix_constrain_lp_is_log_det_jacobian) {
+  Eigen::VectorXd y(6);
+  y << 0.3, -1.2, 0.8, 2.1, -0.4, 1.5;
+  Eigen::VectorXd fx;
+  Eigen::MatrixXd J;
+  stan::math::jacobian(
+      corr_matrix_constrain_test::strict_lower_of_constrained{4}, y, fx, J);
+  double lp = 0;
+  stan::math::corr_matrix_constrain(y, 4, lp);
+  EXPECT_NEAR(std::log(std::fabs(J.determinant())), lp, 1e-12);
+}
+
+// lp = sum_n w_n log(1 - tanh(y_n)^2) with weights (1.5, 1.5, 1) for K = 3,
+// and its gradient, at large y against mpmath. Forming 1 - tanh(y)^2 loses
+// digits from |y| = 8.
+TEST(mathMixMatFun, corr_matrix_constrain_lp_large_argument) {
+  using stan::math::fvar;
+  using stan::math::var;
+  Eigen::VectorXd y(3);
+  y << 15.0, 12.0, -0.5;
+  const double lp_ref = -77.081345930670418;
+  Eigen::VectorXd grad_ref(3);
+  grad_ref << -2.9999999999994385, -2.9999999997734919, 0.92423431452001952;
+
+  double lp_d = 0;
+  stan::math::corr_matrix_constrain(y, 3, lp_d);
+  EXPECT_NEAR(lp_ref, lp_d, 1e-13);
+
+  Eigen::Matrix<var, Eigen::Dynamic, 1> y_v = stan::math::to_var(y);
+  var lp_v = 0;
+  stan::math::corr_matrix_constrain(y_v, 3, lp_v);
+  lp_v.grad();
+  EXPECT_NEAR(lp_ref, lp_v.val(), 1e-13);
+  for (int i = 0; i < 3; ++i) {
+    EXPECT_NEAR(grad_ref(i), y_v(i).adj(), 1e-14);
+  }
+  stan::math::recover_memory();
+
+  stan::math::var_value<Eigen::VectorXd> y_m(y);
+  var lp_m = 0;
+  stan::math::corr_matrix_constrain(y_m, 3, lp_m);
+  lp_m.grad();
+  EXPECT_NEAR(lp_ref, lp_m.val(), 1e-13);
+  for (int i = 0; i < 3; ++i) {
+    EXPECT_NEAR(grad_ref(i), y_m.adj()(i), 1e-14);
+  }
+  stan::math::recover_memory();
+
+  for (int n = 0; n < 3; ++n) {
+    Eigen::Matrix<fvar<double>, Eigen::Dynamic, 1> y_f(3);
+    for (int i = 0; i < 3; ++i) {
+      y_f(i) = fvar<double>(y(i), i == n ? 1.0 : 0.0);
+    }
+    fvar<double> lp_f = 0;
+    stan::math::corr_matrix_constrain(y_f, 3, lp_f);
+    EXPECT_NEAR(lp_ref, lp_f.val_, 1e-13);
+    EXPECT_NEAR(grad_ref(n), lp_f.d_, 1e-14);
+  }
+}
