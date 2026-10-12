@@ -109,6 +109,14 @@ TEST(ProbDistributionsCategoricalLogit, infinityValues) {
   EXPECT_EQ(-inf, categorical_logit_lpmf(1, beta));
   EXPECT_FLOAT_EQ(log_softmax(finite)[0], categorical_logit_lpmf(2, beta));
 
+  // a single +inf entry has all the probability
+  beta << -inf, inf, 2.0;
+  EXPECT_EQ(-inf, categorical_logit_lpmf(1, beta));
+  EXPECT_EQ(0.0, categorical_logit_lpmf(2, beta));
+  EXPECT_EQ(-inf, categorical_logit_lpmf(3, beta));
+  EXPECT_EQ(0.0, categorical_logit_lpmf(std::vector<int>{2, 2, 2}, beta));
+  EXPECT_EQ(-inf, categorical_logit_lpmf(std::vector<int>{2, 3}, beta));
+
   // +inf entries split the probability evenly
   beta.resize(4);
   beta << -inf, inf, 2.0, inf;

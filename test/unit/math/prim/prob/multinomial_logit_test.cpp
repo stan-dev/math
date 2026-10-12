@@ -79,6 +79,40 @@ TEST(ProbDistributionsMultinomialLogit, RNGMultiplePosInfinityIsUniform) {
   EXPECT_NEAR(total_2, expected, expected * 0.05);
 }
 
+TEST(ProbDistributionsMultinomialLogit, RNGNegInfinityGetsNoCounts) {
+  boost::random::mt19937 rng;
+  // -inf entries with no +inf entries go through softmax
+  Matrix<double, Dynamic, 1> beta(4);
+  beta << -std::numeric_limits<double>::infinity(), 0.0,
+      -std::numeric_limits<double>::infinity(), 1.0;
+  Matrix<double, Dynamic, 1> theta = stan::math::softmax(beta);
+
+  int N = 20;
+  int trials = 1000;
+  int total_1 = 0;
+  for (int i = 0; i < trials; i++) {
+    std::vector<int> sample = stan::math::multinomial_logit_rng(beta, N, rng);
+    EXPECT_EQ(0, sample[0]);
+    EXPECT_EQ(0, sample[2]);
+    EXPECT_EQ(N, sample[1] + sample[3]);
+    total_1 += sample[1];
+  }
+
+  double expected = trials * N * theta(1);
+  EXPECT_NEAR(total_1, expected, expected * 0.05);
+}
+
+TEST(ProbDistributionsMultinomialLogit, RNGSinglePosInfinityIsDeterministic) {
+  boost::random::mt19937 rng;
+  Matrix<double, Dynamic, 1> beta(4);
+  beta << -std::numeric_limits<double>::infinity(), 1e5,
+      std::numeric_limits<double>::infinity(), 3.0;
+  std::vector<int> expected{0, 0, 20, 0};
+  for (int i = 0; i < 1000; i++) {
+    EXPECT_EQ(expected, stan::math::multinomial_logit_rng(beta, 20, rng));
+  }
+}
+
 TEST(ProbDistributionsMultinomialLogit, MultinomialLogit) {
   std::vector<int> ns;
   ns.push_back(1);
@@ -206,6 +240,13 @@ TEST(ProbDistributionsMultinomialLogit, infinityValues) {
                   multinomial_logit_lpmf(ns, beta));
   // nonzero count on a -inf entry is impossible
   ns = {1, 1, 1};
+  EXPECT_EQ(-inf, multinomial_logit_lpmf(ns, beta));
+
+  // a single +inf entry has all the probability
+  beta << -inf, inf, 2.0;
+  ns = {0, 3, 0};
+  EXPECT_EQ(0.0, multinomial_logit_lpmf(ns, beta));
+  ns = {0, 3, 1};
   EXPECT_EQ(-inf, multinomial_logit_lpmf(ns, beta));
 
   // +inf entries split the probability evenly

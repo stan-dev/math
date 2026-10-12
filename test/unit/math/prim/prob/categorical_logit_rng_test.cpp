@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <cstdint>
 #include <limits>
 
 TEST(ProbDistributionsCategoricalLogit, error_check) {
@@ -89,4 +90,64 @@ TEST(ProbDistributionsCategoricalLogit, multiplePosInfinityIsUniform) {
   // every draw lands on one of the +inf entries, split roughly evenly
   EXPECT_EQ(N, count_2 + count_4);
   EXPECT_NEAR(count_2, N / 2, N * 0.05);
+}
+
+TEST(ProbDistributionsCategoricalLogit, negInfinityNeverDrawn) {
+  using Eigen::VectorXd;
+  using stan::math::categorical_logit_rng;
+  boost::random::mt19937 rng;
+
+  // -inf entries with no +inf entries go through softmax
+  VectorXd beta(4);
+  beta << -std::numeric_limits<double>::infinity(), 0.0,
+      -std::numeric_limits<double>::infinity(), 1.0;
+  VectorXd theta = stan::math::softmax(beta);
+
+  int N = 10000;
+  int bin[4] = {0, 0, 0, 0};
+  for (int i = 0; i < N; i++) {
+    bin[categorical_logit_rng(beta, rng) - 1]++;
+  }
+
+  EXPECT_EQ(0, bin[0]);
+  EXPECT_EQ(0, bin[2]);
+  EXPECT_NEAR(bin[1], N * theta(1), N * 0.05);
+  EXPECT_NEAR(bin[3], N * theta(3), N * 0.05);
+}
+
+TEST(ProbDistributionsCategoricalLogit, singlePosInfinityIsDeterministic) {
+  using Eigen::VectorXd;
+  using stan::math::categorical_logit_rng;
+  boost::random::mt19937 rng;
+
+  VectorXd beta(4);
+  beta << -std::numeric_limits<double>::infinity(), 1e5,
+      std::numeric_limits<double>::infinity(), 3.0;
+  for (int i = 0; i < 1000; i++) {
+    EXPECT_EQ(3, categorical_logit_rng(beta, rng));
+  }
+}
+
+namespace {
+// 64-bit engine whose uniform_01 draw is always 1 - 2^-53
+struct largest_below_one_engine {
+  using result_type = std::uint64_t;
+  static constexpr result_type min() { return 0; }
+  static constexpr result_type max() {
+    return std::numeric_limits<result_type>::max();
+  }
+  result_type operator()() { return max() - 2047; }
+};
+}  // namespace
+
+TEST(ProbDistributionsCategoricalLogit, uniformDrawAboveCumulativeSum) {
+  using Eigen::VectorXd;
+  using stan::math::categorical_logit_rng;
+  largest_below_one_engine rng;
+
+  // ten +inf entries sum to 1 - 2^-53, so the draw is not below the last
+  // cumulative sum; the trailing zero-probability entry must not be chosen
+  VectorXd beta = VectorXd::Constant(11, stan::math::INFTY);
+  beta(10) = 1.0;
+  EXPECT_EQ(10, categorical_logit_rng(beta, rng));
 }

@@ -59,9 +59,14 @@ inline int categorical_logit_rng(const Eigen::VectorXd& beta, RNG& rng) {
   variate_generator<RNG&, uniform_01<> > uniform01_rng(rng, uniform_01<>());
   Eigen::VectorXd index = cumulative_sum(theta);
 
+  // index may sum to just below 1, so stop at the last nonzero entry
+  int last = theta.size() - 1;
+  while (theta(last) == 0) {
+    last--;
+  }
   double c = uniform01_rng();
   int b = 0;
-  while (c >= index(b)) {
+  while (b < last && c >= index(b)) {
     b++;
   }
   return b + 1;
