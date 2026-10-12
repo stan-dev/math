@@ -59,3 +59,28 @@ TEST_F(AgradRev, logistic_lpdf_gradients_vectorized) {
       (0.5 * std::tanh(0.25) - 1.0) / 2.0 + (1.0 * std::tanh(0.5) - 1.0) / 2.0,
       sigma.adj());
 }
+
+// y - mu overflows to NEGATIVE_INFTY with finite arguments. The value is
+// NEGATIVE_INFTY, not inf - inf = NaN.
+TEST_F(AgradRev, logistic_lpdf_value_neg_overflow) {
+  using stan::math::var;
+  var y = -1e308;
+  var mu = 1e308;
+  var sigma = 1.0;
+
+  var logp = stan::math::logistic_lpdf(y, mu, sigma);
+  logp.grad();
+
+  EXPECT_EQ(stan::math::NEGATIVE_INFTY, logp.val());
+  EXPECT_EQ(1.0, y.adj());
+  EXPECT_EQ(-1.0, mu.adj());
+}
+
+// Values on both sides of the location. Reference value from mpmath at
+// z = -20.25 and z = 1.25, sigma = 2.
+TEST_F(AgradRev, logistic_lpdf_value_both_signs) {
+  Eigen::VectorXd y(2);
+  y << -40.0, 3.0;
+  EXPECT_NEAR(-23.390152527021093, stan::math::logistic_lpdf(y, 0.5, 2.0),
+              1e-14);
+}

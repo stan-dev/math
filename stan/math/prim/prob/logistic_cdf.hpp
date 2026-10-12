@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1m_inv_logit.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -87,7 +88,10 @@ inline return_type_t<T_y, T_loc, T_scale> logistic_cdf(const T_y& y,
         partials<1>(ops_partials)[n] -= deriv;
       }
       if constexpr (is_autodiff_v<T_scale>) {
-        partials<2>(ops_partials)[n] -= scaled_diff * deriv;
+        // At an overflowed scaled_diff, either deriv or P is zero
+        if (!is_inf(scaled_diff)) {
+          partials<2>(ops_partials)[n] -= scaled_diff * deriv;
+        }
       }
     }
   }
