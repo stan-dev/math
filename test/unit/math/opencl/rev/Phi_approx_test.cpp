@@ -24,9 +24,9 @@ TEST(OpenCL_Phi_approx, rev_tail_derivative_against_references) {
   x << -40, -10, -7, 1, 7, 8, 10, 40;
   // at x = -40 and 40 the true value, about 4e-1987, underflows to 0
   Eigen::VectorXd expected(N);
-  expected << 0.0, 5.9589784505245725e-37, 5.1340418352583332e-15,
-      0.24152728992165639, 5.1340418352583332e-15, 8.7097694481792379e-21,
-      5.9589784505245725e-37, 0.0;
+  expected << 0.0, 5.934767576595731e-37, 5.126988948527854e-15,
+      0.2415281648469019, 5.126988948527854e-15, 8.691773531236095e-21,
+      5.934767576595731e-37, 0.0;
 
   stan::math::var_value<stan::math::matrix_cl<double>> x_cl(
       stan::math::to_matrix_cl(x));

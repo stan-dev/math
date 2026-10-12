@@ -4,6 +4,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/Phi_approx.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <cmath>
 
 namespace stan {
@@ -31,27 +32,33 @@ namespace math {
    \f]
 
    \f[
-   \Phi_{\mbox{\footnotesize approx}}(x) = \mbox{logit}^{-1}(0.07056 \,
-   x^3 + 1.5976 \, x)
+   \Phi_{\mbox{\footnotesize approx}}(x) = \mbox{logit}^{-1}(\gamma \,
+   x^3 + \beta \, x)
    \f]
 
    \f[
    \frac{\partial \, \Phi_{\mbox{\footnotesize approx}}(x)}{\partial x}
-   = -\Phi_{\mbox{\footnotesize approx}}^2(x)
-   e^{-0.07056x^3 - 1.5976x}(-0.21168x^2-1.5976)
+   = \Phi_{\mbox{\footnotesize approx}}(x)
+   \left(1 - \Phi_{\mbox{\footnotesize approx}}(x)\right)
+   (3 \gamma x^2 + \beta)
    \f]
+
+   with \f$ \gamma \f$ = <code>PHI_APPROX_CUBIC_COEF</code> and
+   \f$ \beta \f$ = <code>PHI_APPROX_LINEAR_COEF</code>.
  *
  * @param a Variable argument.
  * @return The corresponding unit normal cdf approximation.
  */
 inline var Phi_approx(const var& a) {
   double av_squared = a.val() * a.val();
-  double u = 0.07056 * a.val() * av_squared + 1.5976 * a.val();
+  double u = PHI_APPROX_CUBIC_COEF * a.val() * av_squared
+             + PHI_APPROX_LINEAR_COEF * a.val();
   // e / (1 + e)^2, not f * (1 - f), which cancels for u >> 0
   double e = std::exp(-std::fabs(u));
   double f = (u >= 0 ? 1.0 : e) / (1.0 + e);
   double da
-      = e / ((1.0 + e) * (1.0 + e)) * (3.0 * 0.07056 * av_squared + 1.5976);
+      = e / ((1.0 + e) * (1.0 + e))
+        * (3.0 * PHI_APPROX_CUBIC_COEF * av_squared + PHI_APPROX_LINEAR_COEF);
   return make_callback_var(
       f, [a, da](auto& vi) mutable { a.adj() += vi.adj() * da; });
 }
@@ -62,10 +69,14 @@ inline auto Phi_approx(const T& a) {
   arena_t<value_type_t<T>> f(a.rows(), a.cols());
   arena_t<value_type_t<T>> da(a.rows(), a.cols());
   // e / (1 + e)^2, not f * (1 - f), which cancels for u >> 0
-  da.array() = (-(0.07056 * x * x.square() + 1.5976 * x).abs()).exp();
+  da.array()
+      = (-(PHI_APPROX_CUBIC_COEF * x * x.square() + PHI_APPROX_LINEAR_COEF * x)
+              .abs())
+            .exp();
   f.array() = (x >= 0).select(1.0, da.array()) / (1.0 + da.array());
   da.array()
-      *= (3.0 * 0.07056 * x.square() + 1.5976) / (1.0 + da.array()).square();
+      *= (3.0 * PHI_APPROX_CUBIC_COEF * x.square() + PHI_APPROX_LINEAR_COEF)
+         / (1.0 + da.array()).square();
   return make_callback_var(f, [a, da](auto& vi) mutable {
     a.adj().array() += vi.adj().array() * da.array();
   });

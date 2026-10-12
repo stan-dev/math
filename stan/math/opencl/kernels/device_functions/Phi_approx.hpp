@@ -17,12 +17,15 @@ static constexpr const char* phi_approx_device_function
           // \endcond
           /** \ingroup opencl_kernels
            * Return the Phi_approx function applied to the specified
-           * argument.
+           * argument. The coefficients are PHI_APPROX_CUBIC_COEF and
+           * PHI_APPROX_LINEAR_COEF of stan/math/prim/fun/constants.hpp,
+           * repeated here because a kernel source string cannot use them.
            *
            * @return Phi_approx(x)
            */
           inline double Phi_approx(double x) {
-            return inv_logit(0.07056 * pow(x, 3.0) + 1.5976 * x);
+            return inv_logit(0.07056409656566716 * pow(x, 3.0)
+                             + 1.597602874240784 * x);
           }
           // \cond
           ) "\n#endif\n";  // NOLINT
