@@ -81,11 +81,11 @@ inline return_type_t<T_n_cl, T_shape_cl, T_inv_scale_cl> neg_binomial_lpmf(
 
   auto logp1
       = -elt_multiply(alpha_val, log1p_inv_beta) - elt_multiply(n, log1p_beta);
+  // lchoose(n + alpha - 1, n) = -lbeta(alpha, n + 1) - log(n + alpha), with
+  // alpha not rounded into n + alpha - 1
   auto logp_expr
       = colwise_sum(static_select<include_summand<propto, T_shape_cl>::value>(
-          logp1
-              + binomial_coefficient_log(n + alpha_val - 1.0, alpha_val - 1.0),
-          logp1));
+          logp1 - lbeta(alpha_val, n + 1) - log(n + alpha_val), logp1));
 
   // digamma_diff replaces digamma(alpha + n) - digamma(alpha), which loses
   // all accuracy for large alpha

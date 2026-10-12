@@ -3,7 +3,6 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
-#include <stan/math/opencl/kernels/device_functions/binomial_coefficient_log.hpp>
 #include <stan/math/opencl/kernels/device_functions/digamma.hpp>
 #include <stan/math/opencl/kernels/device_functions/digamma_diff.hpp>
 #include <stan/math/opencl/kernels/device_functions/lbeta.hpp>
@@ -52,10 +51,10 @@ static constexpr const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
      * @param need_phi_derivative_sum whether phi_derivative_sum needs to be
      * computed
      * @param need_logp_phi interpreted as boolean - whether the term
-     * binomial_coefficient_log(y + phi - 1, y) of logp_global needs to be
-     * computed
+     * lchoose(y + phi - 1, y) = -lbeta(phi, y + 1) - log(y + phi) of
+     * logp_global needs to be computed
      * @param need_add_lgamma_y1 interpreted as boolean - whether to add
-     * lgamma(y + 1), which propto drops but binomial_coefficient_log
+     * lgamma(y + 1), which propto drops but lchoose(y + phi - 1, y)
      * contains
      * @param need_sub_phi_log_phi interpreted as boolean - whether to
      * subtract phi log(phi), which propto drops for data phi but the
@@ -109,7 +108,9 @@ static constexpr const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
         logp
             -= y * log1p_exp(log_phi - theta) + phi * log1p_exp_theta_m_log_phi;
         if (need_logp_phi) {
-          logp += binomial_coefficient_log(y_plus_phi - 1, y);
+          // lchoose(y + phi - 1, y), with phi not rounded into
+          // y + phi - 1
+          logp -= stan_lbeta(phi, y + 1) + log(y_plus_phi);
         }
         if (need_add_lgamma_y1) {
           logp += lgamma(y + 1);
@@ -120,16 +121,24 @@ static constexpr const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
         if (need_sub_y_theta) {
           logp -= y * theta;
         }
-        double theta_exp = exp(theta);
-        theta_derivative = y - theta_exp * y_plus_phi / (theta_exp + phi);
+        // mu / (mu + phi) and phi / (mu + phi) are 1 / (1 + e) and
+        // e / (1 + e) with e = exp(-|u|), u = theta - log(phi), in the order
+        // given by the sign of u; mu = exp(theta) overflows from
+        // theta = 709.8
+        double u = theta - log_phi;
+        double e = exp(-fabs(u));
+        double mu_over_mu_p_phi = u > 0 ? 1 / (1 + e) : e / (1 + e);
+        double phi_over_mu_p_phi = u > 0 ? e / (1 + e) : 1 / (1 + e);
+        theta_derivative = y - y_plus_phi * mu_over_mu_p_phi;
         if (need_theta_derivative) {
           theta_derivative_global[gid] = theta_derivative;
         }
         if (need_phi_derivative) {
-          // 1 - (y + phi) / (mu + phi) and log(phi) - log(mu + phi) are
-          // formed without cancellation, and digamma_diff replaces
+          // 1 - (y + phi) / (mu + phi) = mu / (mu + phi) - (y / phi) phi
+          // / (mu + phi) and log(phi) - log(mu + phi) are formed without
+          // cancellation, and digamma_diff replaces
           // digamma(y + phi) - digamma(phi)
-          phi_derivative = (theta_exp - y) / (theta_exp + phi)
+          phi_derivative = mu_over_mu_p_phi - y / phi * phi_over_mu_p_phi
                            - log1p_exp_theta_m_log_phi + digamma_diff(phi, y);
           if (!need_phi_derivative_sum) {
             phi_derivative_global[gid] = phi_derivative;
@@ -209,7 +218,6 @@ const kernel_cl<out_buffer, out_buffer, out_buffer, out_buffer, in_buffer,
         {digamma_device_function, digamma_diff_device_function,
          log1p_exp_device_function, lgamma_stirling_device_function,
          lgamma_stirling_diff_device_function, lbeta_device_function,
-         binomial_coefficient_log_device_function,
          neg_binomial_2_log_glm_kernel_code},
         {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 64}});
 
