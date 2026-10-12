@@ -86,7 +86,10 @@ inline return_type_t<T_y, T_loc, T_scale> logistic_lcdf(const T_y& y,
         partials<1>(ops_partials)[n] -= deriv;
       }
       if constexpr (is_autodiff_v<T_scale>) {
-        partials<2>(ops_partials)[n] -= scaled_diff * deriv;
+        // deriv is zero at an overflowed scaled_diff == INFTY
+        if (scaled_diff != INFTY) {
+          partials<2>(ops_partials)[n] -= scaled_diff * deriv;
+        }
       }
     }
   }

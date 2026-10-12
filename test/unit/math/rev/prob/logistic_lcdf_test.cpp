@@ -80,3 +80,45 @@ TEST_F(AgradRev, logistic_lcdf_pos_inf_element) {
   EXPECT_DOUBLE_EQ(-deriv, mu.adj());
   EXPECT_DOUBLE_EQ(-1.5 * deriv, sigma.adj());
 }
+
+// A scaled difference that overflows to INFTY with finite arguments
+// (y = 1e10, sigma = 1e-300) contributes log(1) = 0 and zero partials, as
+// y == INFTY does. The second element is unaffected. Reference values from
+// mpmath at z = 0.5, sigma = 2.
+TEST_F(AgradRev, logistic_lcdf_pos_overflow_scale_partial) {
+  using stan::math::var;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
+  y << 1e10, 1.5;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> mu(2);
+  mu << 0.0, 0.5;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> sigma(2);
+  sigma << 1e-300, 2.0;
+
+  var log_cdf = stan::math::logistic_lcdf(y, mu, sigma);
+  log_cdf.grad();
+
+  EXPECT_NEAR(-0.47407698418010668, log_cdf.val(), 1e-15);
+  EXPECT_EQ(0.0, y(0).adj());
+  EXPECT_EQ(0.0, mu(0).adj());
+  EXPECT_EQ(0.0, sigma(0).adj());
+  EXPECT_NEAR(0.18877033439907272, y(1).adj(), 1e-15);
+  EXPECT_NEAR(-0.18877033439907272, mu(1).adj(), 1e-15);
+  EXPECT_NEAR(-0.094385167199536359, sigma(1).adj(), 1e-15);
+}
+
+// The scaled difference overflows to NEGATIVE_INFTY with finite arguments.
+// The exact scale partial -z * inv_logit(-z) / sigma overflows too.
+TEST_F(AgradRev, logistic_lcdf_neg_overflow_scale_partial) {
+  using stan::math::var;
+  var y = -1e10;
+  var mu = 0.0;
+  var sigma = 1e-300;
+
+  var log_cdf = stan::math::logistic_lcdf(y, mu, sigma);
+  log_cdf.grad();
+
+  EXPECT_EQ(stan::math::NEGATIVE_INFTY, log_cdf.val());
+  EXPECT_NEAR(1e300, y.adj(), 1e285);
+  EXPECT_NEAR(-1e300, mu.adj(), 1e285);
+  EXPECT_EQ(stan::math::INFTY, sigma.adj());
+}

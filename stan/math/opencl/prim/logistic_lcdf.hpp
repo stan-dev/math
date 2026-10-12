@@ -64,14 +64,14 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_lcdf(
   auto sigma_positive_finite_expr = 0 < sigma_val && isfinite(sigma_val);
 
   auto any_y_neg_inf = colwise_max(cast<char>(y_val == NEGATIVE_INFTY));
-  auto cond = y_val == INFTY;
   auto inv_sigma = elt_divide(1.0, sigma_val);
   auto scaled_diff = elt_multiply(y_val - mu_val, inv_sigma);
+  auto cond = scaled_diff == INFTY;
   auto P_expr = colwise_sum(log_inv_logit(scaled_diff));
 
-  // y == INFTY contributes log(1) = 0 to P and zero to every partial; without
-  // the select the scale partial would be 0 * INFTY = NaN, which prim (where
-  // the element is skipped outright) never produces.
+  // scaled_diff == INFTY (y == INFTY, or an overflow with finite y)
+  // contributes log(1) = 0 to P and zero to every partial; without the select
+  // the scale partial would be 0 * INFTY = NaN.
   auto deriv = logistic_tail_deriv(scaled_diff, sigma_val);
   auto y_deriv = select(cond, 0.0, deriv);
   auto mu_deriv = -y_deriv;

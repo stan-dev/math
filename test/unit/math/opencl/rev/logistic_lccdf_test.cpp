@@ -91,8 +91,6 @@ TEST(ProbDistributionsLogisticLccdf, opencl_matches_cpu_upper_tail) {
                                                 sigma);
 }
 
-// A single y == INFTY makes the whole result -INFTY with zero partials; the
-// partials of the finite elements preceding it must not survive.
 TEST(ProbDistributionsLogisticLccdf, opencl_matches_cpu_underflow_small_sigma) {
   Eigen::VectorXd y(2);
   y << -8e-298, -1.0;
@@ -105,6 +103,8 @@ TEST(ProbDistributionsLogisticLccdf, opencl_matches_cpu_underflow_small_sigma) {
                                                 sigma);
 }
 
+// A single y == INFTY makes the whole result -INFTY with zero partials; the
+// partials of the finite elements preceding it must not survive.
 TEST(ProbDistributionsLogisticLccdf, opencl_matches_cpu_y_pos_inf) {
   Eigen::VectorXd y(3);
   y << 1.5, INFINITY, 1.0;
@@ -133,6 +133,64 @@ TEST(ProbDistributionsLogisticLccdf, opencl_matches_cpu_small_y_neg_inf) {
   stan::math::test::compare_cpu_opencl_prim_rev(
       logistic_lccdf_functor, y.transpose().eval(), mu.transpose().eval(),
       sigma.transpose().eval());
+}
+
+// y == NEGATIVE_INFTY and a scaled difference that overflows to
+// NEGATIVE_INFTY (y = -1e10, sigma = 1e-300) contribute log(1) = 0 to the
+// value and zero to every partial. Absolute reference values from mpmath at
+// z = 0.5, sigma = 2, because a comparison with the CPU passes when both are
+// wrong in the same way.
+TEST(ProbDistributionsLogisticLccdf, opencl_neg_inf_elements_reference) {
+  Eigen::VectorXd y(3);
+  y << -INFINITY, -1e10, 1.5;
+  Eigen::VectorXd mu(3);
+  mu << 0.5, 0.0, 0.5;
+  Eigen::VectorXd sigma(3);
+  sigma << 2.0, 1e-300, 2.0;
+
+  stan::math::test::compare_cpu_opencl_prim_rev(logistic_lccdf_functor, y, mu,
+                                                sigma);
+
+  stan::math::var_value<stan::math::matrix_cl<double>> y_cl
+      = stan::math::to_matrix_cl(y);
+  stan::math::var_value<stan::math::matrix_cl<double>> mu_cl
+      = stan::math::to_matrix_cl(mu);
+  stan::math::var_value<stan::math::matrix_cl<double>> sigma_cl
+      = stan::math::to_matrix_cl(sigma);
+  stan::math::var log_ccdf = stan::math::logistic_lccdf(y_cl, mu_cl, sigma_cl);
+  log_ccdf.grad();
+  Eigen::VectorXd y_adj
+      = stan::math::from_matrix_cl<Eigen::VectorXd>(y_cl.adj());
+  Eigen::VectorXd mu_adj
+      = stan::math::from_matrix_cl<Eigen::VectorXd>(mu_cl.adj());
+  Eigen::VectorXd sigma_adj
+      = stan::math::from_matrix_cl<Eigen::VectorXd>(sigma_cl.adj());
+
+  EXPECT_NEAR(-0.97407698418010668, log_ccdf.val(), 1e-15);
+  for (int i = 0; i < 2; ++i) {
+    EXPECT_EQ(0.0, y_adj(i));
+    EXPECT_EQ(0.0, mu_adj(i));
+    EXPECT_EQ(0.0, sigma_adj(i));
+  }
+  EXPECT_NEAR(-0.31122966560092728, y_adj(2), 1e-15);
+  EXPECT_NEAR(0.31122966560092728, mu_adj(2), 1e-15);
+  EXPECT_NEAR(0.15561483280046364, sigma_adj(2), 1e-15);
+  stan::math::recover_memory();
+}
+
+TEST(ProbDistributionsLogisticLccdf, opencl_neg_inf_and_pos_inf_reference) {
+  Eigen::VectorXd y(2);
+  y << -INFINITY, INFINITY;
+  Eigen::VectorXd mu(2);
+  mu << 0.0, 0.0;
+  Eigen::VectorXd sigma(2);
+  sigma << 1.0, 1.0;
+
+  stan::math::matrix_cl<double> y_cl(y);
+  stan::math::matrix_cl<double> mu_cl(mu);
+  stan::math::matrix_cl<double> sigma_cl(sigma);
+  EXPECT_EQ(stan::math::NEGATIVE_INFTY,
+            stan::math::logistic_lccdf(y_cl, mu_cl, sigma_cl));
 }
 
 TEST(ProbDistributionsLogisticLccdf, opencl_broadcast_y) {

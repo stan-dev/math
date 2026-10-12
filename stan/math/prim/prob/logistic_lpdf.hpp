@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
@@ -64,8 +65,11 @@ inline return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y,
   const auto& y_minus_mu_div_sigma = to_ref(y_minus_mu * inv_sigma);
 
   size_t N = max_size(y, mu, sigma);
-  T_partials_return logp = -sum(y_minus_mu_div_sigma)
-                           - 2.0 * sum(log1p_exp(-y_minus_mu_div_sigma));
+  // The density is symmetric in the scaled difference z. The -|z| form is
+  // -inf at an overflowed z = -inf, where -z - 2 log1p_exp(-z) is inf - inf.
+  const auto& abs_scaled_diff = to_ref(fabs(y_minus_mu_div_sigma));
+  T_partials_return logp
+      = -sum(abs_scaled_diff) - 2.0 * sum(log1p_exp(-abs_scaled_diff));
   if constexpr (include_summand<propto, T_scale>::value) {
     logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }

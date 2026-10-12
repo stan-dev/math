@@ -74,3 +74,50 @@ TEST_F(AgradRev, logistic_cdf_location_scale) {
   EXPECT_DOUBLE_EQ(-deriv * cdf_value, mu.adj());
   EXPECT_DOUBLE_EQ(-scaled_diff * deriv * cdf_value, sigma.adj());
 }
+
+// A scaled difference that overflows to INFTY with finite arguments
+// (y = 1e10, sigma = 1e-300) contributes a factor 1 and zero partials. The
+// second element is unaffected. Reference values from mpmath at z = 0.5,
+// sigma = 2.
+TEST_F(AgradRev, logistic_cdf_pos_overflow_scale_partial) {
+  using stan::math::var;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
+  y << 1e10, 1.5;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> mu(2);
+  mu << 0.0, 0.5;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> sigma(2);
+  sigma << 1e-300, 2.0;
+
+  var cdf = stan::math::logistic_cdf(y, mu, sigma);
+  cdf.grad();
+
+  EXPECT_NEAR(0.62245933120185456, cdf.val(), 1e-15);
+  EXPECT_EQ(0.0, y(0).adj());
+  EXPECT_EQ(0.0, mu(0).adj());
+  EXPECT_EQ(0.0, sigma(0).adj());
+  EXPECT_NEAR(0.11750185610079724, y(1).adj(), 1e-15);
+  EXPECT_NEAR(-0.11750185610079724, mu(1).adj(), 1e-15);
+  EXPECT_NEAR(-0.058750928050398622, sigma(1).adj(), 1e-15);
+}
+
+// A scaled difference that overflows to NEGATIVE_INFTY makes the cdf 0; every
+// partial is then 0, also the scale partial of the overflowed element.
+TEST_F(AgradRev, logistic_cdf_neg_overflow_scale_partial) {
+  using stan::math::var;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
+  y << -1e10, 1.5;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> mu(2);
+  mu << 0.0, 0.5;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> sigma(2);
+  sigma << 1e-300, 2.0;
+
+  var cdf = stan::math::logistic_cdf(y, mu, sigma);
+  cdf.grad();
+
+  EXPECT_EQ(0.0, cdf.val());
+  for (int i = 0; i < 2; ++i) {
+    EXPECT_EQ(0.0, y(i).adj());
+    EXPECT_EQ(0.0, mu(i).adj());
+    EXPECT_EQ(0.0, sigma(i).adj());
+  }
+}

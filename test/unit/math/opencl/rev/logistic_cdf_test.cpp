@@ -135,6 +135,57 @@ TEST(ProbDistributionsLogisticCdf, opencl_matches_cpu_y_pos_inf) {
                                                 sigma);
 }
 
+// A scaled difference that overflows to INFTY with finite arguments
+// (y = 1e10, sigma = 1e-300) contributes a factor 1 and zero partials; one
+// that overflows to NEGATIVE_INFTY makes the cdf and every partial 0.
+// Absolute reference values from mpmath at z = 0.5, sigma = 2, because a
+// comparison with the CPU passes when both are wrong in the same way.
+TEST(ProbDistributionsLogisticCdf, opencl_overflow_reference) {
+  Eigen::VectorXd mu(2);
+  mu << 0.0, 0.5;
+  Eigen::VectorXd sigma(2);
+  sigma << 1e-300, 2.0;
+
+  for (double y0 : {1e10, -1e10}) {
+    Eigen::VectorXd y(2);
+    y << y0, 1.5;
+
+    stan::math::test::compare_cpu_opencl_prim_rev(logistic_cdf_functor, y, mu,
+                                                  sigma);
+
+    stan::math::var_value<stan::math::matrix_cl<double>> y_cl
+        = stan::math::to_matrix_cl(y);
+    stan::math::var_value<stan::math::matrix_cl<double>> mu_cl
+        = stan::math::to_matrix_cl(mu);
+    stan::math::var_value<stan::math::matrix_cl<double>> sigma_cl
+        = stan::math::to_matrix_cl(sigma);
+    stan::math::var cdf = stan::math::logistic_cdf(y_cl, mu_cl, sigma_cl);
+    cdf.grad();
+    Eigen::VectorXd y_adj
+        = stan::math::from_matrix_cl<Eigen::VectorXd>(y_cl.adj());
+    Eigen::VectorXd mu_adj
+        = stan::math::from_matrix_cl<Eigen::VectorXd>(mu_cl.adj());
+    Eigen::VectorXd sigma_adj
+        = stan::math::from_matrix_cl<Eigen::VectorXd>(sigma_cl.adj());
+
+    EXPECT_EQ(0.0, y_adj(0));
+    EXPECT_EQ(0.0, mu_adj(0));
+    EXPECT_EQ(0.0, sigma_adj(0));
+    if (y0 > 0) {
+      EXPECT_NEAR(0.62245933120185456, cdf.val(), 1e-15);
+      EXPECT_NEAR(0.11750185610079724, y_adj(1), 1e-15);
+      EXPECT_NEAR(-0.11750185610079724, mu_adj(1), 1e-15);
+      EXPECT_NEAR(-0.058750928050398622, sigma_adj(1), 1e-15);
+    } else {
+      EXPECT_EQ(0.0, cdf.val());
+      EXPECT_EQ(0.0, y_adj(1));
+      EXPECT_EQ(0.0, mu_adj(1));
+      EXPECT_EQ(0.0, sigma_adj(1));
+    }
+    stan::math::recover_memory();
+  }
+}
+
 TEST(ProbDistributionsLogisticCdf, opencl_broadcast_y) {
   int N = 3;
 

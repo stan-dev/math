@@ -97,3 +97,66 @@ TEST_F(AgradRev, logistic_lccdf_pos_inf_zeroes_partials) {
   EXPECT_DOUBLE_EQ(0.0, mu.adj());
   EXPECT_DOUBLE_EQ(0.0, sigma.adj());
 }
+
+// y == NEGATIVE_INFTY and a scaled difference that overflows to
+// NEGATIVE_INFTY (y = -1e10, sigma = 1e-300) contribute log(1) = 0 to the
+// value and zero to every partial. The third element is unaffected.
+// Reference values from mpmath at z = 0.5, sigma = 2.
+TEST_F(AgradRev, logistic_lccdf_neg_inf_elements) {
+  using stan::math::var;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> y(3);
+  y << stan::math::NEGATIVE_INFTY, -1e10, 1.5;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> mu(3);
+  mu << 0.5, 0.0, 0.5;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> sigma(3);
+  sigma << 2.0, 1e-300, 2.0;
+
+  var log_ccdf = stan::math::logistic_lccdf(y, mu, sigma);
+  log_ccdf.grad();
+
+  EXPECT_NEAR(-0.97407698418010668, log_ccdf.val(), 1e-15);
+  for (int i = 0; i < 2; ++i) {
+    EXPECT_EQ(0.0, y(i).adj());
+    EXPECT_EQ(0.0, mu(i).adj());
+    EXPECT_EQ(0.0, sigma(i).adj());
+  }
+  EXPECT_NEAR(-0.31122966560092728, y(2).adj(), 1e-15);
+  EXPECT_NEAR(0.31122966560092728, mu(2).adj(), 1e-15);
+  EXPECT_NEAR(0.15561483280046364, sigma(2).adj(), 1e-15);
+}
+
+// y == INFTY makes the result NEGATIVE_INFTY also when another element is
+// NEGATIVE_INFTY.
+TEST_F(AgradRev, logistic_lccdf_neg_inf_and_pos_inf) {
+  using stan::math::var;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
+  y << stan::math::NEGATIVE_INFTY, stan::math::INFTY;
+  var mu = 0.0;
+  var sigma = 1.0;
+
+  var log_ccdf = stan::math::logistic_lccdf(y, mu, sigma);
+  log_ccdf.grad();
+
+  EXPECT_EQ(stan::math::NEGATIVE_INFTY, log_ccdf.val());
+  EXPECT_EQ(0.0, y(0).adj());
+  EXPECT_EQ(0.0, y(1).adj());
+  EXPECT_EQ(0.0, mu.adj());
+  EXPECT_EQ(0.0, sigma.adj());
+}
+
+// The scaled difference overflows to INFTY with finite arguments. The exact
+// scale partial z * inv_logit(z) / sigma overflows too.
+TEST_F(AgradRev, logistic_lccdf_pos_overflow_scale_partial) {
+  using stan::math::var;
+  var y = 1e10;
+  var mu = 0.0;
+  var sigma = 1e-300;
+
+  var log_ccdf = stan::math::logistic_lccdf(y, mu, sigma);
+  log_ccdf.grad();
+
+  EXPECT_EQ(stan::math::NEGATIVE_INFTY, log_ccdf.val());
+  EXPECT_NEAR(-1e300, y.adj(), 1e285);
+  EXPECT_NEAR(1e300, mu.adj(), 1e285);
+  EXPECT_EQ(stan::math::INFTY, sigma.adj());
+}

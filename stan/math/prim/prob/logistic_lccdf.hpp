@@ -55,17 +55,18 @@ inline return_type_t<T_y, T_loc, T_scale> logistic_lccdf(const T_y& y,
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero.
   for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (y_vec.val(i) == NEGATIVE_INFTY) {
-      return ops_partials.build(0.0);
-    }
-  }
-  for (size_t i = 0; i < stan::math::size(y); i++) {
     if (y_vec.val(i) == INFTY) {
       return ops_partials.build(negative_infinity());
     }
   }
 
   for (size_t n = 0; n < N; n++) {
+    // Explicit results for extreme values
+    // The gradients are technically ill-defined, but treated as zero
+    if (y_vec.val(n) == NEGATIVE_INFTY) {
+      continue;
+    }
+
     const T_partials_return y_dbl = y_vec.val(n);
     const T_partials_return mu_dbl = mu_vec.val(n);
     const T_partials_return sigma_inv_vec = 1.0 / sigma_vec.val(n);
@@ -84,7 +85,10 @@ inline return_type_t<T_y, T_loc, T_scale> logistic_lccdf(const T_y& y,
         partials<1>(ops_partials)[n] += deriv;
       }
       if constexpr (is_autodiff_v<T_scale>) {
-        partials<2>(ops_partials)[n] += scaled_diff * deriv;
+        // deriv is zero at an overflowed scaled_diff == NEGATIVE_INFTY
+        if (scaled_diff != NEGATIVE_INFTY) {
+          partials<2>(ops_partials)[n] += scaled_diff * deriv;
+        }
       }
     }
   }
