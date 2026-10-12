@@ -20,9 +20,12 @@ template <typename T,
 inline var_value<matrix_cl<double>> Phi_approx(const var_value<T>& A) {
   return make_callback_var(
       Phi_approx(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
+        // e / (1 + e)^2, not res * (1 - res), which cancels for u >> 0
+        auto x_sq = square(A.val());
+        auto e = exp(-fabs(elt_multiply(A.val(), 0.07056 * x_sq + 1.5976)));
         A.adj() += elt_multiply(
-            elt_multiply(elt_multiply(res.adj(), res.val()), 1 - res.val()),
-            3.0 * 0.07056 * square(A.val()) + 1.5976);
+            elt_multiply(res.adj(), elt_divide(e, square(1.0 + e))),
+            3.0 * 0.07056 * x_sq + 1.5976);
       });
 }
 

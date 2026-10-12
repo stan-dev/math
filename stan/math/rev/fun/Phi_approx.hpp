@@ -3,8 +3,8 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/inv_logit.hpp>
 #include <stan/math/prim/fun/Phi_approx.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -46,26 +46,26 @@ namespace math {
  */
 inline var Phi_approx(const var& a) {
   double av_squared = a.val() * a.val();
-  double f = inv_logit(0.07056 * a.val() * av_squared + 1.5976 * a.val());
-  double da = f * (1 - f) * (3.0 * 0.07056 * av_squared + 1.5976);
+  double u = 0.07056 * a.val() * av_squared + 1.5976 * a.val();
+  // e / (1 + e)^2, not f * (1 - f), which cancels for u >> 0
+  double e = std::exp(-std::fabs(u));
+  double f = (u >= 0 ? 1.0 : e) / (1.0 + e);
+  double da
+      = e / ((1.0 + e) * (1.0 + e)) * (3.0 * 0.07056 * av_squared + 1.5976);
   return make_callback_var(
       f, [a, da](auto& vi) mutable { a.adj() += vi.adj() * da; });
 }
 
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto Phi_approx(const T& a) {
+  const auto& x = a.val().array();
   arena_t<value_type_t<T>> f(a.rows(), a.cols());
   arena_t<value_type_t<T>> da(a.rows(), a.cols());
-  for (Eigen::Index j = 0; j < a.cols(); ++j) {
-    for (Eigen::Index i = 0; i < a.rows(); ++i) {
-      const auto a_val = a.val().coeff(i, j);
-      const auto av_squared = a_val * a_val;
-      f.coeffRef(i, j) = inv_logit(0.07056 * a_val * av_squared
-                                   + 1.5976 * a.val().coeff(i, j));
-      da.coeffRef(i, j) = f.coeff(i, j) * (1 - f.coeff(i, j))
-                          * (3.0 * 0.07056 * av_squared + 1.5976);
-    }
-  }
+  // e / (1 + e)^2, not f * (1 - f), which cancels for u >> 0
+  da.array() = (-(0.07056 * x * x.square() + 1.5976 * x).abs()).exp();
+  f.array() = (x >= 0).select(1.0, da.array()) / (1.0 + da.array());
+  da.array()
+      *= (3.0 * 0.07056 * x.square() + 1.5976) / (1.0 + da.array()).square();
   return make_callback_var(f, [a, da](auto& vi) mutable {
     a.adj().array() += vi.adj().array() * da.array();
   });
