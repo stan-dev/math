@@ -21,11 +21,11 @@ namespace math {
    \f]
 
    \f[
-    \frac{\partial }{\partial x} = -\frac{e^x}{e^y-e^x}-\frac{e^x}{e^x+1}
+    \frac{\partial}{\partial x} = \mbox{logit}^{-1}(-x) + \frac{1}{e^{x-y}-1}
    \f]
 
    \f[
-    \frac{\partial }{\partial x} = -\frac{e^y}{e^x-e^y}-\frac{e^y}{e^y+1}
+    \frac{\partial}{\partial y} = -\mbox{logit}^{-1}(y) - \frac{1}{e^{x-y}-1}
    \f]
  *
  * @tparam T1 Type of x argument
@@ -41,11 +41,10 @@ class log_inv_logit_diff_vv_vari : public op_vv_vari {
   log_inv_logit_diff_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(log_inv_logit_diff(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
-    avi_->adj_
-        -= adj_ * (inv(expm1(bvi_->val_ - avi_->val_)) + inv_logit(avi_->val_));
-
-    bvi_->adj_
-        -= adj_ * (inv(expm1(avi_->val_ - bvi_->val_)) + inv_logit(bvi_->val_));
+    // both partials as sums of positive terms, no cancellation for x >> 0
+    double c = inv(expm1(avi_->val_ - bvi_->val_));
+    avi_->adj_ += adj_ * (c + inv_logit(-avi_->val_));
+    bvi_->adj_ -= adj_ * (c + inv_logit(bvi_->val_));
   }
 };
 
@@ -54,7 +53,8 @@ class log_inv_logit_diff_vd_vari : public op_vd_vari {
   log_inv_logit_diff_vd_vari(vari* avi, double b)
       : op_vd_vari(log_inv_logit_diff(avi->val_, b), avi, b) {}
   void chain() {
-    avi_->adj_ -= adj_ * (inv(expm1(bd_ - avi_->val_)) + inv_logit(avi_->val_));
+    avi_->adj_
+        += adj_ * (inv(expm1(avi_->val_ - bd_)) + inv_logit(-avi_->val_));
   }
 };
 
