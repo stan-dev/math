@@ -39,3 +39,17 @@ TEST_F(AgradRev, mathMixScalFun_categorical_logit_glm_lpmf_matrix_beta) {
   stan::test::expect_ad(f(y), x, alpha, beta);
   stan::test::expect_ad(f(y), x_rowvec, alpha, beta);
 }
+
+// x and beta are both row vectors: a single attribute
+TEST_F(AgradRev, mathMixScalFun_categorical_logit_glm_lpmf_row_vector_beta) {
+  std::vector<int> y{1, 3};
+  auto f = [y](const auto& x, const auto& alpha, const auto& beta) {
+    return stan::math::categorical_logit_glm_lpmf(y, x, alpha, beta);
+  };
+
+  Eigen::RowVectorXd x = Eigen::RowVectorXd::Random(1);
+  Eigen::VectorXd alpha = Eigen::VectorXd::Random(3);
+  Eigen::RowVectorXd beta = Eigen::RowVectorXd::Random(3);
+
+  stan::test::expect_ad(f, x, alpha, beta);
+}
