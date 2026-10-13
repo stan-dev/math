@@ -42,7 +42,7 @@ TEST(mathMixMultiplyOperator, innerAndOuterProduct) {
 }
 
 TEST(mathMixMultiplyOperator, fixedSize) {
-  // 2x2 uses Eigen's lazy coefficient-based product
+  // 2x2 uses Eigen's coefficient-based product
   auto f_fixed = [](const auto& a, const auto& b) {
     using a_scalar = typename std::decay_t<decltype(a)>::Scalar;
     using b_scalar = typename std::decay_t<decltype(b)>::Scalar;
@@ -56,7 +56,23 @@ TEST(mathMixMultiplyOperator, fixedSize) {
                                       test_matrix(2, 2, -0.3));
 }
 
+TEST(mathMixMultiplyOperator, fixedSizeOuterProduct) {
+  // a fixed-size outer product uses Eigen's lazy coefficient-based product
+  auto f_outer = [](const auto& a, const auto& b) {
+    using a_scalar = typename std::decay_t<decltype(a)>::Scalar;
+    using b_scalar = typename std::decay_t<decltype(b)>::Scalar;
+    using ret_scalar = stan::return_type_t<a_scalar, b_scalar>;
+    const Eigen::Matrix<a_scalar, 3, 1> a3 = a;
+    const Eigen::Matrix<b_scalar, 1, 3> b3 = b;
+    const Eigen::Matrix<ret_scalar, 3, 3> c = a3 * b3;
+    return Eigen::Matrix<ret_scalar, -1, -1>(c);
+  };
+  stan::test::expect_ad<reverse_only>(f_outer, test_matrix(3, 1, 0.1),
+                                      test_matrix(1, 3, -0.3));
+}
+
 TEST(mathMixMultiplyOperator, lazyProduct) {
+  // lazy products are left to Eigen's coefficient-based evaluator
   auto lazy_eval
       = [](const auto& a, const auto& b) { return a.lazyProduct(b).eval(); };
   Eigen::MatrixXd a = test_matrix(2, 3, 0.1);

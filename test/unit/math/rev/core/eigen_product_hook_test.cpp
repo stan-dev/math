@@ -85,8 +85,6 @@ TEST_F(AgradRev, eigen_product_hook_matrix_products_use_multiply) {
                         [&] { return vec<var>(a * v); });
   expect_same_as_direct([&] { return stan::math::multiply(v, rv); },
                         [&] { return mat<var>(v * rv); });
-  expect_same_as_direct([&] { return stan::math::multiply(a, b); },
-                        [&] { return mat<var>(a.lazyProduct(b)); });
   expect_same_as_direct(
       [&] {
         mat<var> c(5, 3);
@@ -218,4 +216,169 @@ TEST_F(AgradRev, eigen_product_hook_gradients) {
   EXPECT_NEAR(s.adj(), (a.val() * b.val()).sum(), 1e-12);
   EXPECT_MATRIX_NEAR(a.adj(), 0.5 * ones * b.val().transpose(), 1e-12);
   EXPECT_MATRIX_NEAR(b.adj(), 0.5 * a.val().transpose() * ones, 1e-12);
+}
+
+// A product nested inside a larger expression is still computed by Stan's
+// function: each expression records the same tape as the same outer
+// expression applied to the already computed product.
+
+TEST_F(AgradRev, eigen_product_hook_nested_views_of_products) {
+  mat<var> a = make_mat<var>(3, 4, 0.3);
+  mat<var> b = make_mat<var>(4, 3, -0.2);
+  mat<var> c = make_mat<var>(3, 3, 0.1);
+  const mat<double> b_d = make_mat<double>(4, 3, -0.2);
+  using stan::math::multiply;
+  expect_same_as_direct(
+      [&] { return mat<var>(mat<var>(multiply(a, b)).transpose()); },
+      [&] { return mat<var>((a * b).transpose()); });
+  expect_same_as_direct(
+      [&] { return mat<var>(mat<var>(multiply(a, b)).block(0, 1, 2, 2)); },
+      [&] { return mat<var>((a * b).block(0, 1, 2, 2)); });
+  expect_same_as_direct(
+      [&] { return mat<var>(mat<var>(multiply(a, b)).rowwise().sum()); },
+      [&] { return mat<var>((a * b).rowwise().sum()); });
+  expect_same_as_direct(
+      [&] {
+        return mat<var>(
+            (mat<var>(multiply(a, b_d)) + c).block(1, 1, 2, 2).transpose());
+      },
+      [&] { return mat<var>(((a * b_d) + c).block(1, 1, 2, 2).transpose()); });
+  expect_same_as_direct(
+      [&] {
+        return mat<var>(multiply(b.transpose(), a.transpose()).transpose());
+      },
+      [&] { return mat<var>((b.transpose() * a.transpose()).transpose()); });
+}
+
+TEST_F(AgradRev, eigen_product_hook_nested_coefficient_wise) {
+  mat<var> a = make_mat<var>(3, 4, 0.3);
+  mat<var> b = make_mat<var>(4, 3, -0.2);
+  mat<var> c = make_mat<var>(3, 3, 0.1);
+  var s = 0.7;
+  using stan::math::multiply;
+  expect_same_as_direct(
+      [&] { return mat<var>(mat<var>(multiply(a, b)).array().exp().matrix()); },
+      [&] { return mat<var>((a * b).array().exp().matrix()); });
+  expect_same_as_direct(
+      [&] { return mat<var>(stan::math::elt_multiply(multiply(a, b), c)); },
+      [&] { return mat<var>((a * b).cwiseProduct(c)); });
+  expect_same_as_direct(
+      [&] {
+        return mat<var>(
+            mat<var>(stan::math::scale_multiply(s, a, b)).transpose());
+      },
+      [&] { return mat<var>((s * (a * b)).transpose()); });
+  expect_same_as_direct(
+      [&] { return mat<var>(mat<var>(multiply(a, b)) + c - c); },
+      [&] { return mat<var>(a * b + c - c); });
+}
+
+TEST_F(AgradRev, eigen_product_hook_nested_products_of_products) {
+  mat<var> a = make_mat<var>(3, 4, 0.3);
+  mat<var> b = make_mat<var>(4, 3, -0.2);
+  mat<var> c = make_mat<var>(3, 3, 0.1);
+  vec<var> v = make_mat<var>(3, 1, 0.2);
+  using stan::math::multiply;
+  expect_same_as_direct([&] { return mat<var>(multiply(multiply(a, b), c)); },
+                        [&] { return mat<var>((a * b) * c); });
+  expect_same_as_direct([&] { return mat<var>(multiply(a, multiply(b, c))); },
+                        [&] { return mat<var>(a * (b * c)); });
+  expect_same_as_direct([&] { return vec<var>(multiply(multiply(a, b), v)); },
+                        [&] { return vec<var>(a * b * v); });
+  expect_same_as_direct(
+      [&] {
+        return mat<var>(
+            multiply(multiply(a, b), mat<var>(multiply(a, b)).transpose()));
+      },
+      [&] { return mat<var>((a * b) * (a * b).transpose()); });
+  expect_same_as_direct(
+      [&] {
+        return mat<var>(
+            multiply(a.block(0, 0, 2, 3), b.topRows(3)).transpose());
+      },
+      [&] {
+        return mat<var>((a.block(0, 0, 2, 3) * b.topRows(3)).transpose());
+      });
+}
+
+TEST_F(AgradRev, eigen_product_hook_nested_in_stan_functions) {
+  mat<var> a = make_mat<var>(3, 4, 0.3);
+  mat<var> b = make_mat<var>(4, 3, -0.2);
+  mat<var> c = make_mat<var>(3, 3, 0.1);
+  using stan::math::multiply;
+  expect_same_as_direct(
+      [&] { return mat<var>(stan::math::exp(mat<var>(multiply(a, b)))); },
+      [&] { return mat<var>(stan::math::exp(a * b)); });
+  expect_same_as_direct(
+      [&] { return mat<var>(stan::math::add(mat<var>(multiply(a, b)), c)); },
+      [&] { return mat<var>(stan::math::add(a * b, c)); });
+  expect_same_as_direct(
+      [&] {
+        return mat<var>::Constant(1, 1,
+                                  stan::math::sum(mat<var>(multiply(a, b))));
+      },
+      [&] { return mat<var>::Constant(1, 1, stan::math::sum(a * b)); });
+}
+
+TEST_F(AgradRev, eigen_product_hook_nested_destinations) {
+  mat<var> a = make_mat<var>(3, 4, 0.3);
+  mat<var> b = make_mat<var>(4, 3, -0.2);
+  mat<var> c = make_mat<var>(3, 3, 0.1);
+  using stan::math::multiply;
+  expect_same_as_direct(
+      [&] {
+        mat<var> d = mat<var>::Zero(5, 5);
+        d.block(1, 1, 3, 3) = multiply(a, b);
+        return d;
+      },
+      [&] {
+        mat<var> d = mat<var>::Zero(5, 5);
+        d.block(1, 1, 3, 3) = a * b;
+        return d;
+      });
+  expect_same_as_direct(
+      [&] {
+        mat<var> d = mat<var>::Zero(5, 5);
+        d.block(1, 1, 3, 3) = stan::math::multiply_add(a, b, c);
+        return d;
+      },
+      [&] {
+        mat<var> d = mat<var>::Zero(5, 5);
+        d.block(1, 1, 3, 3) = c;
+        d.block(1, 1, 3, 3).noalias() += a * b;
+        return d;
+      });
+  expect_same_as_direct(
+      [&] {
+        mat<var> d = mat<var>::Zero(3, 3);
+        d.transpose() = multiply(a, b);
+        return d;
+      },
+      [&] {
+        mat<var> d = mat<var>::Zero(3, 3);
+        d.transpose() = a * b;
+        return d;
+      });
+}
+
+TEST_F(AgradRev, eigen_product_hook_nested_gradients) {
+  mat<var> a = make_mat<var>(3, 4, 0.3);
+  mat<var> b = make_mat<var>(4, 3, -0.2);
+  mat<var> c = make_mat<var>(3, 3, 0.1);
+  var s = 0.7;
+  stan::math::sum(((s * (a * b)).transpose().array() * c.array()).matrix() * c)
+      .grad();
+  const mat<double> a_v = a.val();
+  const mat<double> b_v = b.val();
+  const mat<double> c_v = c.val();
+  // f = sum(((s A B)^T .* C) C) = sum_ij ((s A B)^T .* C)_ij r_j, r = C 1
+  const Eigen::VectorXd r = c_v * Eigen::VectorXd::Ones(3);
+  // G = d f / d (s A B)^T = C .* (1 r^T); d f / d (s A B) = G^T
+  const mat<double> g
+      = (c_v.array() * (Eigen::VectorXd::Ones(3) * r.transpose()).array())
+            .matrix()
+            .transpose();
+  EXPECT_NEAR(s.adj(), (g.array() * (a_v * b_v).array()).sum(), 1e-12);
+  EXPECT_MATRIX_NEAR(a.adj(), 0.7 * g * b_v.transpose(), 1e-12);
+  EXPECT_MATRIX_NEAR(b.adj(), 0.7 * a_v.transpose() * g, 1e-12);
 }

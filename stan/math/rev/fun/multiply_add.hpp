@@ -60,7 +60,7 @@ inline auto multiply_add(const Mat1& A, const Mat2& B, const Mat3& C) {
           arena_C.adj() += res_adj;
         }
       });
-  return return_t(res);
+  return res;
 }
 
 }  // namespace math

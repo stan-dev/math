@@ -57,7 +57,7 @@ inline auto scale_multiply(const Scal& s, const Mat1& A, const Mat2& B) {
           arena_B.adj() += s_val * arena_A_val.transpose() * res_adj;
         }
       });
-  return return_t(res);
+  return res;
 }
 
 }  // namespace math

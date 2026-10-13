@@ -5,6 +5,7 @@
 #include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta/lazy_select_evaluator.hpp>
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/meta/eigen_product_evaluator_hooks.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/gevv_vvv_vari.hpp>
 #include <stan/math/rev/core/std_numeric_limits.hpp>
@@ -301,29 +302,6 @@ struct ternary_evaluator<
   using Base::Base;
 };
 #endif
-
-/**
- * Coefficient-wise products and products with a scalar of `var` with `var`,
- * `double` or `int` are computed by `elt_multiply`, `multiply` or
- * `scale_multiply` (see stan/math/prim/meta/eigen_product_evaluator_hooks.hpp).
- */
-#define STAN_REV_NO_TPARAMS()
-STAN_EIGEN_AD_CWISE_PRODUCT_EVALUATOR(STAN_REV_NO_TPARAMS, stan::math::var,
-                                      stan::math::var)
-STAN_EIGEN_AD_CWISE_PRODUCT_EVALUATOR(STAN_REV_NO_TPARAMS, stan::math::var,
-                                      double)
-STAN_EIGEN_AD_CWISE_PRODUCT_EVALUATOR(STAN_REV_NO_TPARAMS, double,
-                                      stan::math::var)
-STAN_EIGEN_AD_CWISE_PRODUCT_EVALUATOR(STAN_REV_NO_TPARAMS, stan::math::var, int)
-STAN_EIGEN_AD_CWISE_PRODUCT_EVALUATOR(STAN_REV_NO_TPARAMS, int, stan::math::var)
-
-/**
- * Products assigned to (`=`, `+=`, `-=`) a destination with `var` scalars are
- * computed by `multiply`, `scale_multiply`, `multiply_add` or `subtract` (see
- * stan/math/prim/meta/eigen_product_evaluator_hooks.hpp).
- */
-STAN_EIGEN_AD_PRODUCT_ASSIGNMENT(STAN_REV_NO_TPARAMS, stan::math::var)
-#undef STAN_REV_NO_TPARAMS
 
 /**
  * Enable linear access of inputs when using read_vi_val_adj.
