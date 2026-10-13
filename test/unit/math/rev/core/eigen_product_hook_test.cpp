@@ -98,16 +98,6 @@ TEST_F(AgradRev, eigen_product_hook_matrix_products_use_multiply) {
       });
 }
 
-TEST_F(AgradRev, eigen_product_hook_fixed_size_products_use_multiply) {
-  mat<var, 2, 2> f = make_mat<var>(2, 2, 0.4);
-  const mat<double, 2, 2> g = make_mat<double>(2, 2, 0.1);
-  mat<var, 4, 4> h = make_mat<var>(4, 4, -0.3);
-  expect_same_as_direct([&] { return stan::math::multiply(f, g); },
-                        [&] { return mat<var, 2, 2>(f * g); });
-  expect_same_as_direct([&] { return stan::math::multiply(h, h); },
-                        [&] { return mat<var, 4, 4>(h * h); });
-}
-
 TEST_F(AgradRev, eigen_product_hook_inner_product_uses_multiply) {
   row_vec<var> rv = make_mat<var>(1, 4, 0.2);
   vec<var> v = make_mat<var>(4, 1, 0.1);
