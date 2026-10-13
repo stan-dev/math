@@ -5,8 +5,9 @@
  * @file
  * Specializations of Eigen's evaluators that compute products of matrices
  * with autodiff scalars with Stan's `multiply`, `elt_multiply`,
- * `scale_multiply` and `multiply_add`, so that `A * B` records one node on
- * the reverse-mode stack instead of one per scalar operation.
+ * `scale_multiply`, `multiply_add` and `multiply_sub`, so that `A * B`
+ * records one node on the reverse-mode stack instead of one per scalar
+ * operation.
  *
  * Each specialization must be more specialized than Eigen's under partial
  * ordering. A condition (`enable_if_t`) can only go in an argument that
@@ -55,7 +56,7 @@ struct is_scalar_times_matrix_impl<Eigen::CwiseBinaryOp<
     const Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<S1>, Plain>,
     const Mat>> : std::true_type {};
 
-    /**
+/**
  * True for the expression Eigen builds for a scalar times a matrix, `s * X`:
  * a `CwiseBinaryOp` of `scalar_product_op` whose left operand is a
  * `CwiseNullaryOp<scalar_constant_op>` holding `s`
@@ -167,20 +168,20 @@ template <typename Lhs, typename Rhs>
 inline auto multiply_operands(Lhs&& lhs, Rhs&& rhs) {
   if constexpr (is_scalar_times_matrix<Lhs>::value) {
     // (s * A) * B
-    return scale_multiply(std::forward<Lhs>(lhs).lhs().functor().m_other, std::forward<Lhs>(lhs).rhs(),
-                          std::forward<Rhs>(rhs));
+    return scale_multiply(std::forward<Lhs>(lhs).lhs().functor().m_other,
+                          std::forward<Lhs>(lhs).rhs(), std::forward<Rhs>(rhs));
   } else if constexpr (is_matrix_times_scalar<Lhs>::value) {
     // (A * s) * B
-    return scale_multiply(std::forward<Lhs>(lhs).rhs().functor().m_other, std::forward<Lhs>(lhs).lhs(),
-                          std::forward<Rhs>(rhs));
+    return scale_multiply(std::forward<Lhs>(lhs).rhs().functor().m_other,
+                          std::forward<Lhs>(lhs).lhs(), std::forward<Rhs>(rhs));
   } else if constexpr (is_scalar_times_matrix<Rhs>::value) {
     // A * (s * B)
-    return scale_multiply(std::forward<Rhs>(rhs).lhs().functor().m_other, std::forward<Lhs>(lhs),
-                          std::forward<Rhs>(rhs).rhs());
+    return scale_multiply(std::forward<Rhs>(rhs).lhs().functor().m_other,
+                          std::forward<Lhs>(lhs), std::forward<Rhs>(rhs).rhs());
   } else if constexpr (is_matrix_times_scalar<Rhs>::value) {
     // A * (B * s)
-    return scale_multiply(std::forward<Rhs>(rhs).rhs().functor().m_other, std::forward<Lhs>(lhs),
-                          std::forward<Rhs>(rhs).lhs());
+    return scale_multiply(std::forward<Rhs>(rhs).rhs().functor().m_other,
+                          std::forward<Lhs>(lhs), std::forward<Rhs>(rhs).lhs());
   } else {
     return multiply(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs));
   }
@@ -193,7 +194,8 @@ inline auto multiply_operands(Lhs&& lhs, Rhs&& rhs) {
  */
 template <typename XprType, require_eigen_product_t<XprType>* = nullptr>
 inline auto evaluate_product(XprType&& xpr) {
-  return multiply_operands(std::forward<XprType>(xpr).lhs(), std::forward<XprType>(xpr).rhs());
+  return multiply_operands(std::forward<XprType>(xpr).lhs(),
+                           std::forward<XprType>(xpr).rhs());
 }
 
 /**
@@ -212,7 +214,8 @@ inline auto evaluate_product(XprType&& xpr) {
   if constexpr (is_scalar_times_matrix<XprType>::value) {
     if constexpr (is_eigen_product<typename Xpr::Rhs>::value) {
       // s * (A * B)
-      return scale_multiply(std::forward<XprType>(xpr).lhs().functor().m_other, std::forward<XprType>(xpr).rhs().lhs(),
+      return scale_multiply(std::forward<XprType>(xpr).lhs().functor().m_other,
+                            std::forward<XprType>(xpr).rhs().lhs(),
                             std::forward<XprType>(xpr).rhs().rhs());
     } else {
       // s * X
@@ -223,8 +226,8 @@ inline auto evaluate_product(XprType&& xpr) {
     if constexpr (is_eigen_product<typename Xpr::Lhs>::value) {
       // (A * B) * s
       return scale_multiply(std::forward<XprType>(xpr).rhs().functor().m_other,
-                             std::forward<XprType>(xpr).lhs().lhs(),
-                             std::forward<XprType>(xpr).lhs().rhs());
+                            std::forward<XprType>(xpr).lhs().lhs(),
+                            std::forward<XprType>(xpr).lhs().rhs());
     } else {
       // X * s
       return multiply(std::forward<XprType>(xpr).rhs().functor().m_other,
@@ -250,7 +253,9 @@ struct ad_product_evaluator
   using PlainObject = typename XprType::PlainObject;
   using Base = Eigen::internal::evaluator<PlainObject>;
   enum { Flags = Base::Flags | Eigen::EvalBeforeNestingBit };
-  template <typename XprTypeT, stan::require_t<std::is_same<std::decay_t<XprTypeT>, std::decay_t<XprType>>>* = nullptr>
+  template <typename XprTypeT,
+            stan::require_t<std::is_same<std::decay_t<XprTypeT>,
+                                         std::decay_t<XprType>>>* = nullptr>
   explicit ad_product_evaluator(XprTypeT&& xpr) {
     if constexpr (is_stan_scalar<decltype(evaluate_product(xpr))>::value) {
       // a row vector times a column vector
@@ -371,9 +376,11 @@ struct Assignment<
       if (dst.rows() != 1 || dst.cols() != 1) {
         dst.resize(1, 1);
       }
-      dst.coeffRef(0, 0) = multiply_operands(std::forward<SrcXpr>(src).lhs(), std::forward<SrcXpr>(src).rhs());
+      dst.coeffRef(0, 0) = multiply_operands(std::forward<SrcXpr>(src).lhs(),
+                                             std::forward<SrcXpr>(src).rhs());
     } else {
-      dst = multiply_operands(std::forward<SrcXpr>(src).lhs(), std::forward<SrcXpr>(src).rhs());
+      dst = multiply_operands(std::forward<SrcXpr>(src).lhs(),
+                              std::forward<SrcXpr>(src).rhs());
     }
   }
 };
@@ -387,9 +394,11 @@ struct Assignment<
     std::enable_if_t<(Options == DefaultProduct
                       || Options == AliasFreeProduct)>>
     : stan::math::internal::eigen_ad_hook {
-  template <typename Func, typename SrcType, stan::math::internal::require_eigen_product_t<SrcType>* = nullptr>
+  template <typename Func, typename SrcType,
+            stan::math::internal::require_eigen_product_t<SrcType>* = nullptr>
   static void run(DstXprType& dst, SrcType&& src, Func&& /* func */) {
-    dst = multiply_add(std::forward<SrcType>(src).lhs(), std::forward<SrcType>(src).rhs(), dst);
+    dst = multiply_add(std::forward<SrcType>(src).lhs(),
+                       std::forward<SrcType>(src).rhs(), dst);
   }
 };
 
@@ -402,10 +411,11 @@ struct Assignment<
     std::enable_if_t<(Options == DefaultProduct
                       || Options == AliasFreeProduct)>>
     : stan::math::internal::eigen_ad_hook {
-  template <typename Func, typename SrcType, stan::math::internal::require_eigen_product_t<SrcType>* = nullptr>
+  template <typename Func, typename SrcType,
+            stan::math::internal::require_eigen_product_t<SrcType>* = nullptr>
   static void run(DstXprType& dst, SrcType&& src, Func&& /* func */) {
-    dst = subtract(
-        dst, stan::math::internal::multiply_operands(std::forward<SrcType>(src).lhs(), std::forward<SrcType>(src).rhs()));
+    dst = multiply_sub(std::forward<SrcType>(src).lhs(),
+                       std::forward<SrcType>(src).rhs(), dst);
   }
 };
 

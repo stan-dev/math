@@ -32,31 +32,27 @@ template <typename Scal, typename Mat1, typename Mat2,
           require_any_st_var<Scal, Mat1, Mat2>* = nullptr,
           require_all_not_complex_t<Scal, value_type_t<Mat1>,
                                     value_type_t<Mat2>>* = nullptr>
-inline auto scale_multiply(const Scal& s, const Mat1& A, const Mat2& B) {
+inline auto scale_multiply(Scal&& s, Mat1&& A, Mat2&& B) {
   check_multiplicable("scale_multiply", "A", A, "B", B);
-  arena_t<Mat1> arena_A = A;
-  arena_t<Mat2> arena_B = B;
-  auto arena_A_val = to_arena(value_of(arena_A));
-  auto arena_B_val = to_arena(value_of(arena_B));
-  const double s_val = value_of(s);
-  using return_t
-      = return_var_matrix_t<decltype(arena_A_val * arena_B_val), Mat1, Mat2>;
-  arena_t<return_t> res = s_val * (arena_A_val * arena_B_val);
-  reverse_pass_callback(
-      [s, arena_A, arena_B, arena_A_val, arena_B_val, s_val, res]() mutable {
-        const auto res_adj = res.adj().eval();
-        if constexpr (is_autodiff_v<Scal>) {
-          s.adj() += (arena_A_val.transpose() * res_adj)
-                         .cwiseProduct(arena_B_val)
-                         .sum();
-        }
-        if constexpr (is_autodiff_v<Mat1>) {
-          arena_A.adj() += s_val * res_adj * arena_B_val.transpose();
-        }
-        if constexpr (is_autodiff_v<Mat2>) {
-          arena_B.adj() += s_val * arena_A_val.transpose() * res_adj;
-        }
-      });
+  arena_t<Mat1> arena_A(std::forward<Mat1>(A));
+  arena_t<Mat2> arena_B(std::forward<Mat2>(B));
+  using return_t = return_var_matrix_t<decltype(arena_A * arena_B), Mat1, Mat2>;
+  arena_t<return_t> res = value_of(s) * (value_of(arena_A) * value_of(arena_B));
+  reverse_pass_callback([s, arena_A, arena_B, res]() mutable {
+    // Eigen's matrix product cannot read the adjoint view directly
+    const auto res_adj = res.adj().eval();
+    if constexpr (is_autodiff_v<Scal>) {
+      s.adj() += (value_of(arena_A).transpose() * res_adj)
+                     .cwiseProduct(value_of(arena_B))
+                     .sum();
+    }
+    if constexpr (is_autodiff_v<Mat1>) {
+      arena_A.adj() += value_of(s) * res_adj * value_of(arena_B).transpose();
+    }
+    if constexpr (is_autodiff_v<Mat2>) {
+      arena_B.adj() += value_of(s) * value_of(arena_A).transpose() * res_adj;
+    }
+  });
   return res;
 }
 

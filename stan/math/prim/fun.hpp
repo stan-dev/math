@@ -226,6 +226,7 @@
 #include <stan/math/prim/fun/multiply_add.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/multiply_lower_tri_self_transpose.hpp>
+#include <stan/math/prim/fun/multiply_sub.hpp>
 #include <stan/math/prim/fun/norm.hpp>
 #include <stan/math/prim/fun/norm1.hpp>
 #include <stan/math/prim/fun/norm2.hpp>

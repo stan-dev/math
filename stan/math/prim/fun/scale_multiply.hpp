@@ -25,9 +25,15 @@ template <typename Scal, typename Mat1, typename Mat2,
           require_stan_scalar_t<Scal>* = nullptr,
           require_all_eigen_t<Mat1, Mat2>* = nullptr,
           require_all_st_arithmetic<Scal, Mat1, Mat2>* = nullptr>
-inline auto scale_multiply(const Scal& s, const Mat1& A, const Mat2& B) {
+inline auto scale_multiply(Scal&& s, Mat1&& A, Mat2&& B) {
   check_multiplicable("scale_multiply", "A", A, "B", B);
-  return (s * (A * B)).eval();
+  return make_holder(
+      [s](auto&& A_, auto&& B_) {
+        return s
+               * (std::forward<decltype(A_)>(A_)
+                  * std::forward<decltype(B_)>(B_));
+      },
+      std::forward<Mat1>(A), std::forward<Mat2>(B));
 }
 
 }  // namespace math

@@ -1,13 +1,13 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
-#include <test/unit/math/ad_tape_util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
 // Eigen's `operator*` on `var` matrices is evaluated by Stan's free functions
-// (multiply, elt_multiply, scale_multiply, multiply_add). Each test checks
-// that an Eigen expression records the same nodes on the reverse-mode stack,
-// and has the same value, as the direct call to the function it should use.
+// (multiply, elt_multiply, scale_multiply, multiply_add, multiply_sub). Each
+// test checks that an Eigen expression records the same nodes on the
+// reverse-mode stack, and has the same value, as the direct call to the
+// function it should use.
 
 namespace {
 
@@ -36,14 +36,18 @@ mat<S> make_mat(Eigen::Index rows, Eigen::Index cols, double offset) {
  */
 template <typename Direct, typename ViaEigen>
 void expect_same_as_direct(const Direct& direct, const ViaEigen& via_eigen) {
-  const stan::test::tape_delta direct_delta;
+  const auto& stack = *stan::math::ChainableStack::instance_;
+  const std::size_t chain_start = stack.var_stack_.size();
+  const std::size_t nochain_start = stack.var_nochain_stack_.size();
   const auto expected = direct();
-  const std::size_t direct_chain = direct_delta.chain();
-  const std::size_t direct_nochain = direct_delta.nochain();
-  const stan::test::tape_delta via_eigen_delta;
+  const std::size_t direct_chain = stack.var_stack_.size() - chain_start;
+  const std::size_t direct_nochain
+      = stack.var_nochain_stack_.size() - nochain_start;
+  const std::size_t chain_mid = stack.var_stack_.size();
+  const std::size_t nochain_mid = stack.var_nochain_stack_.size();
   const auto actual = via_eigen();
-  EXPECT_EQ(via_eigen_delta.chain(), direct_chain);
-  EXPECT_EQ(via_eigen_delta.nochain(), direct_nochain);
+  EXPECT_EQ(stack.var_stack_.size() - chain_mid, direct_chain);
+  EXPECT_EQ(stack.var_nochain_stack_.size() - nochain_mid, direct_nochain);
   EXPECT_MATRIX_NEAR(stan::math::value_of(actual),
                      stan::math::value_of(expected), 1e-12);
 }
@@ -65,7 +69,9 @@ TEST_F(AgradRev, eigen_product_hook_double_products_unchanged) {
       EXPECT_DOUBLE_EQ(c_lazy(i, j), expected);
     }
   }
-  EXPECT_EQ(stan::test::tape_size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
 }
 
 TEST_F(AgradRev, eigen_product_hook_matrix_products_use_multiply) {
@@ -101,12 +107,15 @@ TEST_F(AgradRev, eigen_product_hook_matrix_products_use_multiply) {
 TEST_F(AgradRev, eigen_product_hook_inner_product_uses_multiply) {
   row_vec<var> rv = make_mat<var>(1, 4, 0.2);
   vec<var> v = make_mat<var>(4, 1, 0.1);
-  const stan::test::tape_delta direct_delta;
+  const auto& stack = *stan::math::ChainableStack::instance_;
+  const std::size_t start
+      = stack.var_stack_.size() + stack.var_nochain_stack_.size();
   const var expected = stan::math::multiply(rv, v);
-  const std::size_t direct_total = direct_delta.total();
-  const stan::test::tape_delta via_eigen_delta;
+  const std::size_t mid
+      = stack.var_stack_.size() + stack.var_nochain_stack_.size();
   const var actual = (rv * v)(0, 0);
-  EXPECT_EQ(via_eigen_delta.total(), direct_total);
+  EXPECT_EQ(stack.var_stack_.size() + stack.var_nochain_stack_.size() - mid,
+            mid - start);
   EXPECT_NEAR(actual.val(), expected.val(), 1e-12);
 }
 
@@ -160,13 +169,12 @@ TEST_F(AgradRev, eigen_product_hook_assignments_use_multiply_add) {
                         });
   expect_same_as_direct([&] { return stan::math::multiply_add(a, b, c); },
                         [&] { return mat<var>(c + a * b); });
-  expect_same_as_direct(
-      [&] { return stan::math::subtract(c, stan::math::multiply(a, b)); },
-      [&] {
-        mat<var> d = c;
-        d.noalias() -= a * b;
-        return d;
-      });
+  expect_same_as_direct([&] { return stan::math::multiply_sub(a, b, c); },
+                        [&] {
+                          mat<var> d = c;
+                          d.noalias() -= a * b;
+                          return d;
+                        });
   // Without noalias() Eigen assumes the product may alias the destination,
   // so it evaluates the product into a temporary first and then adds it
   // coefficient by coefficient.

@@ -1,6 +1,5 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
-#include <test/unit/math/ad_tape_util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
@@ -22,10 +21,13 @@ TEST_F(AgradRev, multiply_add_values_and_gradients) {
   Eigen::Matrix<var, -1, -1> a = multiply_add_test_matrix(n, k, 0.1);
   Eigen::Matrix<var, -1, -1> b = multiply_add_test_matrix(k, m, -0.2);
   Eigen::Matrix<var, -1, -1> c = multiply_add_test_matrix(n, m, 0.4);
-  const stan::test::tape_delta delta;
+  const auto& stack = *stan::math::ChainableStack::instance_;
+  const std::size_t start
+      = stack.var_stack_.size() + stack.var_nochain_stack_.size();
   Eigen::Matrix<var, -1, -1> d = stan::math::multiply_add(a, b, c);
   // one callback plus one vari per result coefficient
-  EXPECT_EQ(delta.total(), 1 + n * m);
+  EXPECT_EQ(stack.var_stack_.size() + stack.var_nochain_stack_.size() - start,
+            1 + n * m);
   EXPECT_MATRIX_NEAR(d.val(), a.val() * b.val() + c.val(), 1e-12);
   stan::math::sum(d).grad();
   const Eigen::MatrixXd ones = Eigen::MatrixXd::Ones(n, m);

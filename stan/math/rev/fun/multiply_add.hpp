@@ -33,33 +33,32 @@ template <typename Mat1, typename Mat2, typename Mat3,
           require_any_st_var<Mat1, Mat2, Mat3>* = nullptr,
           require_all_not_complex_t<value_type_t<Mat1>, value_type_t<Mat2>,
                                     value_type_t<Mat3>>* = nullptr>
-inline auto multiply_add(const Mat1& A, const Mat2& B, const Mat3& C) {
+inline auto multiply_add(Mat1&& A, Mat2&& B, Mat3&& C) {
   check_multiplicable("multiply_add", "A", A, "B", B);
   check_size_match("multiply_add", "Rows of A", A.rows(), "rows of C",
                    C.rows());
   check_size_match("multiply_add", "Columns of B", B.cols(), "columns of C",
                    C.cols());
-  arena_t<Mat1> arena_A = A;
-  arena_t<Mat2> arena_B = B;
-  arena_t<Mat3> arena_C = C;
-  auto arena_A_val = to_arena(value_of(arena_A));
-  auto arena_B_val = to_arena(value_of(arena_B));
-  using return_t = return_var_matrix_t<decltype(arena_A_val * arena_B_val),
-                                       Mat1, Mat2, Mat3>;
-  arena_t<return_t> res = arena_A_val * arena_B_val + value_of(arena_C);
-  reverse_pass_callback(
-      [arena_A, arena_B, arena_C, arena_A_val, arena_B_val, res]() mutable {
-        const auto res_adj = res.adj().eval();
-        if constexpr (is_autodiff_v<Mat1>) {
-          arena_A.adj() += res_adj * arena_B_val.transpose();
-        }
-        if constexpr (is_autodiff_v<Mat2>) {
-          arena_B.adj() += arena_A_val.transpose() * res_adj;
-        }
-        if constexpr (is_autodiff_v<Mat3>) {
-          arena_C.adj() += res_adj;
-        }
-      });
+  arena_t<Mat1> arena_A(std::forward<Mat1>(A));
+  arena_t<Mat2> arena_B(std::forward<Mat2>(B));
+  arena_t<Mat3> arena_C(std::forward<Mat3>(C));
+  using return_t
+      = return_var_matrix_t<decltype(arena_A * arena_B), Mat1, Mat2, Mat3>;
+  arena_t<return_t> res
+      = value_of(arena_A) * value_of(arena_B) + value_of(arena_C);
+  reverse_pass_callback([arena_A, arena_B, arena_C, res]() mutable {
+    // Eigen's matrix product cannot read the adjoint view directly
+    const auto res_adj = res.adj().eval();
+    if constexpr (is_autodiff_v<Mat1>) {
+      arena_A.adj() += res_adj * value_of(arena_B).transpose();
+    }
+    if constexpr (is_autodiff_v<Mat2>) {
+      arena_B.adj() += value_of(arena_A).transpose() * res_adj;
+    }
+    if constexpr (is_autodiff_v<Mat3>) {
+      arena_C.adj() += res_adj;
+    }
+  });
   return res;
 }
 

@@ -26,13 +26,18 @@ namespace math {
 template <typename Mat1, typename Mat2, typename Mat3,
           require_all_eigen_t<Mat1, Mat2, Mat3>* = nullptr,
           require_all_st_arithmetic<Mat1, Mat2, Mat3>* = nullptr>
-inline auto multiply_add(const Mat1& A, const Mat2& B, const Mat3& C) {
+inline auto multiply_add(Mat1&& A, Mat2&& B, Mat3&& C) {
   check_multiplicable("multiply_add", "A", A, "B", B);
   check_size_match("multiply_add", "Rows of A", A.rows(), "rows of C",
                    C.rows());
   check_size_match("multiply_add", "Columns of B", B.cols(), "columns of C",
                    C.cols());
-  return (A * B + C).eval();
+  return make_holder(
+      [](auto&& A_, auto&& B_, auto&& C_) {
+        return std::forward<decltype(A_)>(A_) * std::forward<decltype(B_)>(B_)
+               + std::forward<decltype(C_)>(C_);
+      },
+      std::forward<Mat1>(A), std::forward<Mat2>(B), std::forward<Mat3>(C));
 }
 
 }  // namespace math

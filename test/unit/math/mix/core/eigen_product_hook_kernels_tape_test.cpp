@@ -1,5 +1,4 @@
 #include <stan/math/mix.hpp>
-#include <test/unit/math/ad_tape_util.hpp>
 #include <gtest/gtest.h>
 
 // Eigen's own kernels (triangular products and solves, Cholesky, LU) form
@@ -39,27 +38,28 @@ kernel_chain_counts measure_kernels() {
       a(i, j) = kernel_scalar<T>((i == j ? n : 0) + 0.01 * (i + 1) * (j + 2));
     }
   }
+  const auto& chain_stack = stan::math::ChainableStack::instance_->var_stack_;
   kernel_chain_counts counts;
   {
-    const stan::test::tape_delta delta;
+    const std::size_t start = chain_stack.size();
     Eigen::Matrix<T, -1, 1> x
         = a.template triangularView<Eigen::Lower>().solve(b);
-    counts.tri_solve = delta.chain();
+    counts.tri_solve = chain_stack.size() - start;
   }
   {
-    const stan::test::tape_delta delta;
+    const std::size_t start = chain_stack.size();
     Eigen::Matrix<T, -1, 1> x = a.template triangularView<Eigen::Lower>() * b;
-    counts.tri_mul = delta.chain();
+    counts.tri_mul = chain_stack.size() - start;
   }
   {
-    const stan::test::tape_delta delta;
+    const std::size_t start = chain_stack.size();
     Eigen::Matrix<T, -1, 1> x = a.llt().solve(b);
-    counts.llt = delta.chain();
+    counts.llt = chain_stack.size() - start;
   }
   {
-    const stan::test::tape_delta delta;
+    const std::size_t start = chain_stack.size();
     Eigen::Matrix<T, -1, 1> x = a.partialPivLu().solve(b);
-    counts.lu = delta.chain();
+    counts.lu = chain_stack.size() - start;
   }
   stan::math::recover_memory();
   return counts;
