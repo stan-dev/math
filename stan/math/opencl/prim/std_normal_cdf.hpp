@@ -20,9 +20,9 @@ namespace math {
 template <typename T_y_cl,
           require_all_prim_or_rev_kernel_expression_t<T_y_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl>* = nullptr>
-inline return_type_t<T_y_cl> std_normal_cdf(const T_y_cl& y) {
+inline return_type_t<T_y_cl> std_normal_cdf(T_y_cl&& y) {
   return exp(internal::std_normal_lcdf_opencl_impl<false>(
-      "std_normal_cdf(OpenCL)", y));
+      "std_normal_cdf(OpenCL)", std::forward<T_y_cl>(y)));
 }
 
 }  // namespace math

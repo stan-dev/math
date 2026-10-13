@@ -54,24 +54,20 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
   T_mu_ref mu_ref = std::forward<T_loc>(mu);
   T_sigma_ref sigma_ref = std::forward<T_scale>(sigma);
   T_lambda_ref lambda_ref = std::forward<T_inv_scale>(lambda);
-  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
-  decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
-  decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
-  decltype(auto) lambda_val
-      = to_ref(as_value_column_array_or_scalar(lambda_ref));
+  decltype(auto) y_val = as_value_column_array_or_scalar(y_ref);
   check_not_nan(function, "Random variable", y_val);
+  decltype(auto) mu_val = as_value_column_array_or_scalar(mu_ref);
   check_finite(function, "Location parameter", mu_val);
+  decltype(auto) sigma_val = as_value_column_array_or_scalar(sigma_ref);
   check_positive_finite(function, "Scale parameter", sigma_val);
+  decltype(auto) lambda_val = as_value_column_array_or_scalar(lambda_ref);
   check_positive_finite(function, "Inv_scale parameter", lambda_val);
 
   if (size_zero(y_ref, mu_ref, sigma_ref, lambda_ref)) {
     return 0;
-  }
-
-  if (any(y_val == NEGATIVE_INFTY)) {
+  } else if (any(y_val == NEGATIVE_INFTY)) {
     return upper ? 0.0 : NEGATIVE_INFTY;
-  }
-  if (any(y_val == INFTY)) {
+  } else if (any(y_val == INFTY)) {
     return upper ? NEGATIVE_INFTY : 0.0;
   }
 
@@ -109,8 +105,9 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
   } else {
     const auto log_a = internal::std_normal_lcdf_value_grad<false>(sign * z);
     const auto log_phi_b = internal::std_normal_lcdf_value_grad<false>(z - v);
-    auto log_b = std::move(log_b_offset) + log_phi_b;
-    auto lp = exp_mod_normal_log_combine<upper>(log_a, log_b);
+    auto log_b = std::move(log_b_offset) + std::move(log_phi_b);
+    auto lp
+        = exp_mod_normal_log_combine<upper>(std::move(log_a), std::move(log_b));
     return sum(std::move(lp));
   }
 }

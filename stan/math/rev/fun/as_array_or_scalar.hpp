@@ -17,11 +17,11 @@ namespace math {
  * @return `var_value<>` with Matrix converted to an array.
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
-inline auto as_array_or_scalar(T&& v) {
+inline decltype(auto) as_array_or_scalar(T&& v) {
   if constexpr (is_eigen_array<value_type_t<T>>::value) {
-    return std::forward<T>(v);
+    return std::decay_t<T>(std::forward<T>(v));
   } else {
-    return v.array();
+    return std::forward<T>(v).array();
   }
 }
 

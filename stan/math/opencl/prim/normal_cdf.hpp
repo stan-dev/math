@@ -28,9 +28,10 @@ template <
                                                 T_scale_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl>* = nullptr>
 inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_cdf(
-    const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma) {
-  return exp(internal::normal_lcdf_opencl_impl<false>("normal_cdf(OpenCL)", y,
-                                                      mu, sigma));
+    T_y_cl&& y, T_loc_cl&& mu, T_scale_cl&& sigma) {
+  return exp(internal::normal_lcdf_opencl_impl<false>(
+      "normal_cdf(OpenCL)", std::forward<T_y_cl>(y), std::forward<T_loc_cl>(mu),
+      std::forward<T_scale_cl>(sigma)));
 }
 
 }  // namespace math

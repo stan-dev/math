@@ -10,7 +10,6 @@
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
@@ -86,30 +85,20 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     if constexpr (is_autodiff_v<T_shape>) {
       partials<3>(ops_partials) = slopes * z;
     }
-    auto log_cdf = sum(values);
-    if constexpr (!propto || is_any_autodiff_v<T_y, T_loc, T_scale>) {
-      auto quadratic
-          = sum(square(z)) * 0.5 * N / max_size(y_ref, mu_ref, sigma_ref);
-      if constexpr (!propto || is_autodiff_v<T_scale>) {
-        auto log_scale = sum(log(sigma_val)) * N / math::size(sigma_ref);
-        return ops_partials.build(std::move(log_cdf) + std::move(log_normalizer)
-                                  - std::move(log_scale)
-                                  - std::move(quadratic));
-      } else {
-        return ops_partials.build(std::move(log_cdf) + std::move(log_normalizer)
-                                  - std::move(quadratic));
-      }
+    // Scalar terms broadcast over the N elements of values, so one sum scales
+    // each term by N / size(term).
+    if constexpr (!propto || is_autodiff_v<T_scale>) {
+      return ops_partials.build(sum(values - 0.5 * square(z) - log(sigma_val))
+                                + log_normalizer);
+    } else if constexpr (is_any_autodiff_v<T_y, T_loc>) {
+      return ops_partials.build(sum(values - 0.5 * square(z)) + log_normalizer);
     } else {
-      return ops_partials.build(std::move(log_cdf) + std::move(log_normalizer));
+      return ops_partials.build(sum(values) + log_normalizer);
     }
   } else {
     const auto values = internal::std_normal_lcdf_value_grad<false>(az);
     if constexpr (!propto) {
-      auto log_scale = sum(log(sigma_val)) * N / math::size(sigma_ref);
-      auto quadratic
-          = sum(square(z)) * 0.5 * N / max_size(y_ref, mu_ref, sigma_ref);
-      return sum(values) + std::move(log_normalizer) - std::move(log_scale)
-             - std::move(quadratic);
+      return sum(values - 0.5 * square(z) - log(sigma_val)) + log_normalizer;
     } else {
       return 0.0;
     }

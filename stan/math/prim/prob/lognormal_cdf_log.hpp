@@ -11,9 +11,10 @@ namespace math {
  * @deprecated use <code>lognormal_lcdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> lognormal_cdf_log(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
-  return lognormal_lcdf(y, mu, sigma);
+inline return_type_t<T_y, T_loc, T_scale> lognormal_cdf_log(T_y&& y, T_loc&& mu,
+                                                            T_scale&& sigma) {
+  return lognormal_lcdf(std::forward<T_y>(y), std::forward<T_loc>(mu),
+                        std::forward<T_scale>(sigma));
 }
 
 }  // namespace math

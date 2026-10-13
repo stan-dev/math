@@ -10,7 +10,6 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
@@ -70,18 +69,9 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
   // log(erfc(t) / 2) = log Phi(-sqrt(2) t) cancels the log(1/2) constant.
   auto z = -(mu_minus_y + lambda_sigma_sq) * inv_sigma;
 
-  size_t N = max_size(y_ref, mu_ref, sigma_ref, lambda_ref);
   auto log_density = lambda_val * (mu_minus_y + 0.5 * lambda_sigma_sq);
-  auto log_inv_scale = [&]() {
-    if constexpr (!propto || is_autodiff_v<T_inv_scale>) {
-      return sum(log(lambda_val)) * N / math::size(lambda_ref);
-    } else {
-      return 0.0;
-    }
-  }();
   if constexpr (any_autodiff) {
     const auto [values, slopes] = internal::std_normal_lcdf_value_grad<true>(z);
-    auto logp = sum(std::move(log_density) + values);
     auto ops_partials
         = make_partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref);
     if constexpr (is_any_autodiff_v<T_y, T_loc>) {
@@ -102,18 +92,20 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
       partials<3>(ops_partials)
           = inv(lambda_val) + lambda_sigma_sq + mu_minus_y - slopes * sigma_val;
     }
+    // A scalar lambda broadcasts over the N elements of values, so one sum
+    // counts log(lambda) N times.
     if constexpr (!propto || is_autodiff_v<T_inv_scale>) {
-      return ops_partials.build(std::move(logp) + std::move(log_inv_scale));
+      return ops_partials.build(
+          sum(std::move(log_density) + values + log(lambda_val)));
     } else {
-      return ops_partials.build(std::move(logp));
+      return ops_partials.build(sum(std::move(log_density) + values));
     }
   } else {
     const auto values = internal::std_normal_lcdf_value_grad<false>(z);
-    auto logp = sum(std::move(log_density) + values);
     if constexpr (!propto) {
-      return std::move(logp) + std::move(log_inv_scale);
+      return sum(std::move(log_density) + values + log(lambda_val));
     } else {
-      return logp;
+      return sum(std::move(log_density) + values);
     }
   }
 }

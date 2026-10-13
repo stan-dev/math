@@ -16,7 +16,7 @@ namespace math {
 namespace internal {
 template <bool reflect, typename T_y_cl>
 inline return_type_t<T_y_cl> std_normal_lcdf_opencl_impl(const char* function,
-                                                         const T_y_cl& y) {
+                                                         T_y_cl&& y) {
   constexpr double sign = reflect ? -1.0 : 1.0;
   using std::isfinite;
   using std::isnan;
@@ -26,8 +26,8 @@ inline return_type_t<T_y_cl> std_normal_lcdf_opencl_impl(const char* function,
     return 0.0;
   }
 
-  const auto& y_col = as_column_vector_or_scalar(y);
-  const auto& y_val = value_of(y_col);
+  decltype(auto) y_col = as_column_vector_or_scalar(std::forward<T_y_cl>(y));
+  decltype(auto) y_val = value_of(y_col);
 
   auto check_y_not_nan
       = check_cl(function, "Random variable", y_val, "not NaN");
@@ -66,9 +66,9 @@ inline return_type_t<T_y_cl> std_normal_lcdf_opencl_impl(const char* function,
 template <typename T_y_cl,
           require_all_prim_or_rev_kernel_expression_t<T_y_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl>* = nullptr>
-inline return_type_t<T_y_cl> std_normal_lcdf(const T_y_cl& y) {
+inline return_type_t<T_y_cl> std_normal_lcdf(T_y_cl&& y) {
   return internal::std_normal_lcdf_opencl_impl<false>("std_normal_lcdf(OpenCL)",
-                                                      y);
+                                                      std::forward<T_y_cl>(y));
 }
 
 }  // namespace math
