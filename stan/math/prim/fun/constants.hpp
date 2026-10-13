@@ -10,8 +10,6 @@
 namespace stan {
 namespace math {
 
-// TODO(anyone) Use constexpr when moving to C++17
-
 /**
  * Return the base of the natural logarithm.
  *
@@ -92,10 +90,18 @@ static constexpr double LOG_PI = 1.14472988584940017414342735135;
 static constexpr double LOG_HALF = -LOG_TWO;
 
 /**
- * The natural logarithm of 2 plus the natural logarithm of \f$ \pi \f$,
- * \f$ \log(2\pi) \f$.
+ * The value of half the natural logarithm \f$ 2\pi \f$,
+ * \f$ \log(2\pi) / 2 \f$.
  */
-static constexpr double LOG_TWO_PI = LOG_TWO + LOG_PI;
+static constexpr double HALF_LOG_TWO_PI
+    = boost::math::constants::log_root_two_pi<double>();
+
+/**
+ * The natural logarithm of \f$ 2\pi \f$,
+ * \f$ \log(2\pi) \f$. Doubling `HALF_LOG_TWO_PI` is exact, whereas
+ * `LOG_TWO + LOG_PI` rounds one ulp low.
+ */
+static constexpr double LOG_TWO_PI = 2 * HALF_LOG_TWO_PI;
 
 /**
  * The value of one quarter the natural logarithm of \f$ \pi \f$,
@@ -138,7 +144,8 @@ static constexpr double SQRT_TWO_PI
  * The square root of 2 divided by the square root of \f$ \pi \f$,
  * \f$ \sqrt{2} / \sqrt{\pi} \f$.
  */
-static constexpr double SQRT_TWO_OVER_SQRT_PI = SQRT_TWO / SQRT_PI;
+static constexpr double SQRT_TWO_OVER_SQRT_PI
+    = boost::math::constants::root_two_div_pi<double>();
 
 /**
  * The value of 1 over the square root of 2,
@@ -175,16 +182,10 @@ static constexpr double TWO_OVER_SQRT_PI
 static constexpr double HALF_LOG_TWO = 0.5 * LOG_TWO;
 
 /**
- * The value of half the natural logarithm \f$ 2\pi \f$,
- * \f$ \log(2\pi) / 2 \f$.
- */
-static constexpr double HALF_LOG_TWO_PI = 0.5 * LOG_TWO_PI;
-
-/**
  * The value of minus the natural logarithm of the square root of \f$ 2\pi \f$,
  * \f$ -\log(\sqrt{2\pi}) \f$.
  */
-const double NEG_LOG_SQRT_TWO_PI = -std::log(SQRT_TWO_PI);
+static constexpr double NEG_LOG_SQRT_TWO_PI = -HALF_LOG_TWO_PI;
 
 /**
  * Largest rate parameter allowed in Poisson RNG
