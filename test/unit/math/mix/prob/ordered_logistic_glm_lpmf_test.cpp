@@ -85,3 +85,18 @@ TEST_F(AgradRev,
         << "cuts_ffv(" << j << ").val_.val_.adj() non-finite";
   }
 }
+
+// x is a column vector: a design matrix with a single attribute
+TEST_F(AgradRev, mathMixScalFun_ordered_logistic_glm_lpmf_x_column_vector) {
+  std::vector<int> y{1, 2};
+  auto f = [y](const auto& x, const auto& beta, const auto& cutpoints) {
+    return stan::math::ordered_logistic_glm_lpmf(y, x, beta, cutpoints);
+  };
+
+  Eigen::VectorXd x = Eigen::VectorXd::Random(2);
+  Eigen::VectorXd beta = Eigen::VectorXd::Random(1);
+  Eigen::VectorXd cutpoints(2);
+  cutpoints << -0.5, 0.8;
+
+  stan::test::expect_ad(f, x, beta, cutpoints);
+}
