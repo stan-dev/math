@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <cmath>
 
 namespace corr_matrix_constrain_test {
 // easier than fiddling the quadratic equation
@@ -198,4 +199,95 @@ TEST(mathMixMatFun, corr_matrix_constrain_lp_large_argument) {
     EXPECT_NEAR(lp_ref, lp_f.val_, 1e-13);
     EXPECT_NEAR(grad_ref(n), lp_f.d_, 1e-14);
   }
+}
+
+namespace corr_matrix_constrain_test {
+// strictly lower triangle, row by row
+template <typename M>
+Eigen::VectorXd strict_lower(const M& Omega) {
+  const int K = Omega.rows();
+  Eigen::VectorXd v((K * (K - 1)) / 2);
+  int k = 0;
+  for (int i = 0; i < K; ++i) {
+    for (int j = 0; j < i; ++j) {
+      v(k++) = stan::math::value_of_rec(Omega(i, j));
+    }
+  }
+  return v;
+}
+}  // namespace corr_matrix_constrain_test
+
+// Correlations at large |y| against mpmath. With sqrt(1 - z^2) from a
+// rounded z, the small elements of the Cholesky factor had relative errors
+// up to 3.8e-4, which reached the correlations close to 1.
+TEST(mathMixMatFun, corr_matrix_constrain_values_large_argument) {
+  using corr_matrix_constrain_test::strict_lower;
+  using stan::math::fvar;
+  using stan::math::var;
+  Eigen::VectorXd y(6);
+  y << 15.0, 12.0, -0.5, 9.0, 2.0, -14.0;
+  Eigen::VectorXd ref(6);
+  ref << 0.99999999999981285, 0.99999999992449731, 0.99999999993182827,
+      -0.46211715726000976, -0.46211663421720721, -0.46210665234659286;
+  auto expect_ref = [&ref](const Eigen::VectorXd& v, const char* mode) {
+    for (int i = 0; i < ref.size(); ++i) {
+      EXPECT_NEAR(ref(i), v(i), 4e-16) << mode << ", element " << i;
+    }
+  };
+  expect_ref(strict_lower(stan::math::corr_matrix_constrain(y, 4)), "double");
+  Eigen::Matrix<var, Eigen::Dynamic, 1> y_v = stan::math::to_var(y);
+  expect_ref(strict_lower(stan::math::corr_matrix_constrain(y_v, 4)), "var");
+  stan::math::var_value<Eigen::VectorXd> y_m(y);
+  expect_ref(
+      strict_lower(stan::math::corr_matrix_constrain(y_m, 4).val().eval()),
+      "var_value");
+  Eigen::Matrix<fvar<double>, Eigen::Dynamic, 1> y_f(6);
+  for (int i = 0; i < 6; ++i) {
+    y_f(i) = fvar<double>(y(i), 1.0);
+  }
+  expect_ref(strict_lower(stan::math::corr_matrix_constrain(y_f, 4)), "fvar");
+  stan::math::recover_memory();
+}
+
+// K = 40 with unconstrained values in [-1.9, 1.9], as default inits: the
+// diagonal must be 1, lp finite, and the var_value gradient must equal the
+// Eigen<var> gradient and be finite.
+TEST(mathMixMatFun, corr_matrix_constrain_long_rows) {
+  using stan::math::var;
+  const int K = 40;
+  Eigen::VectorXd y((K * (K - 1)) / 2);
+  for (int i = 0; i < y.size(); ++i) {
+    y(i) = 1.9 * std::sin(1.3 * i + 0.7);
+  }
+  Eigen::MatrixXd W(K, K);
+  for (int i = 0; i < W.size(); ++i) {
+    W(i) = std::cos(0.7 * i);
+  }
+  double lp = 0;
+  Eigen::MatrixXd Omega = stan::math::corr_matrix_constrain(y, K, lp);
+  EXPECT_LT((Omega.diagonal().array() - 1).abs().maxCoeff(), 1e-14);
+  EXPECT_TRUE(std::isfinite(lp));
+
+  Eigen::Matrix<var, Eigen::Dynamic, 1> y_v = stan::math::to_var(y);
+  var lp_v = 0;
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> Omega_v
+      = stan::math::corr_matrix_constrain(y_v, K, lp_v);
+  var f_v = (W.array() * Omega_v.array()).sum() + lp_v;
+  f_v.grad();
+  Eigen::VectorXd g_v = stan::math::value_of(y_v.adj());
+  stan::math::recover_memory();
+
+  stan::math::var_value<Eigen::VectorXd> y_m(y);
+  var lp_m = 0;
+  stan::math::var_value<Eigen::MatrixXd> Omega_m
+      = stan::math::corr_matrix_constrain(y_m, K, lp_m);
+  var f_m = stan::math::sum(stan::math::elt_multiply(W, Omega_m)) + lp_m;
+  f_m.grad();
+  Eigen::VectorXd g_m = y_m.adj();
+  stan::math::recover_memory();
+
+  EXPECT_TRUE(g_v.allFinite());
+  EXPECT_TRUE(g_m.allFinite());
+  EXPECT_LT((g_v - g_m).cwiseAbs().maxCoeff(),
+            1e-12 * g_v.cwiseAbs().maxCoeff());
 }
