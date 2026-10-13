@@ -1,5 +1,6 @@
 #include <stan/math.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
 TEST_F(AgradRev, Rev_reverse_pass_callback_test) {
@@ -30,4 +31,20 @@ TEST_F(AgradRev, Rev_reverse_pass_callback_over_aligned_capture) {
   b.grad();
   EXPECT_TRUE(captured_aligned);
   EXPECT_FLOAT_EQ(captured_sum, 2.0);
+}
+
+TEST_F(AgradRev, Rev_multiply_fixed_size_var_matrices) {
+  using stan::math::var;
+  Eigen::Matrix<var, 2, 2> f;
+  f << 1, 2, 3, 4;
+  // leave the next free arena byte 8 but not 32 byte aligned
+  stan::math::ChainableStack::instance_->memalloc_.alloc(8);
+  Eigen::Matrix<var, 2, 2> c = stan::math::multiply(f, f);
+  stan::math::sum(c).grad();
+  const Eigen::Matrix2d f_val = f.val();
+  EXPECT_MATRIX_NEAR(c.val(), f_val * f_val, 1e-12);
+  // d sum(F * F) / dF = ones * F^T + F^T * ones
+  const Eigen::Matrix2d ones = Eigen::Matrix2d::Ones();
+  EXPECT_MATRIX_NEAR(
+      f.adj(), ones * f_val.transpose() + f_val.transpose() * ones, 1e-12);
 }
