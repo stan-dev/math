@@ -7,7 +7,7 @@ TEST(ProbStdNormal, ccdf_log_matches_lccdf) {
   EXPECT_FLOAT_EQ((stan::math::std_normal_lccdf(y)),
                   (stan::math::std_normal_ccdf_log(y)));
   EXPECT_FLOAT_EQ((stan::math::std_normal_lccdf(y)),
-                  (stan::math::std_normal_ccdf_log<double>(y)));
+                  (stan::math::std_normal_ccdf_log(y)));
 }
 
 TEST(ProbStdNormal, lccdf_tail) {

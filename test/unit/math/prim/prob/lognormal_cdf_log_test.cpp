@@ -10,5 +10,5 @@ TEST(ProbLognormal, cdf_log_matches_lcdf) {
                   (stan::math::lognormal_cdf_log(y, mu, sigma)));
   EXPECT_FLOAT_EQ(
       (stan::math::lognormal_lcdf(y, mu, sigma)),
-      (stan::math::lognormal_cdf_log<double, double, double>(y, mu, sigma)));
+      (stan::math::lognormal_cdf_log(y, mu, sigma)));
 }
