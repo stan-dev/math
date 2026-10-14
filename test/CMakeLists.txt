@@ -56,6 +56,12 @@ function(stan_add_test_binary target)
   add_executable(${target} "${PROJECT_SOURCE_DIR}/cmake/pch.cpp" ${ARGN})
   stan_configure_test(${target} "")
   set_property(TARGET ${target} PROPERTY STAN_TEST_OBJECTS "${ARGN}")
+  if(WIN32)
+    add_custom_command(TARGET ${target} POST_BUILD
+      COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+        "$<TARGET_FILE:TBB::tbb>" "$<TARGET_FILE_DIR:${target}>"
+      VERBATIM)
+  endif()
 endfunction()
 
 # Directory and per-file executables share objects with per-source PCH choices.
@@ -75,9 +81,6 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
     elseif(folder_test_name STREQUAL "expressions")
       set(repo_relative "test/expressions/${relative_source}")
     endif()
-    if(STAN_TEST_FILTER AND NOT repo_relative MATCHES "${STAN_TEST_FILTER}")
-      continue()
-    endif()
     set(matches_name_filters TRUE)
     foreach(filter IN LISTS STAN_TEST_NAME_FILTERS)
       string(FIND "${repo_relative}" "${filter}" match_index)
@@ -85,9 +88,6 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
         set(matches_name_filters FALSE)
       endif()
     endforeach()
-    if(NOT matches_name_filters)
-      continue()
-    endif()
     if(NOT STAN_OPENCL AND repo_relative MATCHES "/opencl/")
       continue()
     endif()
@@ -134,7 +134,11 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
     string(REPLACE "/" ";" labels "${relative_dir}")
     set_tests_properties(${name} PROPERTIES
       WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-      LABELS "${folder_test_name};${labels}")
+      LABELS "${folder_test_name};${labels};${repo_relative}")
+
+    if(NOT matches_name_filters)
+      continue()
+    endif()
 
     set(key "${relative_dir}")
     while(TRUE)

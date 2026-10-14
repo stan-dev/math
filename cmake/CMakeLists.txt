@@ -7,7 +7,7 @@ foreach(line IN LISTS library_locations)
   if(line MATCHES "^([A-Z]+) .*lib/([^ ]+)")
     set(dependency "${CMAKE_MATCH_1}")
     set(vendored_root "${PROJECT_SOURCE_DIR}/lib/${CMAKE_MATCH_2}")
-    set(STAN_${dependency}_ROOT "" CACHE PATH "Override ${dependency} source directory (empty: vendored)")
+    stan_cache_default(STAN_${dependency}_ROOT "" PATH "Override ${dependency} source directory (empty: vendored)")
     if(NOT STAN_${dependency}_ROOT)
       set(STAN_${dependency}_ROOT "${vendored_root}")
     endif()
@@ -40,11 +40,19 @@ else()
   # Vendored TBB predates oneTBB's CMake build. One nested Make job keeps
   # dependency compilation within the outer build's parallelism limit.
   include(ExternalProject)
-  find_program(STAN_TBB_MAKE NAMES gmake make)
+  find_program(STAN_TBB_MAKE NAMES gmake make mingw32-make)
   if(NOT STAN_TBB_MAKE)
     message(FATAL_ERROR "Building vendored TBB requires GNU Make")
   endif()
-  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  set(tbb_extra_args "")
+  set(tbb_extra_cxx_flags "")
+  if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    set(tbb_compiler gcc)
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(ARM64|arm64|aarch64)$")
+      list(APPEND tbb_extra_args WINARM64=true)
+      set(tbb_extra_cxx_flags "-DTBB_USE_GCC_BUILTINS")
+    endif()
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(tbb_compiler clang)
   elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(tbb_compiler gcc)
@@ -54,7 +62,7 @@ else()
   if(APPLE)
     set(tbb_library "${CMAKE_CURRENT_BINARY_DIR}/tbb/libtbb.dylib")
   elseif(WIN32)
-    message(FATAL_ERROR "Use STAN_USE_SYSTEM_TBB on Windows")
+    set(tbb_library "${CMAKE_CURRENT_BINARY_DIR}/tbb/tbb.dll")
   else()
     set(tbb_library "${CMAKE_CURRENT_BINARY_DIR}/tbb/libtbb.so.2")
   endif()
@@ -65,8 +73,9 @@ else()
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ${STAN_TBB_MAKE} -j1 -r -f "${STAN_TBB_ROOT}/build/Makefile.tbb"
       "tbb_root=${STAN_TBB_ROOT}" compiler=${tbb_compiler} cfg=release stdver=c++17
-      "CXX=${CMAKE_CXX_COMPILER}" "CC=${CMAKE_C_COMPILER}"
-      "CXXFLAGS=-Wno-deprecated-declarations -Wno-deprecated-copy"
+      "CPLUS=${CMAKE_CXX_COMPILER}" "CONLY=${CMAKE_C_COMPILER}"
+      "CXXFLAGS=-Wno-deprecated-declarations -Wno-deprecated-copy ${STAN_MAKE_LOCAL_CPP_FLAGS} ${STAN_MAKE_LOCAL_CXX_FLAGS} ${tbb_extra_cxx_flags}"
+      ${tbb_extra_args}
     BUILD_BYPRODUCTS "${tbb_library}"
     BUILD_ALWAYS TRUE
     INSTALL_COMMAND "")
@@ -74,6 +83,9 @@ else()
   set_target_properties(TBB::tbb PROPERTIES
     IMPORTED_LOCATION "${tbb_library}"
     INTERFACE_INCLUDE_DIRECTORIES "${STAN_TBB_ROOT}/include")
+  if(WIN32)
+    set_property(TARGET TBB::tbb PROPERTY IMPORTED_IMPLIB "${tbb_library}")
+  endif()
   add_dependencies(TBB::tbb stan_tbb_build)
 endif()
 target_link_libraries(stanmath INTERFACE TBB::tbb)
@@ -120,4 +132,7 @@ if(BUILD_TESTING)
   set(INSTALL_GTEST OFF CACHE BOOL "Install Google Test")
   add_subdirectory("${STAN_BENCHMARK_ROOT}/googletest"
     "${CMAKE_CURRENT_BINARY_DIR}/googletest" EXCLUDE_FROM_ALL)
+  if(WIN32)
+    target_compile_definitions(gtest PUBLIC GTEST_HAS_PTHREAD=0)
+  endif()
 endif()

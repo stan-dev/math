@@ -25,38 +25,55 @@ def shellQuote(String value) {
   return "'" + value.replace("'", "'\"'\"'") + "'"
 }
 
+def configureCmake(List arguments) {
+  def flags = ['-S', '.', '-B', 'build'] + arguments
+  if (fileExists('build/CMakeCache.txt')) {
+    flags += ['--fresh']
+  }
+  sh 'cmake ' + flags.collect { shellQuote(it.toString()) }.join(' ')
+}
+
 def runCmakeTests(Map config) {
-  def buildDir = config.buildDir
-  def jobs = Math.max(1, Math.min(6, (env.PARALLEL ?: '6').toInteger()))
+  def buildDir = 'build'
+  def reportDir = "test-results/${config.name}"
+  def jobs = Math.max(1, (env.PARALLEL ?: '1').toInteger())
   def flags = [
-    '-S', '.', '-B', buildDir, '-DCMAKE_BUILD_TYPE=Release',
+    '-DCMAKE_BUILD_TYPE=Release',
     '-DSTAN_TEST_HEADERS=OFF', '-DSTAN_BUILD_PROB_TESTS=OFF',
-    "-DSTAN_TEST_FILTER=${config.filter}",
     "-DSTAN_TEST_OPTIMIZATION=${config.optimization ?: '1'}"
   ] + (config.flags ?: [])
   try {
     sh "cmake -E rm -rf ${shellQuote(buildDir + '/test-results')} " +
-       "${shellQuote(buildDir + '/ctest-results.xml')} ${shellQuote(buildDir + '/Testing')}"
-    sh "cmake " + flags.collect { shellQuote(it.toString()) }.join(' ')
-    sh "cmake --build ${shellQuote(buildDir)} --parallel ${jobs}"
+       "${shellQuote(buildDir + '/ctest-results.xml')} ${shellQuote(buildDir + '/Testing')} " +
+       shellQuote(reportDir)
+    configureCmake(flags)
+    sh "python3 test/cmake.py build-tests ${shellQuote(buildDir)} " +
+       "--source-regex ${shellQuote(config.filter)} --jobs ${jobs}"
     sh "cmake -E make_directory ${shellQuote(buildDir + '/test-results')}"
     withEnv(["GTEST_OUTPUT=xml:${pwd()}/${buildDir}/test-results/"]) {
-      sh "ctest --test-dir ${shellQuote(buildDir)} --parallel ${config.testJobs ?: jobs} " +
+      sh "ctest --test-dir ${shellQuote(buildDir)} -L ${shellQuote(config.filter)} " +
+         "--parallel ${config.testJobs ?: jobs} " +
          "--no-tests=error --output-on-failure " +
          "--output-junit ${shellQuote(pwd() + '/' + buildDir + '/ctest-results.xml')}"
     }
   } finally {
     junit(testResults: "${buildDir}/test-results/*.xml", allowEmptyResults: true)
-    archiveArtifacts(artifacts: "${buildDir}/ctest-results.xml,${buildDir}/Testing/Temporary/LastTest.log",
-                     allowEmptyArchive: true)
+    sh "cmake -E make_directory ${shellQuote(reportDir)}"
+    if (fileExists(buildDir + '/test-results')) {
+      sh "cmake -E copy_directory ${shellQuote(buildDir + '/test-results')} ${shellQuote(reportDir + '/gtest')}"
+    }
+    for (file in ['ctest-results.xml', 'Testing/Temporary/LastTest.log']) {
+      if (fileExists(buildDir + '/' + file)) {
+        sh "cmake -E copy ${shellQuote(buildDir + '/' + file)} ${shellQuote(reportDir)}"
+      }
+    }
+    archiveArtifacts(artifacts: "${reportDir}/**", allowEmptyArchive: true)
   }
 }
 
-// Var-matrix compatibility still invokes Make directly; expression framework
-// self-tests exercise compile and runtime failures through the CMake runner.
-def runLegacyFrameworkTests(String compiler) {
+def runFrameworkTests(String compiler) {
   writeFile(file: 'make/local', text: "CXX=${compiler}\nO=0\n")
-  withEnv(['PARALLEL=6', 'MAKEFLAGS=-j1', 'PATH+TBB=./lib/tbb', "CXX=${compiler}"]) {
+  withEnv(["CXX=${compiler}"]) {
     sh 'python3 test/varmat_compatibility_test.py'
     sh 'python3 test/expressions/test_expression_testing_framework.py'
   }
@@ -121,13 +138,11 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
           CppLint: { sh "make cpplint" },
           Dependencies: { sh "make test-math-dependencies" },
           CMakeSelection: {
-            sh 'python3 test/cmake_ci_test.py'
-            sh 'python3 test/cmake_runner_test.py'
-            sh 'python3 test/cmake_build_test.py'
+            sh 'python3 test/cmake.py self-test'
           },
           Documentation: {
-            sh 'cmake -S . -B build-ci-docs -DBUILD_TESTING=OFF -DSTAN_BUILD_DOCS=ON'
-            sh 'cmake --build build-ci-docs --parallel 6 --target doxygen'
+            configureCmake(['-DBUILD_TESTING=OFF', '-DSTAN_BUILD_DOCS=ON'])
+            sh "cmake --build build --parallel ${env.PARALLEL ?: '1'} --target doxygen"
           },
         )
       }
@@ -138,11 +153,11 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
         parallel headers: {
           runPod(image: image) {
             stage('Headers check') {
-              sh "cmake -S . -B build-ci-headers -DCMAKE_BUILD_TYPE=Release " +
-                 "-DCMAKE_C_COMPILER=${CLANG_CC} -DCMAKE_CXX_COMPILER=${CLANG_CXX} " +
-                 "-DCMAKE_CXX_FLAGS=-Werror -DSTAN_BUILD_PROB_TESTS=OFF " +
-                 '-DSTAN_TEST_FILTER=\'^$\' -DSTAN_TEST_HEADERS=ON'
-              sh 'cmake --build build-ci-headers --parallel 6 --target test-headers'
+              configureCmake(['-DCMAKE_BUILD_TYPE=Release',
+                "-DCMAKE_C_COMPILER=${CLANG_CC}", "-DCMAKE_CXX_COMPILER=${CLANG_CXX}",
+                '-DCMAKE_CXX_FLAGS=-Werror', '-DSTAN_BUILD_PROB_TESTS=OFF',
+                '-DSTAN_TEST_HEADERS=ON'])
+              sh "cmake --build build --parallel ${env.PARALLEL ?: '1'} --target test-headers"
             }
           }
         }, unit: {
@@ -150,9 +165,9 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
             runPod(image: image) {
               stage('Run changed unit tests') {
                 def filter = sh(returnStdout: true,
-                  script: 'python3 test/cmake_ci.py changed-unit-filter').trim()
+                  script: 'python3 test/cmake.py changed-unit-filter').trim()
                 if (filter) {
-                  runCmakeTests(buildDir: 'build-ci-changed', filter: filter, optimization: '3',
+                  runCmakeTests(name: 'changed', filter: filter, optimization: '3',
                     flags: ['-DCMAKE_CXX_FLAGS=-march=native -mtune=native'])
                 } else {
                   echo 'No priority unit tests selected.'
@@ -168,7 +183,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
           revfwd: {
             runPod(image: image) {
               stage('Rev/Fwd Unit Tests') {
-                runCmakeTests(buildDir: 'build-ci-revfwd', filter: '^test/unit/math/(rev|fwd)/',
+                runCmakeTests(name: 'revfwd', filter: '^test/unit/math/(rev|fwd)/',
                   optimization: noOptimize ? '0' : '3',
                   flags: ['-DCMAKE_CXX_FLAGS=-fsanitize=address', '-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address',
                           '-DCMAKE_SHARED_LINKER_FLAGS=-fsanitize=address'])
@@ -178,7 +193,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
           mix: {
             runPod(image: image, cpus: 6, memory: '192Gi') {
               stage('Mix Unit Tests') {
-                runCmakeTests(buildDir: 'build-ci-mix', filter: '^test/unit/math/mix/',
+                runCmakeTests(name: 'mix', filter: '^test/unit/math/mix/',
                   optimization: noOptimize ? '1' : '3',
                   flags: ['-DCMAKE_CXX_FLAGS=-fsanitize=address', '-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address',
                           '-DCMAKE_SHARED_LINKER_FLAGS=-fsanitize=address'])
@@ -188,7 +203,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
           prim: {
             runPod(image: image) {
               stage('Prim Unit Tests') {
-                runCmakeTests(buildDir: 'build-ci-prim',
+                runCmakeTests(name: 'prim',
                   filter: '^test/unit/([^/]+_test[.]cpp$|math/([^/]+_test[.]cpp$|prim/|memory/))',
                   optimization: noOptimize ? '0' : '3',
                   flags: ['-DCMAKE_CXX_FLAGS=-fsanitize=address', '-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address',
@@ -199,10 +214,10 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
           laplace: {
             runPod(image: image, memory: '32Gi') {
               stage('Laplace Unit Tests') {
-                runCmakeTests(buildDir: 'build-ci-laplace', filter: '^test/unit/math/laplace/',
+                runCmakeTests(name: 'laplace', filter: '^test/unit/math/laplace/',
                   optimization: '3', flags: ['-DCMAKE_CXX_FLAGS=-march=native -mtune=native'])
                 if (mainBranch) {
-                  runCmakeTests(buildDir: 'build-ci-laplace-asan', optimization: '3',
+                  runCmakeTests(name: 'laplace-asan', optimization: '3',
                     filter: '^test/unit/math/laplace/laplace_marginal_lpdf_moto_test[.]cpp$',
                     flags: ['-DCMAKE_CXX_FLAGS=-march=native -mtune=native -fsanitize=address',
                             '-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address'])
@@ -213,7 +228,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
           gpu: {
             runPod(image: image, memory: '32Gi', gpus: 1) {
               stage('OpenCL GPU tests') {
-                runCmakeTests(buildDir: 'build-ci-opencl',
+                runCmakeTests(name: 'opencl',
                   filter: '^test/unit/(math/opencl/|multiple_translation_units_test[.]cpp$)',
                   optimization: noOptimize ? '1' : '3',
                   flags: ["-DCMAKE_C_COMPILER=${CLANG_CC}", "-DCMAKE_CXX_COMPILER=${CLANG_CXX}",
@@ -226,7 +241,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
           mpi: {
             runPod(image: image) {
               stage('MPI Tests') {
-                runCmakeTests(buildDir: 'build-ci-mpi',
+                runCmakeTests(name: 'mpi',
                   filter: '^test/unit/math/(prim|rev)/functor/', testJobs: 1,
                   flags: ["-DCMAKE_CXX_COMPILER=${MPICXX}", '-DSTAN_MPI=ON'])
               }
@@ -239,14 +254,14 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
                 sh 'python3 test/signature_parser_test.py'
                 sh 'python3 test/statement_types_test.py'
                 sh 'python3 test/varmat_compatibility_summary_test.py'
-                runLegacyFrameworkTests(CLANG_CXX)
-                sh 'python3 test/cmake_ci.py generate-expressions build-ci-expressions'
-                runCmakeTests(buildDir: 'build-ci-expressions', filter: '^test/expressions/', optimization: '0',
+                runFrameworkTests(CLANG_CXX)
+                sh 'python3 test/cmake.py generate-expressions build'
+                runCmakeTests(name: 'expressions', filter: '^test/expressions/', optimization: '0',
                   flags: ["-DCMAKE_C_COMPILER=${CLANG_CC}", "-DCMAKE_CXX_COMPILER=${CLANG_CXX}",
                           '-DCMAKE_CXX_FLAGS=-Werror', '-DSTAN_BUILD_EXPRESSION_TESTS=ON'])
-                sh 'python3 test/cmake_ci.py generate-expressions build-ci-expressions-threads --functions reduce_sum map_rect'
+                sh 'python3 test/cmake.py generate-expressions build --functions reduce_sum map_rect'
                 withEnv(['STAN_NUM_THREADS=4']) {
-                  runCmakeTests(buildDir: 'build-ci-expressions-threads', filter: '^test/expressions/',
+                  runCmakeTests(name: 'expressions-threads', filter: '^test/expressions/',
                     optimization: '0', testJobs: 1,
                     flags: ["-DCMAKE_C_COMPILER=${CLANG_CC}", "-DCMAKE_CXX_COMPILER=${CLANG_CXX}",
                             '-DCMAKE_CXX_FLAGS=-Werror', '-DSTAN_BUILD_EXPRESSION_TESTS=ON', '-DSTAN_THREADS=ON'])
@@ -258,7 +273,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
             runPod(image: image, cpus: 6, memory: '128Gi') {
               stage('Threading tests') {
                 withEnv(['STAN_NUM_THREADS=4']) {
-                  runCmakeTests(buildDir: 'build-ci-threads', testJobs: 1,
+                  runCmakeTests(name: 'threads', testJobs: 1,
                     filter: mainBranch ? '^test/unit/' : '^test/unit/.*(thread|map_rect|reduce_sum)',
                     flags: ["-DCMAKE_C_COMPILER=${CLANG_CC}", "-DCMAKE_CXX_COMPILER=${CLANG_CXX}",
                             '-DCMAKE_CXX_FLAGS=-Werror', '-DSTAN_THREADS=ON'])
@@ -269,7 +284,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
           dist: {
             runPod(image: image, cpus: 6, memory: '128Gi') {
               stage('Distribution tests') {
-                def command = 'python3 test/cmake_ci.py changed-distribution-filter'
+                def command = 'python3 test/cmake.py changed-distribution-filter'
                 if (params.runAllDistributions || params.run_all || mainBranch) {
                   command += ' --all'
                 }
@@ -280,7 +295,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
                   if (params.withRowVector || mainBranch) {
                     flags += ['-DSTAN_TEST_ROW_VECTORS=ON', '-DSTAN_PROB_TEST_ALL=ON']
                   }
-                  runCmakeTests(buildDir: 'build-ci-distributions', filter: filter,
+                  runCmakeTests(name: 'distributions', filter: filter,
                     optimization: '0', flags: flags)
                 } else {
                   echo 'No distribution tests affected by this change.'
@@ -306,8 +321,8 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
       runPod(image: image, cpus: 2) {
         stage('Upload doxygen') {
           def branch = 'gh-pages'
-          sh 'cmake -S . -B build-ci-docs -DBUILD_TESTING=OFF -DSTAN_BUILD_DOCS=ON'
-          sh 'cmake --build build-ci-docs --parallel 6 --target doxygen'
+          configureCmake(['-DBUILD_TESTING=OFF', '-DSTAN_BUILD_DOCS=ON'])
+          sh "cmake --build build --parallel ${env.PARALLEL ?: '1'} --target doxygen"
           dir('gh-pages') {
             def scm = scmGit(
               branches: [[name: "refs/heads/$branch"]],

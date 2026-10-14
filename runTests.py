@@ -1,74 +1,16 @@
 #!/usr/bin/env python3
+"""Build and run Stan Math tests with CMake."""
 
-"""
-Build and run Stan Math tests with CMake (or the legacy Make backend).
-
-Call script with '-h' as an option to see a helpful message.
-"""
-
-from __future__ import print_function
-
-import glob
 import os
-import os.path
-import platform
+from pathlib import Path
 import re
 import subprocess
 import sys
 import time
 from argparse import ArgumentParser, RawTextHelpFormatter
 
-winsfx = ".exe"
+maxChangedTests = 20
 testsfx = "_test.cpp"
-
-allowed_paths_with_jumbo = [
-    "test/unit/math/prim/",
-    "test/unit/math/prim/constraint",
-    "test/unit/math/",
-    "test/unit/math/rev/",
-     "test/unit/math/rev/constraint",
-    "test/unit/math/fwd/",
-    "test/unit/math/fwd/constraint",
-    "test/unit/math/mix/",
-    "test/unit/math/mix/fun/",
-    "test/unit/math/opencl/",
-    "test/unit/",
-]
-
-jumbo_folders = [
-    "test/unit/math/prim/constraint",
-    "test/unit/math/prim/core",
-    "test/unit/math/prim/err",
-    "test/unit/math/prim/fun",
-    "test/unit/math/prim/functor",
-    "test/unit/math/prim/meta",
-    "test/unit/math/prim/prob",
-     "test/unit/math/rev/constraint",
-    "test/unit/math/rev/core",
-    "test/unit/math/rev/err",
-    "test/unit/math/rev/fun",
-    "test/unit/math/rev/functor",
-    "test/unit/math/rev/meta",
-    "test/unit/math/rev/prob",
-    "test/unit/math/fwd/constraint",
-    "test/unit/math/fwd/core",
-    "test/unit/math/fwd/fun",
-    "test/unit/math/fwd/functor",
-    "test/unit/math/fwd/meta",
-    "test/unit/math/fwd/prob",
-    "test/unit/math/mix/core",
-    "test/unit/math/mix/fun",
-    "test/unit/math/mix/functor",
-    "test/unit/math/mix/meta",
-    "test/unit/math/mix/prob",
-    "test/unit/math/opencl/device_functions",
-    "test/unit/math/opencl/kernel_generator",
-    "test/unit/math/opencl/prim",
-    "test/unit/math/opencl/prim/constraint",
-    "test/unit/math/opencl/rev",
-    "test/unit/math/opencl/rev/constraint",
-]
-
 
 def processCLIArgs():
     """
@@ -85,7 +27,7 @@ def processCLIArgs():
 
     # Now define all the rules of the command line args and opts
     parser.add_argument(
-        "-j", metavar="N", type=int, default=1, help="parallel build jobs (maximum 6)"
+        "-j", metavar="N", type=int, default=1, help="parallel build jobs (default: 1)"
     )
 
     parser.add_argument(
@@ -140,16 +82,16 @@ def processCLIArgs():
         "--jumbo-test",
         dest="do_jumbo",
         action="store_true",
-        help="Build/run jumbo tests.",
+        help="accepted for compatibility, directory tests already use one executable",
     )
 
     tests_help_msg = "The path(s) to the test case(s) to run.\n"
     tests_help_msg += "Example: 'test/unit', 'test/prob', and/or\n"
     tests_help_msg += "         'test/unit/math/prim/fun/abs_test.cpp'"
     parser.add_argument("tests", nargs="*", type=str, help=tests_help_msg)
-    parser.add_argument("--backend", choices=("cmake", "make"), default="cmake",
-                        help="build backend (default: cmake)")
     parser.add_argument("--build-dir", default="build", help="CMake build directory")
+    parser.add_argument("--fresh", action="store_true",
+                        help="reset the CMake cache before configuring (requires CMake 3.24 or newer)")
     parser.add_argument("--cmake-arg", action="append", default=[],
                         help="extra configure argument, e.g. --cmake-arg=-DSTAN_THREADS=ON")
     parser.add_argument("--config", default="Release", help="CMake build configuration")
@@ -157,9 +99,10 @@ def processCLIArgs():
     inputs = parser.parse_args()
     if inputs.j < 1:
         parser.error("-j must be positive")
-    inputs.j = min(inputs.j, 6)
     if inputs.make_only and inputs.test_only:
         parser.error("--make-only and --test-only cannot be combined")
+    if inputs.fresh and inputs.test_only:
+        parser.error("--fresh cannot be combined with --test-only")
     return inputs
 
 
@@ -170,176 +113,10 @@ def stopErr(msg, returncode):
     sys.exit(returncode)
 
 
-def isWin():
-    return platform.system().lower().startswith(
-        "windows"
-    ) or os.name.lower().startswith("windows")
-
-
-batchSize = 20 if isWin() else 200
-jumboSize = 5 if isWin() else 12
-maxChangedTests = 20
-
-
-def mungeName(name):
-    """Set up the makefile target name"""
-    if name.endswith(testsfx):
-        name = name.replace(testsfx, "_test")
-
-        if isWin():
-            name += winsfx
-            name = name.replace("\\", "/")
-    return name
-
-
-def doCommand(command, exit_on_failure=True):
-    """Run command as a shell command and report/exit on errors."""
-    print("------------------------------------------------------------")
-    print("%s" % command)
-    p1 = subprocess.Popen(command, shell=True)
-    p1.wait()
-    if exit_on_failure and (not (p1.returncode is None) and not (p1.returncode == 0)):
-        stopErr("%s failed" % command, p1.returncode)
-
-
-def generateTests(j):
-    """Generate all tests and pass along the j parameter to make."""
-    doCommand("make -j%d generate-tests -s" % (j or 1))
-
-
-def divide_chunks(l, n):
-    # looping till length l
-    for i in range(0, len(l), n):
-        yield l[i : i + n]
-
-include_pattern = re.compile(r'^\s*#include\s+<.*>$')
-
-def generateJumboTests(paths, debug=False):
-    jumbo_files_to_create = []
-    jumbo_files = []
-    for p in paths:
-        if not p.endswith(testsfx) and not p.endswith("/"):
-            p = p + "/"
-        if p in allowed_paths_with_jumbo:
-            jumbo_files_to_create.extend([x for x in jumbo_folders if x.startswith(p)])
-        else:
-            stopErr("The --jumbo flag is only allowed with top level folders.", 10)
-    for jf in jumbo_files_to_create:
-        tests_in_subfolder = sorted(os.path.join(jf, x) for x in os.listdir(jf) if x.endswith(testsfx))
-        for i, tests in enumerate(divide_chunks(tests_in_subfolder, jumboSize)):
-
-            includes = []
-            jumbo_contents = []
-            for t in tests:
-                with open(t, "r") as test_file:
-                    contents_raw = test_file.read()
-
-                test_contents = []
-                for l in contents_raw.splitlines():
-                    if include_pattern.fullmatch(l.strip()):
-                        includes.append(l.strip())
-                        continue
-                    test_contents.append(l)
-
-                jumbo_contents.append('\n'.join(test_contents))
-
-            jumbo_file_path = jf + "_" + str(i) + testsfx
-            jumbo_files.append(jumbo_file_path)
-            if debug:
-                print("Generating jumbo test file '{}' with tests: {}".format( jumbo_file_path, ', '.join(tests)))
-            with open(jumbo_file_path, "w") as jumbo_file:
-                jumbo_file.write('\n'.join(list(dict.fromkeys(includes))))
-                jumbo_file.write('\n')
-                jumbo_file.write('\n'.join(jumbo_contents))
-    return jumbo_files
-
-
-def cleanupJumboTests(paths):
-    for f in paths:
-        if os.path.exists(f):
-            os.remove(f)
-
-
-def makeTest(name, j):
-    """Run the make command for a given single test."""
-    doCommand("make -j%d %s" % (j or 1, name))
-
-
-def commandExists(command):
-    p = subprocess.Popen(
-        command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-    )
-    p.wait()
-    return p.returncode != 127
-
-
-def runTest(name, run_all=False, mpi=False, j=1):
-    executable = mungeName(name).replace("/", os.sep)
-    xml = mungeName(name).replace(winsfx, "")
-    command = '%s --gtest_output="xml:%s.xml"' % (executable, xml)
-    if mpi:
-        if not commandExists("mpirun"):
-            stopErr(
-                "Error: need to have mpi (and mpirun) installed to run mpi tests",
-                -1,
-            )
-        if "mpi_" in name:
-            j = j > 2 and j or 2
-        else:
-            j = 1
-        command = "mpirun -np {} {}".format(j, command)
-    doCommand(command, not run_all)
-
-
-def test_files_in_folder(folder):
-    """Returns a list of test files (*_test.cpp) in the folder and all
-    its subfolders recursively. The folder can be written with
-    wildcards as with the Unix find command.
-    """
-    files = []
-    for f in glob.glob(folder):
-        if os.path.isdir(f):
-            files.extend(test_files_in_folder(f + os.sep + "**"))
-        else:
-            if f.endswith(testsfx):
-                files.append(f)
-    return files
-
-
-def findTests(base_path, filter_names, do_jumbo=False):
-    tests = []
-    for path in base_path:
-        if (not os.path.isdir(path)) and path.endswith("_test"):
-            tests.append(path + ".cpp")
-        else:
-            tests.extend(test_files_in_folder(path))
-    tests = map(mungeName, tests)
-    tests = [
-        test
-        for test in tests
-        if all(filter_name in test for filter_name in filter_names)
-    ]
-    if do_jumbo:
-        filtered_jumbo_tests = []
-        for t in tests:
-            add = True
-            for k in jumbo_folders:
-                k = k + "/"
-                if t.startswith(k):
-                    add = False
-                    break
-            if add:
-                filtered_jumbo_tests.append(t)
-        tests = filtered_jumbo_tests
-    return tests
-
-
 def findChangedTests(debug):
-    import subprocess
-
     changed_files = subprocess.run(
         ["git", "diff", "--name-only", "--diff-filter=d", "origin/develop...HEAD"],
-        text=True, capture_output=True
+        text=True, capture_output=True, check=True, cwd=Path(__file__).resolve().parent
     ).stdout.splitlines()
     if debug:
         print("Changed files:", changed_files)
@@ -364,122 +141,18 @@ def findChangedTests(debug):
     if len(changed_tests) > maxChangedTests:
         stopErr("Number of changed tests excluded maximum, not running priority tests", 0)
 
-    return list(map(mungeName, changed_tests))
-
-
-def batched(tests):
-    return [tests[i : i + batchSize] for i in range(0, len(tests), batchSize)]
-
-
-def handleExpressionTests(tests, only_functions, n_test_files):
-    expression_tests = False
-    for n, i in list(enumerate(tests))[::-1]:
-        if "test/expressions" in i or "test\\expressions" in i:
-            del tests[n]
-            expression_tests = True
-    if expression_tests:
-        HERE = os.path.dirname(os.path.realpath(__file__))
-        sys.path.append(os.path.join(HERE, "test"))
-        sys.path.append(os.path.join(HERE, "test/expressions"))
-        import generate_expression_tests
-
-        generate_expression_tests.main(only_functions, n_test_files)
-        for i in range(n_test_files):
-            tests.append("test/expressions/tests%d_test.cpp" % i)
-    elif only_functions:
-        stopErr(
-            "--only-functions can only be specified if running expression tests (test/expressions)",
-            -1,
-        )
-
-
-def checkToolchainPathWindows():
-    if isWin():
-        p1 = subprocess.Popen(
-            "where.exe make",
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True,
-        )
-        out, err = p1.communicate()
-        if re.search(r" |\(|\)", out):
-            stopErr(
-                "The RTools toolchain is installed in a path with spaces or bracket. Please reinstall to a valid path.",
-                -1,
-            )
-
-
-def runMake(inputs):
-    checkToolchainPathWindows()
-
-    try:
-        with open("make/local") as f:
-            stan_mpi = "STAN_MPI" in f.read()
-    except IOError:
-        stan_mpi = False
-
-    jumboFiles = []
-
-    if inputs.changed:
-        tests = findChangedTests(inputs.debug)
-    else:
-        if not inputs.test_only:
-            # pass 0: generate all auto-generated tests
-            if any("test/prob" in arg for arg in inputs.tests):
-                generateTests(inputs.j)
-
-            if inputs.do_jumbo:
-                jumboFiles = generateJumboTests(inputs.tests)
-            if inputs.e == -1:
-                if inputs.j == 1:
-                    num_expr_test_files = 1
-                else:
-                    num_expr_test_files = inputs.j * 4
-            else:
-                num_expr_test_files = inputs.e
-            handleExpressionTests(inputs.tests, inputs.only_functions, num_expr_test_files)
-
-        tests = findTests(inputs.tests, inputs.f, inputs.do_jumbo)
-
-    if not tests:
-        if inputs.changed:
-            stopErr("No changed tests were found!", 0)
-        stopErr(
-            "No matching tests found. Check the path passed on the command line", -1
-        )
-
-    try:
-        # pass 1: make test executables
-        if not inputs.test_only:
-            for batch in batched(tests):
-                if inputs.debug:
-                    print("Test batch: ", batch)
-                makeTest(" ".join(batch), inputs.j)
-        if not inputs.make_only:
-            # pass 2: run test targets
-            for t in tests:
-                if inputs.debug:
-                    print("run single test: %s" % t)
-                runTest(t, inputs.run_all, mpi=stan_mpi, j=inputs.j)
-    except BaseException as e:
-       print(e, file=sys.stderr)
-       sys.exit(1)
-    finally:
-        cleanupJumboTests(jumboFiles)
-        pass
+    return sorted(changed_tests)
 
 
 def main():
     inputs = processCLIArgs()
-    if inputs.backend == "make":
-        runMake(inputs)
-        return
     sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "test"))
-    from cmake_runner import run
+    from cmake import run
     try:
         sys.exit(run(inputs))
     except (ValueError, OSError, subprocess.CalledProcessError) as error:
         stopErr(str(error), 1)
+
 
 
 if __name__ == "__main__":

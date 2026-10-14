@@ -3,9 +3,17 @@ import json
 import tempfile
 import unittest
 import os
+from unittest.mock import patch
 
 
 class VarmatCompatibilityMainTest(unittest.TestCase):
+    def test_configuration_failure_propagates(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(
+                varmat_compatibility, "get_signatures", return_value=["sum(matrix) => real\n"]), patch.object(
+                varmat_compatibility, "build_signature", side_effect=RuntimeError("configuration failed")):
+            with self.assertRaisesRegex(RuntimeError, "CMake compilation setup failed"):
+                varmat_compatibility.main(["sum"], os.path.join(directory, "results.json"), 1, False)
+
     def test_sum_works(self):
         f = tempfile.NamedTemporaryFile("w", suffix="_test.json", delete=False)
         f.close()

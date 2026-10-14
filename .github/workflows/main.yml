@@ -48,25 +48,24 @@ jobs:
       with:
         r-version: 'release'
 
-    - name: Build Math libs
+    - name: Configure test tools
       shell: pwsh
       run: |
-        echo "$(pwd)/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+        python -m pip install ninja
         Add-Content make\local "CPPFLAGS=-w -Wno-psabi -Wno-misleading-indentation`n"
         Add-Content make\local "STAN_THREADS=true`n"
-        make -f make/standalone math-libs -j2
 
     - name: Run ${{ matrix.config.label }} unit tests
       shell: pwsh
       run: |
-        python runTests.py --backend make -j4 ${{ matrix.config.tests }}
+        python runTests.py --cmake-arg=-GNinja --cmake-arg=-DCMAKE_C_COMPILER=gcc --cmake-arg=-DCMAKE_CXX_COMPILER=g++ -j4 ${{ matrix.config.tests }}
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v7
       if: failure()
       with:
         name: gtest_outputs_xml
-        path: '**/*_test.xml'
+        path: 'build/test-results/*.xml'
 
   mix-fun:
     name: mix fun and prob tests ${{ matrix.group }} (${{ matrix.os }})
@@ -91,13 +90,12 @@ jobs:
         r-version: 'release'
 
 
-    - name: Build Math libs
+    - name: Configure test tools
       shell: pwsh
       run: |
-        echo "$(pwd)/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+        python -m pip install ninja
         Add-Content make\local "CPPFLAGS=-w -Wno-psabi -Wno-misleading-indentation`n"
         Add-Content make\local "STAN_THREADS=true`n"
-        make -f make/standalone math-libs -j2
 
     - name: Run mix/fun unit tests
       shell: pwsh
@@ -114,11 +112,11 @@ jobs:
           $MixFunProbTests[(4 * $FifthNumberTests)..($NumberTests - 1)] `
         )
 
-        python runTests.py --backend make -j2 $MixFunProbTestsArray[(${{ matrix.group }} - 1)]
+        python runTests.py --cmake-arg=-GNinja --cmake-arg=-DCMAKE_C_COMPILER=gcc --cmake-arg=-DCMAKE_CXX_COMPILER=g++ -j2 $MixFunProbTestsArray[(${{ matrix.group }} - 1)]
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v7
       if: failure()
       with:
         name: gtest_outputs_xml
-        path: '**/*_test.xml'
+        path: 'build/test-results/*.xml'

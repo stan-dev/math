@@ -16,7 +16,7 @@ actual stderr:
 
 class TestExpressionTestingFramework(unittest.TestCase):
     def runCommand(self, command):
-        command = command + ("--build-dir", "build-expression-framework",
+        command = command + ("--build-dir", "build", "--fresh",
                              "--cmake-arg=-DSTAN_TEST_OPTIMIZATION=0")
         p1 = subprocess.Popen(command, stdout = subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
         out, err = p1.communicate()
