@@ -9,6 +9,7 @@
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/inv_square.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
@@ -90,7 +91,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
         = make_partials_propagator(y_ref, loc_ref, scale_ref, shape_ref);
     const size_t num_terms = max_size(y_ref, loc_ref, scale_ref, shape_ref);
 
-    auto resid = (y_val - loc_val) / scale_val;
+    auto resid = eval((y_val - loc_val) / scale_val);
     auto resid_is_zero = as_array_or_scalar(value_of_rec(resid)) == 0;
     auto shape_eq_two = as_array_or_scalar(value_of_rec(shape_val)) == 2.0;
     // Replace zero bases with one so pow and multiply_log have finite tangents.
@@ -101,10 +102,10 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
 
     // At shape == 2 the square expression preserves the normal Hessian at
     // the tie, whereas the generic expression would inherit abs'(0) == 0.
-    auto kernel
-        = select(resid_is_zero,
-                 select(shape_eq_two, normal_kernel, T_partials_return(0.0)),
-                 generic_kernel);
+    auto kernel = eval(
+        select(resid_is_zero,
+               select(shape_eq_two, normal_kernel, T_partials_return(0.0)),
+               generic_kernel));
     const T_partials_return kernel_log_density = -sum(kernel);
 
     if constexpr (y_is_ad || loc_is_ad || scale_is_ad) {

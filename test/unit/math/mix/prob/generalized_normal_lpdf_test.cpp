@@ -7,7 +7,11 @@ namespace generalized_normal_lpdf_test {
 
 // expect_ad takes at most three autodiff arguments, so each factory holds
 // one of (y, mu, alpha, beta) primitive and rotates the other three.
-auto f_y_mu_alpha(double beta) {
+// Every expect_ad call in this file goes through these factories: each new
+// closure type re-instantiates expect_ad for every autodiff type, which made
+// this test exhaust memory when compiling.
+template <typename T_beta>
+auto f_y_mu_alpha(const T_beta& beta) {
   return [beta](const auto& y, const auto& mu, const auto& alpha) {
     return stan::math::generalized_normal_lpdf(y, mu, alpha, beta);
   };
@@ -96,22 +100,16 @@ TEST_F(AgradRev, mathMixScalFun_generalized_normal_lpdf_y_equals_mu_normal) {
   stan::test::expect_ad(f_y_mu_alpha(2.0), 0.0, 0.0, 1.0);
 
   // Same requirement inside a vectorized call, where only y[0] == mu[0].
-  auto f_vec = [](const auto& y, const auto& mu, const auto& alpha) {
-    return stan::math::generalized_normal_lpdf(y, mu, alpha, 2.0);
-  };
   Eigen::VectorXd y(2), mu(2), alpha(2);
   y << 0.5, 0.3;
   mu << 0.5, -0.2;
   alpha << 1.0, 1.4;
-  stan::test::expect_ad(f_vec, y, mu, alpha);
+  stan::test::expect_ad(f_y_mu_alpha(2.0), y, mu, alpha);
 
   // The same boundary handling applies elementwise when beta is a vector.
   Eigen::VectorXd beta(2);
   beta << 2.0, 3.5;
-  auto f_vec_beta = [&beta](const auto& y, const auto& mu, const auto& alpha) {
-    return stan::math::generalized_normal_lpdf(y, mu, alpha, beta);
-  };
-  stan::test::expect_ad(f_vec_beta, y, mu, alpha);
+  stan::test::expect_ad(f_y_mu_alpha(beta), y, mu, alpha);
 }
 
 TEST_F(AgradRev,
@@ -184,57 +182,48 @@ TEST_F(AgradRev, mathMixScalFun_generalized_normal_lpdf_y_equals_mu_cusp) {
 }
 
 TEST_F(AgradRev, mathMixScalFun_generalized_normal_lpdf_vectorized) {
-  auto f_vec = [](const auto& y, const auto& mu, const auto& alpha) {
-    return stan::math::generalized_normal_lpdf(y, mu, alpha, 3.0);
-  };
-  auto f_vec_beta = [](const auto& y, const auto& mu, const auto& beta) {
-    return stan::math::generalized_normal_lpdf(y, mu, 1.1, beta);
-  };
+  using generalized_normal_lpdf_test::f_y_mu_alpha;
+  using generalized_normal_lpdf_test::f_y_mu_beta;
 
+  // Each distinct (vector, scalar) argument pattern is a separate expect_ad
+  // instantiation. test/prob/generalized_normal covers every broadcasting
+  // combination, so only one scalar position per factory is checked here.
   Eigen::VectorXd y(3), mu(3), alpha(3), beta(3);
   y << -1.0, 0.6, 2.0;
   mu << 0.0, 0.5, -0.4;
   alpha << 1.0, 2.5, 0.7;
   beta << 3.5, 4.0, 5.5;
 
-  stan::test::expect_ad(f_vec, y, mu, alpha);
-  stan::test::expect_ad(f_vec, y, mu[0], alpha);
-  stan::test::expect_ad(f_vec, y, mu, alpha[0]);
-  stan::test::expect_ad(f_vec, y[0], mu, alpha);
-  stan::test::expect_ad(f_vec, y[1], mu[0], alpha);
+  stan::test::expect_ad(f_y_mu_alpha(3.0), y, mu, alpha);
+  stan::test::expect_ad(f_y_mu_alpha(3.0), y[1], mu[0], alpha);
 
-  stan::test::expect_ad(f_vec_beta, y, mu, beta);
-  stan::test::expect_ad(f_vec_beta, y, mu, beta[0]);
-  stan::test::expect_ad(f_vec_beta, y[1], mu[0], beta);
+  stan::test::expect_ad(f_y_mu_beta(1.1), y, mu, beta);
+  stan::test::expect_ad(f_y_mu_beta(1.1), y[1], mu[0], beta);
 
   std::vector<double> y_std{-1.0, 0.6, 2.0};
   std::vector<double> mu_std{0.0, 0.5, -0.4};
   std::vector<double> alpha_std{1.0, 2.5, 0.7};
-  stan::test::expect_ad(f_vec, y_std, mu_std, alpha_std);
-  stan::test::expect_ad(f_vec, y_std, mu_std[0], alpha_std);
+  stan::test::expect_ad(f_y_mu_alpha(3.0), y_std, mu_std, alpha_std);
 }
 
 TEST_F(AgradRev, mathMixScalFun_generalized_normal_lpdf_vectorized_tie) {
-  // y[1] == mu[1] exercises the y == mu branch inside a vectorized call;
-  // beta > 3 keeps the third derivative at the tie well defined.
-  auto f_vec = [](const auto& y, const auto& mu, const auto& alpha) {
-    return stan::math::generalized_normal_lpdf(y, mu, alpha, 4.0);
-  };
-  auto f_vec_beta = [](const auto& y, const auto& mu, const auto& beta) {
-    return stan::math::generalized_normal_lpdf(y, mu, 1.1, beta);
-  };
+  using generalized_normal_lpdf_test::f_y_mu_alpha;
+  using generalized_normal_lpdf_test::f_y_mu_beta;
 
+  // y[1] == mu[1] exercises the y == mu branch inside a vectorized call;
+  // beta > 3 keeps the third derivative at the tie well defined. These reuse
+  // the argument patterns of the vectorized test, so they add no
+  // instantiations.
   Eigen::VectorXd y(3), mu(3), alpha(3), beta(3);
   y << -1.0, 0.5, 2.0;
   mu << 0.0, 0.5, -0.4;
   alpha << 1.0, 2.5, 0.7;
   beta << 3.5, 4.0, 5.5;
 
-  stan::test::expect_ad(f_vec, y, mu, alpha);
-  stan::test::expect_ad(f_vec, y, mu, alpha[0]);
-  stan::test::expect_ad(f_vec, y[1], mu[1], alpha);
-  stan::test::expect_ad(f_vec_beta, y, mu, beta);
-  stan::test::expect_ad(f_vec_beta, y[1], mu[1], beta);
+  stan::test::expect_ad(f_y_mu_alpha(4.0), y, mu, alpha);
+  stan::test::expect_ad(f_y_mu_alpha(4.0), y[1], mu[1], alpha);
+  stan::test::expect_ad(f_y_mu_beta(1.1), y, mu, beta);
+  stan::test::expect_ad(f_y_mu_beta(1.1), y[1], mu[1], beta);
 }
 
 TEST_F(AgradRev, mathMixScalFun_generalized_normal_lpdf_propto) {
@@ -309,12 +298,8 @@ TEST_F(AgradRev, mathMixScalFun_generalized_normal_lpdf_subnormal_alpha) {
 }
 
 TEST_F(AgradRev, mathMixScalFun_generalized_normal_lpdf_matvar) {
-  auto f = [](const auto& y, const auto& mu, const auto& alpha) {
-    return stan::math::generalized_normal_lpdf(y, mu, alpha, 3.0);
-  };
-  auto f_beta = [](const auto& y, const auto& mu, const auto& beta) {
-    return stan::math::generalized_normal_lpdf(y, mu, 1.1, beta);
-  };
+  using generalized_normal_lpdf_test::f_y_mu_alpha;
+  using generalized_normal_lpdf_test::f_y_mu_beta;
 
   Eigen::VectorXd y(3), mu(3), alpha(3), beta(3);
   y << -1.0, 0.6, 2.0;
@@ -322,9 +307,8 @@ TEST_F(AgradRev, mathMixScalFun_generalized_normal_lpdf_matvar) {
   alpha << 1.0, 2.5, 0.7;
   beta << 3.5, 4.0, 5.5;
 
-  stan::test::expect_ad_matvar(f, y, mu, alpha);
-  stan::test::expect_ad_matvar(f, y, mu, alpha[0]);
-  stan::test::expect_ad_matvar(f_beta, y, mu, beta);
+  stan::test::expect_ad_matvar(f_y_mu_alpha(3.0), y, mu, alpha);
+  stan::test::expect_ad_matvar(f_y_mu_beta(1.1), y, mu, beta);
 }
 
 TEST_F(AgradRev, mathMixScalFun_generalized_normal_lpdf_size_errors) {
