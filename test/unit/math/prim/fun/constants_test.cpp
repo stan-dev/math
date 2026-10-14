@@ -57,3 +57,20 @@ TEST(MathsConstants, inv_sqrt_two_pi) {
 TEST(MathsConstants, egamma) {
   EXPECT_FLOAT_EQ(-stan::math::digamma(1), stan::math::egamma());
 }
+
+TEST(MathsConstants, log_two_pi) {
+  EXPECT_FLOAT_EQ(std::log(2 * stan::math::pi()), stan::math::LOG_TWO_PI);
+}
+TEST(MathsConstants, half_log_two_pi) {
+  EXPECT_FLOAT_EQ(0.5 * std::log(2 * stan::math::pi()),
+                  stan::math::HALF_LOG_TWO_PI);
+}
+TEST(MathsConstants, sqrt_two_over_sqrt_pi) {
+  EXPECT_FLOAT_EQ(std::sqrt(2.0) / std::sqrt(stan::math::pi()),
+                  stan::math::SQRT_TWO_OVER_SQRT_PI);
+}
+TEST(MathsConstants, log_two_pi_identities) {
+  // Negation and doubling are exact, so these hold bitwise.
+  EXPECT_EQ(-stan::math::HALF_LOG_TWO_PI, stan::math::NEG_LOG_SQRT_TWO_PI);
+  EXPECT_EQ(2 * stan::math::HALF_LOG_TWO_PI, stan::math::LOG_TWO_PI);
+}
