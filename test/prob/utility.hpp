@@ -64,7 +64,8 @@ inline T get_param(const vector<double>& params, const size_t n) {
 }
 
 template <>
-inline empty get_param<empty>(const vector<double>& /*params*/, const size_t /*n*/) {
+inline empty get_param<empty>(const vector<double>& /*params*/,
+                              const size_t /*n*/) {
   return empty();
 }
 
@@ -134,7 +135,7 @@ inline T get_params(const vector<vector<double>>& parameters, const size_t p) {
 // handle empty
 template <>
 inline empty get_params<empty>(const vector<vector<double>>& /*parameters*/,
-                        const size_t /*p*/) {
+                               const size_t /*p*/) {
   return empty();
 }
 // handle scalars
@@ -195,7 +196,8 @@ inline fvar<fvar<var>> get_params<fvar<fvar<var>>>(
   return param;
 }
 template <>
-inline int get_params<int>(const vector<vector<double>>& parameters, const size_t p) {
+inline int get_params<int>(const vector<vector<double>>& parameters,
+                           const size_t p) {
   int param(0);
   if (p < parameters[0].size())
     param = (int)parameters[0][p];
@@ -301,7 +303,7 @@ inline T get_params(const vector<vector<double>>& parameters,
 // handle empty
 template <>
 inline empty get_params<empty>(const vector<vector<double>>& /*parameters*/,
-                        const size_t /*n*/, const size_t /*p*/) {
+                               const size_t /*n*/, const size_t /*p*/) {
   return empty();
 }
 // handle scalars
@@ -362,8 +364,8 @@ inline fvar<fvar<var>> get_params<fvar<fvar<var>>>(
   return param;
 }
 template <>
-inline int get_params<int>(const vector<vector<double>>& parameters, const size_t n,
-                    const size_t p) {
+inline int get_params<int>(const vector<vector<double>>& parameters,
+                           const size_t n, const size_t p) {
   int param(0);
   if (p < parameters[0].size())
     param = (int)parameters[n][p];
@@ -541,8 +543,9 @@ typename scalar_type<T>::type select_var_param(
 }
 
 template <>
-inline empty select_var_param<empty>(const vector<vector<double>>& /*parameters*/,
-                              const size_t /*n*/, const size_t /*p*/) {
+inline empty select_var_param<empty>(
+    const vector<vector<double>>& /*parameters*/, const size_t /*n*/,
+    const size_t /*p*/) {
   return empty();
 }
 
