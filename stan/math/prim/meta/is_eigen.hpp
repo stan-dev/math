@@ -261,7 +261,11 @@ using require_all_not_eigen_st = require_all_not_t<
  */
 template <typename T>
 struct is_eigen_array
-    : bool_constant<is_base_pointer_convertible<Eigen::ArrayBase, T>::value> {};
+    : bool_constant<is_base_pointer_convertible<Eigen::ArrayBase,
+                                                std::decay_t<T>>::value> {};
+
+template <typename T>
+inline constexpr bool is_eigen_array_v = is_eigen_array<T>::value;
 
 /*! \ingroup require_eigens_types */
 /*! \defgroup eigen_array_types eigen_array  */

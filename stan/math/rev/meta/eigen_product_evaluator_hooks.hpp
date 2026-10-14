@@ -24,9 +24,13 @@
  */
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
+#include <stan/math/prim/meta/plain_type.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
+#include <stan/math/prim/meta/value_type.hpp>
+#include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/meta/is_var.hpp>
 #include <type_traits>
@@ -154,6 +158,32 @@ using var_if_dense_product_t = std::enable_if_t<
     var>;
 
 /**
+ * Return `x`, or an arena copy of its vars if `x` is an `Eigen::Map` of vars.
+ *
+ * Stan's functions assume an `Eigen::Map` points at arena memory and keep it
+ * in their reverse-pass callbacks without copying (see
+ * `arena_matrix(const Map&)`), so the callback reads whatever vars the mapped
+ * memory holds during the reverse pass. Eigen's own algorithms map
+ * workspaces that they reuse and free, e.g. the Householder reflections in
+ * `HouseholderQR`. Copying the vars (not their varis) keeps the ones the
+ * forward pass used.
+ *
+ * @tparam T type of the operand
+ * @param x an operand passed from an Eigen expression to a Stan function
+ */
+template <typename T>
+inline decltype(auto) copy_var_map(T&& x) {
+  if constexpr (is_eigen_contiguous_map<T>::value
+                && is_var<value_type_t<T>>::value) {
+    arena_matrix<plain_type_t<T>> vars(x.rows(), x.cols());
+    vars.deep_copy(x);
+    return vars;
+  } else {
+    return std::forward<T>(x);
+  }
+}
+
+/**
  * Return the product of the operands of an Eigen matrix product. When an
  * operand is Eigen's `s * A` or `A * s` (Eigen rewrites `s * (A * B)` as
  * `(s * A) * B`) this is `scale_multiply(s, A, B)`, otherwise
@@ -169,21 +199,26 @@ inline auto multiply_operands(Lhs&& lhs, Rhs&& rhs) {
   if constexpr (is_scalar_times_matrix<Lhs>::value) {
     // (s * A) * B
     return scale_multiply(std::forward<Lhs>(lhs).lhs().functor().m_other,
-                          std::forward<Lhs>(lhs).rhs(), std::forward<Rhs>(rhs));
+                          copy_var_map(std::forward<Lhs>(lhs).rhs()),
+                          copy_var_map(std::forward<Rhs>(rhs)));
   } else if constexpr (is_matrix_times_scalar<Lhs>::value) {
     // (A * s) * B
     return scale_multiply(std::forward<Lhs>(lhs).rhs().functor().m_other,
-                          std::forward<Lhs>(lhs).lhs(), std::forward<Rhs>(rhs));
+                          copy_var_map(std::forward<Lhs>(lhs).lhs()),
+                          copy_var_map(std::forward<Rhs>(rhs)));
   } else if constexpr (is_scalar_times_matrix<Rhs>::value) {
     // A * (s * B)
     return scale_multiply(std::forward<Rhs>(rhs).lhs().functor().m_other,
-                          std::forward<Lhs>(lhs), std::forward<Rhs>(rhs).rhs());
+                          copy_var_map(std::forward<Lhs>(lhs)),
+                          copy_var_map(std::forward<Rhs>(rhs).rhs()));
   } else if constexpr (is_matrix_times_scalar<Rhs>::value) {
     // A * (B * s)
     return scale_multiply(std::forward<Rhs>(rhs).rhs().functor().m_other,
-                          std::forward<Lhs>(lhs), std::forward<Rhs>(rhs).lhs());
+                          copy_var_map(std::forward<Lhs>(lhs)),
+                          copy_var_map(std::forward<Rhs>(rhs).lhs()));
   } else {
-    return multiply(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs));
+    return multiply(copy_var_map(std::forward<Lhs>(lhs)),
+                    copy_var_map(std::forward<Rhs>(rhs)));
   }
 }
 
@@ -214,28 +249,33 @@ inline auto evaluate_product(XprType&& xpr) {
   if constexpr (is_scalar_times_matrix<XprType>::value) {
     if constexpr (is_eigen_product<typename Xpr::Rhs>::value) {
       // s * (A * B)
-      return scale_multiply(std::forward<XprType>(xpr).lhs().functor().m_other,
-                            std::forward<XprType>(xpr).rhs().lhs(),
-                            std::forward<XprType>(xpr).rhs().rhs());
+      return scale_multiply(
+          std::forward<XprType>(xpr).lhs().functor().m_other,
+          copy_var_map(std::forward<XprType>(xpr).rhs().lhs()),
+          copy_var_map(std::forward<XprType>(xpr).rhs().rhs()));
     } else {
       // s * X
-      return multiply(std::forward<XprType>(xpr).lhs().functor().m_other,
-                      std::forward<XprType>(xpr).rhs().matrix().derived());
+      return multiply(
+          std::forward<XprType>(xpr).lhs().functor().m_other,
+          copy_var_map(std::forward<XprType>(xpr).rhs().matrix().derived()));
     }
   } else if constexpr (is_matrix_times_scalar<XprType>::value) {
     if constexpr (is_eigen_product<typename Xpr::Lhs>::value) {
       // (A * B) * s
-      return scale_multiply(std::forward<XprType>(xpr).rhs().functor().m_other,
-                            std::forward<XprType>(xpr).lhs().lhs(),
-                            std::forward<XprType>(xpr).lhs().rhs());
+      return scale_multiply(
+          std::forward<XprType>(xpr).rhs().functor().m_other,
+          copy_var_map(std::forward<XprType>(xpr).lhs().lhs()),
+          copy_var_map(std::forward<XprType>(xpr).lhs().rhs()));
     } else {
       // X * s
-      return multiply(std::forward<XprType>(xpr).rhs().functor().m_other,
-                      std::forward<XprType>(xpr).lhs().matrix().derived());
+      return multiply(
+          std::forward<XprType>(xpr).rhs().functor().m_other,
+          copy_var_map(std::forward<XprType>(xpr).lhs().matrix().derived()));
     }
   } else {
-    return elt_multiply(std::forward<XprType>(xpr).lhs().matrix().derived(),
-                        std::forward<XprType>(xpr).rhs().matrix().derived());
+    return elt_multiply(
+        copy_var_map(std::forward<XprType>(xpr).lhs().matrix().derived()),
+        copy_var_map(std::forward<XprType>(xpr).rhs().matrix().derived()));
   }
 }
 
@@ -257,12 +297,11 @@ struct ad_product_evaluator
             stan::require_t<std::is_same<std::decay_t<XprTypeT>,
                                          std::decay_t<XprType>>>* = nullptr>
   explicit ad_product_evaluator(XprTypeT&& xpr) {
-    if constexpr (is_stan_scalar<decltype(evaluate_product(xpr))>::value) {
+    if constexpr (is_stan_scalar_v<decltype(evaluate_product(xpr))>) {
       // a row vector times a column vector
       m_result.resize(1, 1);
       m_result.coeffRef(0, 0) = evaluate_product(std::forward<XprTypeT>(xpr));
-    } else if constexpr (std::is_base_of<Eigen::ArrayBase<PlainObject>,
-                                         PlainObject>::value) {
+    } else if constexpr (is_eigen_array_v<PlainObject>) {
       m_result = evaluate_product(std::forward<XprTypeT>(xpr)).array();
     } else {
       m_result = evaluate_product(std::forward<XprTypeT>(xpr));
@@ -397,8 +436,10 @@ struct Assignment<
   template <typename Func, typename SrcType,
             stan::math::internal::require_eigen_product_t<SrcType>* = nullptr>
   static void run(DstXprType& dst, SrcType&& src, Func&& /* func */) {
-    dst = multiply_add(std::forward<SrcType>(src).lhs(),
-                       std::forward<SrcType>(src).rhs(), dst);
+    using stan::math::internal::copy_var_map;
+    dst = multiply_add(copy_var_map(std::forward<SrcType>(src).lhs()),
+                       copy_var_map(std::forward<SrcType>(src).rhs()),
+                       copy_var_map(dst));
   }
 };
 
@@ -414,8 +455,10 @@ struct Assignment<
   template <typename Func, typename SrcType,
             stan::math::internal::require_eigen_product_t<SrcType>* = nullptr>
   static void run(DstXprType& dst, SrcType&& src, Func&& /* func */) {
-    dst = multiply_sub(std::forward<SrcType>(src).lhs(),
-                       std::forward<SrcType>(src).rhs(), dst);
+    using stan::math::internal::copy_var_map;
+    dst = multiply_sub(copy_var_map(std::forward<SrcType>(src).lhs()),
+                       copy_var_map(std::forward<SrcType>(src).rhs()),
+                       copy_var_map(dst));
   }
 };
 

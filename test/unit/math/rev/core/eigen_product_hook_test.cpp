@@ -380,3 +380,76 @@ TEST_F(AgradRev, eigen_product_hook_nested_gradients) {
   EXPECT_MATRIX_NEAR(a.adj(), 0.7 * g * b_v.transpose(), 1e-12);
   EXPECT_MATRIX_NEAR(b.adj(), 0.7 * a_v.transpose() * g, 1e-12);
 }
+
+namespace {
+/**
+ * Expect `op(x)` to propagate the same gradient to `x` when `x` is an
+ * `Eigen::Map` over a heap buffer of vars as when it is a plain matrix, even
+ * after the buffer is refilled with new vars before the reverse pass. Eigen's
+ * own algorithms (e.g. Householder reflections in `HouseholderQR`) map
+ * workspaces that they reuse and free like this.
+ */
+template <typename Op>
+void expect_var_map_operand_kept(const Op& op) {
+  vec<var> plain = make_mat<var>(3, 1, 0.2);
+  stan::math::sum(op(plain)).grad();
+  const Eigen::VectorXd expected = plain.adj();
+  stan::math::set_zero_all_adjoints();
+
+  vec<var> workspace = make_mat<var>(3, 1, 0.2);
+  const vec<var> forward_vars = workspace;
+  Eigen::Map<vec<var>> x(workspace.data(), workspace.size());
+  const mat<var> result = op(x);
+  for (Eigen::Index i = 0; i < workspace.size(); ++i) {
+    workspace(i) = var(10.0 + i);
+  }
+  stan::math::sum(result).grad();
+  EXPECT_MATRIX_NEAR(forward_vars.adj(), expected, 1e-12);
+  EXPECT_MATRIX_NEAR(workspace.adj(), Eigen::VectorXd::Zero(3), 1e-12);
+}
+}  // namespace
+
+TEST_F(AgradRev, eigen_product_hook_var_map_operands_are_copied) {
+  mat<var> a = make_mat<var>(3, 3, 0.3);
+  vec<var> c = make_mat<var>(3, 1, -0.1);
+  var s = 0.7;
+  // product, multiply
+  expect_var_map_operand_kept([&](const auto& x) { return mat<var>(a * x); });
+  // scaled product, scale_multiply
+  expect_var_map_operand_kept(
+      [&](const auto& x) { return mat<var>((s * a) * x); });
+  // noalias() +=, multiply_add
+  expect_var_map_operand_kept([&](const auto& x) {
+    mat<var> d = c;
+    d.noalias() += a * x;
+    return d;
+  });
+  // noalias() -=, multiply_sub
+  expect_var_map_operand_kept([&](const auto& x) {
+    mat<var> d = c;
+    d.noalias() -= a * x;
+    return d;
+  });
+  // scalar times matrix, multiply
+  expect_var_map_operand_kept([&](const auto& x) { return mat<var>(s * x); });
+  // coefficient-wise product, elt_multiply
+  expect_var_map_operand_kept(
+      [&](const auto& x) { return mat<var>(x.cwiseProduct(c)); });
+}
+
+TEST_F(AgradRev, eigen_product_hook_var_map_destination_is_copied) {
+  mat<var> a = make_mat<var>(3, 3, 0.3);
+  vec<var> b = make_mat<var>(3, 1, -0.2);
+  // the destination of `noalias() +=` is an operand of multiply_add
+  vec<var> buffer = make_mat<var>(3, 1, 0.1);
+  const vec<var> forward_vars = buffer;
+  Eigen::Map<vec<var>> dst(buffer.data(), buffer.size());
+  dst.noalias() += a * b;
+  const vec<var> result = buffer;
+  for (Eigen::Index i = 0; i < buffer.size(); ++i) {
+    buffer(i) = var(10.0 + i);
+  }
+  stan::math::sum(result).grad();
+  EXPECT_MATRIX_NEAR(forward_vars.adj(), Eigen::VectorXd::Ones(3), 1e-12);
+  EXPECT_MATRIX_NEAR(buffer.adj(), Eigen::VectorXd::Zero(3), 1e-12);
+}

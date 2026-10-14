@@ -1,4 +1,5 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <complex>
 #include <type_traits>
@@ -92,7 +93,7 @@ TYPED_TEST(EigenHookDispatch, cwise_product_evaluator) {
   EXPECT_TRUE(evaluator_hooked<matrix_times_scalar_t>);
 }
 
-TEST(EigenHookDispatch, non_ad_products_use_eigen) {
+TEST_F(AgradRev, EigenHookDispatch_non_ad_products_use_eigen) {
   using Eigen::internal::assign_op;
   using double_product_t = decltype(std::declval<const mat<double>&>()
                                     * std::declval<const mat<double>&>());
@@ -105,7 +106,7 @@ TEST(EigenHookDispatch, non_ad_products_use_eigen) {
                                 * std::declval<const mat<double>&>().array())>);
 }
 
-TEST(EigenHookDispatch, lazy_and_complex_products_use_eigen) {
+TEST_F(AgradRev, EigenHookDispatch_lazy_and_complex_products_use_eigen) {
   using lazy_t = decltype(std::declval<const mat<var>&>().lazyProduct(
       std::declval<const mat<var>&>()));
   using complex_t = decltype(std::declval<const mat<std::complex<var>>&>()
@@ -118,7 +119,7 @@ template <typename T>
 constexpr bool is_cwise_product
     = stan::math::internal::is_eigen_cwise_product<T>::value;
 
-TEST(EigenHookDispatch, is_eigen_cwise_product) {
+TEST_F(AgradRev, EigenHookDispatch_is_eigen_cwise_product) {
   // Eigen's operators return `const` expressions, which the trait decays
   const mat<var> a(2, 2);
   const mat<double> b(2, 2);
@@ -132,7 +133,7 @@ TEST(EigenHookDispatch, is_eigen_cwise_product) {
   EXPECT_FALSE(is_cwise_product<mat<var>>);
 }
 
-TEST(EigenHookDispatch, inner_product_assignment) {
+TEST_F(AgradRev, EigenHookDispatch_inner_product_assignment) {
   using Eigen::internal::add_assign_op;
   using Eigen::internal::assign_op;
   using Eigen::internal::sub_assign_op;
@@ -146,7 +147,7 @@ TEST(EigenHookDispatch, inner_product_assignment) {
   EXPECT_TRUE((assignment_hooked<sub_assign_op, dst_t, inner_t>));
 }
 
-TEST(EigenHookDispatch, triangular_product_assignment_uses_eigen) {
+TEST_F(AgradRev, EigenHookDispatch_triangular_product_assignment_uses_eigen) {
   using Eigen::internal::add_assign_op;
   using Eigen::internal::assign_op;
   using Eigen::internal::sub_assign_op;
