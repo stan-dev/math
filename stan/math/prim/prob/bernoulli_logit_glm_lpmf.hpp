@@ -4,9 +4,11 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/isfinite.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -106,7 +108,7 @@ inline return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     T_ytheta_tmp ytheta_tmp = (x_val * beta_val_vec)(0, 0);
     ytheta = signs * (ytheta_tmp + as_array_or_scalar(alpha_val_vec));
   } else {
-    ytheta = (x_val * beta_val_vec).array();
+    ytheta = multiply(x_val, beta_val_vec).array();
     ytheta = signs * (ytheta + as_array_or_scalar(alpha_val_vec));
   }
 
@@ -138,8 +140,11 @@ inline return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     if constexpr (is_autodiff_v<T_beta>) {
       if constexpr (T_x_rows == 1) {
         edge<2>(ops_partials).partials_ = theta_derivative.sum() * x_val;
+      } else if constexpr (T_x::ColsAtCompileTime == 1) {
+        partials<2>(ops_partials)[0] = dot_product(x_val, theta_derivative);
       } else {
-        partials<2>(ops_partials) = x_val.transpose() * theta_derivative;
+        partials<2>(ops_partials)
+            = multiply(x_val.transpose(), theta_derivative);
       }
     }
     if constexpr (is_autodiff_v<T_x>) {
