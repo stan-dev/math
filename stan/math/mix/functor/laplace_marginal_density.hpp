@@ -198,11 +198,8 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
     auto ll_args_filter = internal::filter_var_scalar_types(ll_args_copy);
     // tuple of references to var types
     // Solver 1 writes R in place; solvers 2 and 3 assign it, which allocates
-    const bool solver_1 = md_est.solver_used == 1;
-    arena_t<Eigen::MatrixXd> R(md_est.theta.size() * solver_1,
-                               md_est.theta.size() * solver_1);
-    // Solver 3 assigns it
-    arena_t<Eigen::MatrixXd> LU_solve_covariance;
+    const Eigen::Index n_R = md_est.solver_used == 1 ? md_est.theta.size() : 0;
+    arena_t<Eigen::MatrixXd> R(n_R, n_R);
     // Solver 1, 2, 3
     arena_t<Eigen::VectorXd> s2(md_est.theta.size());
     using stan::math::internal::ZeroOut;
@@ -261,7 +258,8 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       s2.deep_copy(s2_tmp);
       internal::copy_compute_s2<ZeroOut>(partial_parm, ll_args_filter);
     } else {  // options.solver with LU decomposition
-      LU_solve_covariance = md_est.LU.solve(covariance_val);
+      arena_t<Eigen::MatrixXd> LU_solve_covariance
+          = md_est.LU.solve(covariance_val);
       auto I_minus_BinvKW
           = Eigen::MatrixXd::Identity(md_est.W_r.rows(), md_est.W_r.cols())
             - LU_solve_covariance * md_est.W_r;
@@ -295,7 +293,7 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       if (md_est.solver_used == 1 || md_est.solver_used == 2) {
         v = covariance_val * s2 - covariance_val * R * covariance_val * s2;
       } else {
-        v = LU_solve_covariance * s2;
+        v = md_est.LU.solve(covariance_val * s2);
       }
       laplace_likelihood::diff_eta_implicit(ll_fun, v, md_est.theta,
                                             ll_args_copy, msgs);
