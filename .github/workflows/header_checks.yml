@@ -68,4 +68,4 @@ jobs:
     - name: Run header tests
       run: |
         echo "STAN_NO_RANGE_CHECKS=true" > make/local
-        ./runTests.py -j2 ./test/unit/math/prim/err/
+        ./runTests.py --backend make -j2 ./test/unit/math/prim/err/

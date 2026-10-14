@@ -5,30 +5,61 @@ properties([
     string(defaultValue: 'develop', name: 'cmdstan_pr', description: 'PR to test CmdStan upstream against e.g. PR-630'),
     string(defaultValue: 'develop', name: 'stan_pr', description: 'PR to test Stan upstream against e.g. PR-630'),
     booleanParam(defaultValue: false, name: 'withRowVector', description: 'Run additional distribution tests on RowVectors (takes 5x as long)'),
-    booleanParam(defaultValue: false, name: 'disableJumbo', description: 'Disable Jumbo tests. This takes longer and should only be used for debugging if it is believed that the jumbo tests are causing failures.'),
-    booleanParam(defaultValue: false, name: 'optimizeUnitTests', description: 'Use O=3 for unit tests (takex ~3x as long)'),
+    booleanParam(defaultValue: false, name: 'optimizeUnitTests', description: 'Use O=3 for unit tests (takes ~3x as long)'),
     booleanParam(defaultValue: false, name: 'runAllDistributions', description: 'Run all distribution tests, even ones which are unchanged compared to develop'),
-    booleanParam(defaultValue: false, name: 'run_all', description: 'Pretend all files changes'),
+    booleanParam(defaultValue: false, name: 'run_all', description: 'Pretend all files changed'),
   ])
 ])
 
-def image = 'stanorg/ci:v1'
+def image = 'stanorg/ci:gpu-cmake3.30.5'
 def runRemainingStages = false
-def CLANG_CXX = 'clang++-7'
-def GCC = 'g++'
+def CLANG_CXX = 'clang++'
+def CLANG_CC = 'clang'
 def MPICXX = 'mpicxx.openmpi'
 
 def mainBranch = env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'master'
 def noOptimize = !(params.optimizeUnitTests || mainBranch)
-def jumboFlags = params.disableJumbo ? '' : ' --jumbo --debug'
 
-def runTests(String local, String args) {
-  writeFile(file: "make/local", text: local)
-  sh "cat make/local"
-  sh "make print-compiler-flags"
-  sh "python3 runTests.py -j\$PARALLEL $args"
-  junit 'test/**/*.xml'
-  sh "find test -name *.xml -delete"
+// Quote complete arguments, including regexes and compiler flags containing spaces.
+def shellQuote(String value) {
+  return "'" + value.replace("'", "'\"'\"'") + "'"
+}
+
+def runCmakeTests(Map config) {
+  def buildDir = config.buildDir
+  def jobs = Math.max(1, Math.min(6, (env.PARALLEL ?: '6').toInteger()))
+  def flags = [
+    '-S', '.', '-B', buildDir, '-DCMAKE_BUILD_TYPE=Release',
+    '-DSTAN_TEST_HEADERS=OFF', '-DSTAN_BUILD_PROB_TESTS=OFF',
+    "-DSTAN_TEST_FILTER=${config.filter}",
+    "-DSTAN_TEST_OPTIMIZATION=${config.optimization ?: '1'}"
+  ] + (config.flags ?: [])
+  try {
+    sh "cmake -E rm -rf ${shellQuote(buildDir + '/test-results')} " +
+       "${shellQuote(buildDir + '/ctest-results.xml')} ${shellQuote(buildDir + '/Testing')}"
+    sh "cmake " + flags.collect { shellQuote(it.toString()) }.join(' ')
+    sh "cmake --build ${shellQuote(buildDir)} --parallel ${jobs}"
+    sh "cmake -E make_directory ${shellQuote(buildDir + '/test-results')}"
+    withEnv(["GTEST_OUTPUT=xml:${pwd()}/${buildDir}/test-results/"]) {
+      sh "ctest --test-dir ${shellQuote(buildDir)} --parallel ${config.testJobs ?: jobs} " +
+         "--no-tests=error --output-on-failure " +
+         "--output-junit ${shellQuote(pwd() + '/' + buildDir + '/ctest-results.xml')}"
+    }
+  } finally {
+    junit(testResults: "${buildDir}/test-results/*.xml", allowEmptyResults: true)
+    archiveArtifacts(artifacts: "${buildDir}/ctest-results.xml,${buildDir}/Testing/Temporary/LastTest.log",
+                     allowEmptyArchive: true)
+  }
+}
+
+// Var-matrix compatibility still invokes Make directly; expression framework
+// self-tests exercise compile and runtime failures through the CMake runner.
+def runLegacyFrameworkTests(String compiler) {
+  writeFile(file: 'make/local', text: "CXX=${compiler}\nO=0\n")
+  withEnv(['PARALLEL=6', 'MAKEFLAGS=-j1', 'PATH+TBB=./lib/tbb', "CXX=${compiler}"]) {
+    sh 'python3 test/varmat_compatibility_test.py'
+    sh 'python3 test/expressions/test_expression_testing_framework.py'
+  }
 }
 
 catchError {
@@ -42,7 +73,7 @@ catchError {
     runPod(image: image, cpus: 2) {
       stage('Verify changes') {
         runRemainingStages = params.run_all || filesChanged(
-            'stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format')
+            'stan', 'make', 'lib', 'test', 'cmake', 'CMakeLists.txt', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format')
       }
 
       stage("Clang-format") {
@@ -89,7 +120,15 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
         parallel(
           CppLint: { sh "make cpplint" },
           Dependencies: { sh "make test-math-dependencies" },
-          Documentation: { sh "make doxygen" },
+          CMakeSelection: {
+            sh 'python3 test/cmake_ci_test.py'
+            sh 'python3 test/cmake_runner_test.py'
+            sh 'python3 test/cmake_build_test.py'
+          },
+          Documentation: {
+            sh 'cmake -S . -B build-ci-docs -DBUILD_TESTING=OFF -DSTAN_BUILD_DOCS=ON'
+            sh 'cmake --build build-ci-docs --parallel 6 --target doxygen'
+          },
         )
       }
     }
@@ -99,16 +138,25 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
         parallel headers: {
           runPod(image: image) {
             stage('Headers check') {
-              writeFile(file: 'make/local', text: "CXX=$CLANG_CXX -Werror")
-              sh 'make -j$PARALLEL test-headers'
+              sh "cmake -S . -B build-ci-headers -DCMAKE_BUILD_TYPE=Release " +
+                 "-DCMAKE_C_COMPILER=${CLANG_CC} -DCMAKE_CXX_COMPILER=${CLANG_CXX} " +
+                 "-DCMAKE_CXX_FLAGS=-Werror -DSTAN_BUILD_PROB_TESTS=OFF " +
+                 '-DSTAN_TEST_FILTER=\'^$\' -DSTAN_TEST_HEADERS=ON'
+              sh 'cmake --build build-ci-headers --parallel 6 --target test-headers'
             }
           }
         }, unit: {
           if (env.CHANGE_TARGET) {
             runPod(image: image) {
               stage('Run changed unit tests') {
-                writeFile(file: 'make/local', text: "O=3\nCXXFLAGS+=-march=native -mtune=native")
-                sh './runTests.py -j$PARALLEL --changed --debug'
+                def filter = sh(returnStdout: true,
+                  script: 'python3 test/cmake_ci.py changed-unit-filter').trim()
+                if (filter) {
+                  runCmakeTests(buildDir: 'build-ci-changed', filter: filter, optimization: '3',
+                    flags: ['-DCMAKE_CXX_FLAGS=-march=native -mtune=native'])
+                } else {
+                  echo 'No priority unit tests selected.'
+                }
               }
             }
           }
@@ -120,49 +168,44 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
           revfwd: {
             runPod(image: image) {
               stage('Rev/Fwd Unit Tests') {
-                def local = 'CXXFLAGS+= -fsanitize=address\n'
-                if (noOptimize)
-                  local += 'O=0\n'
-                runTests(local, "test/unit/math/rev")
-                runTests(local, "test/unit/math/fwd")
+                runCmakeTests(buildDir: 'build-ci-revfwd', filter: '^test/unit/math/(rev|fwd)/',
+                  optimization: noOptimize ? '0' : '3',
+                  flags: ['-DCMAKE_CXX_FLAGS=-fsanitize=address', '-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address',
+                          '-DCMAKE_SHARED_LINKER_FLAGS=-fsanitize=address'])
               }
             }
           },
           mix: {
-            runPod(image: image, cpus: 8, memory: '192Gi') {
+            runPod(image: image, cpus: 6, memory: '192Gi') {
               stage('Mix Unit Tests') {
-                def local = 'CXXFLAGS+= -fsanitize=address\n'
-                if (noOptimize)
-                  local += 'O=1\n'
-                runTests(local, "test/unit/math/mix" + jumboFlags)
+                runCmakeTests(buildDir: 'build-ci-mix', filter: '^test/unit/math/mix/',
+                  optimization: noOptimize ? '1' : '3',
+                  flags: ['-DCMAKE_CXX_FLAGS=-fsanitize=address', '-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address',
+                          '-DCMAKE_SHARED_LINKER_FLAGS=-fsanitize=address'])
               }
             }
           },
           prim: {
             runPod(image: image) {
               stage('Prim Unit Tests') {
-                def local = 'CXXFLAGS+= -fsanitize=address\n'
-                if (noOptimize)
-                  local += 'O=0\n'
-                runTests(local, "test/unit/*_test.cpp")
-                runTests(local, "test/unit/math/*_test.cpp")
-                runTests(local, "test/unit/math/prim" + jumboFlags)
-                runTests(local, "test/unit/math/memory")
+                runCmakeTests(buildDir: 'build-ci-prim',
+                  filter: '^test/unit/([^/]+_test[.]cpp$|math/([^/]+_test[.]cpp$|prim/|memory/))',
+                  optimization: noOptimize ? '0' : '3',
+                  flags: ['-DCMAKE_CXX_FLAGS=-fsanitize=address', '-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address',
+                          '-DCMAKE_SHARED_LINKER_FLAGS=-fsanitize=address'])
               }
             }
           },
           laplace: {
             runPod(image: image, memory: '32Gi') {
               stage('Laplace Unit Tests') {
-                def local = 'CXXFLAGS+= -march=native -mtune=native\nO=3\n'
-
-                runTests(local, "test/unit/math/laplace/*_test.cpp")
-
+                runCmakeTests(buildDir: 'build-ci-laplace', filter: '^test/unit/math/laplace/',
+                  optimization: '3', flags: ['-DCMAKE_CXX_FLAGS=-march=native -mtune=native'])
                 if (mainBranch) {
-                  // only run ASAN on a selected test to avoid extremely long CI times
-                  sh 'make clean'
-                  local += 'CXXFLAGS+= -fsanitize=address'
-                  runTests(local, "test/unit/math/laplace/laplace_marginal_lpdf_moto_test.cpp")
+                  runCmakeTests(buildDir: 'build-ci-laplace-asan', optimization: '3',
+                    filter: '^test/unit/math/laplace/laplace_marginal_lpdf_moto_test[.]cpp$',
+                    flags: ['-DCMAKE_CXX_FLAGS=-march=native -mtune=native -fsanitize=address',
+                            '-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address'])
                 }
               }
             }
@@ -170,89 +213,81 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
           gpu: {
             runPod(image: image, memory: '32Gi', gpus: 1) {
               stage('OpenCL GPU tests') {
-                def local = """CXX=$CLANG_CXX -Werror
-STAN_OPENCL=true
-OPENCL_PLATFORM_ID_GPU=0
-OPENCL_DEVICE_ID=0
-LDFLAGS_OPENCL=-L/usr/local/cuda/targets/x86_64-linux/lib
-"""
-                if (noOptimize)
-                  local += 'O=1\n'
-                runTests(local, "test/unit/math/opencl") // TODO(bward): try to enable
-                runTests(local, "test/unit/multiple_translation_units_test.cpp")
+                runCmakeTests(buildDir: 'build-ci-opencl',
+                  filter: '^test/unit/(math/opencl/|multiple_translation_units_test[.]cpp$)',
+                  optimization: noOptimize ? '1' : '3',
+                  flags: ["-DCMAKE_C_COMPILER=${CLANG_CC}", "-DCMAKE_CXX_COMPILER=${CLANG_CXX}",
+                          '-DCMAKE_CXX_FLAGS=-Werror', '-DSTAN_OPENCL=ON',
+                          '-DSTAN_OPENCL_PLATFORM_ID=0', '-DSTAN_OPENCL_DEVICE_ID=0',
+                          '-DOpenCL_LIBRARY=/usr/local/cuda/targets/x86_64-linux/lib/libOpenCL.so'])
               }
             }
           },
           mpi: {
             runPod(image: image) {
               stage('MPI Tests') {
-                def local = "CXX=$MPICXX\nCXX_TYPE=gcc\nSTAN_MPI=true\n"
-                runTests(local, "test/unit/math/prim/functor")
-                runTests(local, "test/unit/math/rev/functor")
+                runCmakeTests(buildDir: 'build-ci-mpi',
+                  filter: '^test/unit/math/(prim|rev)/functor/', testJobs: 1,
+                  flags: ["-DCMAKE_CXX_COMPILER=${MPICXX}", '-DSTAN_MPI=ON'])
               }
             }
           },
           expr: {
             runPod(image: image, memory: '64Gi') {
               stage('Expressions test') {
-                def local = "CXX=$CLANG_CXX -Werror\nO=0\n"
-                writeFile(file: 'make/local', text: local)
-                sh "python ./test/code_generator_test.py"
-                sh "python ./test/signature_parser_test.py"
-                sh "python ./test/statement_types_test.py"
-                sh "python ./test/varmat_compatibility_summary_test.py"
-                sh "python ./test/varmat_compatibility_test.py"
-                withEnv(['PATH+TBB=./lib/tbb']) {
-                  sh "python ./test/expressions/test_expression_testing_framework.py"
-                  runTests(local, 'test/expressions')
-                  sh "make clean-all"
-                  runTests(local + "STAN_THREADS=true\n", 'test/expressions --only-functions reduce_sum map_rect')
+                sh 'python3 test/code_generator_test.py'
+                sh 'python3 test/signature_parser_test.py'
+                sh 'python3 test/statement_types_test.py'
+                sh 'python3 test/varmat_compatibility_summary_test.py'
+                runLegacyFrameworkTests(CLANG_CXX)
+                sh 'python3 test/cmake_ci.py generate-expressions build-ci-expressions'
+                runCmakeTests(buildDir: 'build-ci-expressions', filter: '^test/expressions/', optimization: '0',
+                  flags: ["-DCMAKE_C_COMPILER=${CLANG_CC}", "-DCMAKE_CXX_COMPILER=${CLANG_CXX}",
+                          '-DCMAKE_CXX_FLAGS=-Werror', '-DSTAN_BUILD_EXPRESSION_TESTS=ON'])
+                sh 'python3 test/cmake_ci.py generate-expressions build-ci-expressions-threads --functions reduce_sum map_rect'
+                withEnv(['STAN_NUM_THREADS=4']) {
+                  runCmakeTests(buildDir: 'build-ci-expressions-threads', filter: '^test/expressions/',
+                    optimization: '0', testJobs: 1,
+                    flags: ["-DCMAKE_C_COMPILER=${CLANG_CC}", "-DCMAKE_CXX_COMPILER=${CLANG_CXX}",
+                            '-DCMAKE_CXX_FLAGS=-Werror', '-DSTAN_BUILD_EXPRESSION_TESTS=ON', '-DSTAN_THREADS=ON'])
                 }
               }
             }
           },
           thread: {
-            runPod(image: image, cpus: 8, memory: '128Gi') {
+            runPod(image: image, cpus: 6, memory: '128Gi') {
               stage('Threading tests') {
-                def local = "CXX=$CLANG_CXX -Werror\nSTAN_THREADS=true\n"
-                withEnv(['STAN_NUM_THREADS=4', 'PARALLEL=8']) { // runTests currently only runs 1 test at a time post-build
-                  if (mainBranch) {
-                    runTests(local, "test/unit")
-                  } else {
-                    runTests(local, "test/unit -f thread")
-                    runTests(local, "test/unit -f map_rect")
-                    runTests(local, "test/unit -f reduce_sum")
-                  }
+                withEnv(['STAN_NUM_THREADS=4']) {
+                  runCmakeTests(buildDir: 'build-ci-threads', testJobs: 1,
+                    filter: mainBranch ? '^test/unit/' : '^test/unit/.*(thread|map_rect|reduce_sum)',
+                    flags: ["-DCMAKE_C_COMPILER=${CLANG_CC}", "-DCMAKE_CXX_COMPILER=${CLANG_CXX}",
+                            '-DCMAKE_CXX_FLAGS=-Werror', '-DSTAN_THREADS=ON'])
                 }
               }
             }
           },
           dist: {
-          def cores_per_test = 6
-          def parallel_tests = 10
-          runPod(image: image, cpus: cores_per_test*parallel_tests, memory: '128Gi') {
-            stage ('Distribution tests') {
-              def local = "CXX=$CLANG_CXX\nO=0\nN_TESTS=100\n"
-              if (params.withRowVector || mainBranch) {
-                local += "CXXFLAGS+= -DSTAN_TEST_ROW_VECTORS -DSTAN_PROB_TEST_ALL\n"
+            runPod(image: image, cpus: 6, memory: '128Gi') {
+              stage('Distribution tests') {
+                def command = 'python3 test/cmake_ci.py changed-distribution-filter'
+                if (params.runAllDistributions || params.run_all || mainBranch) {
+                  command += ' --all'
+                }
+                def filter = sh(returnStdout: true, script: command).trim()
+                if (filter) {
+                  def flags = ["-DCMAKE_C_COMPILER=${CLANG_CC}", "-DCMAKE_CXX_COMPILER=${CLANG_CXX}",
+                               '-DSTAN_BUILD_PROB_TESTS=ON', '-DSTAN_PROB_TEST_BATCH_SIZE=100']
+                  if (params.withRowVector || mainBranch) {
+                    flags += ['-DSTAN_TEST_ROW_VECTORS=ON', '-DSTAN_PROB_TEST_ALL=ON']
+                  }
+                  runCmakeTests(buildDir: 'build-ci-distributions', filter: filter,
+                    optimization: '0', flags: flags)
+                } else {
+                  echo 'No distribution tests affected by this change.'
+                }
               }
-              writeFile(file: 'make/local', text: local)
-
-              def cmd = 'python3 test/prob/getDependencies.py'
-              if (params.runAllDistributions || mainBranch) {
-                cmd += ' --pretend-all'
-              }
-              sh """
-              $cmd > changed-tests
-              if [ -s changed-tests ] ; then
-                ./runTests.py -j${cores_per_test*parallel_tests} --make-only `cat changed-tests`
-                unset PARALLEL
-                parallel --halt now,fail=1 -r -j$parallel_tests ./runTests.py --test-only -j$cores_per_test {} < changed-tests
-              fi
-              """
             }
           }
-        }
       }
 
       if (env.CHANGE_TARGET) {
@@ -271,7 +306,8 @@ LDFLAGS_OPENCL=-L/usr/local/cuda/targets/x86_64-linux/lib
       runPod(image: image, cpus: 2) {
         stage('Upload doxygen') {
           def branch = 'gh-pages'
-          sh 'make doxygen'
+          sh 'cmake -S . -B build-ci-docs -DBUILD_TESTING=OFF -DSTAN_BUILD_DOCS=ON'
+          sh 'cmake --build build-ci-docs --parallel 6 --target doxygen'
           dir('gh-pages') {
             def scm = scmGit(
               branches: [[name: "refs/heads/$branch"]],

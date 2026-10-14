@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Replacement for runtest target in Makefile.
+Build and run Stan Math tests with CMake (or the legacy Make backend).
 
 Call script with '-h' as an option to see a helpful message.
 """
@@ -85,7 +85,7 @@ def processCLIArgs():
 
     # Now define all the rules of the command line args and opts
     parser.add_argument(
-        "-j", metavar="N", type=int, default=1, help="number of cores for make to use"
+        "-j", metavar="N", type=int, default=1, help="parallel build jobs (maximum 6)"
     )
 
     parser.add_argument(
@@ -147,8 +147,20 @@ def processCLIArgs():
     tests_help_msg += "Example: 'test/unit', 'test/prob', and/or\n"
     tests_help_msg += "         'test/unit/math/prim/fun/abs_test.cpp'"
     parser.add_argument("tests", nargs="*", type=str, help=tests_help_msg)
+    parser.add_argument("--backend", choices=("cmake", "make"), default="cmake",
+                        help="build backend (default: cmake)")
+    parser.add_argument("--build-dir", default="build", help="CMake build directory")
+    parser.add_argument("--cmake-arg", action="append", default=[],
+                        help="extra configure argument, e.g. --cmake-arg=-DSTAN_THREADS=ON")
+    parser.add_argument("--config", default="Release", help="CMake build configuration")
     # And parse the command line against those rules
-    return parser.parse_args()
+    inputs = parser.parse_args()
+    if inputs.j < 1:
+        parser.error("-j must be positive")
+    inputs.j = min(inputs.j, 6)
+    if inputs.make_only and inputs.test_only:
+        parser.error("--make-only and --test-only cannot be combined")
+    return inputs
 
 
 def stopErr(msg, returncode):
@@ -397,8 +409,7 @@ def checkToolchainPathWindows():
             )
 
 
-def main():
-    inputs = processCLIArgs()
+def runMake(inputs):
     checkToolchainPathWindows()
 
     try:
@@ -456,6 +467,19 @@ def main():
     finally:
         cleanupJumboTests(jumboFiles)
         pass
+
+
+def main():
+    inputs = processCLIArgs()
+    if inputs.backend == "make":
+        runMake(inputs)
+        return
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "test"))
+    from cmake_runner import run
+    try:
+        sys.exit(run(inputs))
+    except (ValueError, OSError, subprocess.CalledProcessError) as error:
+        stopErr(str(error), 1)
 
 
 if __name__ == "__main__":

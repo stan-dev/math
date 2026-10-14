@@ -59,7 +59,7 @@ jobs:
     - name: Run ${{ matrix.config.label }} unit tests
       shell: pwsh
       run: |
-        python runTests.py -j4 ${{ matrix.config.tests }}
+        python runTests.py --backend make -j4 ${{ matrix.config.tests }}
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v7
@@ -114,7 +114,7 @@ jobs:
           $MixFunProbTests[(4 * $FifthNumberTests)..($NumberTests - 1)] `
         )
 
-        python runTests.py -j2 $MixFunProbTestsArray[(${{ matrix.group }} - 1)]
+        python runTests.py --backend make -j2 $MixFunProbTestsArray[(${{ matrix.group }} - 1)]
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v7
