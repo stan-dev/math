@@ -250,3 +250,27 @@ TEST_F(AgradRev, RevArenaMat_arena_matrix_move_test) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 1);
   stan::math::recover_memory();
 }
+
+TEST_F(AgradRev, RevArenaMat_arena_matrix_copy_allocates_once) {
+  using stan::math::arena_matrix;
+  using vec_v = Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1>;
+  auto& memalloc = stan::math::ChainableStack::instance_->memalloc_;
+  Eigen::VectorXd x(5);
+  x << 1, 2, 3, 4, 5;
+  vec_v x_v = x;
+  // Each copy of 5 doubles should take exactly 5 * 8 = 40 bytes of arena.
+  size_t before = memalloc.approx_bytes_used();
+  arena_matrix<Eigen::VectorXd> a(x);
+  EXPECT_EQ(40, memalloc.approx_bytes_used() - before);
+  EXPECT_MATRIX_EQ(x, a);
+
+  before = memalloc.approx_bytes_used();
+  arena_matrix<Eigen::VectorXd> b(2 * x);
+  EXPECT_EQ(40, memalloc.approx_bytes_used() - before);
+  EXPECT_MATRIX_EQ(2 * x, b);
+
+  before = memalloc.approx_bytes_used();
+  arena_matrix<vec_v> c(x_v);
+  EXPECT_EQ(40, memalloc.approx_bytes_used() - before);
+  EXPECT_MATRIX_EQ(x, c.val());
+}
