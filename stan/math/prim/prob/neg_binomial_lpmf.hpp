@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/binomial_coefficient_log.hpp>
+#include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma_diff.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
@@ -90,8 +90,9 @@ inline return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(
 
     if constexpr (include_summand<propto, T_shape>::value) {
       if (n_vec[i] != 0) {
-        logp += binomial_coefficient_log(n_vec[i] + alpha_dbl - 1.0,
-                                         alpha_dbl - 1.0);
+        // lchoose(n + alpha - 1, n), with alpha not rounded into
+        // n + alpha - 1
+        logp -= lbeta(alpha_dbl, n_vec[i] + 1.0) + log(n_vec[i] + alpha_dbl);
       }
     }
     logp -= alpha_dbl * log1p_inv_beta[i] + n_vec[i] * log1p_beta[i];

@@ -13,8 +13,9 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/eval.hpp>
-#include <stan/math/prim/fun/binomial_coefficient_log.hpp>
+#include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/sum.hpp>
@@ -128,13 +129,13 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
   const bool need_phi_derivative_sum = need_phi_derivative && !is_phi_vector;
   matrix_cl<double> phi_derivative_cl(
       need_phi_derivative ? (need_phi_derivative_sum ? wgs : N) : 0, 1);
-  // binomial_coefficient_log(y + phi - 1, y) is computed in the kernel if it
-  // differs between instances, and below otherwise
+  // lchoose(y + phi - 1, y) = -lbeta(phi, y + 1) - log(y + phi) is computed
+  // in the kernel if it differs between instances, and below otherwise
   const bool need_logp_phi = include_summand<propto, T_phi_cl>::value
                              && (is_y_vector || is_phi_vector);
   // Under propto, the kernel (or the code below, for a scalar y or phi)
-  // removes -lgamma(y + 1) (in binomial_coefficient_log), phi log(phi) for
-  // data phi, and y theta for data x, alpha and beta.
+  // removes -lgamma(y + 1) (in lchoose), phi log(phi) for data phi, and
+  // y theta for data x, alpha and beta.
   const bool need_add_lgamma_y1 = !include_summand<propto>::value
                                   && include_summand<propto, T_phi_cl>::value
                                   && is_y_vector;
@@ -177,7 +178,7 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
 
   if constexpr (include_summand<propto, T_phi_cl>::value && !is_y_vector
                 && !is_phi_vector) {
-    logp += N * binomial_coefficient_log(y_val + phi_val - 1, y_val);
+    logp -= N * (lbeta(phi_val, y_val + 1.0) + log(y_val + phi_val));
   }
   if constexpr (!include_summand<propto>::value
                 && include_summand<propto, T_phi_cl>::value && !is_y_vector) {

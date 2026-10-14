@@ -82,8 +82,10 @@ inline return_type_t<T_n_cl, T_location_cl, T_precision_cl> neg_binomial_2_lpmf(
 
   auto logp1 = -elt_multiply(phi_val, log1p(elt_divide(mu_val, phi_val)))
                - elt_multiply(n, log_mu_plus_phi);
+  // lchoose(n + phi - 1, n) = -lbeta(phi, n + 1) - log(n + phi), with phi
+  // not rounded into n + phi - 1
   auto logp2 = static_select<include_summand<propto, T_precision_cl>::value>(
-      logp1 + binomial_coefficient_log(n_plus_phi - 1, n), logp1);
+      logp1 - lbeta(phi_val, n + 1) - log(n_plus_phi), logp1);
   auto logp_expr = colwise_sum(
       static_select<include_summand<propto, T_location_cl>::value>(
           logp2 + multiply_log(n, mu_val), logp2));

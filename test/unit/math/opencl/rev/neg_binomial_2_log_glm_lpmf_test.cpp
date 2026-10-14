@@ -283,8 +283,10 @@ TEST(ProbDistributionsNegBinomial2LogGLM, opencl_large_shapes_reference) {
   // value formed from lgamma(phi), lgamma(y + phi) and phi log(phi), and
   // the phi partial formed from digamma(y + phi) - digamma(phi), keep no
   // correct digits for phi near 1e15. One attribute; the phi partial is
-  // compared as phi * d/dphi. The last row is a small phi where the plain
-  // differences are correct.
+  // compared as phi * d/dphi. The rows at theta = 720 and 709 check the
+  // partials where exp(theta) overflows, and the rows at phi = 1e-17 and
+  // 1e-8 the value where phi is small compared to y. The last rows are
+  // points where the plain differences are correct.
   struct TestValue {
     vector<int> y;
     vector<double> x;
@@ -352,6 +354,44 @@ TEST(ProbDistributionsNegBinomial2LogGLM, opencl_large_shapes_reference) {
        -8.0507631203930684,
        -1.8705862362370543e+1,
        -2.2918189241713975e-23},
+      // theta = 720 and 709, where exp(theta) overflows
+      {{3},
+       {1.0},
+       0.0,
+       0x1.6800000000000p+9,
+       0x1.8000000000000p+0,
+       -1.0786090429985881e+3,
+       -1.5000000000000000,
+       -1.5000000000000000,
+       -7.1724215393951088e+2},
+      {{5},
+       {1.0},
+       0.0,
+       0x1.6280000000000p+9,
+       0x1.8000000000000p+0,
+       -1.0618959497831274e+3,
+       -1.5000000000000000,
+       -1.5000000000000000,
+       -7.0583811353547048e+2},
+      // small phi, where binomial_coefficient_log(y + phi - 1, y) rounds phi
+      {{1},
+       {1.0},
+       0.0,
+       0.0,
+       0x1.70ef54646d497p-57,
+       -3.9143946580898777e+1,
+       0.0,
+       0.0,
+       9.9999999999999954e+16},
+      {{1000},
+       {1.0},
+       0.0,
+       0x1.ba18a998fffa0p+2,
+       0x1.5798ee2308c3ap-27,
+       -2.5328436211374154e+1,
+       2.3695155268308091e-24,
+       2.3695155268308091e-24,
+       9.9999982156034819e+7},
       {{0},
        {0.5},
        1.0,
