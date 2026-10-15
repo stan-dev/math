@@ -156,3 +156,17 @@ TEST(MathFunctions, sylvester_solver_errors) {
   Eigen::MatrixXd C_cols = Eigen::MatrixXd::Ones(3, 3);
   EXPECT_THROW(sylvester_solver(A, B, C_cols), std::invalid_argument);
 }
+
+TEST(MathFunctions, sylvester_solver_zero_size) {
+  using stan::math::sylvester_solver;
+  Eigen::MatrixXd I2 = Eigen::MatrixXd::Identity(2, 2);
+  Eigen::MatrixXd E(0, 0);
+
+  Eigen::MatrixXcd X1 = sylvester_solver(E, I2, Eigen::MatrixXd(0, 2));
+  EXPECT_EQ(X1.rows(), 0);
+  EXPECT_EQ(X1.cols(), 2);
+
+  Eigen::MatrixXcd X2 = sylvester_solver(I2, E, Eigen::MatrixXd(2, 0));
+  EXPECT_EQ(X2.rows(), 2);
+  EXPECT_EQ(X2.cols(), 0);
+}
