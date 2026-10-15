@@ -12,8 +12,6 @@
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/meta/is_kernel_expression.hpp>
 
-#include <tuple>
-
 namespace stan {
 namespace math {
 
@@ -45,9 +43,7 @@ inline var_value<matrix_cl<double>> append_row(T_a&& a, T_b&& b) {
 
   return make_callback_var(
       append_row(value_of(a_arena), value_of(b_arena)),
-      [state = std::make_tuple(a_arena, b_arena)](
-          const vari_value<matrix_cl<double>>& res) mutable {
-        auto& [a_arena, b_arena] = state;
+      [=](const vari_value<matrix_cl<double>>& res) mutable {
         if constexpr (is_autodiff_v<T_a>) {
           adjoint_of(a_arena) += block_zero_based(
               res.adj(), 0, 0, a_arena.rows(), a_arena.cols());

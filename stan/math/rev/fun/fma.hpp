@@ -7,8 +7,6 @@
 #include <stan/math/prim/fun/is_any_nan.hpp>
 #include <stan/math/prim/fun/fma.hpp>
 
-#include <tuple>
-
 namespace stan {
 namespace math {
 
@@ -196,8 +194,7 @@ namespace internal {
 template <typename T1, typename T2, typename T3, typename T4,
           require_all_matrix_t<T1, T2, T3>* = nullptr>
 inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
-  return [state = std::make_tuple(arena_x, arena_y, arena_z, ret)]() mutable {
-    auto& [arena_x, arena_y, arena_z, ret] = state;
+  return [=]() mutable {
     if constexpr (is_autodiff_v<T1>) {
       arena_x.adj().array() += ret.adj().array() * value_of(arena_y).array();
     }
@@ -217,8 +214,7 @@ template <typename T1, typename T2, typename T3, typename T4,
           require_all_matrix_t<T2, T3>* = nullptr,
           require_stan_scalar_t<T1>* = nullptr>
 inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
-  return [state = std::make_tuple(arena_x, arena_y, arena_z, ret)]() mutable {
-    auto& [arena_x, arena_y, arena_z, ret] = state;
+  return [=]() mutable {
     if constexpr (is_autodiff_v<T1>) {
       arena_x.adj() += (ret.adj().array() * value_of(arena_y).array()).sum();
     }
@@ -238,8 +234,7 @@ template <typename T1, typename T2, typename T3, typename T4,
           require_all_matrix_t<T1, T3>* = nullptr,
           require_stan_scalar_t<T2>* = nullptr>
 inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
-  return [state = std::make_tuple(arena_x, arena_y, arena_z, ret)]() mutable {
-    auto& [arena_x, arena_y, arena_z, ret] = state;
+  return [=]() mutable {
     if constexpr (is_autodiff_v<T1>) {
       arena_x.adj().array() += ret.adj().array() * value_of(arena_y);
     }
@@ -259,8 +254,7 @@ template <typename T1, typename T2, typename T3, typename T4,
           require_matrix_t<T3>* = nullptr,
           require_all_stan_scalar_t<T1, T2>* = nullptr>
 inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
-  return [state = std::make_tuple(arena_x, arena_y, arena_z, ret)]() mutable {
-    auto& [arena_x, arena_y, arena_z, ret] = state;
+  return [=]() mutable {
     if constexpr (is_autodiff_v<T1>) {
       arena_x.adj() += (ret.adj().array() * value_of(arena_y)).sum();
     }
@@ -280,8 +274,7 @@ template <typename T1, typename T2, typename T3, typename T4,
           require_all_matrix_t<T1, T2>* = nullptr,
           require_stan_scalar_t<T3>* = nullptr>
 inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
-  return [state = std::make_tuple(arena_x, arena_y, arena_z, ret)]() mutable {
-    auto& [arena_x, arena_y, arena_z, ret] = state;
+  return [=]() mutable {
     if constexpr (is_autodiff_v<T1>) {
       arena_x.adj().array() += ret.adj().array() * value_of(arena_y).array();
     }
@@ -301,8 +294,7 @@ template <typename T1, typename T2, typename T3, typename T4,
           require_matrix_t<T2>* = nullptr,
           require_all_stan_scalar_t<T1, T3>* = nullptr>
 inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
-  return [state = std::make_tuple(arena_x, arena_y, arena_z, ret)]() mutable {
-    auto& [arena_x, arena_y, arena_z, ret] = state;
+  return [=]() mutable {
     if constexpr (is_autodiff_v<T1>) {
       arena_x.adj() += (ret.adj().array() * value_of(arena_y).array()).sum();
     }
@@ -322,8 +314,7 @@ template <typename T1, typename T2, typename T3, typename T4,
           require_matrix_t<T1>* = nullptr,
           require_all_stan_scalar_t<T2, T3>* = nullptr>
 inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
-  return [state = std::make_tuple(arena_x, arena_y, arena_z, ret)]() mutable {
-    auto& [arena_x, arena_y, arena_z, ret] = state;
+  return [=]() mutable {
     if constexpr (is_autodiff_v<T1>) {
       arena_x.adj().array() += ret.adj().array() * value_of(arena_y);
     }
