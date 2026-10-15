@@ -10,6 +10,29 @@
 #include <sstream>
 #include <stdexcept>
 #include <vector>
+#ifdef _WIN32
+#include <malloc.h>
+#endif
+
+/**
+ * `STAN_ALIGNED_ALLOC(alignment, size)` allocates `size` bytes aligned to
+ * `alignment` bytes and `STAN_ALIGNED_FREE(ptr)` releases that memory.
+ *
+ * MSVC and MinGW do not provide `std::aligned_alloc`, so on Windows these
+ * use `_aligned_malloc` and `_aligned_free`. Memory from `_aligned_malloc`
+ * must not be released with `free()`. Defining `STAN_ALIGNED_ALLOC` before
+ * including Stan replaces both, so `STAN_ALIGNED_FREE` must be defined too.
+ */
+#ifndef STAN_ALIGNED_ALLOC
+#ifdef _WIN32
+#define STAN_ALIGNED_ALLOC(alignment, size) _aligned_malloc((size), (alignment))
+#define STAN_ALIGNED_FREE(ptr) _aligned_free(ptr)
+#else
+#define STAN_ALIGNED_ALLOC(alignment, size) \
+  std::aligned_alloc((alignment), (size))
+#define STAN_ALIGNED_FREE(ptr) std::free(ptr)
+#endif
+#endif
 
 namespace stan {
 namespace math {
@@ -33,25 +56,10 @@ inline bool is_aligned(T* ptr, unsigned int bytes_aligned) {
 namespace internal {
 const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
 
-// FIXME: enforce alignment
-// big fun to inline, but only called twice
-inline char* eight_byte_aligned_malloc(size_t size) {
-  char* ptr = static_cast<char*>(malloc(size));
-  if (!ptr) {
-    return ptr;  // malloc failed to alloc
-  }
-  if (!is_aligned(ptr, 8U)) {
-    std::stringstream s;
-    s << "invalid alignment to 8 bytes, ptr="
-      << reinterpret_cast<uintptr_t>(ptr) << std::endl;
-    throw std::runtime_error(s.str());
-  }
-  return ptr;
-}
-
 /**
  * Allocate a block of memory aligned to `alignment` bytes with
- * `std::aligned_alloc`. The block can be released with `free()`.
+ * `STAN_ALIGNED_ALLOC`. The block must be released with
+ * `STAN_ALIGNED_FREE`.
  *
  * @param size Number of bytes to allocate; rounded up to a multiple of
  * `alignment` as `std::aligned_alloc` requires.
@@ -60,7 +68,7 @@ inline char* eight_byte_aligned_malloc(size_t size) {
  */
 inline char* aligned_malloc(size_t size, size_t alignment) {
   const size_t rounded_size = (size + alignment - 1) / alignment * alignment;
-  return static_cast<char*>(std::aligned_alloc(alignment, rounded_size));
+  return static_cast<char*>(STAN_ALIGNED_ALLOC(alignment, rounded_size));
 }
 
 /**
@@ -164,11 +172,10 @@ class stack_alloc {
    *
    * @param initial_nbytes Initial number of bytes for the
    * allocator.  Defaults to <code>(1 << 16) = 64KB</code> initial bytes.
-   * @throws std::runtime_error if the underlying malloc is not 8-byte
-   * aligned.
+   * @throws std::bad_alloc if the initial block cannot be allocated.
    */
   explicit stack_alloc(size_t initial_nbytes = internal::DEFAULT_INITIAL_NBYTES)
-      : blocks_(1, internal::eight_byte_aligned_malloc(initial_nbytes)),
+      : blocks_(1, internal::aligned_malloc(initial_nbytes, 8)),
         sizes_(1, initial_nbytes),
         cur_block_(0),
         cur_block_end_(blocks_[0] + initial_nbytes),
@@ -188,7 +195,7 @@ class stack_alloc {
     // free ALL blocks
     for (auto& block : blocks_) {
       if (block) {
-        free(block);
+        STAN_ALIGNED_FREE(block);
       }
     }
   }
@@ -286,7 +293,7 @@ class stack_alloc {
     // frees all BUT the first (index 0) block
     for (size_t i = 1; i < blocks_.size(); ++i) {
       if (blocks_[i]) {
-        free(blocks_[i]);
+        STAN_ALIGNED_FREE(blocks_[i]);
       }
     }
     sizes_.resize(1);

@@ -169,3 +169,17 @@ TEST(stack_alloc, in_stack_second_block) {
   EXPECT_FALSE(allocator.in_stack(x));
   EXPECT_FALSE(allocator.in_stack(y));
 }
+
+TEST(stack_alloc, aligned_alloc_and_free) {
+  for (std::size_t alignment : {8, 16, 32, 64, 128}) {
+    void* ptr = STAN_ALIGNED_ALLOC(alignment, 4 * alignment);
+    ASSERT_NE(ptr, nullptr) << alignment;
+    EXPECT_TRUE(stan::math::is_aligned(ptr, alignment)) << alignment;
+    STAN_ALIGNED_FREE(ptr);
+  }
+}
+
+TEST(stack_alloc, first_block_aligned) {
+  stan::math::stack_alloc allocator;
+  EXPECT_TRUE(stan::math::is_aligned(allocator.alloc(1), 8U));
+}
