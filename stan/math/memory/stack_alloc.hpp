@@ -48,6 +48,34 @@ inline char* eight_byte_aligned_malloc(size_t size) {
   }
   return ptr;
 }
+
+/**
+ * Allocate a block of memory aligned to `alignment` bytes with
+ * `std::aligned_alloc`. The block can be released with `free()`.
+ *
+ * @param size Number of bytes to allocate; rounded up to a multiple of
+ * `alignment` as `std::aligned_alloc` requires.
+ * @param alignment Alignment in bytes, a power of two.
+ * @return Pointer to the block, or `nullptr` if the allocation failed.
+ */
+inline char* aligned_block_malloc(size_t size, size_t alignment) {
+  const size_t rounded_size = (size + alignment - 1) / alignment * alignment;
+  return static_cast<char*>(std::aligned_alloc(alignment, rounded_size));
+}
+
+/**
+ * Return the first address at or after `ptr` that is aligned to
+ * `alignment` bytes.
+ *
+ * @param ptr Pointer to align.
+ * @param alignment Alignment in bytes, a power of two.
+ */
+inline char* align_up(char* ptr, size_t alignment) {
+  const uintptr_t address = reinterpret_cast<uintptr_t>(ptr);
+  const uintptr_t aligned
+      = (address + alignment - 1) & ~static_cast<uintptr_t>(alignment - 1);
+  return ptr + (aligned - address);
+}
 }  // namespace internal
 
 /**
@@ -84,18 +112,31 @@ class stack_alloc {
   std::vector<char*> nested_cur_block_ends_;
 
   /**
+   * Return `true` if block `i` has room for `len` bytes starting at an
+   * address aligned to `alignment` bytes.
+   */
+  bool block_fits(size_t i, size_t len, size_t alignment) const {
+    const size_t offset
+        = internal::align_up(blocks_[i], alignment) - blocks_[i];
+    return offset + len <= sizes_[i];
+  }
+
+  /**
    * Moves us to the next block of memory, allocating that block
    * if necessary, and allocates len bytes of memory within that
-   * block.
+   * block, aligned to `alignment` bytes.
    *
    * @param len Number of bytes to allocate.
+   * @param alignment Alignment in bytes, a power of two. Blocks from
+   * `malloc()` are 8 byte aligned; new blocks for larger alignments come
+   * from `std::aligned_alloc`.
    * @return A pointer to the allocated memory.
    */
-  char* move_to_next_block(size_t len) {
-    char* result;
+  char* move_to_next_block(size_t len, size_t alignment = 8) {
     ++cur_block_;
-    // Find the next block (if any) containing at least len bytes.
-    while ((cur_block_ < blocks_.size()) && (sizes_[cur_block_] < len)) {
+    // Find the next block (if any) with room for len aligned bytes.
+    while ((cur_block_ < blocks_.size())
+           && !block_fits(cur_block_, len, alignment)) {
       ++cur_block_;
     }
     // Allocate a new block if necessary.
@@ -105,16 +146,20 @@ class stack_alloc {
       if (newsize < len) {
         newsize = len;
       }
-      blocks_.push_back(internal::eight_byte_aligned_malloc(newsize));
+      if (alignment <= 8) {
+        blocks_.push_back(internal::eight_byte_aligned_malloc(newsize));
+      } else {
+        blocks_.push_back(internal::aligned_block_malloc(newsize, alignment));
+      }
       if (!blocks_.back()) {
         throw std::bad_alloc();
       }
       sizes_.push_back(newsize);
     }
-    result = blocks_[cur_block_];
+    char* result = internal::align_up(blocks_[cur_block_], alignment);
     // Get the object's state back in order.
     next_loc_ = result + len;
-    cur_block_end_ = result + sizes_[cur_block_];
+    cur_block_end_ = blocks_[cur_block_] + sizes_[cur_block_];
     return result;
   }
 
@@ -177,6 +222,33 @@ class stack_alloc {
     // Occasionally, we have to switch blocks.
     if (unlikely(next_loc_ >= cur_block_end_)) {
       result = move_to_next_block(len + pad);
+    }
+    return reinterpret_cast<void*>(result);
+  }
+
+  /**
+   * Return a newly allocated block of memory of the appropriate size
+   * managed by the stack allocator, aligned to `alignment` bytes.
+   *
+   * As for `alloc(len)`, the reserved space is padded up to a multiple of
+   * 8 bytes, so allocations after this one stay 8 byte aligned.
+   *
+   * @param len Number of bytes to allocate.
+   * @param alignment Alignment in bytes, a power of two.
+   * @return A pointer to the allocated memory.
+   */
+  inline void* alloc(size_t len, size_t alignment) {
+    if (alignment <= 8) {
+      return alloc(len);
+    }
+    size_t pad = len % 8 == 0 ? 0 : 8 - len % 8;
+    char* result = internal::align_up(next_loc_, alignment);
+    const size_t needed = static_cast<size_t>(result - next_loc_) + len + pad;
+    // Occasionally, we have to switch blocks.
+    if (unlikely(needed >= static_cast<size_t>(cur_block_end_ - next_loc_))) {
+      result = move_to_next_block(len + pad, alignment);
+    } else {
+      next_loc_ = result + len + pad;
     }
     return reinterpret_cast<void*>(result);
   }
