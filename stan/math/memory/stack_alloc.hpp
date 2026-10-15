@@ -125,12 +125,12 @@ class stack_alloc {
    * block, aligned to `alignment` bytes.
    *
    * @param len Number of bytes to allocate.
-   * @param alignment Alignment in bytes, a power of two. Blocks from
-   * `malloc()` are 8 byte aligned; new blocks for larger alignments come
-   * from `std::aligned_alloc`.
+   * @param alignment Alignment in bytes, a power of two. New blocks come
+   * from `std::aligned_alloc` with this alignment.
    * @return A pointer to the allocated memory.
    */
-  char* move_to_next_block(size_t len, size_t alignment = 8) {
+  STAN_STRONG_INLINE inline char* move_to_next_block(size_t len,
+                                                     size_t alignment = 8) {
     ++cur_block_;
     // Find the next block (if any) with room for len aligned bytes.
     while ((cur_block_ < blocks_.size())
@@ -144,11 +144,7 @@ class stack_alloc {
       if (newsize < len) {
         newsize = len;
       }
-      if (alignment <= 8) {
-        blocks_.push_back(internal::eight_byte_aligned_malloc(newsize));
-      } else {
-        blocks_.push_back(internal::aligned_malloc(newsize, alignment));
-      }
+      blocks_.push_back(internal::aligned_malloc(newsize, alignment));
       if (!blocks_.back()) {
         throw std::bad_alloc();
       }
@@ -208,11 +204,11 @@ class stack_alloc {
    * This function may call C++'s <code>malloc()</code> function,
    * with any exceptions percolated through this function.
    *
-   * @param len Number of bytes to allocate.
-   * @param alignment Alignment in bytes, a power of two.
+   * @param[in] len Number of bytes to allocate.
+   * @param[in] alignment Alignment in bytes, a power of two.
    * @return A pointer to the allocated memory.
    */
-  inline void* alloc(size_t len, size_t alignment = 8) {
+  STAN_STRONG_INLINE inline void* alloc(size_t len, size_t alignment = 8) {
     const size_t padded_len = (len + 7) & ~static_cast<size_t>(7);
     // Every block and every allocation is 8 byte aligned, so only
     // larger alignments need to round up the next location.
@@ -233,10 +229,11 @@ class stack_alloc {
    *
    * @tparam T type of entries in allocated array.
    * @param[in] n size of array to allocate.
+   * @param[in] alignment Alignment in bytes, a power of two.
    * @return new array allocated on the arena.
    */
   template <typename T>
-  inline T* alloc_array(size_t n, size_t alignment = 8) {
+  STAN_STRONG_INLINE inline T* alloc_array(size_t n, size_t alignment = 8) {
     return static_cast<T*>(alloc(n * sizeof(T), alignment));
   }
 
