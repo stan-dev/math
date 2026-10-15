@@ -5,6 +5,7 @@
 #include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta/lazy_select_evaluator.hpp>
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/meta/eigen_product_evaluator_hooks.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/gevv_vvv_vari.hpp>
 #include <stan/math/rev/core/std_numeric_limits.hpp>
@@ -504,4 +505,5 @@ struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
 };
 }  // namespace internal
 }  // namespace Eigen
+
 #endif
