@@ -197,12 +197,13 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
         ll_fun, ll_args_vals, covariance_val, options, msgs);
     auto ll_args_filter = internal::filter_var_scalar_types(ll_args_copy);
     // tuple of references to var types
+    const Eigen::Index theta_size = md_est.theta.size();
     // Every solver writes R in place; no right-hand side below aliases it
-    arena_t<Eigen::MatrixXd> R(md_est.theta.size(), md_est.theta.size());
+    arena_t<Eigen::MatrixXd> R(theta_size, theta_size);
     // Solver 3 assigns it
     arena_t<Eigen::MatrixXd> LU_solve_covariance;
     // Solver 1, 2, 3
-    arena_t<Eigen::VectorXd> s2(md_est.theta.size());
+    arena_t<Eigen::VectorXd> s2(theta_size);
     using stan::math::internal::ZeroOut;
     if (md_est.solver_used == 1) {
       if (options.hessian_block_size == 1) {
