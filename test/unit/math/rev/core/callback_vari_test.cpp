@@ -45,6 +45,37 @@ TEST_F(AgradRev, RevCBack_callback_vari_eigen_test) {
   EXPECT_MATRIX_EQ(a.adj(), Eigen::MatrixXd::Constant(2, 3, 2));
 }
 
+TEST_F(AgradRev, RevCBack_callback_vari_over_aligned_capture) {
+  // a callback stores its captures inside the vari allocated on the arena
+  const Eigen::Vector2d m16(1.0, 2.0);
+  const Eigen::Matrix4d m32 = Eigen::Matrix4d::Identity();
+  stan::math::var a = 1;
+  bool aligned16 = false;
+  bool aligned32 = false;
+  // leave the next free byte of the arena 8 bytes past a 16 byte boundary
+  auto& arena = stan::math::ChainableStack::instance_->memalloc_;
+  while (!stan::math::is_aligned(arena.alloc(8), 16U)) {
+  }
+  stan::math::var b = stan::math::make_callback_vari(
+      a.val(), [a, m16, &aligned16](const auto& vi) mutable {
+        aligned16
+            = stan::math::is_aligned(m16.data(), alignof(Eigen::Vector2d));
+        a.adj() += vi.adj_ * m16.sum();
+      });
+  while (!stan::math::is_aligned(arena.alloc(8), 16U)) {
+  }
+  stan::math::var c = stan::math::make_callback_vari(
+      b.val(), [b, m32, &aligned32](const auto& vi) mutable {
+        aligned32
+            = stan::math::is_aligned(m32.data(), alignof(Eigen::Matrix4d));
+        b.adj() += vi.adj_ * m32.trace();
+      });
+  c.grad();
+  EXPECT_TRUE(aligned16);
+  EXPECT_TRUE(aligned32);
+  EXPECT_FLOAT_EQ(a.adj(), 12.0);
+}
+
 TEST_F(AgradRev, RevCBack_make_callback_var_scalar_test) {
   stan::math::var a = 1;
   stan::math::var b = 1;
