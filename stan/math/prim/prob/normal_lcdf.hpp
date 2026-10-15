@@ -32,9 +32,10 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf_impl(const char* function,
   T_y_ref y_ref = std::forward<T_y>(y);
   T_mu_ref mu_ref = std::forward<T_loc>(mu);
   T_sigma_ref sigma_ref = std::forward<T_scale>(sigma);
-  decltype(auto) y_val = as_value_column_array_or_scalar(y_ref);
-  decltype(auto) mu_val = as_value_column_array_or_scalar(mu_ref);
-  decltype(auto) sigma_val = as_value_column_array_or_scalar(sigma_ref);
+  // to_ref only reduces compile memory by evaluating expression arguments.
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
+  decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
   check_positive(function, "Scale parameter", sigma_val);

@@ -54,13 +54,15 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
   T_mu_ref mu_ref = std::forward<T_loc>(mu);
   T_sigma_ref sigma_ref = std::forward<T_scale>(sigma);
   T_lambda_ref lambda_ref = std::forward<T_inv_scale>(lambda);
-  decltype(auto) y_val = as_value_column_array_or_scalar(y_ref);
+  // to_ref only reduces compile memory by evaluating expression arguments.
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
   check_not_nan(function, "Random variable", y_val);
-  decltype(auto) mu_val = as_value_column_array_or_scalar(mu_ref);
+  decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
   check_finite(function, "Location parameter", mu_val);
-  decltype(auto) sigma_val = as_value_column_array_or_scalar(sigma_ref);
+  decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
   check_positive_finite(function, "Scale parameter", sigma_val);
-  decltype(auto) lambda_val = as_value_column_array_or_scalar(lambda_ref);
+  decltype(auto) lambda_val
+      = to_ref(as_value_column_array_or_scalar(lambda_ref));
   check_positive_finite(function, "Inv_scale parameter", lambda_val);
 
   if (size_zero(y_ref, mu_ref, sigma_ref, lambda_ref)) {
