@@ -8,6 +8,8 @@
 #include <stan/math/rev/constraint/ub_constrain.hpp>
 #include <cmath>
 
+#include <tuple>
+
 namespace stan {
 namespace math {
 
@@ -49,19 +51,21 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
     check_less("lub_constrain", "lb", lb_val, ub_val);
     auto diff = ub_val - lb_val;
     double inv_logit_x = inv_logit(value_of(x));
-    return make_callback_var(diff * inv_logit_x + lb_val,
-                             [x, ub, lb, diff, inv_logit_x](auto& vi) mutable {
-                               if constexpr (is_autodiff_v<T>) {
-                                 x.adj() += vi.adj() * diff * inv_logit_x
-                                            * (1.0 - inv_logit_x);
-                               }
-                               if constexpr (is_autodiff_v<L>) {
-                                 lb.adj() += vi.adj() * (1.0 - inv_logit_x);
-                               }
-                               if constexpr (is_autodiff_v<U>) {
-                                 ub.adj() += vi.adj() * inv_logit_x;
-                               }
-                             });
+    return make_callback_var(
+        diff * inv_logit_x + lb_val,
+        [state
+         = std::make_tuple(x, ub, lb, diff, inv_logit_x)](auto& vi) mutable {
+          auto& [x, ub, lb, diff, inv_logit_x] = state;
+          if constexpr (is_autodiff_v<T>) {
+            x.adj() += vi.adj() * diff * inv_logit_x * (1.0 - inv_logit_x);
+          }
+          if constexpr (is_autodiff_v<L>) {
+            lb.adj() += vi.adj() * (1.0 - inv_logit_x);
+          }
+          if constexpr (is_autodiff_v<U>) {
+            ub.adj() += vi.adj() * inv_logit_x;
+          }
+        });
   }
 }
 
@@ -122,7 +126,9 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
     lp += (log(diff) + (neg_abs_x - (2.0 * log1p_exp(neg_abs_x))));
     return make_callback_var(
         diff * inv_logit_x + lb_val,
-        [x, ub, lb, diff, lp, inv_logit_x](auto& vi) mutable {
+        [state = std::make_tuple(x, ub, lb, diff, lp, inv_logit_x)](
+            auto& vi) mutable {
+          auto& [x, ub, lb, diff, lp, inv_logit_x] = state;
           if constexpr (is_autodiff_v<T>) {
             x.adj() += vi.adj() * diff * inv_logit_x * (1.0 - inv_logit_x)
                        + lp.adj() * (1.0 - 2.0 * inv_logit_x);
@@ -167,7 +173,9 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
     const auto diff = ub_val - lb_val;
     auto inv_logit_x = to_arena(inv_logit(arena_x.val().array()));
     arena_t<ret_type> ret = diff * inv_logit_x + lb_val;
-    reverse_pass_callback([arena_x, ub, lb, ret, diff, inv_logit_x]() mutable {
+    reverse_pass_callback([state = std::make_tuple(arena_x, ub, lb, ret, diff,
+                                                   inv_logit_x)]() mutable {
+      auto& [arena_x, ub, lb, ret, diff, inv_logit_x] = state;
       if constexpr (is_autodiff_v<T>) {
         arena_x.adj().array()
             += ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x);
@@ -212,7 +220,9 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
     auto inv_logit_x = to_arena(inv_logit(value_of(arena_x).array()));
     arena_t<ret_type> ret = diff * inv_logit_x + lb_val;
     reverse_pass_callback(
-        [arena_x, ub, lb, ret, lp, diff, inv_logit_x]() mutable {
+        [state = std::make_tuple(arena_x, ub, lb, ret, lp, diff,
+                                 inv_logit_x)]() mutable {
+          auto& [arena_x, ub, lb, ret, lp, diff, inv_logit_x] = state;
           if constexpr (is_autodiff_v<T>) {
             arena_x.adj().array()
                 += ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x)
@@ -262,8 +272,10 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
     auto inv_logit_x = to_arena(inv_logit(value_of(arena_x).array()));
     arena_t<ret_type> ret = (is_lb_inf).select(
         ub_val - value_of(arena_x).array().exp(), diff * inv_logit_x + lb_val);
-    reverse_pass_callback([arena_x, ub, arena_lb, ret, diff, inv_logit_x,
-                           is_lb_inf]() mutable {
+    reverse_pass_callback([state = std::make_tuple(arena_x, ub, arena_lb, ret,
+                                                   diff, inv_logit_x,
+                                                   is_lb_inf)]() mutable {
+      auto& [arena_x, ub, arena_lb, ret, diff, inv_logit_x, is_lb_inf] = state;
       if constexpr (is_autodiff_v<T>) {
         arena_x.adj().array() += (is_lb_inf).select(
             ret.adj().array() * -value_of(arena_x).array().exp(),
@@ -316,29 +328,33 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
               .select(arena_x_val,
                       log(diff) + (neg_abs_x - (2.0 * log1p_exp(neg_abs_x))))
               .sum();
-    reverse_pass_callback([arena_x, arena_x_val, ub, arena_lb, ret, lp, diff,
-                           inv_logit_x, is_lb_inf]() mutable {
-      const auto lp_adj = lp.adj();
-      if constexpr (is_autodiff_v<T>) {
-        const auto x_sign = arena_x_val.sign().eval();
-        arena_x.adj().array() += (is_lb_inf).select(
-            ret.adj().array() * -arena_x_val.exp() + lp_adj,
-            ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x)
-                + lp.adj() * (1.0 - 2.0 * inv_logit_x));
-      }
-      if constexpr (is_autodiff_v<L>) {
-        arena_lb.adj().array()
-            += (is_lb_inf).select(0, ret.adj().array() * (1.0 - inv_logit_x)
-                                         + -(1.0 / diff) * lp_adj);
-      }
-      if constexpr (is_autodiff_v<U>) {
-        ub.adj()
-            += (is_lb_inf)
-                   .select(ret.adj().array(), ret.adj().array() * inv_logit_x
-                                                  + (1.0 / diff) * lp_adj)
-                   .sum();
-      }
-    });
+    reverse_pass_callback(
+        [state = std::make_tuple(arena_x, arena_x_val, ub, arena_lb, ret, lp,
+                                 diff, inv_logit_x, is_lb_inf)]() mutable {
+          auto& [arena_x, arena_x_val, ub, arena_lb, ret, lp, diff, inv_logit_x,
+                 is_lb_inf]
+              = state;
+          const auto lp_adj = lp.adj();
+          if constexpr (is_autodiff_v<T>) {
+            const auto x_sign = arena_x_val.sign().eval();
+            arena_x.adj().array() += (is_lb_inf).select(
+                ret.adj().array() * -arena_x_val.exp() + lp_adj,
+                ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x)
+                    + lp.adj() * (1.0 - 2.0 * inv_logit_x));
+          }
+          if constexpr (is_autodiff_v<L>) {
+            arena_lb.adj().array()
+                += (is_lb_inf).select(0, ret.adj().array() * (1.0 - inv_logit_x)
+                                             + -(1.0 / diff) * lp_adj);
+          }
+          if constexpr (is_autodiff_v<U>) {
+            ub.adj() += (is_lb_inf)
+                            .select(ret.adj().array(),
+                                    ret.adj().array() * inv_logit_x
+                                        + (1.0 / diff) * lp_adj)
+                            .sum();
+          }
+        });
     return ret_type(ret);
   }
 }
@@ -369,24 +385,28 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
     auto inv_logit_x = to_arena(inv_logit(arena_x_val.array()));
     arena_t<ret_type> ret = (is_ub_inf).select(
         arena_x_val.array().exp() + lb_val, diff * inv_logit_x + lb_val);
-    reverse_pass_callback([arena_x, arena_x_val, arena_ub, lb, ret, is_ub_inf,
-                           inv_logit_x, diff]() mutable {
-      if constexpr (is_autodiff_v<T>) {
-        arena_x.adj().array() += (is_ub_inf).select(
-            ret.adj().array() * arena_x_val.array().exp(),
-            ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x));
-      }
-      if constexpr (is_autodiff_v<L>) {
-        lb.adj() += (is_ub_inf)
-                        .select(ret.adj().array(),
-                                ret.adj().array() * (1.0 - inv_logit_x))
-                        .sum();
-      }
-      if constexpr (is_autodiff_v<U>) {
-        arena_ub.adj().array()
-            += (is_ub_inf).select(0, ret.adj().array() * inv_logit_x);
-      }
-    });
+    reverse_pass_callback(
+        [state = std::make_tuple(arena_x, arena_x_val, arena_ub, lb, ret,
+                                 is_ub_inf, inv_logit_x, diff)]() mutable {
+          auto& [arena_x, arena_x_val, arena_ub, lb, ret, is_ub_inf,
+                 inv_logit_x, diff]
+              = state;
+          if constexpr (is_autodiff_v<T>) {
+            arena_x.adj().array() += (is_ub_inf).select(
+                ret.adj().array() * arena_x_val.array().exp(),
+                ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x));
+          }
+          if constexpr (is_autodiff_v<L>) {
+            lb.adj() += (is_ub_inf)
+                            .select(ret.adj().array(),
+                                    ret.adj().array() * (1.0 - inv_logit_x))
+                            .sum();
+          }
+          if constexpr (is_autodiff_v<U>) {
+            arena_ub.adj().array()
+                += (is_ub_inf).select(0, ret.adj().array() * inv_logit_x);
+          }
+        });
     return ret_type(ret);
   }
 }
@@ -423,27 +443,31 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
     auto inv_logit_x = to_arena(inv_logit(arena_x_val.array()));
     arena_t<ret_type> ret = (is_ub_inf).select(
         arena_x_val.array().exp() + lb_val, diff * inv_logit_x + lb_val);
-    reverse_pass_callback([arena_x, arena_x_val, diff, inv_logit_x, arena_ub,
-                           lb, ret, lp, is_ub_inf]() mutable {
-      const auto lp_adj = lp.adj();
-      if constexpr (is_autodiff_v<T>) {
-        arena_x.adj().array() += (is_ub_inf).select(
-            ret.adj().array() * arena_x_val.array().exp() + lp_adj,
-            ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x)
-                + lp.adj() * (1.0 - 2.0 * inv_logit_x));
-      }
-      if constexpr (is_autodiff_v<L>) {
-        lb.adj() += (is_ub_inf)
-                        .select(ret.adj().array(),
-                                ret.adj().array() * (1.0 - inv_logit_x)
-                                    + -(1.0 / diff) * lp_adj)
-                        .sum();
-      }
-      if constexpr (is_autodiff_v<U>) {
-        arena_ub.adj().array() += (is_ub_inf).select(
-            0, ret.adj().array() * inv_logit_x + (1.0 / diff) * lp_adj);
-      }
-    });
+    reverse_pass_callback(
+        [state = std::make_tuple(arena_x, arena_x_val, diff, inv_logit_x,
+                                 arena_ub, lb, ret, lp, is_ub_inf)]() mutable {
+          auto& [arena_x, arena_x_val, diff, inv_logit_x, arena_ub, lb, ret, lp,
+                 is_ub_inf]
+              = state;
+          const auto lp_adj = lp.adj();
+          if constexpr (is_autodiff_v<T>) {
+            arena_x.adj().array() += (is_ub_inf).select(
+                ret.adj().array() * arena_x_val.array().exp() + lp_adj,
+                ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x)
+                    + lp.adj() * (1.0 - 2.0 * inv_logit_x));
+          }
+          if constexpr (is_autodiff_v<L>) {
+            lb.adj() += (is_ub_inf)
+                            .select(ret.adj().array(),
+                                    ret.adj().array() * (1.0 - inv_logit_x)
+                                        + -(1.0 / diff) * lp_adj)
+                            .sum();
+          }
+          if constexpr (is_autodiff_v<U>) {
+            arena_ub.adj().array() += (is_ub_inf).select(
+                0, ret.adj().array() * inv_logit_x + (1.0 / diff) * lp_adj);
+          }
+        });
     return ret_type(ret);
   }
 }
@@ -477,9 +501,13 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
                         ub_val - arena_x.val().array().exp(),
                         (is_ub_inf).select(arena_x_val.array().exp() + lb_val,
                                            diff * inv_logit_x + lb_val)));
-  reverse_pass_callback([arena_x, arena_x_val, inv_logit_x, arena_ub, arena_lb,
-                         diff, ret, is_ub_inf, is_lb_inf,
-                         is_lb_ub_inf]() mutable {
+  reverse_pass_callback([state = std::make_tuple(
+                             arena_x, arena_x_val, inv_logit_x, arena_ub,
+                             arena_lb, diff, ret, is_ub_inf, is_lb_inf,
+                             is_lb_ub_inf)]() mutable {
+    auto& [arena_x, arena_x_val, inv_logit_x, arena_ub, arena_lb, diff, ret,
+           is_ub_inf, is_lb_inf, is_lb_ub_inf]
+        = state;
     // The most likely case is neither of them are infinity
     const bool is_none_inf = !(is_lb_inf.any() || is_ub_inf.any());
     if (is_none_inf) {
@@ -560,9 +588,13 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
                         arena_x_val.array(),
                         log(diff) + (neg_abs_x - (2.0 * log1p_exp(neg_abs_x)))))
             .sum();
-  reverse_pass_callback([arena_x, arena_x_val, inv_logit_x, arena_ub, arena_lb,
-                         diff, ret, is_ub_inf, is_lb_inf, is_lb_ub_inf,
-                         lp]() mutable {
+  reverse_pass_callback([state = std::make_tuple(
+                             arena_x, arena_x_val, inv_logit_x, arena_ub,
+                             arena_lb, diff, ret, is_ub_inf, is_lb_inf,
+                             is_lb_ub_inf, lp)]() mutable {
+    auto& [arena_x, arena_x_val, inv_logit_x, arena_ub, arena_lb, diff, ret,
+           is_ub_inf, is_lb_inf, is_lb_ub_inf, lp]
+        = state;
     const auto lp_adj = lp.adj();
     // The most likely case is neither of them are infinity
     const bool is_none_inf = !(is_lb_inf.any() || is_ub_inf.any());

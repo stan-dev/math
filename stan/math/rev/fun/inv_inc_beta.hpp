@@ -17,6 +17,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/hypergeometric_3F2.hpp>
 #include <stan/math/prim/fun/inv_inc_beta.hpp>
+#include <tuple>
 
 namespace stan {
 namespace math {
@@ -62,7 +63,9 @@ inline var inv_inc_beta(const T1& a, const T2& b, const T3& p) {
   double b_val = value_of(b);
   double p_val = value_of(p);
   double w = inv_inc_beta(a_val, b_val, p_val);
-  return make_callback_var(w, [a, b, p, a_val, b_val, w](auto& vi) {
+  return make_callback_var(w, [state = std::make_tuple(a, b, p, a_val, b_val,
+                                                       w)](auto& vi) {
+    auto& [a, b, p, a_val, b_val, w] = state;
     double log_w = log(w);
     double log1m_w = log1m(w);
     double one_m_a = 1 - a_val;

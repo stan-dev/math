@@ -59,6 +59,26 @@ TEST(KernelGenerator, colwise_prod_test) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
+TEST(KernelGenerator, colwise_reductions_rvalue_input) {
+  MatrixXd m(3, 2);
+  m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
+
+  matrix_cl<double> res_cl = stan::math::colwise_sum(matrix_cl<double>(m));
+  MatrixXd res = stan::math::from_matrix_cl(res_cl).colwise().sum();
+  MatrixXd correct = m.colwise().sum();
+  EXPECT_MATRIX_NEAR(correct, res, 1e-9);
+
+  matrix_cl<double> prod_cl = stan::math::colwise_prod(matrix_cl<double>(m));
+  MatrixXd prod = stan::math::from_matrix_cl(prod_cl).colwise().prod();
+  MatrixXd correct_prod = m.colwise().prod();
+  EXPECT_MATRIX_NEAR(correct_prod, prod, 1e-9);
+
+  matrix_cl<double> max_cl = stan::math::colwise_max(matrix_cl<double>(m));
+  MatrixXd max = stan::math::from_matrix_cl(max_cl).colwise().maxCoeff();
+  MatrixXd correct_max = m.colwise().maxCoeff();
+  EXPECT_MATRIX_NEAR(correct_max, max, 1e-9);
+}
+
 TEST(KernelGenerator, colwise_min_test) {
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;

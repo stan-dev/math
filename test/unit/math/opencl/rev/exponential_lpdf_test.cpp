@@ -57,7 +57,6 @@ auto exponential_lpdf_functor_propto = [](const auto& y, const auto& beta) {
 
 TEST(ProbDistributionsExponential, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << 0, 0.5, 12.3;

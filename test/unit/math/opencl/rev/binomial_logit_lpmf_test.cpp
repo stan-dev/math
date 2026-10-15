@@ -114,8 +114,6 @@ TEST(ProbDistributionsBinomialLogit, opencl_broadcast_N) {
 }
 
 TEST(ProbDistributionsBinomialLogit, opencl_broadcast_alpha) {
-  int N = 3;
-
   std::vector<int> n{0, 1, 12};
   std::vector<int> m{0, 1, 123};
   double alpha_scal = 0.4;

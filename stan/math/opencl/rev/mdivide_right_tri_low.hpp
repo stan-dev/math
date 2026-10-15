@@ -9,6 +9,8 @@
 #include <stan/math/rev/fun/adjoint_of.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 
+#include <tuple>
+
 namespace stan {
 namespace math {
 
@@ -39,7 +41,9 @@ inline var_value<matrix_cl<double>> mdivide_right_tri_low(T2&& b, T1&& A) {
       = tri_inverse<matrix_cl_view::Lower>(value_of(A_arena));
   return make_callback_var(
       value_of(b_arena) * A_tri_inv,
-      [A_arena, b_arena, A_tri_inv](const vari_value<matrix_cl<double>>& res) {
+      [state = std::make_tuple(A_arena, b_arena, A_tri_inv)](
+          const vari_value<matrix_cl<double>>& res) {
+        auto& [A_arena, b_arena, A_tri_inv] = state;
         matrix_cl<double> adjB = res.adj() * transpose(A_tri_inv);
         if constexpr (is_autodiff_v<T1>) {
           matrix_cl<double> adjA = transpose(res.val()) * adjB;

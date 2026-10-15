@@ -39,7 +39,6 @@ inline var student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
     const double p_val_flip = p_val < 0.5 ? p_val : 1.0 - p_val;
     const double p_sign = p_val < 0.5 ? -1.0 : 1.0;
     const double ibeta_arg = inv_inc_beta(0.5 * nu_val, 0.5, 2 * p_val_flip);
-    const double sqrt_inv_ibeta_m1 = sqrt(inv(ibeta_arg) - 1.0);
     double ret_val
         = mu_val
           + p_sign * sigma_val * sqrt(nu_val) * sqrt(-1.0 + 1.0 / ibeta_arg);
@@ -49,7 +48,6 @@ inline var student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
       const double mu_val = value_of(mu);
       const double sigma_val = value_of(sigma);
       const double nu_val = value_of(nu);
-      const double p_val_flip = p_val < 0.5 ? p_val : 1.0 - p_val;
       const double p_sign = p_val < 0.5 ? -1.0 : 1.0;
       const double sqrt_inv_ibeta_m1 = sqrt(inv(ibeta_arg) - 1.0);
       if constexpr (is_autodiff_v<T_p>) {
