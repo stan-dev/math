@@ -34,6 +34,23 @@ else()
   target_include_directories(stanmath SYSTEM INTERFACE "${STAN_BOOST_ROOT}")
 endif()
 
+if(WIN32)
+  # Match Make's windows.h macro probe, without requiring an executable link.
+  function(stan_detect_ucrt)
+    include(CheckCXXSourceCompiles)
+    set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+    check_cxx_source_compiles("#include <windows.h>
+      #ifndef _UCRT
+      #error Not UCRT
+      #endif
+      int main() { return 0; }" STAN_WINDOWS_UCRT)
+  endfunction()
+  stan_detect_ucrt()
+  if(STAN_WINDOWS_UCRT)
+    target_compile_definitions(stanmath INTERFACE _UCRT)
+  endif()
+endif()
+
 if(STAN_USE_SYSTEM_TBB)
   find_package(TBB REQUIRED COMPONENTS tbb)
 else()
@@ -46,11 +63,15 @@ else()
   endif()
   set(tbb_extra_args "")
   set(tbb_extra_cxx_flags "")
+  if(STAN_WINDOWS_UCRT)
+    set(tbb_extra_cxx_flags "-D_UCRT")
+  endif()
   if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     set(tbb_compiler gcc)
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(ARM64|arm64|aarch64)$")
       list(APPEND tbb_extra_args WINARM64=true)
-      set(tbb_extra_cxx_flags "-DTBB_USE_GCC_BUILTINS")
+      string(APPEND tbb_extra_cxx_flags " -DTBB_USE_GCC_BUILTINS")
+      set(tbb_interface_definitions TBB_USE_GCC_BUILTINS)
     endif()
   elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(tbb_compiler clang)
@@ -82,7 +103,8 @@ else()
   add_library(TBB::tbb SHARED IMPORTED GLOBAL)
   set_target_properties(TBB::tbb PROPERTIES
     IMPORTED_LOCATION "${tbb_library}"
-    INTERFACE_INCLUDE_DIRECTORIES "${STAN_TBB_ROOT}/include")
+    INTERFACE_INCLUDE_DIRECTORIES "${STAN_TBB_ROOT}/include"
+    INTERFACE_COMPILE_DEFINITIONS "${tbb_interface_definitions}")
   if(WIN32)
     set_property(TARGET TBB::tbb PROPERTY IMPORTED_IMPLIB "${tbb_library}")
   endif()
@@ -130,8 +152,17 @@ endif()
 if(BUILD_TESTING)
   set(BUILD_GMOCK OFF CACHE BOOL "Build Google Mock")
   set(INSTALL_GTEST OFF CACHE BOOL "Install Google Test")
-  add_subdirectory("${STAN_BENCHMARK_ROOT}/googletest"
-    "${CMAKE_CURRENT_BINARY_DIR}/googletest" EXCLUDE_FROM_ALL)
+  function(stan_add_googletest)
+    # CMake 4 removed policies older than 3.5. Limit the compatibility setting
+    # to this old dependency, preserving a higher caller-provided minimum.
+    if(NOT DEFINED CMAKE_POLICY_VERSION_MINIMUM
+        OR CMAKE_POLICY_VERSION_MINIMUM VERSION_LESS "3.5")
+      set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+    endif()
+    add_subdirectory("${STAN_BENCHMARK_ROOT}/googletest"
+      "${CMAKE_CURRENT_BINARY_DIR}/googletest" EXCLUDE_FROM_ALL)
+  endfunction()
+  stan_add_googletest()
   if(WIN32)
     target_compile_definitions(gtest PUBLIC GTEST_HAS_PTHREAD=0)
   endif()

@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
 """Build and run Stan Math tests with CMake."""
 
+import glob
+import json
 import os
 from pathlib import Path
 import re
+import shlex
 import subprocess
 import sys
-import time
 from argparse import ArgumentParser, RawTextHelpFormatter
 
-maxChangedTests = 20
-testsfx = "_test.cpp"
-
-def processCLIArgs():
+def processCLIArgs(arguments):
     """
     Define and process the command line interface to the runTests.py script.
     """
@@ -25,7 +24,26 @@ def processCLIArgs():
         formatter_class=RawTextHelpFormatter,
     )
 
-    # Now define all the rules of the command line args and opts
+    parser.set_defaults(command=None)
+    if arguments and arguments[0] in ("changed-unit-filter", "changed-distribution-filter",
+                                      "generate-expressions", "build-tests"):
+        commands = parser.add_subparsers(dest="command", required=True)
+        commands.add_parser("changed-unit-filter")
+        distributions = commands.add_parser("changed-distribution-filter")
+        distributions.add_argument("--all", action="store_true")
+        expressions = commands.add_parser("generate-expressions")
+        expressions.add_argument("build_dir")
+        expressions.add_argument("--functions", nargs="*", default=[])
+        expressions.add_argument("--batches", type=int, default=6)
+        build = commands.add_parser("build-tests")
+        build.add_argument("build_dir")
+        build.add_argument("--source-regex", required=True)
+        build.add_argument("--jobs", type=int, default=1)
+        inputs = parser.parse_args(arguments)
+        if getattr(inputs, "jobs", 1) < 1 or getattr(inputs, "batches", 1) < 1:
+            parser.error("job and batch counts must be positive")
+        return inputs
+
     parser.add_argument(
         "-j", metavar="N", type=int, default=1, help="parallel build jobs (default: 1)"
     )
@@ -96,7 +114,7 @@ def processCLIArgs():
                         help="extra configure argument, e.g. --cmake-arg=-DSTAN_THREADS=ON")
     parser.add_argument("--config", default="Release", help="CMake build configuration")
     # And parse the command line against those rules
-    inputs = parser.parse_args()
+    inputs = parser.parse_args(arguments)
     if inputs.j < 1:
         parser.error("-j must be positive")
     if inputs.make_only and inputs.test_only:
@@ -106,54 +124,234 @@ def processCLIArgs():
     return inputs
 
 
-def stopErr(msg, returncode):
-    """Report an error message to stderr and exit with a given code."""
-    sys.stderr.write("%s\n" % msg)
-    sys.stderr.write("exit now (%s)\n" % time.strftime("%x %X %Z"))
-    sys.exit(returncode)
+def findChangedTests(files, existing_tests, limit=20):
+    """Select priority tests from supplied changes and existing test paths."""
+    dependencies = {"prim": ("prim", "rev", "mix", "fwd"),
+                    "rev": ("rev", "mix"), "fwd": ("fwd", "mix")}
+    selected = set()
+    for path in files:
+        if "opencl" in path:
+            continue
+        if path.endswith("_test.cpp"):
+            selected.add(path)
+        elif path.startswith("stan/") and path.endswith(".hpp"):
+            candidate = path.replace("stan/", "test/unit/", 1)[:-4] + "_test.cpp"
+            layer = candidate.split("/")[3]
+            for replacement in dependencies.get(layer, (layer,)):
+                test = candidate.replace("/" + layer + "/", "/" + replacement + "/", 1)
+                if test in existing_tests:
+                    selected.add(test)
+    return sorted(selected) if len(selected) <= limit else []
 
 
-def findChangedTests(debug):
-    changed_files = subprocess.run(
-        ["git", "diff", "--name-only", "--diff-filter=d", "origin/develop...HEAD"],
-        text=True, capture_output=True, check=True, cwd=Path(__file__).resolve().parent
-    ).stdout.splitlines()
-    if debug:
-        print("Changed files:", changed_files)
-
-    # changes in prim should also test other non-prim signatures
-    test_deps = {"prim/": ["prim/", "rev/", "mix/", "fwd/"], "rev/": ["rev/", "mix/"], "fwd/": ["fwd/", "mix/"]}
-
-    changed_tests = set()
-    for f in changed_files:
-        if 'stan/' in f and f.endswith('.hpp') and 'opencl' not in f: # changed fn
-            maybe_test = f.replace('stan/', 'test/unit/').replace('.hpp', testsfx)
-            for (path, replacements) in test_deps.items():
-                if path in maybe_test:
-                    for rep in replacements:
-                        maybe_test = maybe_test.replace(path, rep)
-                        if os.path.exists(maybe_test):
-                            changed_tests.add(maybe_test)
-
-        if f.endswith(testsfx) and 'opencl' not in f:
-            changed_tests.add(f)
-
-    if len(changed_tests) > maxChangedTests:
-        stopErr("Number of changed tests excluded maximum, not running priority tests", 0)
-
-    return sorted(changed_tests)
+def select_paths(matches, directories):
+    """Validate expanded paths and remove selections covered by a directory."""
+    paths = set()
+    for argument, expanded in matches.items():
+        if not expanded:
+            raise ValueError("No matching tests: " + argument)
+        for path in expanded:
+            if not any(path == base or path.startswith(base + "/")
+                       for base in ("test/unit", "test/prob", "test/expressions")):
+                raise ValueError("Unsupported test path: " + path)
+            if path not in directories and not path.endswith("_test.cpp"):
+                raise ValueError("Expected a test directory or *_test.cpp: " + path)
+            paths.add(path)
+    return [path for path in sorted(paths)
+            if not any(path.startswith(parent + "/") for parent in directories)]
 
 
-def main():
-    inputs = processCLIArgs()
-    sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "test"))
-    from cmake import run
+def target_for(path):
+    if path.endswith(".cpp"):
+        target = path[:-4].replace("/", "_")
+    else:
+        prefix = path.replace("test/unit/math", "unit_math", 1)
+        prefix = prefix.replace("test/unit", "unit", 1)
+        prefix = prefix.replace("test/prob", "prob_math", 1)
+        prefix = prefix.replace("test/expressions", "expressions", 1)
+        target = prefix.replace("/", "_") + "_all_tests"
+    folder = "test/unit" if path.startswith("test/unit") else (
+        "test/prob" if path.startswith("test/prob") else "test")
+    return target, folder
+
+
+def build_commands(inputs, paths, root, build_dir):
+    """Plan configuration and builds for the CMake targets selected by the user."""
+    if inputs.test_only:
+        return []
+    expressions = any(path.startswith("test/expressions") for path in paths)
+    configure = ["cmake", "-S", str(root), "-B", str(build_dir),
+                 "-DCMAKE_BUILD_TYPE=" + inputs.config, "-DBUILD_TESTING=ON",
+                 "-DSTAN_TEST_HEADERS=OFF",
+                 "-DSTAN_BUILD_PROB_TESTS=" + ("ON" if any(path.startswith("test/prob") for path in paths) else "OFF"),
+                 "-DSTAN_BUILD_EXPRESSION_TESTS=" + ("ON" if expressions else "OFF"),
+                 "-DSTAN_TEST_NAME_FILTERS=" + ";".join(inputs.f)]
+    if expressions:
+        configure.append("-DSTAN_EXPRESSION_TEST_DIR=" + str(build_dir / "expression-sources"))
+    if inputs.fresh:
+        configure.append("--fresh")
+    build = ["cmake", "--build", str(build_dir), "--config", inputs.config,
+             "--parallel", str(inputs.j), "--target"] + [target_for(path)[0] for path in paths]
+    return [configure + inputs.cmake_arg, build]
+
+
+def parse_cache(text):
+    cache = {}
+    for line in text.splitlines():
+        if not line.startswith(("//", "#")) and "=" in line and ":" in line.split("=", 1)[0]:
+            key, value = line.split("=", 1)
+            cache[key.split(":", 1)[0]] = value
+    return cache
+
+
+def test_command(path, build_dir, config, cache, windows):
+    """Plan an executable invocation using supplied CMake settings."""
+    target, folder = target_for(path)
+    executable = build_dir / folder / target
+    if cache.get("CMAKE_CONFIGURATION_TYPES"):
+        executable = executable.parent / config / executable.name
+    if cache.get("CMAKE_SYSTEM_NAME") == "Windows" or windows:
+        executable = executable.with_suffix(".exe")
+    args = [str(executable), "--gtest_output=xml:" + str(build_dir / "test-results" / (target + ".xml"))]
+    if cache.get("STAN_EFFECTIVE_MPI", cache.get("STAN_MPI")) in ("ON", "TRUE", "1"):
+        ranks = "2" if not path.endswith(".cpp") or "mpi_" in path else "1"
+        args = [cache.get("MPIEXEC_EXECUTABLE", "mpirun"),
+                cache.get("MPIEXEC_NUMPROC_FLAG", "-np"), ranks] + [
+                    flag for flag in cache.get("MPIEXEC_PREFLAGS", "").split(";") if flag] + args + [
+                    flag for flag in cache.get("MPIEXEC_POSTFLAGS", "").split(";") if flag]
+    return args
+
+
+def source_filter(paths):
+    return "^(" + "|".join(re.escape(path) for path in sorted(set(paths))) + ")$" if paths else ""
+
+
+def build_tests(inventory, source_pattern, build_dir, jobs, batch_size):
+    """Plan builds using the source labels registered by CMake."""
+    pattern = re.compile(source_pattern)
+    selected = [test["name"] for test in inventory["tests"]
+                if any(pattern.search(label) for entry in test.get("properties", [])
+                       if entry["name"] == "LABELS" for label in entry["value"])]
+    if not selected:
+        raise ValueError("No registered tests match: " + source_pattern)
+    return [["cmake", "--build", str(build_dir), "--parallel", str(jobs), "--target"]
+            + selected[offset:offset + batch_size] for offset in range(0, len(selected), batch_size)]
+
+
+def changed_distributions(files, run_all=False):
+    # Every distribution fixture includes the Stan umbrella headers. Library,
+    # build-system, and shared test-header changes can affect all distributions.
+    if run_all or any(
+        path.startswith(("stan/", "lib/", "make/", "cmake/"))
+        or path in ("CMakeLists.txt", "Jenkinsfile", "makefile")
+        or (path.startswith("test/") and path.endswith(".hpp")
+            and not re.fullmatch(r"test/prob/[^/]+/[^/]+_test\.hpp", path))
+        or (path.startswith("test/prob/") and not path.endswith("_test.hpp"))
+        for path in files
+    ):
+        return "^test/prob/"
+    fixtures = [path for path in files
+                if re.fullmatch(r"test/prob/[^/]+/[^/]+_test\.hpp", path)]
+    return ("^(" + "|".join(re.escape(path[:-len("_test.hpp")])
+                            for path in sorted(fixtures)) + ")_[0-9]+_generated_"
+            if fixtures else "")
+
+
+def main(arguments, root, working_dir, windows, error_stream):
+    """Perform command-line I/O. Helpers above only transform explicit inputs."""
+    inputs = processCLIArgs(arguments)
     try:
-        sys.exit(run(inputs))
-    except (ValueError, OSError, subprocess.CalledProcessError) as error:
-        stopErr(str(error), 1)
-
+        files = []
+        if getattr(inputs, "changed", False) or inputs.command == "changed-unit-filter" or (
+                inputs.command == "changed-distribution-filter" and not inputs.all):
+            files = subprocess.run(["git", "diff", "--name-only", "--diff-filter=d",
+                                    "origin/develop...HEAD"], cwd=root, check=True,
+                                   text=True, capture_output=True).stdout.splitlines()
+            if getattr(inputs, "debug", False):
+                print("Changed files:", files)
+        if inputs.command == "changed-distribution-filter":
+            print(changed_distributions(files, inputs.all))
+            return 0
+        if getattr(inputs, "changed", False) or inputs.command == "changed-unit-filter":
+            existing = {path.relative_to(root).as_posix()
+                        for path in (root / "test/unit").rglob("*_test.cpp")}
+            paths = findChangedTests(files, existing)
+            if inputs.command == "changed-unit-filter":
+                print(source_filter(paths))
+                return 0
+            if not paths:
+                print("No changed tests were found!")
+                return 0
+        elif inputs.command is None:
+            matches = {}
+            for argument in inputs.tests:
+                expanded = glob.glob(str(root / argument))
+                if not expanded and argument.replace("\\", "/").lstrip("./").startswith(
+                        ("test/prob/", "test/expressions/")) and argument.endswith("_test.cpp"):
+                    expanded = [str(root / argument)]
+                matches[argument] = [Path(path).resolve().relative_to(root).as_posix()
+                                     for path in expanded]
+            directories = {path for expanded in matches.values() for path in expanded
+                           if (root / path).is_dir()}
+            paths = select_paths(matches, directories)
+        build_dir = (working_dir / inputs.build_dir).resolve()
+        if inputs.command == "build-tests":
+            inventory = subprocess.run(["ctest", "--test-dir", str(build_dir), "--show-only=json-v1"],
+                                       cwd=root, check=True, text=True, capture_output=True)
+            commands = build_tests(json.loads(inventory.stdout), inputs.source_regex,
+                                   build_dir, inputs.jobs, 50 if windows else 500)
+        else:
+            generate = inputs.command == "generate-expressions"
+            if not generate:
+                paths = [path for path in paths if not path.endswith(".cpp")
+                         or all(value in path for value in inputs.f)]
+                if not paths:
+                    raise ValueError("No matching tests found")
+                expressions = any(path.startswith("test/expressions") for path in paths)
+                if inputs.only_functions and not expressions:
+                    raise ValueError("--only-functions requires test/expressions")
+                generate = expressions and not inputs.test_only
+            if generate:
+                # Keep the legacy generator's output setting inside the I/O boundary.
+                sys.path.insert(0, str(root / "test"))
+                import generate_expression_tests
+                output = build_dir / "expression-sources"
+                output.mkdir(parents=True, exist_ok=True)
+                for source in output.glob("*test.cpp"):
+                    source.unlink()
+                functions = inputs.functions if inputs.command else inputs.only_functions
+                batches = inputs.batches if inputs.command else (inputs.e if inputs.e > 0 else inputs.j)
+                generate_expression_tests.src_folder = str(output) + "/"
+                generate_expression_tests.main(functions, batches)
+                if not list(output.glob("*test.cpp")):
+                    raise RuntimeError("Expression generator produced no tests")
+            if inputs.command == "generate-expressions":
+                return 0
+            commands = build_commands(inputs, paths, root, build_dir)
+        for command in commands:
+            print(" ".join(shlex.quote(str(arg)) for arg in command), flush=True)
+            subprocess.run(command, cwd=root, check=True)
+        if inputs.command == "build-tests" or inputs.make_only:
+            return 0
+        cache_file = build_dir / "CMakeCache.txt"
+        cache = parse_cache(cache_file.read_text() if cache_file.exists() else "")
+        (build_dir / "test-results").mkdir(parents=True, exist_ok=True)
+        failed = False
+        for path in paths:
+            command = test_command(path, build_dir, inputs.config, cache, windows)
+            print(" ".join(shlex.quote(arg) for arg in command), flush=True)
+            try:
+                subprocess.run(command, cwd=root, check=True)
+            except subprocess.CalledProcessError:
+                if not inputs.run_all:
+                    raise
+                failed = True
+        return int(failed)
+    except (ValueError, OSError, RuntimeError, subprocess.CalledProcessError) as error:
+        print(error, file=error_stream)
+        return 1
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main(sys.argv[1:], Path(__file__).resolve().parent,
+                  Path.cwd(), os.name == "nt", sys.stderr))

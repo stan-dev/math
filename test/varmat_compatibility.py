@@ -35,8 +35,15 @@ def compile_signature(cpp_path):
             "cmake", "-S", str(Path(HERE).parent), "-B", str(_compile_worker.build),
             "-DBUILD_TESTING=OFF", "-DSTAN_TEST_OPTIMIZATION=0",
             "-DSTAN_COMPILE_TEST_SOURCE=" + str(_compile_worker.source)])
+        if successful:
+            successful, stdout, stderr = run_command([
+                "cmake", "--build", str(_compile_worker.build),
+                "--parallel", "1", "--target", "stan_compile_test"])
         if not successful:
-            raise RuntimeError(stderr.decode("utf-8") + stdout.decode("utf-8"))
+            _compile_worker.directory.cleanup()
+            del _compile_worker.directory
+            raise RuntimeError("CMake compilation setup failed:\n"
+                               + stdout.decode("utf-8") + stderr.decode("utf-8"))
     shutil.copyfile(cpp_path, _compile_worker.source)
     return run_command(["cmake", "--build", str(_compile_worker.build),
                         "--parallel", "1", "--target", "stan_compile_test"])

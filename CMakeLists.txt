@@ -14,6 +14,16 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 option(STAN_BUILD_DOCS "Build the Stan Math library documentation" OFF)
 option(STAN_TEST_HEADERS "Create targets that check standalone headers" ON)
 option(STAN_TEST_PCH "Reuse precompiled headers when building tests" ON)
+set(STAN_EFFECTIVE_TEST_PCH ${STAN_TEST_PCH})
+set(stan_pch_reason "")
+if(STAN_TEST_PCH AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang"
+    AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "9"
+    AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "11")
+  # Clang 9/10 cannot deserialize Eigen's __builtin_bit_cast expressions.
+  # Fixed in LLVM 95d7ccb70b9cbd53f1f137c0b2411852c42c122b (Clang 11).
+  set(STAN_EFFECTIVE_TEST_PCH OFF)
+  set(stan_pch_reason " (Clang 9/10 PCH bit_cast defect; fixed in Clang 11)")
+endif()
 option(STAN_BUILD_PROB_TESTS "Generate and build distribution tests" ON)
 option(STAN_BUILD_EXPRESSION_TESTS "Build pre-generated expression tests" OFF)
 option(STAN_TEST_ROW_VECTORS "Include row vectors in distribution tests" OFF)
@@ -60,9 +70,21 @@ endforeach()
 add_subdirectory(cmake)
 
 if(STAN_OPENCL)
-  find_package(OpenCL REQUIRED)
+  # Configuration and object-only header checks need headers, not a loader.
+  # Respect explicit FindOpenCL overrides while defaulting to vendored headers.
+  if(NOT DEFINED OpenCL_INCLUDE_DIR)
+    set(OpenCL_INCLUDE_DIR "${STAN_OPENCL_ROOT}")
+  endif()
+  find_package(OpenCL QUIET)
   target_include_directories(stanmath SYSTEM INTERFACE "${STAN_OPENCL_ROOT}")
-  target_link_libraries(stanmath INTERFACE OpenCL::OpenCL)
+  if(TARGET OpenCL::OpenCL)
+    target_link_libraries(stanmath INTERFACE OpenCL::OpenCL)
+  elseif(APPLE)
+    target_link_libraries(stanmath INTERFACE "-framework OpenCL")
+  else()
+    # Keep the ordinary platform link requirement even without a found loader.
+    target_link_libraries(stanmath INTERFACE OpenCL)
+  endif()
   target_compile_definitions(stanmath INTERFACE
     STAN_OPENCL OPENCL_DEVICE_ID=${STAN_OPENCL_DEVICE_ID}
     OPENCL_PLATFORM_ID=${STAN_OPENCL_PLATFORM_ID}
@@ -95,7 +117,7 @@ endif()
 
 message(STATUS "Stan Math: threads=${STAN_THREADS}, OpenCL=${STAN_OPENCL}, MPI=${STAN_MPI}")
 set(STAN_EFFECTIVE_MPI "${STAN_MPI}" CACHE INTERNAL "MPI setting used by test executables" FORCE)
-message(STATUS "Test PCH=${STAN_TEST_PCH}")
+message(STATUS "Test PCH: requested=${STAN_TEST_PCH}, effective=${STAN_EFFECTIVE_TEST_PCH}${stan_pch_reason}")
 if(BUILD_TESTING)
   add_subdirectory(test)
 endif()
@@ -113,15 +135,19 @@ endif()
 
 set(STAN_COMPILE_TEST_SOURCE "" CACHE FILEPATH "Source file for compile-only compatibility checks")
 if(STAN_COMPILE_TEST_SOURCE)
-  add_library(stan_compile_test_pch OBJECT EXCLUDE_FROM_ALL cmake/pch.cpp)
   add_library(stan_compile_test OBJECT EXCLUDE_FROM_ALL "${STAN_COMPILE_TEST_SOURCE}")
-  foreach(target stan_compile_test_pch stan_compile_test)
+  set(compile_test_targets stan_compile_test)
+  if(STAN_EFFECTIVE_TEST_PCH)
+    add_library(stan_compile_test_pch OBJECT EXCLUDE_FROM_ALL cmake/pch.cpp)
+    list(APPEND compile_test_targets stan_compile_test_pch)
+    target_precompile_headers(stan_compile_test_pch PRIVATE <stan/math/mix.hpp> <gtest/gtest.h>)
+    target_precompile_headers(stan_compile_test REUSE_FROM stan_compile_test_pch)
+  endif()
+  foreach(target IN LISTS compile_test_targets)
     target_link_libraries(${target} PRIVATE stanmath)
     target_include_directories(${target} SYSTEM PRIVATE
       "${STAN_BENCHMARK_ROOT}/googletest/googletest/include")
     target_compile_options(${target} PRIVATE ${STAN_TEST_OPTIMIZATION_FLAGS})
     set_target_properties(${target} PROPERTIES POSITION_INDEPENDENT_CODE FALSE)
   endforeach()
-  target_precompile_headers(stan_compile_test_pch PRIVATE <stan/math/mix.hpp> <gtest/gtest.h>)
-  target_precompile_headers(stan_compile_test REUSE_FROM stan_compile_test_pch)
 endif()

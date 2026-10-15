@@ -392,6 +392,9 @@ ctest --test-dir build -L '^test/unit/math/prim/core/' --output-on-failure
 ```
 
 Precompiled headers (PCH) are enabled by default with `STAN_TEST_PCH=ON`.
+Upstream Clang 9 and 10 automatically compile without PCH because of a compiler
+defect fixed in Clang 11. Configuration reports the requested and effective
+settings; the same setting applies to var-matrix compatibility checks.
 Automatic differentiation (AD) computes derivatives through the Stan Math type system.
 Unit tests reuse a PCH for the automatic differentiation layer under test.
 Sources including `test_ad.hpp` use the AD helper PCH instead.
@@ -436,7 +439,7 @@ Test reports are saved under `test-results` with a directory for each test stage
 The pipeline includes ASan, GPU, MPI, threading, and expression tests.
 `STAN_TEST_ROW_VECTORS` and `STAN_PROB_TEST_ALL` enable the additional
 distribution cases requested by Jenkins.
-`test/cmake.py generate-expressions PATH` creates expression test sources in
+`runTests.py generate-expressions PATH` creates expression test sources in
 `PATH/expression-sources`.
 `STAN_BUILD_EXPRESSION_TESTS=ON` enables generated expression tests.
 `runTests.py` also generates expression sources when you select `test/expressions`.
@@ -445,7 +448,7 @@ The runner option `--only-functions` selects functions for expression tests.
 Example: Generate expression test sources in `build-expressions/expression-sources`.
 
 ```sh
-python3 test/cmake.py generate-expressions build-expressions
+python3 runTests.py generate-expressions build-expressions
 ```
 
 Expression framework self-tests use the CMake runner.

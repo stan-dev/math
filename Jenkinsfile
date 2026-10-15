@@ -47,7 +47,7 @@ def runCmakeTests(Map config) {
        "${shellQuote(buildDir + '/ctest-results.xml')} ${shellQuote(buildDir + '/Testing')} " +
        shellQuote(reportDir)
     configureCmake(flags)
-    sh "python3 test/cmake.py build-tests ${shellQuote(buildDir)} " +
+    sh "python3 runTests.py build-tests ${shellQuote(buildDir)} " +
        "--source-regex ${shellQuote(config.filter)} --jobs ${jobs}"
     sh "cmake -E make_directory ${shellQuote(buildDir + '/test-results')}"
     withEnv(["GTEST_OUTPUT=xml:${pwd()}/${buildDir}/test-results/"]) {
@@ -138,7 +138,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
           CppLint: { sh "make cpplint" },
           Dependencies: { sh "make test-math-dependencies" },
           CMakeSelection: {
-            sh 'python3 test/cmake.py self-test'
+            sh 'python3 test/cmake.py'
           },
           Documentation: {
             configureCmake(['-DBUILD_TESTING=OFF', '-DSTAN_BUILD_DOCS=ON'])
@@ -165,7 +165,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
             runPod(image: image) {
               stage('Run changed unit tests') {
                 def filter = sh(returnStdout: true,
-                  script: 'python3 test/cmake.py changed-unit-filter').trim()
+                  script: 'python3 runTests.py changed-unit-filter').trim()
                 if (filter) {
                   runCmakeTests(name: 'changed', filter: filter, optimization: '3',
                     flags: ['-DCMAKE_CXX_FLAGS=-march=native -mtune=native'])
@@ -255,11 +255,11 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
                 sh 'python3 test/statement_types_test.py'
                 sh 'python3 test/varmat_compatibility_summary_test.py'
                 runFrameworkTests(CLANG_CXX)
-                sh 'python3 test/cmake.py generate-expressions build'
+                sh 'python3 runTests.py generate-expressions build'
                 runCmakeTests(name: 'expressions', filter: '^test/expressions/', optimization: '0',
                   flags: ["-DCMAKE_C_COMPILER=${CLANG_CC}", "-DCMAKE_CXX_COMPILER=${CLANG_CXX}",
                           '-DCMAKE_CXX_FLAGS=-Werror', '-DSTAN_BUILD_EXPRESSION_TESTS=ON'])
-                sh 'python3 test/cmake.py generate-expressions build --functions reduce_sum map_rect'
+                sh 'python3 runTests.py generate-expressions build --functions reduce_sum map_rect'
                 withEnv(['STAN_NUM_THREADS=4']) {
                   runCmakeTests(name: 'expressions-threads', filter: '^test/expressions/',
                     optimization: '0', testJobs: 1,
@@ -284,7 +284,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
           dist: {
             runPod(image: image, cpus: 6, memory: '128Gi') {
               stage('Distribution tests') {
-                def command = 'python3 test/cmake.py changed-distribution-filter'
+                def command = 'python3 runTests.py changed-distribution-filter'
                 if (params.runAllDistributions || params.run_all || mainBranch) {
                   command += ' --all'
                 }
