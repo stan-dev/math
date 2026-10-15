@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
+#include <stan/math/prim/fun/inc_beta_ddz.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -96,33 +97,61 @@ inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = y_vec.val(n);
+
+    // Explicit results for extreme values
+    // The gradients are technically ill-defined, but treated as zero
+    if (y_dbl >= 1.0) {
+      return ops_partials.build(negative_infinity());
+    }
+
     const T_partials_return alpha_dbl = alpha_vec.val(n);
     const T_partials_return beta_dbl = beta_vec.val(n);
     const T_partials_return betafunc_dbl = beta(alpha_dbl, beta_dbl);
-    const T_partials_return Pn = 1.0 - inc_beta(alpha_dbl, beta_dbl, y_dbl);
+    // The complement 1 - I_y(a, b), evaluated from the smaller of y and
+    // 1 - y. Forming it as a difference loses every digit once I_y(a, b)
+    // rounds to 1, which happens for every complement below eps.
+    const T_partials_return Pn = internal::inc_beta_complement(
+        alpha_dbl, beta_dbl, y_dbl, 1.0 - y_dbl);
     const T_partials_return inv_Pn
         = is_constant_all<T_y, T_scale_succ, T_scale_fail>::value ? 0 : inv(Pn);
 
     ccdf_log += log(Pn);
 
     if constexpr (is_autodiff_v<T_y>) {
-      partials<0>(ops_partials)[n] -= pow(1 - y_dbl, beta_dbl - 1)
-                                      * pow(y_dbl, alpha_dbl - 1) * inv_Pn
-                                      / betafunc_dbl;
+      // inc_beta_ddz is the same density, evaluated without the product of
+      // two powers over a beta function, each of which can underflow on
+      // its own.
+      partials<0>(ops_partials)[n]
+          -= inc_beta_ddz(alpha_dbl, beta_dbl, y_dbl) * inv_Pn;
     }
 
-    T_partials_return g1 = 0;
-    T_partials_return g2 = 0;
+    T_partials_return dPn_dalpha = 0;
+    T_partials_return dPn_dbeta = 0;
 
     if constexpr (is_any_autodiff_v<T_scale_succ, T_scale_fail>) {
-      grad_reg_inc_beta(g1, g2, alpha_dbl, beta_dbl, y_dbl, digamma_alpha[n],
-                        digamma_beta[n], digamma_sum[n], betafunc_dbl);
+      // The shape derivatives from the same argument as the value
+      T_partials_return g1 = 0;
+      T_partials_return g2 = 0;
+      if (y_dbl <= 0.5) {
+        // the derivatives of I_y(a, b), which are those of -Pn
+        grad_reg_inc_beta(g1, g2, alpha_dbl, beta_dbl, y_dbl, digamma_alpha[n],
+                          digamma_beta[n], digamma_sum[n], betafunc_dbl);
+        dPn_dalpha = -g1;
+        dPn_dbeta = -g2;
+      } else {
+        // on the reflected arguments, the derivatives of Pn itself
+        grad_reg_inc_beta(g1, g2, beta_dbl, alpha_dbl, 1.0 - y_dbl,
+                          digamma_beta[n], digamma_alpha[n], digamma_sum[n],
+                          betafunc_dbl);
+        dPn_dalpha = g2;
+        dPn_dbeta = g1;
+      }
     }
     if constexpr (is_autodiff_v<T_scale_succ>) {
-      partials<1>(ops_partials)[n] -= g1 * inv_Pn;
+      partials<1>(ops_partials)[n] += dPn_dalpha * inv_Pn;
     }
     if constexpr (is_autodiff_v<T_scale_fail>) {
-      partials<2>(ops_partials)[n] -= g2 * inv_Pn;
+      partials<2>(ops_partials)[n] += dPn_dbeta * inv_Pn;
     }
   }
   return ops_partials.build(ccdf_log);

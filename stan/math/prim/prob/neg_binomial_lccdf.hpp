@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
+#include <stan/math/prim/fun/inc_beta_ddz.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -99,7 +100,12 @@ inline return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
     const T_partials_return inv_beta_p1 = inv(beta_dbl + 1);
     const T_partials_return p_dbl = beta_dbl * inv_beta_p1;
     const T_partials_return d_dbl = square(inv_beta_p1);
-    const T_partials_return Pi = 1.0 - inc_beta(alpha_dbl, n_dbl + 1.0, p_dbl);
+    // The complement 1 - I_p(alpha, n + 1), evaluated from the smaller of
+    // p and 1 - p = 1 / (beta + 1), both formed without cancellation.
+    // Forming it as a difference loses every digit once I_p(alpha, n + 1)
+    // rounds to 1, which happens for every complement below eps.
+    const T_partials_return Pi = internal::inc_beta_complement(
+        alpha_dbl, n_dbl + 1.0, p_dbl, inv_beta_p1);
     const T_partials_return beta_func = beta(n_dbl + 1, alpha_dbl);
 
     P += log(Pi);
@@ -107,16 +113,30 @@ inline return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
     if constexpr (is_autodiff_v<T_shape>) {
       T_partials_return g1 = 0;
       T_partials_return g2 = 0;
-
-      grad_reg_inc_beta(g1, g2, alpha_dbl, n_dbl + 1, p_dbl,
-                        digammaAlpha_vec[i], digammaN_vec[i], digammaSum_vec[i],
-                        beta_func);
-      partials<0>(ops_partials)[i] -= g1 / Pi;
+      if (p_dbl <= 0.5) {
+        // the derivative of I_p(alpha, n + 1), which is that of -Pi
+        grad_reg_inc_beta(g1, g2, alpha_dbl, n_dbl + 1, p_dbl,
+                          digammaAlpha_vec[i], digammaN_vec[i],
+                          digammaSum_vec[i], beta_func);
+        partials<0>(ops_partials)[i] -= g1 / Pi;
+      } else {
+        // on the reflected arguments, the derivative of Pi itself
+        grad_reg_inc_beta(g1, g2, n_dbl + 1, alpha_dbl, inv_beta_p1,
+                          digammaN_vec[i], digammaAlpha_vec[i],
+                          digammaSum_vec[i], beta_func);
+        partials<0>(ops_partials)[i] += g2 / Pi;
+      }
     }
     if constexpr (is_autodiff_v<T_inv_scale>) {
-      partials<1>(ops_partials)[i] -= d_dbl * pow(1 - p_dbl, n_dbl)
-                                      * pow(p_dbl, alpha_dbl - 1)
-                                      / (beta_func * Pi);
+      // inc_beta_ddz is the same density, evaluated without the product of
+      // two powers over a beta function, each of which can underflow on
+      // its own. The density at p equals the reflected density at 1 - p;
+      // it is evaluated at whichever of the two is at most 1/2, because
+      // inc_beta_ddz forms the complement of its argument internally.
+      const T_partials_return density
+          = p_dbl <= 0.5 ? inc_beta_ddz(alpha_dbl, n_dbl + 1.0, p_dbl)
+                         : inc_beta_ddz(n_dbl + 1.0, alpha_dbl, inv_beta_p1);
+      partials<1>(ops_partials)[i] -= d_dbl * density / Pi;
     }
   }
 
