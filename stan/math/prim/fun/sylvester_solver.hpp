@@ -31,11 +31,28 @@ namespace math {
  */
 template <typename MatA, typename MatB, typename MatC,
           require_all_matrix_t<MatA, MatB, MatC>* = nullptr,
-          require_all_t<std::is_arithmetic<base_type_t<MatA>>,
-                        std::is_arithmetic<base_type_t<MatB>>,
-                        std::is_arithmetic<base_type_t<MatC>>>* = nullptr>
+          require_all_not_t<is_var<base_type_t<MatA>>,
+                        is_var<base_type_t<MatB>>,
+                        is_var<base_type_t<MatC>>>* = nullptr>
 inline auto sylvester_solver(const MatA& A, const MatB& B,
                                          const MatC& C) {
+
+  // common base scalar: double, or fvar<...> if any input is fvar
+  using base_t = return_type_t<base_type_t<MatA>, base_type_t<MatB>,
+                               base_type_t<MatC>>;
+  using complex_t = std::complex<base_t>;
+  using complex_mat_t
+      = Eigen::Matrix<complex_t, Eigen::Dynamic, Eigen::Dynamic>;
+  // A and B are promoted to base_t but stay real or complex as given
+  using A_mat_t = Eigen::Matrix<
+      std::conditional_t<is_complex<value_type_t<MatA>>::value, complex_t,
+                         base_t>,
+      Eigen::Dynamic, Eigen::Dynamic>;
+  using B_mat_t = Eigen::Matrix<
+      std::conditional_t<is_complex<value_type_t<MatB>>::value, complex_t,
+                         base_t>,
+      Eigen::Dynamic, Eigen::Dynamic>;
+
   check_square("sylvester_solver", "A", A);
   check_square("sylvester_solver", "B", B);
   check_size_match("sylvester_solver", "rows of A", A.rows(), "rows of C",
@@ -43,13 +60,20 @@ inline auto sylvester_solver(const MatA& A, const MatB& B,
   check_size_match("sylvester_solver", "rows of B", B.rows(), "cols of C",
                    C.cols());
 
+  if(unlikely(A.rows() == 0 || B.rows() == 0)) {
+    return complex_mat_t(A.rows(), B.rows());
+  }
+
   const Eigen::Index m = B.rows();
 
-  Eigen::ComplexSchur<plain_type_t<MatA>> schur_A(A);
+  // ComplexSchur needs a plain matrix (same pattern as complex_schur_decompose)
+  Eigen::ComplexSchur<A_mat_t> schur_A{
+      A_mat_t(A.template cast<typename A_mat_t::Scalar>())};
   const auto& U = schur_A.matrixU();
   const auto& S = schur_A.matrixT();
 
-  Eigen::ComplexSchur<plain_type_t<MatB>> schur_B(B);
+  Eigen::ComplexSchur<B_mat_t> schur_B{
+      B_mat_t(B.template cast<typename B_mat_t::Scalar>())};
   const auto& V = schur_B.matrixU();
   const auto& T = schur_B.matrixT();
 
@@ -62,7 +86,7 @@ inline auto sylvester_solver(const MatA& A, const MatB& B,
     Sshift.template triangularView<Eigen::Upper>().solveInPlace(Y.col(i));
   }
 
-  auto X = (U * Y * V.adjoint()).eval();
+  complex_mat_t X = U * Y * V.adjoint();
 
   return X;
 }
