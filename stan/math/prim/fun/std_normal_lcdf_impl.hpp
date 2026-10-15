@@ -195,7 +195,8 @@ inline return_type_t<T_y> std_normal_lcdf_impl(const char* function, T_y&& y) {
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   constexpr double sign = reflect ? -1.0 : 1.0;
   T_y_ref y_ref = std::forward<T_y>(y);
-  decltype(auto) y_val = as_value_column_array_or_scalar(y_ref);
+  // to_ref evaluates an expression argument once for the check and kernel.
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
   check_not_nan(function, "Random variable", y_val);
 
   if (size_zero(y_ref)) {
