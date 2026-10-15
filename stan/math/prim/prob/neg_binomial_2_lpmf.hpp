@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/binomial_coefficient_log.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/lbeta.hpp>
+#include <stan/math/prim/fun/digamma_diff.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
@@ -68,13 +68,16 @@ inline return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     return -phi_val * (log1p(mu_val / phi_val))
            - value_of(n_vec) * log_mu_plus_phi;
   };
+  // lchoose(n + phi - 1, n) = -lbeta(phi, n + 1) - log(n + phi). The form
+  // binomial_coefficient_log(n + phi - 1, n) rounds phi to the precision of
+  // n in n + phi - 1, which loses phi where it is small compared to n. The
+  // lbeta expression holds temporaries, so it is used within one statement.
   if constexpr (include_precision || include_location) {
     if constexpr (include_precision && include_location) {
-      logp += sum(binomial_coefficient_log(n_plus_phi - 1, n_vec)
+      logp += sum(-lbeta(phi_val, n_vec + 1) - log(n_plus_phi)
                   + multiply_log(n_vec, mu_val) + logp_calc());
     } else if constexpr (include_precision) {
-      logp
-          += sum(binomial_coefficient_log(n_plus_phi - 1, n_vec) + logp_calc());
+      logp += sum(-lbeta(phi_val, n_vec + 1) - log(n_plus_phi) + logp_calc());
     } else if constexpr (include_location) {
       logp += sum(multiply_log(n_vec, mu_val) + logp_calc());
     }
@@ -87,8 +90,7 @@ inline return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     auto log_term = select(mu_val < phi_val, log1p(-mu_val / mu_plus_phi),
                            log_phi - log_mu_plus_phi);
     partials<1>(ops_partials) = (mu_val - value_of(n_vec)) / mu_plus_phi
-                                + log_term - digamma(phi_val)
-                                + digamma(n_plus_phi);
+                                + log_term + digamma_diff(phi_val, n_vec);
   }
   return ops_partials.build(logp);
 }

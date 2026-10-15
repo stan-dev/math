@@ -4,10 +4,14 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/digamma_diff.hpp>
+#include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
 namespace math {
@@ -16,10 +20,12 @@ template <typename T_shape>
 inline return_type_t<double, T_shape> do_lkj_constant(const T_shape& eta,
                                                       const unsigned int& K) {
   // Lewandowski, Kurowicka, and Joe (2009) theorem 5
-  return_type_t<double, T_shape> constant;
+  using T_partials_return = partials_return_t<T_shape>;
+  const T_partials_return eta_val = value_of(eta);
+  T_partials_return constant;
   const int Km1 = K - 1;
   using stan::math::lgamma;
-  if (eta == 1.0) {
+  if (eta_val == 1.0) {
     // C++ integer division is appropriate in this block
     Eigen::VectorXd denominator(Km1 / 2);
     for (int k = 1; k <= denominator.rows(); k++) {
@@ -35,12 +41,25 @@ inline return_type_t<double, T_shape> do_lkj_constant(const T_shape& eta,
                   - Km1 * lgamma(static_cast<double>(K));
     }
   } else {
-    constant = Km1 * lgamma(eta + 0.5 * Km1);
+    // Km1 lgamma(eta + Km1 / 2) - sum_k lgamma(eta + (Km1 - k) / 2) is a sum
+    // of differences lgamma(x + k / 2) - lgamma(x), x = eta + (Km1 - k) / 2,
+    // which cancel for large eta. Each one equals
+    // lgamma(k / 2) - lbeta(k / 2, x), which does not cancel.
+    constant = -0.25 * Km1 * K * LOG_PI;
     for (int k = 1; k <= Km1; k++) {
-      constant -= 0.5 * k * LOG_PI + lgamma(eta + 0.5 * (Km1 - k));
+      constant += lgamma(0.5 * k) - lbeta(0.5 * k, eta_val + 0.5 * (Km1 - k));
     }
   }
-  return constant;
+  // d/deta = sum_k digamma(x + k / 2) - digamma(x), also at eta = 1
+  auto ops_partials = make_partials_propagator(eta);
+  if constexpr (is_autodiff_v<T_shape>) {
+    T_partials_return d_eta(0.0);
+    for (int k = 1; k <= Km1; k++) {
+      d_eta += digamma_diff(eta_val + 0.5 * (Km1 - k), 0.5 * k);
+    }
+    partials<0>(ops_partials)[0] = d_eta;
+  }
+  return ops_partials.build(constant);
 }
 
 // LKJ_Corr(y|eta) [ y correlation matrix (not covariance matrix)

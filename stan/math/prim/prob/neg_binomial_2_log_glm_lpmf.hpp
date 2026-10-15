@@ -7,9 +7,10 @@
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/digamma_diff.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
@@ -149,42 +150,55 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
   }
   check_finite(function, "Matrix of independent variables", theta);
   T_precision_val log_phi = log(phi_arr);
-  Array<T_partials_return, Dynamic, 1> logsumexp_theta_logphi
-      = (theta > log_phi)
-            .select(theta + log1p_exp(log_phi - theta),
-                    log_phi + log1p_exp(theta - log_phi));
+  // log1p(mu / phi) with mu = exp(theta)
+  Array<T_partials_return, Dynamic, 1> log1p_exp_theta_m_log_phi
+      = log1p_exp(theta - log_phi);
 
   T_sum_val y_plus_phi = y_arr + phi_arr;
 
-  // Compute the log-density.
-  T_partials_return logp(0);
-  if constexpr (include_summand<propto>::value) {
-    if constexpr (is_vector<T_y>::value) {
-      logp -= sum(lgamma(y_arr + 1.0));
-    } else {
-      logp -= sum(lgamma(y_arr + 1.0)) * N_instances;
-    }
-  }
-  if constexpr (include_summand<propto, T_precision>::value) {
-    if constexpr (is_vector<T_precision>::value) {
-      scalar_seq_view<decltype(phi_val_vec)> phi_vec(phi_val_vec);
-      for (size_t n = 0; n < N_instances; ++n) {
-        logp += multiply_log(phi_vec[n], phi_vec[n]) - lgamma(phi_vec[n]);
-      }
-    } else {
-      logp += N_instances * (multiply_log(phi_val, phi_val) - lgamma(phi_val));
-    }
-  }
-  logp -= sum(y_plus_phi * logsumexp_theta_logphi);
-
-  if constexpr (include_summand<propto, T_x, T_alpha, T_beta>::value) {
-    logp += sum(y_arr * theta);
-  }
+  // Compute the log-density. The log pmf of one instance, with
+  // mu = exp(theta), is
+  //
+  //   lchoose(y + phi - 1, y) - y log1p(phi / mu) - phi log1p(mu / phi),
+  //
+  // the form of neg_binomial_2_log_lpmf. Formed as phi log(phi) - lgamma(phi)
+  // + lgamma(y + phi) - (y + phi) log(mu + phi) + y theta, the terms are of
+  // the size of phi log(phi) and cancel for large phi.
+  T_partials_return logp = -sum(y_arr * log1p_exp(log_phi - theta)
+                                + phi_arr * log1p_exp_theta_m_log_phi);
+  // lchoose(y + phi - 1, y) = -lbeta(phi, y + 1) - log(y + phi). The form
+  // binomial_coefficient_log(y + phi - 1, y) rounds phi to the precision of
+  // y in y + phi - 1, which loses phi where it is small compared to y.
   if constexpr (include_summand<propto, T_precision>::value) {
     if constexpr (is_vector<T_y>::value || is_vector<T_precision>::value) {
-      logp += sum(lgamma(y_plus_phi));
+      scalar_seq_view<decltype(y_val_vec)> y_vec(y_val_vec);
+      scalar_seq_view<decltype(phi_val_vec)> phi_vec(phi_val_vec);
+      for (size_t n = 0; n < N_instances; ++n) {
+        logp -= lbeta(phi_vec[n], y_vec[n] + 1.0) + log(y_vec[n] + phi_vec[n]);
+      }
     } else {
-      logp += sum(lgamma(y_plus_phi)) * N_instances;
+      logp
+          -= N_instances * (lbeta(phi_val, y_val + 1.0) + log(y_val + phi_val));
+    }
+  }
+  // Under propto, remove -lgamma(y + 1) (in lchoose), phi log(phi) for data
+  // phi, and y theta for data x, alpha and beta (in the log1p_exp terms).
+  if constexpr (!include_summand<propto>::value) {
+    if constexpr (include_summand<propto, T_precision>::value) {
+      if constexpr (is_vector<T_y>::value) {
+        logp += sum(lgamma(y_arr + 1.0));
+      } else {
+        logp += sum(lgamma(y_arr + 1.0)) * N_instances;
+      }
+    } else {
+      if constexpr (is_vector<T_precision>::value) {
+        logp -= sum(phi_arr * log_phi);
+      } else {
+        logp -= N_instances * multiply_log(phi_val, phi_val);
+      }
+    }
+    if constexpr (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
+      logp -= sum(y_arr * theta);
     }
   }
 
@@ -192,10 +206,19 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
   auto ops_partials
       = make_partials_propagator(x_ref, alpha_ref, beta_ref, phi_ref);
   if constexpr (is_any_autodiff_v<T_x, T_beta, T_alpha, T_precision>) {
-    Array<T_partials_return, Dynamic, 1> theta_exp = theta.exp();
+    // mu / (mu + phi) and phi / (mu + phi), mu = exp(theta), are
+    // 1 / (1 + e) and e / (1 + e) with e = exp(-|u|), u = theta - log(phi),
+    // in the order given by the sign of u. mu itself overflows from
+    // theta = 709.8, and the derivative of 1 - mu / (mu + phi) cancels.
+    Array<T_partials_return, Dynamic, 1> u = theta - log_phi;
+    Array<T_partials_return, Dynamic, 1> e = (u > 0).select(-u, u).exp();
+    Array<T_partials_return, Dynamic, 1> inv_1p_e = 1.0 / (1.0 + e);
+    Array<T_partials_return, Dynamic, 1> e_over_1p_e = e * inv_1p_e;
+    Array<T_partials_return, Dynamic, 1> mu_over_mu_p_phi
+        = (u > 0).select(inv_1p_e, e_over_1p_e);
     if constexpr (is_any_autodiff_v<T_x, T_beta, T_alpha>) {
       Matrix<T_partials_return, Dynamic, 1> theta_derivative
-          = y_arr - theta_exp * y_plus_phi / (theta_exp + phi_arr);
+          = y_arr - y_plus_phi * mu_over_mu_p_phi;
       if constexpr (is_autodiff_v<T_beta>) {
         if constexpr (T_x_rows == 1) {
           edge<2>(ops_partials).partials_ = theta_derivative.sum() * x_val;
@@ -225,16 +248,20 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
       }
     }
     if constexpr (is_autodiff_v<T_precision>) {
+      // 1 - (y + phi) / (mu + phi) = mu / (mu + phi) - (y / phi) phi
+      // / (mu + phi) and log(phi) - log(mu + phi) are formed without
+      // cancellation, and digamma_diff replaces
+      // digamma(y + phi) - digamma(phi)
+      Array<T_partials_return, Dynamic, 1> phi_over_mu_p_phi
+          = (u > 0).select(e_over_1p_e, inv_1p_e);
       if constexpr (is_vector<T_precision>::value) {
         edge<3>(ops_partials).partials_
-            = 1 - y_plus_phi / (theta_exp + phi_arr) + log_phi
-              - logsumexp_theta_logphi + digamma(y_plus_phi) - digamma(phi_arr);
+            = mu_over_mu_p_phi - phi_over_mu_p_phi * y_arr / phi_arr
+              - log1p_exp_theta_m_log_phi + digamma_diff(phi_arr, y_arr);
       } else {
         partials<3>(ops_partials)[0]
-            = N_instances
-              + sum(-y_plus_phi / (theta_exp + phi_arr) + log_phi
-                    - logsumexp_theta_logphi + digamma(y_plus_phi)
-                    - digamma(phi_arr));
+            = sum(mu_over_mu_p_phi - phi_over_mu_p_phi * y_arr / phi_arr
+                  - log1p_exp_theta_m_log_phi + digamma_diff(phi_arr, y_arr));
       }
     }
   }

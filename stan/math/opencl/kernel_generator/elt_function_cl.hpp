@@ -6,6 +6,7 @@
 #include <stan/math/opencl/kernels/device_functions/binomial_coefficient_log.hpp>
 #include <stan/math/opencl/kernels/device_functions/beta.hpp>
 #include <stan/math/opencl/kernels/device_functions/digamma.hpp>
+#include <stan/math/opencl/kernels/device_functions/digamma_diff.hpp>
 #include <stan/math/opencl/kernels/device_functions/erfcx.hpp>
 #include <stan/math/opencl/kernels/device_functions/inv_logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/inv_Phi.hpp>
@@ -14,6 +15,7 @@
 #include <stan/math/opencl/kernels/device_functions/lgamma_stirling.hpp>
 #include <stan/math/opencl/kernels/device_functions/lgamma_stirling_diff.hpp>
 #include <stan/math/opencl/kernels/device_functions/lmultiply.hpp>
+#include <stan/math/opencl/kernels/device_functions/log_beta_ratio.hpp>
 #include <stan/math/opencl/kernels/device_functions/log_inv_logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/log_inv_logit_diff.hpp>
 #include <stan/math/opencl/kernels/device_functions/log_diff_exp.hpp>
@@ -410,6 +412,108 @@ const std::vector<const char*> lbeta_<T1, T2>::includes{
     stan::math::opencl_kernels::lgamma_stirling_device_function,
     stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
     stan::math::opencl_kernels::lbeta_device_function};
+
+ADD_BINARY_FUNCTION_WITH_INCLUDES(
+    digamma_diff, stan::math::opencl_kernels::digamma_device_function,
+    stan::math::opencl_kernels::digamma_diff_device_function)
+
+/**
+ * Represents lbeta(alpha + n, beta + m) - lbeta(alpha, beta) in kernel
+ * generator expressions. See the device function stan_log_beta_ratio.
+ * @tparam T1 type of the first shape
+ * @tparam T2 type of the second shape
+ * @tparam T3 type of the first count
+ * @tparam T4 type of the second count
+ */
+template <typename T1, typename T2, typename T3, typename T4>
+class log_beta_ratio_ : public elt_function_cl<log_beta_ratio_<T1, T2, T3, T4>,
+                                               double, T1, T2, T3, T4> {
+  using base = elt_function_cl<log_beta_ratio_<T1, T2, T3, T4>, double, T1, T2,
+                               T3, T4>;
+  using base::arguments_;
+
+ public:
+  using base::cols;
+  using base::rows;
+  static const std::vector<const char*> includes;
+  explicit log_beta_ratio_(T1&& alpha, T2&& beta, T3&& n, T4&& m)
+      : base("stan_log_beta_ratio", std::forward<T1>(alpha),
+             std::forward<T2>(beta), std::forward<T3>(n), std::forward<T4>(m)) {
+    const std::array<int, 4> arg_rows{{this->template get_arg<0>().rows(),
+                                       this->template get_arg<1>().rows(),
+                                       this->template get_arg<2>().rows(),
+                                       this->template get_arg<3>().rows()}};
+    const std::array<int, 4> arg_cols{{this->template get_arg<0>().cols(),
+                                       this->template get_arg<1>().cols(),
+                                       this->template get_arg<2>().cols(),
+                                       this->template get_arg<3>().cols()}};
+    for (int i = 0; i < 4; i++) {
+      for (int j = i + 1; j < 4; j++) {
+        if (arg_rows[i] != base::dynamic && arg_rows[j] != base::dynamic) {
+          check_size_match("log_beta_ratio", "Rows of ", "an argument",
+                           arg_rows[i], "rows of ", "another argument",
+                           arg_rows[j]);
+        }
+        if (arg_cols[i] != base::dynamic && arg_cols[j] != base::dynamic) {
+          check_size_match("log_beta_ratio", "Columns of ", "an argument",
+                           arg_cols[i], "columns of ", "another argument",
+                           arg_cols[j]);
+        }
+      }
+    }
+  }
+  inline auto deep_copy() const {
+    auto&& arg1_copy = this->template get_arg<0>().deep_copy();
+    auto&& arg2_copy = this->template get_arg<1>().deep_copy();
+    auto&& arg3_copy = this->template get_arg<2>().deep_copy();
+    auto&& arg4_copy = this->template get_arg<3>().deep_copy();
+    return log_beta_ratio_<std::remove_reference_t<decltype(arg1_copy)>,
+                           std::remove_reference_t<decltype(arg2_copy)>,
+                           std::remove_reference_t<decltype(arg3_copy)>,
+                           std::remove_reference_t<decltype(arg4_copy)>>{
+        std::move(arg1_copy), std::move(arg2_copy), std::move(arg3_copy),
+        std::move(arg4_copy)};
+  }
+  inline std::pair<int, int> extreme_diagonals() const {
+    return {-rows() + 1, cols() - 1};
+  }
+};
+
+/**
+ * Returns lbeta(alpha + n, beta + m) - lbeta(alpha, beta) for shapes
+ * alpha, beta > 0 and integer counts n, m >= 0, without the cancellation of
+ * the two lbeta values for large shapes. This is the kernel generator
+ * version of stan::math::internal::log_beta_ratio().
+ * @tparam T1 type of the first shape
+ * @tparam T2 type of the second shape
+ * @tparam T3 type of the first count
+ * @tparam T4 type of the second count
+ * @param alpha first shape
+ * @param beta second shape
+ * @param n first count
+ * @param m second count
+ * @return expression for the difference of the two lbeta values
+ */
+template <typename T1, typename T2, typename T3, typename T4,
+          require_all_kernel_expressions_t<T1, T2, T3, T4>* = nullptr,
+          require_any_not_stan_scalar_t<T1, T2, T3, T4>* = nullptr>
+inline log_beta_ratio_<as_operation_cl_t<T1>, as_operation_cl_t<T2>,
+                       as_operation_cl_t<T3>, as_operation_cl_t<T4>>
+log_beta_ratio(T1&& alpha, T2&& beta, T3&& n, T4&& m) {
+  return log_beta_ratio_<as_operation_cl_t<T1>, as_operation_cl_t<T2>,
+                         as_operation_cl_t<T3>, as_operation_cl_t<T4>>(
+      as_operation_cl(std::forward<T1>(alpha)),
+      as_operation_cl(std::forward<T2>(beta)),
+      as_operation_cl(std::forward<T3>(n)),
+      as_operation_cl(std::forward<T4>(m)));
+}
+
+template <typename T1, typename T2, typename T3, typename T4>
+const std::vector<const char*> log_beta_ratio_<T1, T2, T3, T4>::includes{
+    stan::math::opencl_kernels::lgamma_stirling_device_function,
+    stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
+    stan::math::opencl_kernels::lbeta_device_function,
+    stan::math::opencl_kernels::log_beta_ratio_device_function};
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
     log_inv_logit_diff, opencl_kernels::log1p_exp_device_function,
     opencl_kernels::log1m_exp_device_function,

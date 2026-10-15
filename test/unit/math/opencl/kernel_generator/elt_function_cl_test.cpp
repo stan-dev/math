@@ -260,6 +260,7 @@ TEST(KernelGenerator, multiple_operations_with_includes_test) {
 
 TEST_BINARY_FUNCTION(beta)
 TEST_BINARY_FUNCTION(binomial_coefficient_log)
+TEST_BINARY_FUNCTION(digamma_diff)
 TEST_BINARY_FUNCTION(fdim)
 TEST_BINARY_FUNCTION(fmax)
 TEST_BINARY_FUNCTION(fmin)
@@ -268,5 +269,51 @@ TEST_BINARY_FUNCTION(lbeta)
 TEST_BINARY_FUNCTION(lmultiply)
 TEST_BINARY_FUNCTION(multiply_log)
 TEST_BINARY_FUNCTION(pow)
+
+TEST(KernelGenerator, log_beta_ratio_test) {
+  // shapes below and above 10, and above 1e15, with integer counts
+  MatrixXd alpha(3, 3);
+  alpha << 0.3, 2.5, 9.9, 10.0, 11.2, 1e6, 3e13, 1e15, 5e17;
+  MatrixXd beta(3, 3);
+  beta << 4.1, 0.7, 12.0, 25.0, 1e8, 15.0, 7e12, 4.84, 2e17;
+  MatrixXi n(3, 3);
+  n << 0, 3, 1, 5, 0, 1000, 400, 5, 57;
+  MatrixXi m(3, 3);
+  m << 2, 0, 7, 15, 1, 3, 600, 112, 60;
+  MatrixXi m_size(3, 2);
+  m_size << 2, 0, 7, 15, 1, 3;
+
+  matrix_cl<double> alpha_cl(alpha);
+  matrix_cl<double> beta_cl(beta);
+  matrix_cl<int> n_cl(n);
+  matrix_cl<int> m_cl(m);
+  matrix_cl<int> m_size_cl(m_size);
+
+  EXPECT_THROW(stan::math::log_beta_ratio(alpha_cl, beta_cl, n_cl, m_size_cl),
+               std::invalid_argument);
+
+  auto cpu = [](double a, double b, double k, double l) {
+    return stan::math::internal::log_beta_ratio(
+        a, b, k, l, stan::math::internal::log_beta_ratio_denominator(a, b));
+  };
+  matrix_cl<double> res1_cl
+      = stan::math::log_beta_ratio(alpha_cl, beta_cl, n_cl, m_cl);
+  matrix_cl<double> res2_cl
+      = stan::math::log_beta_ratio(alpha_cl, 3.5, n_cl, 4);
+  MatrixXd res1 = stan::math::from_matrix_cl(res1_cl);
+  MatrixXd res2 = stan::math::from_matrix_cl(res2_cl);
+  for (int i = 0; i < 3; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      const double correct1 = cpu(alpha(i, j), beta(i, j), n(i, j), m(i, j));
+      EXPECT_NEAR(res1(i, j), correct1,
+                  1e-13 * std::max(1.0, std::fabs(correct1)))
+          << "i = " << i << ", j = " << j;
+      const double correct2 = cpu(alpha(i, j), 3.5, n(i, j), 4);
+      EXPECT_NEAR(res2(i, j), correct2,
+                  1e-13 * std::max(1.0, std::fabs(correct2)))
+          << "i = " << i << ", j = " << j;
+    }
+  }
+}
 
 #endif

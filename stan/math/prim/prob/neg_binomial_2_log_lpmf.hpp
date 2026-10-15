@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/binomial_coefficient_log.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/lbeta.hpp>
+#include <stan/math/prim/fun/digamma_diff.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
@@ -109,7 +109,8 @@ inline return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
 
   for (size_t i = 0; i < size_all; i++) {
     if constexpr (include_summand<propto, T_precision>::value) {
-      logp += binomial_coefficient_log(n_plus_phi[i] - 1, n_vec[i]);
+      // lchoose(n + phi - 1, n), with phi not rounded into n + phi - 1
+      logp -= lbeta(phi_val[i], n_vec[i] + 1.0) + log(n_plus_phi[i]);
     }
     if constexpr (include_summand<propto, T_log_location>::value) {
       logp += n_vec[i] * eta_val[i];
@@ -124,8 +125,7 @@ inline return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
     if constexpr (is_autodiff_v<T_precision>) {
       partials<1>(ops_partials)[i]
           += exp_eta_over_exp_eta_phi[i] - n_vec[i] / (exp_eta[i] + phi_val[i])
-             - log1p_exp_eta_m_logphi[i]
-             - (digamma(phi_val[i]) - digamma(n_plus_phi[i]));
+             - log1p_exp_eta_m_logphi[i] + digamma_diff(phi_val[i], n_vec[i]);
     }
   }
   return ops_partials.build(logp);

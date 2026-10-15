@@ -3,6 +3,9 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
+#include <algorithm>
+#include <cmath>
+#include <string>
 #include <vector>
 
 TEST(ProbDistributionsBetaBinomial, error_checking) {
@@ -75,6 +78,39 @@ TEST(ProbDistributionsBetaBinomial, error_checking) {
   EXPECT_THROW(
       stan::math::beta_binomial_lpmf(n_cl, N_cl, alpha_cl, beta_value2_cl),
       std::domain_error);
+}
+
+TEST(ProbDistributionsBetaBinomial, opencl_n_outside_support) {
+  // n < 0 or n > N has probability 0: LOG_ZERO, also under propto, and no
+  // gradient, as on the CPU
+  std::vector<int> N{5, 5, 5};
+  Eigen::VectorXd alpha(3);
+  alpha << 0.3, 1.8, 1.3;
+  Eigen::VectorXd beta(3);
+  beta << 0.3, 1.8, 1.2;
+  stan::math::matrix_cl<int> N_cl(N);
+  stan::math::matrix_cl<double> alpha_cl(alpha);
+  stan::math::matrix_cl<double> beta_cl(beta);
+  for (const std::vector<int>& n :
+       {std::vector<int>{2, 6, 1}, std::vector<int>{2, -1, 1}}) {
+    stan::math::matrix_cl<int> n_cl(n);
+    EXPECT_EQ(stan::math::beta_binomial_lpmf(n, N, alpha, beta),
+              stan::math::LOG_ZERO);
+    EXPECT_EQ(stan::math::beta_binomial_lpmf(n_cl, N_cl, alpha_cl, beta_cl),
+              stan::math::LOG_ZERO);
+    stan::math::var_value<stan::math::matrix_cl<double>> alpha_v
+        = stan::math::to_matrix_cl(alpha);
+    stan::math::var lp
+        = stan::math::beta_binomial_lpmf(n_cl, N_cl, alpha_v, beta_cl);
+    stan::math::var lp_propto
+        = stan::math::beta_binomial_lpmf<true>(n_cl, N_cl, alpha_v, beta_cl);
+    EXPECT_EQ(lp.val(), stan::math::LOG_ZERO);
+    EXPECT_EQ(lp_propto.val(), stan::math::LOG_ZERO);
+    (lp + lp_propto).grad();
+    Eigen::VectorXd alpha_adj = stan::math::from_matrix_cl(alpha_v.adj());
+    EXPECT_TRUE((alpha_adj.array() == 0).all()) << alpha_adj.transpose();
+    stan::math::recover_memory();
+  }
 }
 
 auto beta_binomial_lpmf_functor
@@ -214,6 +250,94 @@ TEST(ProbDistributionsBetaBinomial, opencl_matches_cpu_big) {
   stan::math::test::compare_cpu_opencl_prim_rev(
       beta_binomial_lpmf_functor_propto, n, N, alpha.transpose().eval(),
       beta.transpose().eval());
+}
+
+namespace beta_binomial_opencl_test_internal {
+struct TestValue {
+  int n;
+  int N;
+  double alpha;
+  double beta;
+  double value;
+  double grad_log_alpha;  // alpha * d/dalpha
+  double grad_log_beta;   // beta * d/dbeta
+};
+
+// The tests above compare OpenCL against the CPU and cannot see an error
+// that both share. These are absolute references from mpmath at 80 digits:
+// the value from mp.loggamma, the gradients from mp.digamma differences,
+// both checked at 130 digits (the gradients with mp.diff). The first four
+// rows are as in
+// test/unit/math/rev/prob/beta_binomial_lpmf_test.cpp. The shapes are in
+// hex so that they are exact. The plain differences of lbeta and digamma
+// values keep no correct digits for shapes near 1e15.
+// The last row is a small shape where the plain differences are correct.
+const std::vector<TestValue> test_values = {
+    {57, 117, 0x1.1f43fcc4b662cp+45, 0x1.1f43fcc4b662cp+45, -2.6471538352642870,
+     -1.4999999999974545, 1.4999999999981384},
+    {400, 1000, 0x1.b48eb57e00000p+44, 0x1.977420dc00000p+42,
+     -4.1354072540579752e+2, -4.1081081080252486e+2, 4.1081081078769344e+2},
+    {0, 117, 0x1.6345785d8a000p+56, 0x1.0a741a4627800p+58,
+     -3.3658802476858363e+1, -2.9249999999999996e+1, 2.9249999999999990e+1},
+    {117, 117, 0x1.6345785d8a000p+56, 0x1.0a741a4627800p+58,
+     -1.6219644025102715e+2, 8.7749999999999936e+1, -8.7749999999999987e+1},
+    // one shape below 10
+    {5, 117, 0x1.c6bf526340000p+49, 0x1.35c28f5c28f5cp+2,
+     -3.4143943462813216e+3, -1.1199999999999266e+2, 1.5906435196801570e+1},
+    {30, 117, 0x1.4000000000000p+1, 0x1.6bcc41e900000p+46,
+     -8.2341924150797106e+2, 6.9065498632679532, -2.9999999999966625e+1},
+    {5, 20, 0x1.4000000000000p+3, 0x1.9000000000000p+4, -1.8540068216786033,
+     -3.4626330704764243e-1, 5.0911144710080701e-1},
+};
+
+template <typename T_alpha, typename T_beta>
+void expect_reference(const TestValue& t, const stan::math::var& lp,
+                      const T_alpha& alpha_adj, const T_beta& beta_adj,
+                      const std::string& signature) {
+  EXPECT_NEAR(lp.val(), t.value, 1e-12 * std::max(1.0, std::fabs(t.value)))
+      << signature << ": n = " << t.n << ", N = " << t.N
+      << ", alpha = " << t.alpha << ", beta = " << t.beta;
+  EXPECT_NEAR(t.alpha * alpha_adj, t.grad_log_alpha,
+              1e-11 * std::max(1.0, std::fabs(t.grad_log_alpha)))
+      << signature << ": n = " << t.n << ", N = " << t.N
+      << ", alpha = " << t.alpha << ", beta = " << t.beta;
+  EXPECT_NEAR(t.beta * beta_adj, t.grad_log_beta,
+              1e-11 * std::max(1.0, std::fabs(t.grad_log_beta)))
+      << signature << ": n = " << t.n << ", N = " << t.N
+      << ", alpha = " << t.alpha << ", beta = " << t.beta;
+}
+}  // namespace beta_binomial_opencl_test_internal
+
+TEST(ProbDistributionsBetaBinomial, opencl_large_shapes_reference) {
+  using beta_binomial_opencl_test_internal::expect_reference;
+  using beta_binomial_opencl_test_internal::test_values;
+  using stan::math::var;
+  for (const auto& t : test_values) {
+    const std::vector<int> n{t.n};
+    const std::vector<int> N{t.N};
+    stan::math::matrix_cl<int> n_cl(n);
+    stan::math::matrix_cl<int> N_cl(N);
+
+    // shapes as vectors: the kernel generator functions run on the device
+    Eigen::Matrix<var, Eigen::Dynamic, 1> alpha(1);
+    alpha << t.alpha;
+    Eigen::Matrix<var, Eigen::Dynamic, 1> beta(1);
+    beta << t.beta;
+    auto alpha_cl = stan::math::to_matrix_cl(alpha);
+    auto beta_cl = stan::math::to_matrix_cl(beta);
+    var lp = stan::math::beta_binomial_lpmf(n_cl, N_cl, alpha_cl, beta_cl);
+    lp.grad();
+    expect_reference(t, lp, alpha(0).adj(), beta(0).adj(), "vector shapes");
+    stan::math::recover_memory();
+
+    // shapes as scalars: alpha + beta is formed on the host
+    var alpha_s = t.alpha;
+    var beta_s = t.beta;
+    var lp_s = stan::math::beta_binomial_lpmf(n_cl, N_cl, alpha_s, beta_s);
+    lp_s.grad();
+    expect_reference(t, lp_s, alpha_s.adj(), beta_s.adj(), "scalar shapes");
+    stan::math::recover_memory();
+  }
 }
 
 #endif

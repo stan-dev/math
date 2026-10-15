@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/digamma_diff.hpp>
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/prim/fun/exp.hpp>
@@ -85,16 +86,19 @@ neg_binomial_2_log_lpmf(const T_n_cl& n, const T_log_location_cl& eta,
 
   auto logp1 = -elt_multiply(phi_val, log1p_exp_eta_m_logphi)
                - elt_multiply(n, log_phi + log1p_exp_eta_m_logphi);
+  // lchoose(n + phi - 1, n) = -lbeta(phi, n + 1) - log(n + phi), with phi
+  // not rounded into n + phi - 1
   auto logp2 = static_select<include_summand<propto, T_precision_cl>::value>(
-      logp1 + binomial_coefficient_log(n_plus_phi - 1, n), logp1);
+      logp1 - lbeta(phi_val, n + 1) - log(n_plus_phi), logp1);
   auto logp_expr = colwise_sum(
       static_select<include_summand<propto, T_log_location_cl>::value>(
           logp2 + elt_multiply(n, eta_val), logp2));
 
   auto eta_deriv = n - elt_multiply(n_plus_phi, exp_eta_over_exp_eta_phi);
+  // digamma_diff replaces digamma(n + phi) - digamma(phi), which loses all
+  // accuracy for large phi
   auto phi_deriv = exp_eta_over_exp_eta_phi - elt_divide(n, exp_eta + phi_val)
-                   - log1p_exp_eta_m_logphi - digamma(phi_val)
-                   + digamma(n_plus_phi);
+                   - log1p_exp_eta_m_logphi + digamma_diff(phi_val, n);
 
   matrix_cl<double> logp_cl;
   matrix_cl<double> eta_deriv_cl;

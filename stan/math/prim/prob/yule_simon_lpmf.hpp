@@ -4,9 +4,10 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/digamma_diff.hpp>
 #include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -61,24 +62,21 @@ inline return_type_t<T_alpha> yule_simon_lpmf(const T_n &n,
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
   const size_t max_size_seq_view = max_size(n_ref, alpha_ref);
   T_partials_return logp(0.0);
-  if constexpr (include_summand<propto>::value) {
-    if constexpr (is_stan_scalar_v<T_n>) {
-      logp += lgamma(n_ref) * max_size_seq_view;
-    }
-  }
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    if constexpr (include_summand<propto>::value) {
-      if constexpr (!is_stan_scalar_v<T_n>) {
-        logp += lgamma(n_vec.val(i));
-      }
+    const T_partials_return alpha_plus_one = alpha_vec.val(i) + 1.0;
+    // lgamma(n) + lgamma(alpha + 1) - lgamma(n + alpha + 1) is
+    // lbeta(n, alpha + 1). Formed from the three lgamma values, the
+    // difference is of the size of alpha and loses eps * alpha.
+    logp += log(alpha_vec.val(i)) + lbeta(n_vec.val(i), alpha_plus_one);
+    if constexpr (!include_summand<propto>::value) {
+      // lbeta(n, alpha + 1) contains the constant lgamma(n)
+      logp -= lgamma(n_vec.val(i));
     }
-    T_partials_return alpha_plus_one = alpha_vec.val(i) + 1.0;
-    logp += log(alpha_vec.val(i)) + lgamma(alpha_plus_one)
-            - lgamma(n_vec.val(i) + alpha_plus_one);
     if constexpr (is_autodiff_v<T_alpha>) {
-      partials<0>(ops_partials)[i] += 1.0 / alpha_vec.val(i)
-                                      + digamma(alpha_plus_one)
-                                      - digamma(n_vec.val(i) + alpha_plus_one);
+      // digamma(alpha + 1) - digamma(n + alpha + 1) without the cancellation
+      partials<0>(ops_partials)[i]
+          += 1.0 / alpha_vec.val(i)
+             - digamma_diff(alpha_plus_one, n_vec.val(i));
     }
   }
   return ops_partials.build(logp);
