@@ -11,8 +11,10 @@
 #include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/isfinite.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
@@ -112,15 +114,13 @@ inline return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     ytheta = signs * (ytheta + as_array_or_scalar(alpha_val_vec));
   }
 
-  // Compute the log-density and handle extreme values gracefully
-  // using Taylor approximations.
-  // And compute the derivatives wrt theta.
-  static constexpr double cutoff = 20.0;
-  Eigen::Array<T_partials_return, Dynamic, 1> exp_m_ytheta = exp(-ytheta);
-  T_partials_return logp = sum(
-      (ytheta > cutoff)
-          .select(-exp_m_ytheta,
-                  (ytheta < -cutoff).select(ytheta, -log1p(exp_m_ytheta))));
+  // exp(-|ytheta|) in (0, 1], so no overflow enters the autodiff tape
+  Array<T_partials_return, Dynamic, 1> exp_m_abs_ytheta
+      = exp((ytheta > 0).select(-ytheta, ytheta));
+  // two sums: no per-element node for the difference in nested autodiff
+  T_partials_return logp
+      = sum((ytheta > 0).select(T_partials_return(0), ytheta))
+        - sum(log1p(exp_m_abs_ytheta));
 
   if (!isfinite(logp)) {
     check_finite(function, "Weight vector", beta);
@@ -132,11 +132,8 @@ inline return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   // Compute the necessary derivatives.
   if constexpr (is_any_autodiff_v<T_beta, T_x, T_alpha>) {
     Matrix<T_partials_return, Dynamic, 1> theta_derivative
-        = (ytheta > cutoff)
-              .select(signs * exp_m_ytheta,
-                      (ytheta < -cutoff)
-                          .select(signs * T_partials_return(1.0),
-                                  signs * exp_m_ytheta / (exp_m_ytheta + 1)));
+        = signs * (ytheta > 0).select(exp_m_abs_ytheta, T_partials_return(1))
+          / (1 + exp_m_abs_ytheta);
     if constexpr (is_autodiff_v<T_beta>) {
       if constexpr (T_x_rows == 1) {
         edge<2>(ops_partials).partials_ = theta_derivative.sum() * x_val;
