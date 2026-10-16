@@ -110,18 +110,18 @@ TEST(MathFunctions, sylvester_solver_lyapunov) {
   EXPECT_LT((Xr - Xr.transpose()).norm(), 1e-12);
 
   // stable A and positive definite Q give a positive definite solution
-  Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(
-      0.5 * (Xr + Xr.transpose()));
+  Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(0.5
+                                                     * (Xr + Xr.transpose()));
   EXPECT_GT(eig.eigenvalues().minCoeff(), 0.0);
 }
 
 TEST(MathFunctions, sylvester_solver_expression_inputs) {
   // Eigen expressions go through plain_type_t; result must match plain inputs
   using stan::math::sylvester_solver;
-  Eigen::MatrixXd A = Eigen::MatrixXd::Random(4, 4)
-                      + 8.0 * Eigen::MatrixXd::Identity(4, 4);
-  Eigen::MatrixXd B = Eigen::MatrixXd::Random(3, 3)
-                      + 6.0 * Eigen::MatrixXd::Identity(3, 3);
+  Eigen::MatrixXd A
+      = Eigen::MatrixXd::Random(4, 4) + 8.0 * Eigen::MatrixXd::Identity(4, 4);
+  Eigen::MatrixXd B
+      = Eigen::MatrixXd::Random(3, 3) + 6.0 * Eigen::MatrixXd::Identity(3, 3);
   Eigen::MatrixXd C = Eigen::MatrixXd::Random(4, 3);
   Eigen::MatrixXd At = A.transpose();
 

@@ -106,7 +106,7 @@ inline auto sylvester_solver(const MatA& A, const MatB& B, const MatC& C) {
       W.col(j).noalias() -= W.rightCols(k) * arena_T.row(j).tail(k).adjoint();
       Sshift_r.diagonal() = arena_S.diagonal().array() + arena_T(j, j);
       Sshift_r.template triangularView<Eigen::Upper>().adjoint().solveInPlace(
-        W.col(j));
+          W.col(j));
     }
     const auto Z = (arena_U * W * arena_V.adjoint()).eval();
 
