@@ -3,22 +3,13 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/beta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/digamma_diff.hpp>
-#include <stan/math/prim/fun/log_rising_factorial_ratio.hpp>
-#include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/hypergeometric_3F2.hpp>
-#include <stan/math/prim/fun/grad_F32.hpp>
-#include <stan/math/prim/fun/lbeta.hpp>
-#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
-#include <cmath>
+#include <stan/math/prim/prob/beta_binomial_log_cdfs.hpp>
 
 namespace stan {
 namespace math {
@@ -27,6 +18,10 @@ namespace math {
  * Returns the log CDF of the Beta-Binomial distribution with given population
  * size, prior success, and prior failure parameters. Given containers of
  * matching sizes, returns the log sum of probabilities.
+ *
+ * The lower or the upper tail is summed directly, and the other one is its
+ * complement only where that loses no digits; see
+ * internal::beta_binomial_log_cdfs().
  *
  * @tparam T_n type of success parameter
  * @tparam T_N type of population size parameter
@@ -47,8 +42,6 @@ inline return_type_t<T_size1, T_size2> beta_binomial_lcdf(const T_n& n,
                                                           const T_size1& alpha,
                                                           const T_size2& beta) {
   using T_partials_return = partials_return_t<T_n, T_N, T_size1, T_size2>;
-  using std::exp;
-  using std::log;
   using T_N_ref = ref_type_t<T_N>;
   using T_alpha_ref = ref_type_t<T_size1>;
   using T_beta_ref = ref_type_t<T_size2>;
@@ -87,92 +80,22 @@ inline return_type_t<T_size1, T_size2> beta_binomial_lcdf(const T_n& n,
     }
   }
 
+  constexpr bool any_autodiff = is_any_autodiff_v<T_size1, T_size2>;
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    const T_partials_return n_dbl = n_vec.val(i);
-    const T_partials_return N_dbl = N_vec.val(i);
-
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    if (n_dbl >= N_dbl) {
+    if (n_vec.val(i) >= N_vec.val(i)) {
       continue;
     }
-
-    const T_partials_return alpha_dbl = alpha_vec.val(i);
-    const T_partials_return beta_dbl = beta_vec.val(i);
-    const T_partials_return N_minus_n = N_dbl - n_dbl;
-    const T_partials_return mu = alpha_dbl + n_dbl + 1;
-    const T_partials_return nu = beta_dbl + N_minus_n - 1;
-    const T_partials_return one = 1;
-
-    const T_partials_return F = hypergeometric_3F2({one, mu, 1 - N_minus_n},
-                                                   {n_dbl + 2, 1 - nu}, one);
-    // lbeta(nu, mu) - lbeta(alpha, beta) without the cancellation for large
-    // shapes
-    T_partials_return C
-        = internal::log_beta_ratio(
-              alpha_dbl, beta_dbl, n_dbl + 1, N_minus_n - 1,
-              internal::log_beta_ratio_denominator(alpha_dbl, beta_dbl))
-          - lbeta(N_minus_n, n_dbl + 2);
-    C = F * exp(C) / (N_dbl + 1);
-
-    if (C > 0.5) {
-      // The cdf is below 1/2, and log(1 - C) loses its digits; C can even
-      // round to 1 or above. Use the mirror: X <= n if and only if
-      // N - X > N - n - 1, and N - X is beta_binomial(N, beta, alpha). Its
-      // ccdf is the same series with the shapes swapped and needs no
-      // complement.
-      const T_partials_return n_m = N_minus_n - 1;
-      const T_partials_return mu_m = beta_dbl + N_minus_n;
-      const T_partials_return nu_m = alpha_dbl + n_dbl;
-      const T_partials_return F_m
-          = hypergeometric_3F2({one, mu_m, -n_dbl}, {n_m + 2, 1 - nu_m}, one);
-      P += internal::log_beta_ratio(
-               beta_dbl, alpha_dbl, N_minus_n, n_dbl,
-               internal::log_beta_ratio_denominator(beta_dbl, alpha_dbl))
-           - lbeta(n_dbl + 1, N_minus_n + 1) + log(F_m) - log(N_dbl + 1);
-      if constexpr (is_any_autodiff_v<T_size1, T_size2>) {
-        T_partials_return dF_m[6];
-        grad_F32<false, true, false, false, true, false>(
-            dF_m, one, mu_m, -n_dbl, n_m + 2, 1 - nu_m, one);
-        const T_partials_return dpsi_total
-            = digamma_diff(alpha_dbl + beta_dbl, N_dbl);
-        if constexpr (is_autodiff_v<T_size1>) {
-          partials<0>(ops_partials)[i]
-              += digamma_diff(alpha_dbl, n_dbl) - dpsi_total - dF_m[4] / F_m;
-        }
-        if constexpr (is_autodiff_v<T_size2>) {
-          partials<1>(ops_partials)[i]
-              += digamma_diff(beta_dbl, N_minus_n) - dpsi_total + dF_m[1] / F_m;
-        }
-      }
-      continue;
-    }
-
-    const T_partials_return Pi = 1 - C;
-
-    P += log(Pi);
-
-    // digamma(alpha + beta) - digamma(mu + nu), mu + nu = alpha + beta + N
-    T_partials_return digammaDiff
-        = is_constant_all<T_size1, T_size2>::value
-              ? 0
-              : -digamma_diff(alpha_dbl + beta_dbl, N_dbl);
-
-    T_partials_return dF[6];
-    if constexpr (is_any_autodiff_v<T_size1, T_size2>) {
-      grad_F32<false, true, false, false, true, false>(
-          dF, one, mu, 1 - N_minus_n, n_dbl + 2, 1 - nu, one);
-    }
+    const auto res = internal::beta_binomial_log_cdfs<any_autodiff>(
+        n_vec.val(i), N_vec.val(i), T_partials_return(alpha_vec.val(i)),
+        T_partials_return(beta_vec.val(i)));
+    P += res.lcdf;
     if constexpr (is_autodiff_v<T_size1>) {
-      const T_partials_return g
-          = -C * (digamma_diff(alpha_dbl, n_dbl + 1) + digammaDiff + dF[1] / F);
-      partials<0>(ops_partials)[i] += g / Pi;
+      partials<0>(ops_partials)[i] += res.dlcdf[0];
     }
     if constexpr (is_autodiff_v<T_size2>) {
-      const T_partials_return g
-          = -C
-            * (digamma_diff(beta_dbl, N_minus_n - 1) + digammaDiff - dF[4] / F);
-      partials<1>(ops_partials)[i] += g / Pi;
+      partials<1>(ops_partials)[i] += res.dlcdf[1];
     }
   }
 
