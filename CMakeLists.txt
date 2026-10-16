@@ -111,7 +111,7 @@ if(STAN_MPI)
     target_link_libraries(stan_boost_mpi PUBLIC Boost::serialization MPI::MPI_CXX)
   endif()
   target_link_libraries(stanmath INTERFACE Boost::mpi Boost::serialization MPI::MPI_CXX)
-  add_library(stan_mpi STATIC stan/math/prim/functor/mpi_cluster_inst.cpp)
+  add_library(stan_mpi OBJECT stan/math/prim/functor/mpi_cluster_inst.cpp)
   target_link_libraries(stan_mpi PRIVATE stanmath)
 endif()
 

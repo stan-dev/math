@@ -35,6 +35,7 @@ else()
 endif()
 
 if(WIN32)
+  target_compile_definitions(stanmath INTERFACE _USE_MATH_DEFINES)
   # Match Make's windows.h macro probe, without requiring an executable link.
   function(stan_detect_ucrt)
     include(CheckCXXSourceCompiles)
@@ -113,9 +114,10 @@ endif()
 target_link_libraries(stanmath INTERFACE TBB::tbb)
 
 if(STAN_USE_SYSTEM_SUNDIALS)
-  find_package(SUNDIALS REQUIRED COMPONENTS cvodes idas kinsol nvecserial)
+  find_package(SUNDIALS REQUIRED COMPONENTS cvodes idas kinsol arkode nvecserial)
   target_link_libraries(stanmath INTERFACE
-    SUNDIALS::cvodes SUNDIALS::idas SUNDIALS::kinsol SUNDIALS::nvecserial)
+    SUNDIALS::cvodes SUNDIALS::idas SUNDIALS::kinsol SUNDIALS::arkode
+    SUNDIALS::nvecserial)
 else()
   # The pruned vendored distribution has no upstream CMakeLists.txt.
   # Match make/libraries, including Stan's printf override and common modules.
@@ -123,6 +125,7 @@ else()
     "${STAN_SUNDIALS_ROOT}/src/cvodes/*.c"
     "${STAN_SUNDIALS_ROOT}/src/idas/*.c"
     "${STAN_SUNDIALS_ROOT}/src/kinsol/*.c"
+    "${STAN_SUNDIALS_ROOT}/src/arkode/*.c"
     "${STAN_SUNDIALS_ROOT}/src/sundials/*.c"
     "${STAN_SUNDIALS_ROOT}/src/sunmatrix/band/*.c"
     "${STAN_SUNDIALS_ROOT}/src/sunmatrix/dense/*.c"

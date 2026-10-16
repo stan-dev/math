@@ -3,14 +3,11 @@
 # Stan's vendored gtest_main initializes the MPI cluster and includes Stan
 # headers even when MPI is disabled.
 target_link_libraries(gtest_main PRIVATE stanmath)
-if(STAN_MPI)
-  target_link_libraries(gtest_main PRIVATE stan_mpi)
-endif()
+# Stan's customized main includes Stan headers. Use the test flags below
+# instead of GoogleTest's internal warning policy for its own sources.
+set_property(TARGET gtest_main PROPERTY COMPILE_FLAGS "")
 add_library(stan_test_options INTERFACE)
 target_link_libraries(stan_test_options INTERFACE stanmath gtest_main)
-if(STAN_MPI)
-  target_link_libraries(stan_test_options INTERFACE stan_mpi)
-endif()
 if(MSVC)
   target_compile_options(stan_test_options INTERFACE ${STAN_TEST_OPTIMIZATION_FLAGS} /W3)
 else()
@@ -21,6 +18,8 @@ else()
       -Werror=invalid-pch -Wno-misleading-indentation)
   endif()
 endif()
+target_compile_options(gtest_main PRIVATE
+  "$<TARGET_PROPERTY:stan_test_options,INTERFACE_COMPILE_OPTIONS>")
 
 function(stan_add_pch target)
   if(STAN_EFFECTIVE_TEST_PCH)
@@ -54,6 +53,10 @@ endfunction()
 function(stan_add_test_binary target)
   # Xcode needs a real source alongside object-library references.
   add_executable(${target} "${PROJECT_SOURCE_DIR}/cmake/pch.cpp" ${ARGN})
+  if(STAN_MPI)
+    # A static archive can discard the unreferenced registration initializer.
+    target_sources(${target} PRIVATE $<TARGET_OBJECTS:stan_mpi>)
+  endif()
   stan_configure_test(${target} "")
   set_property(TARGET ${target} PROPERTY STAN_TEST_OBJECTS "${ARGN}")
   if(WIN32)
