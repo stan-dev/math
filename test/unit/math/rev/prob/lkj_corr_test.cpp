@@ -65,7 +65,10 @@ TEST_F(AgradRev, ProbDistributionsLkjCorrCholesky_gradients1) {
   double fx_ad_1;
   finite_diff_gradient(test_func_1, x1, fx_1, grad_1);
   gradient(test_func_1, x1, fx_ad_1, grad_ad_1);
-  test_grad_eq(grad_1, grad_ad_1);
+  // x1(0) = 0, where the exact derivative is 0; the finite difference has
+  // rounding noise of about 1e-13 there, so compare with an absolute
+  // tolerance instead of float equality
+  test_grad_near(grad_1, grad_ad_1, 1e-10);
   EXPECT_FLOAT_EQ(fx_1, fx_ad_1);
 }
 

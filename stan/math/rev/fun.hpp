@@ -105,6 +105,7 @@
 #include <stan/math/rev/fun/log1p.hpp>
 #include <stan/math/rev/fun/log1p_exp.hpp>
 #include <stan/math/rev/fun/log2.hpp>
+#include <stan/math/rev/fun/log_cosh.hpp>
 #include <stan/math/rev/fun/log_determinant.hpp>
 #include <stan/math/rev/fun/log_determinant_ldlt.hpp>
 #include <stan/math/rev/fun/log_determinant_spd.hpp>
