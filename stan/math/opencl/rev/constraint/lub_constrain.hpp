@@ -52,8 +52,8 @@ inline var_value<matrix_cl<double>> lub_constrain(T_x&& x, T_lb&& lb,
         auto lb_inf = value_of(lb_arena) == NEGATIVE_INFTY;
         auto ub_inf = value_of(ub_arena) == INFTY;
         auto inv_logit_x = inv_logit(value_of(x_arena));
-        auto one_m_inv_logit_x = 1.0 - inv_logit_x;
         auto exp_x = exp(value_of(x_arena));
+        auto one_m_inv_logit_x = elt_divide(1.0, 1.0 + exp_x);
         auto res_adj_exp_x = elt_multiply(res.adj(), exp_x);
         adjoint_results(x_arena, lb_arena, ub_arena) += expressions(
             select(lb_inf, select(ub_inf, res.adj(), -res_adj_exp_x),
@@ -112,10 +112,10 @@ inline var_value<matrix_cl<double>> lub_constrain(T_x&& x, T_lb&& lb, T_ub&& ub,
         auto lb_inf = value_of(lb_arena) == NEGATIVE_INFTY;
         auto ub_inf = value_of(ub_arena) == INFTY;
         auto inv_logit_x = inv_logit(value_of(x_arena));
-        auto one_m_inv_logit_x = 1.0 - inv_logit_x;
+        auto exp_x = exp(value_of(x_arena));
+        auto one_m_inv_logit_x = elt_divide(1.0, 1.0 + exp_x);
         auto diff = value_of(ub_arena) - value_of(lb_arena);
         auto one_over_diff = elt_divide(1.0, diff);
-        auto exp_x = exp(value_of(x_arena));
         auto res_adj_exp_x = elt_multiply(res.adj(), exp_x);
         adjoint_results(x_arena, lb_arena, ub_arena) += expressions(
             select(lb_inf, select(ub_inf, res.adj(), lp.adj() - res_adj_exp_x),
