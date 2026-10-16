@@ -19,15 +19,15 @@ TEST(MathMatrixCL, segment_exception) {
   EXPECT_THROW(segment(m3_cl, 1, 5), std::invalid_argument);
 
   stan::math::var_value<stan::math::matrix_cl<double>> m4_cl = m1_cl;
-  EXPECT_THROW(segment(m1_cl, 1, 5), std::invalid_argument);
+  EXPECT_THROW(segment(m4_cl, 1, 5), std::invalid_argument);
 
   stan::math::var_value<stan::math::matrix_cl<double>> m5_cl = m2_cl;
-  EXPECT_THROW(segment(m2_cl, 0, 2), std::invalid_argument);
-  EXPECT_THROW(segment(m2_cl, 1, 5), std::invalid_argument);
+  EXPECT_THROW(segment(m5_cl, 0, 2), std::invalid_argument);
+  EXPECT_THROW(segment(m5_cl, 1, 5), std::invalid_argument);
 
   stan::math::var_value<stan::math::matrix_cl<double>> m6_cl = m3_cl;
-  EXPECT_THROW(segment(m3_cl, 0, 2), std::invalid_argument);
-  EXPECT_THROW(segment(m3_cl, 1, 5), std::invalid_argument);
+  EXPECT_THROW(segment(m6_cl, 0, 2), std::invalid_argument);
+  EXPECT_THROW(segment(m6_cl, 1, 5), std::invalid_argument);
 }
 
 auto segment_functor = [](const auto& a, size_t i, size_t n) {

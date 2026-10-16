@@ -34,7 +34,7 @@ inline auto add_diag(const T_m& mat, const T_a& to_add) {
 
   var_value<matrix_cl<double>> res = add_diag(value_of(mat), value_of(to_add));
 
-  reverse_pass_callback([mat_arena, to_add_arena, res]() mutable {
+  reverse_pass_callback([=]() mutable {
     if constexpr (is_autodiff_v<T_m>) {
       adjoint_of(mat_arena) += res.adj();
     }

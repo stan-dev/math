@@ -43,6 +43,8 @@ template <typename F>
 inline void finite_diff_gradient(const F& f, const Eigen::VectorXd& x,
                                  double& fx, Eigen::VectorXd& grad_fx,
                                  double epsilon = 1e-03) {
+  static constexpr int h_scale[3] = {3, 2, 1};
+  static constexpr int mults[3] = {1, -9, 45};
   Eigen::VectorXd x_temp(x);
   int d = x.size();
   grad_fx.resize(d);
@@ -52,23 +54,13 @@ inline void finite_diff_gradient(const F& f, const Eigen::VectorXd& x,
   for (int i = 0; i < d; ++i) {
     double delta_f = 0.0;
 
-    x_temp(i) = x(i) + 3.0 * epsilon;
-    delta_f = f(x_temp);
-
-    x_temp(i) = x(i) + 2.0 * epsilon;
-    delta_f -= 9.0 * f(x_temp);
-
-    x_temp(i) = x(i) + epsilon;
-    delta_f += 45.0 * f(x_temp);
-
-    x_temp(i) = x(i) + -3.0 * epsilon;
-    delta_f -= f(x_temp);
-
-    x_temp(i) = x(i) + -2.0 * epsilon;
-    delta_f += 9.0 * f(x_temp);
-
-    x_temp(i) = x(i) + -epsilon;
-    delta_f -= 45.0 * f(x_temp);
+    for (int j = 0; j < 3; ++j) {
+      x_temp(i) = x(i) + h_scale[j] * epsilon;
+      const double f_plus = f(x_temp);
+      x_temp(i) = x(i) - h_scale[j] * epsilon;
+      // Cancel constant terms before weighting the symmetric differences.
+      delta_f += (f_plus - f(x_temp)) * mults[j];
+    }
 
     delta_f /= 60 * epsilon;
 

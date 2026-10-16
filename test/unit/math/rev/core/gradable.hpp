@@ -25,7 +25,7 @@ struct gradable {
   double adj() { return f_.adj(); }
 };
 
-gradable setup_quad_form() {
+inline gradable setup_quad_form() {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::quad_form;
@@ -52,7 +52,7 @@ gradable setup_quad_form() {
   return gradable(x, f, g_expected);
 }
 
-gradable setup_simple() {
+inline gradable setup_simple() {
   stan::math::var a = 3;
   stan::math::var b = 7;
   std::vector<stan::math::var> x;

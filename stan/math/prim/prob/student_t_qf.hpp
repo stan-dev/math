@@ -72,7 +72,6 @@ template <typename T_p, typename T_nu, typename T_mu, typename T_sigma,
 inline auto student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
                          const T_sigma& sigma) {
   using ret_scalar = return_type_t<T_p, T_nu, T_mu, T_sigma>;
-  static constexpr const char* function = "student_t_qf";
   const size_t max_size_all = max_size(p, nu, mu, sigma);
   Eigen::Matrix<ret_scalar, -1, 1> result(max_size_all);
 

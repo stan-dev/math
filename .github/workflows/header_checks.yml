@@ -39,13 +39,14 @@ jobs:
         Get-Command mingw32-make | Select-Object -ExpandProperty Definition
       shell: powershell
 
-    - name: Build Math libs
-      shell: powershell
-      run: mingw32-make -f make/standalone math-libs -j2
+    - name: Install Ninja
+      run: python -m pip install ninja
 
     - name: Run header tests
       shell: powershell
-      run: make -j2 test-headers
+      run: |
+        cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DSTAN_BUILD_PROB_TESTS=OFF
+        cmake --build build --parallel 2 --target test-headers
 
   opencl:
     name: OpenCL
@@ -57,7 +58,8 @@ jobs:
     - name: Run header tests
       run: |
         echo "STAN_OPENCL=true" > make/local
-        make -j2 test-headers
+        cmake -S . -B build -DSTAN_OPENCL=ON -DSTAN_BUILD_PROB_TESTS=OFF
+        cmake --build build --parallel 2 --target test-headers
   no_range_checks:
     name: NoRange
     runs-on: ubuntu-latest

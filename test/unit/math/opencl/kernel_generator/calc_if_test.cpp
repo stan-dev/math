@@ -50,7 +50,6 @@ TEST(KernelGenerator, calc_if_multi_result_pass_test) {
 }
 
 TEST(KernelGenerator, calc_if_multi_result_no_output_test) {
-  double eps = 0;
   MatrixXd m(2, 2);
   m << 1, 2, 3, 4;
   matrix_cl<double> m_cl(m);

@@ -20,9 +20,6 @@ template <typename T1, typename T2,
 inline Eigen::Matrix<value_type_t<T1>, std::decay_t<T1>::RowsAtCompileTime,
                      std::decay_t<T2>::ColsAtCompileTime>
 mdivide_left_tri_low(T1&& A, T2&& b) {
-  constexpr int S1 = std::decay_t<T1>::RowsAtCompileTime;
-  constexpr int C2 = std::decay_t<T2>::ColsAtCompileTime;
-
   check_square("mdivide_left_tri_low", "A", A);
   check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
   if (A.size() == 0) {
@@ -47,7 +44,6 @@ template <typename T1, typename T2, require_eigen_t<T1>* = nullptr,
 inline Eigen::Matrix<value_type_t<T2>, std::decay_t<T1>::RowsAtCompileTime,
                      std::decay_t<T2>::ColsAtCompileTime>
 mdivide_left_tri_low(T1&& A, T2&& b) {
-  constexpr int S1 = std::decay_t<T1>::RowsAtCompileTime;
   check_square("mdivide_left_tri_low", "A", A);
   check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
   if (A.size() == 0) {
@@ -64,8 +60,6 @@ template <typename T1, typename T2, require_eigen_vt<is_fvar, T1>* = nullptr,
 inline Eigen::Matrix<value_type_t<T1>, std::decay_t<T1>::RowsAtCompileTime,
                      std::decay_t<T2>::ColsAtCompileTime>
 mdivide_left_tri_low(T1&& A, T2&& b) {
-  constexpr int S1 = std::decay_t<T1>::RowsAtCompileTime;
-  constexpr int C2 = std::decay_t<T2>::ColsAtCompileTime;
   check_square("mdivide_left_tri_low", "A", A);
   check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
   if (A.size() == 0) {
