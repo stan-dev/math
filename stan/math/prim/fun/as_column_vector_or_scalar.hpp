@@ -41,8 +41,12 @@ internal::empty_broadcast_array<T, S, void>& as_column_vector_or_scalar(
  * @return Same vector.
  */
 template <typename T, require_eigen_col_vector_t<T>* = nullptr>
-inline T as_column_vector_or_scalar(T&& a) {
-  return std::forward<T>(a);
+inline decltype(auto) as_column_vector_or_scalar(T&& a) {
+  if constexpr (std::is_rvalue_reference_v<T&&>) {
+    return T(std::forward<T>(a));
+  } else {
+    return std::forward<T>(a);
+  }
 }
 
 /**
