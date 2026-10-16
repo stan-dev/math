@@ -139,6 +139,11 @@
 #include <stan/math/prim/prob/inv_gamma_lcdf.hpp>
 #include <stan/math/prim/prob/inv_gamma_lpdf.hpp>
 #include <stan/math/prim/prob/inv_gamma_rng.hpp>
+#include <stan/math/prim/prob/inv_gaussian_cdf.hpp>
+#include <stan/math/prim/prob/inv_gaussian_lccdf.hpp>
+#include <stan/math/prim/prob/inv_gaussian_lcdf.hpp>
+#include <stan/math/prim/prob/inv_gaussian_lpdf.hpp>
+#include <stan/math/prim/prob/inv_gaussian_rng.hpp>
 #include <stan/math/prim/prob/inv_wishart_cholesky_lpdf.hpp>
 #include <stan/math/prim/prob/inv_wishart_cholesky_rng.hpp>
 #include <stan/math/prim/prob/inv_wishart_lpdf.hpp>
@@ -277,6 +282,7 @@
 #include <stan/math/prim/prob/std_normal_cdf.hpp>
 #include <stan/math/prim/prob/std_normal_cdf_log.hpp>
 #include <stan/math/prim/prob/std_normal_lcdf.hpp>
+#include <stan/math/prim/prob/std_normal_lcdf_impl.hpp>
 #include <stan/math/prim/prob/std_normal_lccdf.hpp>
 #include <stan/math/prim/prob/std_normal_log_qf.hpp>
 #include <stan/math/prim/prob/std_normal_lpdf.hpp>
