@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_PHI_APPROX_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
@@ -12,6 +13,9 @@ namespace math {
 /**
  * Return an approximation of the unit normal CDF.
  *
+ * Computes \f$ \mbox{logit}^{-1}(\gamma x^3 + \beta x) \f$ with the
+ * coefficients <code>PHI_APPROX_CUBIC_COEF</code> and
+ * <code>PHI_APPROX_LINEAR_COEF</code>, the form of Bowling et al. (2009),
  * http://www.jiem.org/index.php/jiem/article/download/60/27
  *
  * This function can be used to implement the inverse link function
@@ -22,7 +26,8 @@ namespace math {
  */
 inline double Phi_approx(double x) {
   using std::pow;
-  return inv_logit(0.07056 * pow(x, 3.0) + 1.5976 * x);
+  return inv_logit(PHI_APPROX_CUBIC_COEF * pow(x, 3.0)
+                   + PHI_APPROX_LINEAR_COEF * x);
 }
 
 /**
