@@ -21,7 +21,8 @@ namespace math {
  * @param y second argument
  * @return maximum value of the two arguments
  */
-template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr,
+          require_all_not_var_t<T1, T2>* = nullptr>
 inline auto max(T1 x, T2 y) {
   return std::max(x, y);
 }
@@ -38,7 +39,8 @@ inline auto max(T1 x, T2 y) {
  * @throws <code>std::invalid_argument</code> if the vector is size zero and the
  * scalar type in the container is integer
  */
-template <typename T, require_container_t<T>* = nullptr>
+template <typename T, require_container_t<T>* = nullptr,
+          require_not_st_var<T>* = nullptr>
 inline value_type_t<T> max(T&& m) {
   if constexpr (std::is_integral<value_type_t<T>>::value) {
     check_nonzero_size("max", "int vector", m);

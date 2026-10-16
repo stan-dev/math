@@ -37,7 +37,8 @@ inline auto min(T1 x, T2 y) {
  * @throws <code>std::invalid_argument</code> if the vector is size zero and the
  * scalar type in the container is integer
  */
-template <typename T, require_container_t<T>* = nullptr>
+template <typename T, require_container_t<T>* = nullptr,
+          require_not_st_var<T>* = nullptr>
 inline value_type_t<T> min(T&& m) {
   if constexpr (std::is_integral<value_type_t<T>>::value) {
     check_nonzero_size("min", "int vector", m);
