@@ -6,13 +6,12 @@
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/as_value_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/fun/is_integer.hpp>
-#include <stan/math/prim/fun/log1p_exp.hpp>
-#include <stan/math/prim/fun/log_inv_logit_diff.hpp>
+#include <stan/math/prim/fun/log1m_exp.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/vector_seq_view.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
@@ -32,23 +31,11 @@ namespace math {
  *
   \f[
     \frac{\partial }{\partial \lambda} =
-    \begin{cases}\\
-    -\mathrm{logit}^{-1}(\lambda - c_1) & \mbox{if } k = 1,\\
-    -(((1-e^{c_{k-1}-c_{k-2}})^{-1} - \mathrm{logit}^{-1}(c_{k-2}-\lambda)) +
-    ((1-e^{c_{k-2}-c_{k-1}})^{-1} - \mathrm{logit}^{-1}(c_{k-1}-\lambda)))
-    & \mathrm{if } 1 < k < K, \mathrm{and}\\
-    \mathrm{logit}^{-1}(c_{K-2}-\lambda) & \mathrm{if } k = K.
-    \end{cases}
-  \f]
-
-  \f[
-    \frac{\partial }{\partial \lambda} =
     \begin{cases}
     -\mathrm{logit}^{-1}(\lambda - c_1) & \text{if } k = 1,\\
-    -(((1-e^{c_{k-1}-c_{k-2}})^{-1} - \mathrm{logit}^{-1}(c_{k-2}-\lambda)) +
-    ((1-e^{c_{k-2}-c_{k-1}})^{-1} - \mathrm{logit}^{-1}(c_{k-1}-\lambda)))
+    \mathrm{logit}^{-1}(c_{k-1} - \lambda) - \mathrm{logit}^{-1}(\lambda - c_k)
     & \text{if } 1 < k < K, \text{ and}\\
-    \mathrm{logit}^{-1}(c_{K-2}-\lambda) & \text{if } k = K.
+    \mathrm{logit}^{-1}(c_{K-1} - \lambda) & \text{if } k = K.
     \end{cases}
   \f]
  *
@@ -144,16 +131,23 @@ inline return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
   Array<T_partials_return, Dynamic, 1> cut2 = lambda_val - cuts_y2;
   Array<T_partials_return, Dynamic, 1> cut1 = lambda_val - cuts_y1;
 
+  // exp(-|cut|) on the same sign partition as every select below
+  Array<T_partials_return, Dynamic, 1> exp_m_abs_cut1
+      = (cut1 > 0.0).select(-cut1, cut1).exp();
+  Array<T_partials_return, Dynamic, 1> exp_m_abs_cut2
+      = (cut2 > 0.0).select(-cut2, cut2).exp();
+  Array<T_cuts_val, Dynamic, 1> cuts_diff = cuts_y2 - cuts_y1;
+
   // Not immediately evaluating next two expressions benefits performance
   auto m_log_1p_exp_cut1
-      = (cut1 > 0.0).select(-cut1, 0) - (-cut1.abs()).exp().log1p();
+      = (cut1 > 0.0).select(-cut1, 0) - exp_m_abs_cut1.log1p();
   auto m_log_1p_exp_m_cut2
-      = (cut2 <= 0.0).select(cut2, 0) - (-cut2.abs()).exp().log1p();
+      = (cut2 <= 0.0).select(cut2, 0) - exp_m_abs_cut2.log1p();
 
   if constexpr (is_vector<T_y>::value) {
     Eigen::Map<const Eigen::Matrix<value_type_t<T_y>, Eigen::Dynamic, 1>> y_vec(
         y_seq.data(), y_seq.size());
-    auto log1m_exp_cuts_diff = log1m_exp(cut1 - cut2);
+    auto log1m_exp_cuts_diff = log1m_exp(cuts_diff);
     logp = y_vec.cwiseEqual(1)
                .select(m_log_1p_exp_cut1,
                        y_vec.cwiseEqual(K).select(m_log_1p_exp_m_cut2,
@@ -167,7 +161,7 @@ inline return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
     } else if (y_seq[0] == K) {
       logp = m_log_1p_exp_m_cut2.sum();
     } else {
-      logp = (m_log_1p_exp_m_cut2 + log1m_exp(cut1 - cut2).array()
+      logp = (m_log_1p_exp_m_cut2 + log1m_exp(cuts_diff).array()
               + m_log_1p_exp_cut1)
                  .sum();
     }
@@ -175,21 +169,21 @@ inline return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
 
   auto ops_partials = make_partials_propagator(lambda_ref, c_ref);
   if constexpr (is_any_autodiff_v<T_loc, T_cut>) {
-    Array<T_partials_return, Dynamic, 1> exp_m_abs_cut1 = (-cut1.abs()).exp();
-    Array<T_partials_return, Dynamic, 1> exp_m_abs_cut2 = (-cut2.abs()).exp();
-    Array<T_partials_return, Dynamic, 1> exp_cuts_diff = exp(cuts_y2 - cuts_y1);
-    Array<T_partials_return, Dynamic, 1> inv_logit_neg_cut2 = (cut2 > 0).select(
-        exp_m_abs_cut2 / (1 + exp_m_abs_cut2), 1 / (1 + exp_m_abs_cut2));
-    Array<T_partials_return, Dynamic, 1> inv_logit_neg_cut1 = (cut1 > 0).select(
-        exp_m_abs_cut1 / (1 + exp_m_abs_cut1), 1 / (1 + exp_m_abs_cut1));
-    Array<T_partials_return, Dynamic, 1> d1
-        = inv_logit_neg_cut2 - exp_cuts_diff / (exp_cuts_diff - 1);
-    Array<T_partials_return, Dynamic, 1> d2
-        = 1 / (1 - exp_cuts_diff) - inv_logit_neg_cut1;
+    Array<T_partials_return, Dynamic, 1> inv_logit_neg_cut2
+        = (cut2 > 0).select(exp_m_abs_cut2, T_partials_return(1))
+          / (1 + exp_m_abs_cut2);
+    Array<T_partials_return, Dynamic, 1> inv_logit_cut1
+        = (cut1 > 0).select(T_partials_return(1), exp_m_abs_cut1)
+          / (1 + exp_m_abs_cut1);
     if constexpr (is_autodiff_v<T_loc>) {
-      partials<0>(ops_partials) = d1 - d2;
+      partials<0>(ops_partials) = inv_logit_neg_cut2 - inv_logit_cut1;
     }
     if constexpr (is_autodiff_v<T_cut>) {
+      // -1 / expm1(c_y - c_{y-1}), zero for the first and last class
+      Array<T_partials_return, Dynamic, 1> q
+          = cuts_diff.exp() / cuts_diff.expm1();
+      Array<T_partials_return, Dynamic, 1> d1 = inv_logit_neg_cut2 - q;
+      Array<T_partials_return, Dynamic, 1> d2 = inv_logit_cut1 - q;
       for (int i = 0; i < N; i++) {
         int c = y_seq[i];
         if (c != K) {
