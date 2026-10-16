@@ -34,6 +34,28 @@ double run(bool allow_fallthrough, std::ostream* msgs) {
       msgs);
 }
 
+// Strictly concave everywhere, so each of the three solvers converges on
+// its own and none of them has to fall back to the next one.
+struct ConcaveLikelihood {
+  template <typename Theta>
+  auto operator()(const Theta& theta, std::ostream* /*msgs*/) const {
+    return -0.5 * stan::math::square(theta(0) - 1.0)
+           - 0.5 * stan::math::square(theta(1) + 1.0);
+  }
+};
+
+// The solver that produced the estimate for the given likelihood.
+template <typename LL>
+int used_solver(const LL& ll, int solver, bool allow_fallthrough) {
+  Eigen::VectorXd theta0 = Eigen::VectorXd::Zero(2);
+  stan::math::laplace_options_user_supplied options(
+      theta0, 1e-10, 100, 1, solver, 100, allow_fallthrough);
+  return stan::math::internal::laplace_marginal_density_est(
+             ll, std::tuple<>{},
+             Eigen::MatrixXd(Eigen::MatrixXd::Identity(2, 2)), options, nullptr)
+      .solver_used;
+}
+
 }  // namespace
 
 TEST(LaplaceSolverFallback, FallbackIsLoggedToStream) {
@@ -71,4 +93,17 @@ TEST(LaplaceSolverFallback, DisabledFallthroughThrowsWithReason) {
               std::string::npos)
         << e.what();
   }
+}
+
+// The requested solver runs whether or not the fallthrough is allowed; the
+// fallthrough only decides what happens after that solver has failed.
+TEST(LaplaceSolverFallback, RequestedSolverRunsWithFallthroughAllowed) {
+  for (int solver = 1; solver <= 3; ++solver) {
+    EXPECT_EQ(solver, used_solver(ConcaveLikelihood{}, solver, true))
+        << "solver " << solver;
+    EXPECT_EQ(solver, used_solver(ConcaveLikelihood{}, solver, false))
+        << "solver " << solver;
+  }
+  // Guard: after solver 1 fails, the fallthrough lands on solver 2.
+  EXPECT_EQ(2, used_solver(PartlyConvexLikelihood{}, 1, true));
 }
