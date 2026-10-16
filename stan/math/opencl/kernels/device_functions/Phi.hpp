@@ -20,17 +20,7 @@ static constexpr const char* phi_device_function
            *
            * @return Phi(x)
            */
-          inline double Phi(double x) {
-            if (x < -37.5) {
-              return 0;
-            } else if (x < -5.0) {
-              return 0.5 * erfc(-M_SQRT1_2 * x);
-            } else if (x > 8.25) {
-              return 1;
-            } else {
-              return 0.5 * (1.0 + erf(M_SQRT1_2 * x));
-            }
-          }
+          inline double Phi(double x) { return exp(std_normal_lcdf_impl(x)); }
           // \cond
           ) "\n#endif\n";  // NOLINT
 // \endcond
