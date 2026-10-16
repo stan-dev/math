@@ -23,7 +23,7 @@ target_compile_options(gtest_main PRIVATE
 
 function(stan_add_pch target)
   if(STAN_EFFECTIVE_TEST_PCH)
-    add_library(${target} OBJECT EXCLUDE_FROM_ALL "${PROJECT_SOURCE_DIR}/cmake/pch.cpp")
+    add_library(${target} OBJECT EXCLUDE_FROM_ALL "${PROJECT_SOURCE_DIR}/cmake/empty.cpp")
     set_target_properties(${target} PROPERTIES POSITION_INDEPENDENT_CODE FALSE)
     target_link_libraries(${target} PRIVATE stan_test_options)
     target_precompile_headers(${target} PRIVATE ${ARGN})
@@ -52,7 +52,7 @@ endfunction()
 
 function(stan_add_test_binary target)
   # Xcode needs a real source alongside object-library references.
-  add_executable(${target} "${PROJECT_SOURCE_DIR}/cmake/pch.cpp" ${ARGN})
+  add_executable(${target} "${PROJECT_SOURCE_DIR}/cmake/empty.cpp" ${ARGN})
   if(STAN_MPI)
     # A static archive can discard the unreferenced registration initializer.
     target_sources(${target} PRIVATE $<TARGET_OBJECTS:stan_mpi>)
@@ -205,7 +205,7 @@ if(STAN_TEST_HEADERS)
     endif()
     string(REPLACE "/" "_" name "${relative_header}")
     string(REGEX REPLACE "\\.hpp$" "-test" name "${name}")
-    add_library(${name} OBJECT EXCLUDE_FROM_ALL "${PROJECT_SOURCE_DIR}/cmake/pch.cpp")
+    add_library(${name} OBJECT EXCLUDE_FROM_ALL "${PROJECT_SOURCE_DIR}/cmake/empty.cpp")
     target_link_libraries(${name} PRIVATE stanmath)
     if(MSVC)
       target_compile_options(${name} PRIVATE "/FI${header}")
