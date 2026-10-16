@@ -76,7 +76,8 @@ inline auto sylvester_solver(const MatA& A, const MatB& B, const MatC& C) {
   const auto& T = schur_B.matrixT();
 
   // Y holds D = U^H C V initially, overwritten column by column
-  auto Y = (U.adjoint() * C * V).eval();
+  const auto C_c = C.template cast<complex_t>();
+  auto Y = (U.adjoint() * C_c * V).eval();
   auto Sshift = S;
   for (Eigen::Index i = 0; i < m; ++i) {
     Y.col(i).noalias() -= Y.leftCols(i) * T.col(i).head(i);
