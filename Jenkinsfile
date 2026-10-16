@@ -25,6 +25,12 @@ def shellQuote(String value) {
   return "'" + value.replace("'", "'\"'\"'") + "'"
 }
 
+def containerJobs() {
+  // runPod sets PARALLEL in the container, outside Groovy's env binding.
+  def jobs = sh(returnStdout: true, script: 'printf "%s" "${PARALLEL:-1}"').trim()
+  return Math.max(1, jobs.toInteger())
+}
+
 def configureCmake(List arguments) {
   def flags = ['-S', '.', '-B', 'build'] + arguments
   if (fileExists('build/CMakeCache.txt')) {
@@ -36,7 +42,7 @@ def configureCmake(List arguments) {
 def runCmakeTests(Map config) {
   def buildDir = 'build'
   def reportDir = "test-results/${config.name}"
-  def jobs = Math.max(1, (env.PARALLEL ?: '1').toInteger())
+  def jobs = containerJobs()
   def flags = [
     '-DCMAKE_BUILD_TYPE=Release',
     '-DSTAN_TEST_HEADERS=OFF', '-DSTAN_BUILD_PROB_TESTS=OFF',
@@ -142,7 +148,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
           },
           Documentation: {
             configureCmake(['-DBUILD_TESTING=OFF', '-DSTAN_BUILD_DOCS=ON'])
-            sh "cmake --build build --parallel ${env.PARALLEL ?: '1'} --target doxygen"
+            sh "cmake --build build --parallel ${containerJobs()} --target doxygen"
           },
         )
       }
@@ -157,7 +163,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
                 "-DCMAKE_C_COMPILER=${CLANG_CC}", "-DCMAKE_CXX_COMPILER=${CLANG_CXX}",
                 '-DCMAKE_CXX_FLAGS=-Werror', '-DSTAN_BUILD_PROB_TESTS=OFF',
                 '-DSTAN_TEST_HEADERS=ON'])
-              sh "cmake --build build --parallel ${env.PARALLEL ?: '1'} --target test-headers"
+              sh "cmake --build build --parallel ${containerJobs()} --target test-headers"
             }
           }
         }, unit: {
@@ -322,7 +328,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
         stage('Upload doxygen') {
           def branch = 'gh-pages'
           configureCmake(['-DBUILD_TESTING=OFF', '-DSTAN_BUILD_DOCS=ON'])
-          sh "cmake --build build --parallel ${env.PARALLEL ?: '1'} --target doxygen"
+          sh "cmake --build build --parallel ${containerJobs()} --target doxygen"
           dir('gh-pages') {
             def scm = scmGit(
               branches: [[name: "refs/heads/$branch"]],
