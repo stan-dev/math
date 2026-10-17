@@ -433,10 +433,8 @@ inline auto hcubature(const F& integrand, const ParsTuple& pars, const int dim,
       = (dim == 1) ? 15 : 1 + 4 * dim + 2 * dim * (dim - 1) + std::pow(2, dim);
 
   auto evals_per_box = numevals;
-  Scalar error = err;
-  Scalar val = result;
 
-  if ((error <= fmax(reqRelError * fabs(val), reqAbsError))
+  if ((err <= fmax(reqRelError * fabs(result), reqAbsError))
       || (numevals >= maxEval)) {
     return result;
   }
@@ -453,8 +451,8 @@ inline auto hcubature(const F& integrand, const ParsTuple& pars, const int dim,
   err_vec.reserve(numevals);
   err_vec.push_back(err);
   while ((numevals < maxEval)
-         && (error > fmax(reqRelError * fabs(val), reqAbsError))
-         && fabs(val) < INFTY) {
+         && (err > fmax(reqRelError * fabs(result), reqAbsError))
+         && fabs(result) < INFTY) {
     auto err_idx = get_largest_box_idx(err_vec);
     auto&& box = ms[err_idx];
     auto w = (box.b_[box.kdiv_] - box.a_[box.kdiv_]) / 2;
@@ -483,22 +481,18 @@ inline auto hcubature(const F& integrand, const ParsTuple& pars, const int dim,
     box_t box2(box.a_, std::move(mb), result_2, kdivide_2);
     result += result_1 + result_2 - box.I_;
     err += err_1 + err_2 - err_vec[err_idx];
-    ms[err_idx].I_ = 0;
-    err_vec[err_idx] = 0;
-    ms.push_back(std::move(box1));
+    // The two halves replace the box. A box that stayed in the list with
+    // error 0 would be split again once all other errors are 0, and its
+    // integral would then be counted twice.
+    ms[err_idx] = std::move(box1);
+    err_vec[err_idx] = err_1;
     ms.push_back(std::move(box2));
-    err_vec.push_back(err_1);
     err_vec.push_back(err_2);
     numevals += 2 * evals_per_box;
   }
   result = 0.0;
-  err = 0.0;
-
   for (auto&& box : ms) {
     result += box.I_;
-  }
-  for (auto err_i : err_vec) {
-    err += err_i;
   }
   return result;
 }  // hcubature

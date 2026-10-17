@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_PROB_WIENER4_LCDF_UNNORM_HPP
 #define STAN_MATH_PRIM_PROB_WIENER4_LCDF_UNNORM_HPP
 
+#include <stan/math/prim/fun/erfcx.hpp>
 #include <stan/math/prim/prob/wiener5_lpdf.hpp>
 
 namespace stan {
@@ -118,14 +119,27 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v, const T_w& w) {
 }
 
 /**
- * Log of Mill's ratio for the normal distribution
+ * Log of Mill's ratio for the normal distribution,
+ * log(Phi(-x) / phi(x)).
+ *
+ * For x >= 0 this is evaluated as log(sqrt(pi / 2) erfcx(x / sqrt(2))),
+ * which is exact as an identity. The difference
+ * std_normal_lcdf(-x) - std_normal_lpdf(x) is the same quantity, but both
+ * terms grow like -x^2 / 2 while the result stays O(log x), so the
+ * subtraction loses digits without bound as x grows. For x < 0 the two
+ * terms have opposite sign and do not cancel, and erfcx would overflow
+ * below about -37, so the difference is kept there.
  *
  * @param x A scalar
  * @return The natural logarithm of Mill's ratio
  */
 template <typename T_x>
 inline auto logMill(T_x&& x) {
-  return std_normal_lcdf(-x) - std_normal_lpdf(x);
+  using ret_t = return_type_t<T_x>;
+  if (x >= 0) {
+    return ret_t((LOG_SQRT_PI - HALF_LOG_TWO) + log(erfcx(x * INV_SQRT_TWO)));
+  }
+  return ret_t(std_normal_lcdf(-x) - std_normal_lpdf(x));
 }
 
 /**
@@ -306,8 +320,10 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
       auto temp_4 = make_finite(exp(d_k_2 + logMill(x_over_sqrt_y_4)));
       auto ans_4 = temp_4 * neg_vy - sqrt_y * exp_d_k_2;
 
-      ans += (ans_1 + ans_2 + ans_3 - ans_4) * (2.0 * k + one_m_w)
-             + ans_3 * one_m_w;
+      // d/da of g(r_1) - g(r_2), r_1 = a (2k + 1 - w), r_2 = a (2k + 1 + w);
+      // (ans_1 + ans_2) and (ans_3 + ans_4) are y g'(r_1) and y g'(r_2)
+      ans += (ans_1 + ans_2) * (2.0 * k + one_m_w)
+             - (ans_3 + ans_4) * (2.0 * k + 2.0 - one_m_w);
     }
     F_k = make_finite(exp(one_m_w_a_neg_v + 0.5 * square(neg_v) * y));
     const auto summands_small_y = ans / (y * F_k);
@@ -519,7 +535,8 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
       auto temp_4 = make_finite(exp(d_k_2 + logMill(x_over_sqrt_y_4)));
       auto ans_4 = temp_4 * neg_vy - sqrt_y * exp_d_k_2;
 
-      ans += (ans_1 + ans_2 + ans_3 - ans_4) * a;
+      // d/dw of g(r_1) - g(r_2): r_1 decreases and r_2 increases with w
+      ans += (ans_1 + ans_2 + ans_3 + ans_4) * a;
     }
     F_k = make_finite(exp(one_m_w_a_neg_v + 0.5 * square(neg_v) * y));
     const auto summands_small_y = ans / (y * F_k);
