@@ -3,6 +3,19 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
 
+TEST(ProbDistributionsLkjCorr, testZero) {
+  boost::random::mt19937 rng;
+  unsigned int K = 0;
+  Eigen::MatrixXd Sigma(K, K);
+  Sigma.setZero();
+  Sigma.diagonal().setOnes();
+  double eta = stan::math::uniform_rng(0, 2, rng);
+  double f = stan::math::do_lkj_constant(eta, K);
+  EXPECT_FLOAT_EQ(0, stan::math::lkj_corr_cholesky_lpdf(Sigma, eta));
+  eta = 1.0;
+  EXPECT_FLOAT_EQ(0, stan::math::lkj_corr_cholesky_lpdf(Sigma, eta));
+}
+
 TEST(ProbDistributionsLkjCorr, testIdentity) {
   boost::random::mt19937 rng;
   unsigned int K = 4;
