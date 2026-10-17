@@ -272,9 +272,12 @@ endif
 # Sets up TBB CXXFLAGS_TBB and LDFLAGS_TBB to compile and link to TBB
 #
 # The tbbmalloc and tbbmalloc_proxy libraries are optionally included
-# as targets. By default these are included on MacOS only. This behavior
-# can be altered by explicitly setting the TBB_LIBRARIES variable which
-# should contain "tbb" or "tbb tbbmalloc tbbmalloc_proxy". Setting the
+# as targets. By default they are not included on any platform. On MacOS
+# tbbmalloc_proxy registers a process-wide malloc zone that can crash host
+# processes (Julia, Python, R) which load Stan as a shared library, see
+# https://github.com/stan-dev/math/issues/3425. This behavior can be
+# altered by explicitly setting the TBB_LIBRARIES variable which should
+# contain "tbb" or "tbb tbbmalloc tbbmalloc_proxy". Setting the
 # TBB_LIBRARIES variable overrides the default.
 
 TBB_BIN ?= $(MATH)lib/tbb
@@ -282,11 +285,7 @@ TBB_RELATIVE_PATH ?= ../$(notdir $(TBB))
 TBB_BIN_ABSOLUTE_PATH = $(abspath $(TBB_BIN))
 TBB_ABSOLUTE_PATH = $(abspath $(TBB))
 
-ifeq ($(OS),Darwin)
-  TBB_LIBRARIES ?= tbb tbbmalloc tbbmalloc_proxy
-else
-  TBB_LIBRARIES ?= tbb
-endif
+TBB_LIBRARIES ?= tbb
 
 # --disable-new-dtags only matters alongside -rpath, which Windows skips
 # below; MacOS ld does not support it
