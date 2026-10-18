@@ -39,29 +39,17 @@ TEST(MathFunctions, is_odd_vector) {
 }
 
 TEST(MathFunctions, is_even_nested_vector) {
-  std::vector<std::vector<int>> input{
-      {1, 2},
-      {3, 4}
-  };
+  std::vector<std::vector<int>> input{{1, 2}, {3, 4}};
 
-  std::vector<std::vector<int>> expected{
-      {0, 1},
-      {0, 1}
-  };
+  std::vector<std::vector<int>> expected{{0, 1}, {0, 1}};
 
   EXPECT_EQ(expected, stan::math::is_even(input));
 }
 
 TEST(MathFunctions, is_odd_nested_vector) {
-  std::vector<std::vector<int>> input{
-      {1, 2},
-      {3, 4}
-  };
+  std::vector<std::vector<int>> input{{1, 2}, {3, 4}};
 
-  std::vector<std::vector<int>> expected{
-      {1, 0},
-      {1, 0}
-  };
+  std::vector<std::vector<int>> expected{{1, 0}, {1, 0}};
 
   EXPECT_EQ(expected, stan::math::is_odd(input));
 }
