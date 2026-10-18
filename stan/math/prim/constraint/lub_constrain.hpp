@@ -17,6 +17,7 @@
 #include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/subtract.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <cmath>
 
 namespace stan {
@@ -55,7 +56,17 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub) {
     return ub_constrain(identity_constrain(x, lb), ub);
   } else {
     check_less("lub_constrain", "lb", value_of(lb), value_of(ub));
-    return (ub - lb) * inv_logit(x) + lb;
+    const auto diff = ub - lb;
+    if constexpr (is_autodiff_v<return_type_t<T, L, U>>) {
+      // inv_logit of a non-positive argument only: the derivatives of
+      // 1 - inv_logit(x) cancel for x >> 0
+      if (value_of_rec(x) >= 0) {
+        return ub - diff * inv_logit(-x);
+      }
+      return lb + diff * inv_logit(x);
+    } else {
+      return diff * inv_logit(x) + lb;
+    }
   }
 }
 
@@ -108,8 +119,22 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub, Lp& lp) {
   } else {
     check_less("lub_constrain", "lb", value_of(lb), value_of(ub));
     const auto diff = ub - lb;
-    lp += add(log(diff), subtract(-abs(x), multiply(2.0, log1p_exp(-abs(x)))));
-    return diff * inv_logit(x) + lb;
+    // a branch instead of abs(x), whose forward-mode derivative is 0 at 0
+    const bool x_nonneg = value_of_rec(x) >= 0;
+    if (x_nonneg) {
+      lp += add(log(diff), subtract(-x, multiply(2.0, log1p_exp(-x))));
+    } else {
+      lp += add(log(diff), subtract(x, multiply(2.0, log1p_exp(x))));
+    }
+    if constexpr (is_autodiff_v<return_type_t<T, L, U>>) {
+      // inv_logit of a non-positive argument only, as above
+      if (x_nonneg) {
+        return ub - diff * inv_logit(-x);
+      }
+      return lb + diff * inv_logit(x);
+    } else {
+      return diff * inv_logit(x) + lb;
+    }
   }
 }
 
