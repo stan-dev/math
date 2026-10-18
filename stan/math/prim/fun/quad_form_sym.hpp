@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_FUN_QUAD_FORM_SYM_HPP
 
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {

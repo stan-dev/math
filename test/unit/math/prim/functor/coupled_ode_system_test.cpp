@@ -1,7 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
-#include <test/unit/math/prim/functor/harmonic_oscillator.hpp>
 #include <test/unit/math/prim/functor/mock_ode_functor.hpp>
 #include <test/unit/math/prim/functor/mock_throwing_ode_functor.hpp>
 #include <vector>

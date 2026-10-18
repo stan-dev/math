@@ -1,11 +1,7 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
-#include <test/unit/util.hpp>
-#include <test/unit/pretty_print_types.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 #include <string>
-#include <vector>
 
 TEST_F(AgradRev, MathMixMatFun_repVectorVar) {
   using stan::math::rep_vector;

@@ -9,13 +9,10 @@
 #include <stan/math/opencl/ref_type_for_opencl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/vec_concat.hpp>
 #include <CL/opencl.hpp>
 #include <tbb/concurrent_vector.h>
 #include <algorithm>
-#include <iostream>
-#include <string>
 #include <type_traits>
 #include <vector>
 

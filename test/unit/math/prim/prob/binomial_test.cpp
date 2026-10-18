@@ -2,9 +2,7 @@
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 #include <test/unit/math/prim/prob/VectorIntRNGTestRig.hpp>
 #include <boost/random/mersenne_twister.hpp>
-#include <boost/math/distributions.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 #include <vector>
 
 class BinomialTestRig : public VectorIntRNGTestRig {

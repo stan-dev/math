@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 #include <tuple>
 #include <type_traits>
-#include <vector>
 
 namespace apply_test {
 struct func {

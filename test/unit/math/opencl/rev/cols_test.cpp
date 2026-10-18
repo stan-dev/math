@@ -1,7 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 
 TEST(MathMatrixCL, cols_rev) {
   using stan::math::cols;

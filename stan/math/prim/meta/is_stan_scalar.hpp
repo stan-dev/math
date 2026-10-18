@@ -6,7 +6,6 @@
 #include <stan/math/prim/meta/is_complex.hpp>
 #include <stan/math/prim/meta/is_fvar.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
-#include <stan/math/prim/meta/is_var_or_arithmetic.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>

@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_ERR_CHECK_POSITIVE_FINITE_HPP
 #define STAN_MATH_PRIM_ERR_CHECK_POSITIVE_FINITE_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/elementwise_check.hpp>
 
 namespace stan {

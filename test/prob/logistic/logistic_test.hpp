@@ -1,6 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/math/prim/prob/logistic_lpdf.hpp>
-#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 
 using stan::math::var;

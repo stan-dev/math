@@ -4,7 +4,6 @@
 #include <stan/math/opencl/prim.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-#include <algorithm>
 
 TEST(MathGpu, make_kernel) {
   stan::math::matrix_d m(3, 3);

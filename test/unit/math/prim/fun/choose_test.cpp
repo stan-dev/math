@@ -1,6 +1,5 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/math/prim/fun/binary_scalar_tester.hpp>
-#include <boost/math/special_functions/binomial.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 

@@ -11,8 +11,6 @@
 #include <stan/math/fwd/fun/lgamma.hpp>
 #include <stan/math/fwd/fun/log.hpp>
 #include <stan/math/fwd/fun/log1m.hpp>
-#include <stan/math/fwd/fun/log_diff_exp.hpp>
-#include <stan/math/fwd/fun/sum.hpp>
 #include <stan/math/prim/fun/hypergeometric_3F2.hpp>
 #include <stan/math/prim/fun/inv_inc_beta.hpp>
 

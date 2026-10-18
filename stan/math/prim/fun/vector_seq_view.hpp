@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_VECTOR_SEQ_VIEW_HPP
 #define STAN_MATH_PRIM_FUN_VECTOR_SEQ_VIEW_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <vector>
 
 namespace stan {
 namespace internal {

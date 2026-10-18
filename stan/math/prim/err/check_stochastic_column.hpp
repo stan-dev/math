@@ -11,7 +11,6 @@
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <sstream>
 #include <string>
-#include <iostream>
 namespace stan {
 namespace math {
 

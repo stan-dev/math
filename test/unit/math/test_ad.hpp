@@ -10,7 +10,6 @@
 #include <test/unit/util.hpp>
 #include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
-#include <algorithm>
 #include <cmath>
 #include <string>
 #include <vector>

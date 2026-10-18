@@ -1,13 +1,7 @@
 #include <test/unit/math/prim/prob/hmm_util.hpp>
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 #include <stan/math/prim/prob/hmm_latent_rng.hpp>
-#include <stan/math/prim/prob/chi_square_lcdf.hpp>
-#include <boost/math/distributions.hpp>
-#include <boost/random.hpp>
-#include <test/unit/math/test_ad.hpp>
-#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 #include <vector>
 
 TEST(hmm_rng_test, chiSquareGoodnessFitTest) {

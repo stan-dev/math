@@ -2,7 +2,6 @@
 #define TEST_UNIT_MATH_PRIM_PROB_VECTOR_RNG_TEST_RIG_HPP
 
 #include <stan/math/prim.hpp>
-#include <gtest/gtest.h>
 #include <vector>
 
 /*

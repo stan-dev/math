@@ -1,6 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/math/prim/prob/frechet_cdf.hpp>
-#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/pow.hpp>
 
 using stan::math::var;

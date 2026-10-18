@@ -2,10 +2,8 @@
 #define STAN_MATH_PRIM_FUN_MIN_HPP
 
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <algorithm>
-#include <vector>
 
 namespace stan {
 namespace math {

@@ -1,8 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/prim.hpp>
 #include <gtest/gtest.h>
-#include <limits>
-#include <vector>
 
 TEST(ErrorHandlingOpenCL, checkColumnIndexMatrix) {
   stan::math::matrix_cl<double> y;

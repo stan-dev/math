@@ -1,6 +1,5 @@
 #include <stan/math/prim/meta.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/util.hpp>
 
 TEST(MathMetaPrim, IncludeSummandProptoFalse) {
   EXPECT_TRUE(stan::math::include_summand<false>::value);

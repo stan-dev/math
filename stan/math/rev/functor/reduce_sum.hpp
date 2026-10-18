@@ -12,7 +12,6 @@
 #include <tuple>
 #include <memory>
 #include <utility>
-#include <vector>
 
 namespace stan {
 namespace math {

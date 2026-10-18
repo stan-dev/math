@@ -4,7 +4,6 @@
 
 #include <stan/math/prim/err/invalid_argument.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
-#include <stan/math/opencl/matrix_cl.hpp>
 namespace stan {
 namespace math {
 

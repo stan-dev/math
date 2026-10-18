@@ -8,7 +8,6 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/functor/iter_tuple_nested.hpp>
 #include <stan/math/rev/functor/reverse_pass_collect_adjoints.hpp>
-#include <unsupported/Eigen/MatrixFunctions>
 #include <cmath>
 
 /**

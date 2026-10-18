@@ -2,7 +2,6 @@
 #define STAN_MATH_OPENCL_PRIM_MEAN_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {

@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_ERR_IS_LOWER_TRIANGULAR_HPP
 #define STAN_MATH_PRIM_ERR_IS_LOWER_TRIANGULAR_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/err/is_not_nan.hpp>
 #include <stan/math/prim/meta.hpp>
 

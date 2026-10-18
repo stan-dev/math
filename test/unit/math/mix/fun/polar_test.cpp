@@ -1,6 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <complex>
-#include <iostream>
 #include <vector>
 
 TEST(mathMixFun, polar) {

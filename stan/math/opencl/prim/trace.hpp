@@ -4,7 +4,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/sum.hpp>
-#include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
 

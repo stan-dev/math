@@ -2,21 +2,14 @@
 #define STAN_MATH_OPENCL_REV_COPY_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/rev/vari.hpp>
-#include <stan/math/opencl/rev/arena_type.hpp>
 #include <stan/math/opencl/rev/to_arena.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/vec_concat.hpp>
 
-#include <CL/opencl.hpp>
-#include <iostream>
 #include <vector>
-#include <algorithm>
-#include <type_traits>
 
 namespace stan {
 namespace math {

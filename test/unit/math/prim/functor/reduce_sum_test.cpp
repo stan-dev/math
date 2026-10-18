@@ -3,7 +3,6 @@
 #include <gtest/gtest.h>
 
 #include <vector>
-#include <set>
 
 TEST(StanMathPrim_reduce_sum, value) {
   using stan::math::test::count_lpdf;

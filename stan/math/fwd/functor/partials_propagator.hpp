@@ -1,17 +1,13 @@
 #ifndef STAN_MATH_FWD_META_PARTIALS_PROPOGATOR_HPP
 #define STAN_MATH_FWD_META_PARTIALS_PROPOGATOR_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/fwd/core/fvar.hpp>
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/functor/operands_and_partials.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/functor/apply.hpp>
-#include <stan/math/prim/functor/for_each.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {

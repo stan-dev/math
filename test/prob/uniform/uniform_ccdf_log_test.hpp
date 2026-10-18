@@ -1,6 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/math/prim/prob/uniform_ccdf_log.hpp>
-#include <stan/math/prim/fun/log.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

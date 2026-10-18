@@ -1,7 +1,5 @@
 #include <test/unit/math/relative_tolerance.hpp>
-#include <stan/math.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 
 TEST(testUnitMath, RelativeTolerance) {
   using stan::test::relative_tolerance;

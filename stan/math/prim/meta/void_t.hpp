@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_META_VOID_T_HPP
 
 #include <stan/math/prim/meta/bool_constant.hpp>
-#include <type_traits>
 
 namespace stan {
 

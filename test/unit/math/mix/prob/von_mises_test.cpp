@@ -1,8 +1,6 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
-#include <test/unit/math/rev/fun/util.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 
 TEST_F(AgradRev, mathMixScalFun_von_mises_lpdf) {
   auto f = [](const auto& y, const auto& mu, const auto& kappa) {

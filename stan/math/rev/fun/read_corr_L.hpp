@@ -3,10 +3,8 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/core/operator_multiplication.hpp>
 #include <stan/math/prim/fun/read_corr_L.hpp>
 #include <cmath>
-#include <complex>
 
 namespace stan {
 namespace math {

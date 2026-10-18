@@ -2,7 +2,6 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
-#include <limits>
 #include <type_traits>
 #include <vector>
 

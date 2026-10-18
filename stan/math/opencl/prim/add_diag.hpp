@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_OPENCL_PRIM_ADD_DIAG_HPP
 #define STAN_MATH_OPENCL_PRIM_ADD_DIAG_HPP
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/prim/size.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>

@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/crossprod.hpp>
 #include <stan/math/prim/prob/chi_square_rng.hpp>
 #include <stan/math/prim/prob/normal_rng.hpp>
 #include <cmath>

@@ -1,6 +1,5 @@
 #include <stan/math/fwd.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 #include <vector>
 
 TEST(ProbDistributionsCategoricalLogit, fvar_double) {

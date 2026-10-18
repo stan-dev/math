@@ -2,8 +2,6 @@
 #define STAN_MATH_PRIM_FUN_VEC_CONCAT_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <type_traits>
-#include <vector>
 
 namespace stan {
 namespace math {

@@ -9,7 +9,6 @@
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
-#include <sstream>
 
 namespace stan {
 namespace math {

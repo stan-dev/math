@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_COPYSIGN_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_COPYSIGN_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <cmath>
 #include <complex>

@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_FUN_TAN_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/i_times.hpp>
 #include <stan/math/prim/fun/tanh.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>

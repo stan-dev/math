@@ -1,14 +1,11 @@
 #ifndef STAN_MATH_MIX_PROB_LAPLACE_MARGINAL_POISSON_LOG_LPMF_HPP
 #define STAN_MATH_MIX_PROB_LAPLACE_MARGINAL_POISSON_LOG_LPMF_HPP
 
-#include <stan/math/mix/functor/laplace_likelihood.hpp>
 #include <stan/math/mix/functor/laplace_marginal_density.hpp>
 #include <stan/math/mix/meta.hpp>
 #include <stan/math/rev/fun/dot_product.hpp>
 #include <stan/math/rev/fun/exp.hpp>
 #include <stan/math/fwd/fun/exp.hpp>
-#include <stan/math/rev/fun/sum.hpp>
-#include <stan/math/fwd/fun/sum.hpp>
 #include <stan/math/fwd/fun/lgamma.hpp>
 #include <stan/math/rev/fun/lgamma.hpp>
 #include <stan/math/prim/fun/add.hpp>

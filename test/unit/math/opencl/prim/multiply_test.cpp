@@ -3,7 +3,6 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-#include <algorithm>
 
 TEST(MathMatrixOpenCLPrim, non_matching_dim_excpetion) {
   stan::math::matrix_d m0(5, 3);

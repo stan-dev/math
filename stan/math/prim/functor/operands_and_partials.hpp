@@ -1,12 +1,9 @@
 #ifndef STAN_MATH_PRIM_FUNCTOR_OPERANDS_AND_PARTIALS_HPP
 #define STAN_MATH_PRIM_FUNCTOR_OPERANDS_AND_PARTIALS_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
-#include <vector>
 #include <type_traits>
-#include <tuple>
 
 namespace stan {
 namespace math {

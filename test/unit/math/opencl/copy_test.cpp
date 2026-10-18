@@ -1,11 +1,9 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim.hpp>
-#include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
-#include <algorithm>
 #include <vector>
 
 TEST(MathMatrixGPU, copy_rvalue_constructor) {

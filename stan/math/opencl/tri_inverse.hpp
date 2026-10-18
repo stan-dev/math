@@ -4,7 +4,6 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/plain_type.hpp>
-#include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernels/diag_inv.hpp>
 #include <stan/math/opencl/kernels/inv_lower_tri_multiply.hpp>
@@ -16,7 +15,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <cmath>
 #include <string>
-#include <vector>
 
 namespace stan {
 namespace math {

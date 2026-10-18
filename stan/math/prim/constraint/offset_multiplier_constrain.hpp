@@ -4,13 +4,11 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/fma.hpp>
-#include <stan/math/prim/constraint/identity_constrain.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/eval.hpp>
-#include <stan/math/prim/functor/apply.hpp>
 #include <cmath>
 
 namespace stan {

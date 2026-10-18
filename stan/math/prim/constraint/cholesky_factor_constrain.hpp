@@ -3,12 +3,8 @@
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <cmath>
-#include <stdexcept>
-#include <vector>
 
 namespace stan {
 namespace math {

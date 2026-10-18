@@ -4,7 +4,6 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
-#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/erfcx.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <cmath>

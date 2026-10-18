@@ -1,11 +1,9 @@
 #ifndef STAN_MATH_PRIM_FUN_ASIN_HPP
 #define STAN_MATH_PRIM_FUN_ASIN_HPP
 
-#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/asinh.hpp>
 #include <stan/math/prim/fun/copysign.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/i_times.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>

@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_REV_FUNCTOR_BROADCAST_ARRAY_HPP
 #define STAN_MATH_REV_FUNCTOR_BROADCAST_ARRAY_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/prim/functor/broadcast_array.hpp>
 #include <stan/math/prim/meta.hpp>

@@ -1,9 +1,7 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim.hpp>
 #include <test/unit/math/opencl/util.hpp>
-#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-#include <algorithm>
 
 auto cumulative_sum_functor
     = [](const auto& a) { return stan::math::cumulative_sum(a); };

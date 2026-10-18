@@ -4,8 +4,6 @@
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/make_holder_tuple.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <functional>
-#include <tuple>
 #include <utility>
 
 namespace stan {

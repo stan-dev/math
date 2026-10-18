@@ -1,4 +1,3 @@
-#include <iostream>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/fun/to_soa_sparse_matrix.hpp>
 #include <stan/math/rev/core.hpp>

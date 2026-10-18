@@ -3,7 +3,6 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
-#include <test/unit/util.hpp>
 
 auto identity_matrix_functorCPU
     = [](int n) { return stan::math::identity_matrix(n); };

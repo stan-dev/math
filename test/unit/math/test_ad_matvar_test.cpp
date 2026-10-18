@@ -1,8 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <gtest/gtest.h>
 #include <gtest/gtest-spi.h>
-#include <limits>
-#include <type_traits>
 #include <vector>
 
 template <typename T>

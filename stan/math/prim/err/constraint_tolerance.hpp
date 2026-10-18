@@ -5,7 +5,6 @@
 #define STAN_MATH_CONSTRAINT_TOLERANCE 1E-8
 #endif
 
-#include <stan/math/prim/meta.hpp>
 namespace stan {
 namespace math {
 

@@ -5,7 +5,6 @@
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/fun/multiply.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/fun/transpose.hpp>
 
 namespace stan {
 namespace math {

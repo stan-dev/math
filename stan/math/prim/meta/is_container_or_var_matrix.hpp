@@ -3,15 +3,8 @@
 
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
-#include <stan/math/prim/meta/is_eigen.hpp>
-#include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_container.hpp>
 #include <stan/math/prim/meta/is_var_matrix.hpp>
-#include <stan/math/prim/meta/scalar_type.hpp>
-#include <stan/math/prim/meta/value_type.hpp>
-#include <stan/math/prim/meta/require_helpers.hpp>
-
-#include <type_traits>
 
 namespace stan {
 

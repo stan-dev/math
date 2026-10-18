@@ -1,7 +1,6 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 
 template <typename F>
 inline void expect_match_autodiff(const F& f, Eigen::VectorXd x) {

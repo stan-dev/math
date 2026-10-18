@@ -1,7 +1,5 @@
 // Arguments: Doubles
 #include <stan/math/prim/prob/std_normal_lccdf.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/erf.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 
 using std::vector;

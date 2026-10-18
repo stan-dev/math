@@ -3,8 +3,6 @@
 #include <test/unit/math/rev/util.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
-#include <limits>
-#include <algorithm>
 #include <vector>
 #include <string>
 #include <cmath>

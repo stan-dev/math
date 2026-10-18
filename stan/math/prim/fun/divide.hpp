@@ -1,13 +1,10 @@
 #ifndef STAN_MATH_PRIM_FUN_DIVIDE_HPP
 #define STAN_MATH_PRIM_FUN_DIVIDE_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
-#include <cstddef>
 #include <cstdlib>
-#include <type_traits>
 
 namespace stan {
 namespace math {

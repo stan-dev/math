@@ -2,7 +2,6 @@
 #define STAN_MATH_OPENCL_PRIM_SUB_ROW_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/prim/block.hpp>
 
 namespace stan {

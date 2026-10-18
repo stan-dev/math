@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
-#include <stdexcept>
 
 TEST(MathFunctions, erfc) {
   using stan::math::erfc;

@@ -4,7 +4,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/functor/integrate_1d_adapter.hpp>
 #include <boost/math/quadrature/exp_sinh.hpp>
 #include <boost/math/quadrature/sinh_sinh.hpp>
 #include <boost/math/quadrature/tanh_sinh.hpp>

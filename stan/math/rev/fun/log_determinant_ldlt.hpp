@@ -5,7 +5,6 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/LDLT_factor.hpp>
-#include <stan/math/rev/core/typedefs.hpp>
 #include <stan/math/prim/fun/log_determinant_ldlt.hpp>
 
 namespace stan {

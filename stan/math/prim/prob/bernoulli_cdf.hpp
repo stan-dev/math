@@ -5,7 +5,6 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/any.hpp>
 #include <stan/math/prim/fun/select.hpp>
-#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 

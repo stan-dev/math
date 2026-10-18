@@ -1,12 +1,9 @@
 #ifndef TEST_UNIT_MATH_PRIM_PROB_HMM_UTIL
 #define TEST_UNIT_MATH_PRIM_PROB_HMM_UTIL
 #include <stan/math/prim/prob/hmm_marginal.hpp>
-#include <boost/math/distributions.hpp>
 #include <boost/random.hpp>
 #include <test/unit/math/test_ad.hpp>
-#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 #include <vector>
 
 /**

@@ -1,14 +1,11 @@
 #ifndef STAN_MATH_REV_CORE_PROFILING_HPP
 #define STAN_MATH_REV_CORE_PROFILING_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
-#include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/err.hpp>
 #include <tbb/concurrent_unordered_map.h>
-#include <iostream>
 #include <sstream>
 #include <thread>
 

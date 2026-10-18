@@ -4,9 +4,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/elementwise_check.hpp>
 #include <stan/math/prim/err/invalid_argument.hpp>
-#include <stan/math/prim/fun/get.hpp>
-#include <stan/math/prim/fun/size.hpp>
-#include <type_traits>
 #include <string>
 
 namespace stan {

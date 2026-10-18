@@ -6,12 +6,9 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/fwd/functor/broadcast_array.hpp>
 #include <stan/math/fwd/core/fvar.hpp>
-#include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/fun/sum.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
-#include <stan/math/prim/functor/apply.hpp>
-#include <stan/math/prim/functor/for_each.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <vector>
 

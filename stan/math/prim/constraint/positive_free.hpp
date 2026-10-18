@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_CONSTRAINT_POSITIVE_FREE_HPP
 #define STAN_MATH_PRIM_CONSTRAINT_POSITIVE_FREE_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <cmath>

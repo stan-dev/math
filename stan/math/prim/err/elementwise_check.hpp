@@ -9,9 +9,7 @@
 #include <stan/math/prim/meta/is_var_matrix.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
-#include <string>
 #include <sstream>
-#include <vector>
 
 namespace stan {
 namespace math {

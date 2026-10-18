@@ -3,16 +3,12 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/opencl/prim/size.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
-#include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
-#include <stan/math/prim/fun/elt_multiply.hpp>
-#include <stan/math/prim/fun/elt_divide.hpp>
 
 namespace stan {
 namespace math {

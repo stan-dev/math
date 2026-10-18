@@ -6,7 +6,6 @@
 #include <stan/math/prim/functor/apply.hpp>
 
 #include <utility>
-#include <vector>
 
 namespace stan {
 namespace math {

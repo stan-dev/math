@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_CORE_ARENA_MATRIX_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/chainable_object.hpp>
 #include <stan/math/rev/core/var_value_fwd_declare.hpp>

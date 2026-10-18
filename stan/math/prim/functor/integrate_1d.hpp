@@ -9,7 +9,6 @@
 #include <boost/math/quadrature/sinh_sinh.hpp>
 #include <boost/math/quadrature/tanh_sinh.hpp>
 #include <cmath>
-#include <functional>
 #include <ostream>
 #include <vector>
 

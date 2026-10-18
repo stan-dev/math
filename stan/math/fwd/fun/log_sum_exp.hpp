@@ -9,7 +9,6 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <cmath>
-#include <vector>
 
 namespace stan {
 namespace math {

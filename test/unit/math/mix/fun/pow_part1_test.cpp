@@ -1,7 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <cmath>
 #include <limits>
-#include <vector>
 
 template <typename T>
 inline void expect_arith_instantiate() {

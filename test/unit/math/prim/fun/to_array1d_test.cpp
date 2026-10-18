@@ -2,7 +2,6 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
-#include <stdexcept>
 
 TEST(MathMatrix, to_array_1d_matrix) {
   using stan::math::to_array_1d;

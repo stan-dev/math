@@ -7,9 +7,7 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/fun/gp_exp_quad_cov.hpp>
 #include <stan/math/rev/fun/squared_distance.hpp>
-#include <stan/math/rev/fun/exp.hpp>
 #include <stan/math/prim/fun/cov_exp_quad.hpp>
-#include <type_traits>
 #include <vector>
 #include <cmath>
 

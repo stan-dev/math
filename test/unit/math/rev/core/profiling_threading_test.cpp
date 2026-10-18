@@ -1,7 +1,6 @@
 #ifdef STAN_THREADS
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
-#include <test/unit/math/prim/functor/utils_threads.hpp>
 #include <test/unit/math/prim/functor/reduce_sum_util.hpp>
 #include <gtest/gtest.h>
 

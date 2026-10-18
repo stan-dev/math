@@ -43,7 +43,6 @@
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <algorithm>
 #include <cmath>
 #include <string>
 

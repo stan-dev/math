@@ -4,7 +4,6 @@
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/operator_subtraction.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/size.hpp>
 namespace stan {
 namespace math {
 

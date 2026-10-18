@@ -6,7 +6,6 @@
 #include <stan/math/opencl/prim/symmetrize_from_lower_tri.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
 
 namespace stan {
 namespace math {

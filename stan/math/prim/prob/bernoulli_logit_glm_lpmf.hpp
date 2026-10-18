@@ -7,10 +7,7 @@
 #include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
-#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
-#include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/isfinite.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>

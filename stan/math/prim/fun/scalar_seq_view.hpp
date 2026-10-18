@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_FUN_SCALAR_SEQ_VIEW_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
 #include <type_traits>
 #include <utility>
 

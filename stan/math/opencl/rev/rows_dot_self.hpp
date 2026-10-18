@@ -6,7 +6,6 @@
 #include <stan/math/opencl/prim/rows_dot_self.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/prim/fun/size_zero.hpp>
 
 namespace stan {
 namespace math {

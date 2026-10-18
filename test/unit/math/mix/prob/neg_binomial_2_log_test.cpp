@@ -1,7 +1,6 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/test_ad.hpp>
 #include <gtest/gtest.h>
-#include <boost/math/differentiation/finite_difference.hpp>
 
 TEST_F(AgradRev, mathMixScalFun_neg_binomial_2_log_lpmf_derivatives) {
   auto f1 = [](const auto& eta, const auto& phi) {

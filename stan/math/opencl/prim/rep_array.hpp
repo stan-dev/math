@@ -3,8 +3,6 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/prim/rep_matrix.hpp>
 
 namespace stan {

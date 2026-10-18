@@ -6,7 +6,6 @@
 #include <stan/math/prim/fun/ceil.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <unsupported/Eigen/MatrixFunctions>
-#include <vector>
 #include <cmath>
 
 namespace stan {

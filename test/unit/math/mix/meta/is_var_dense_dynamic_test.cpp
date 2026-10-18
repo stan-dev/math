@@ -1,5 +1,4 @@
 #include <stan/math/mix.hpp>
-#include <test/unit/math/mix/meta/eigen_utils.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMetaMix, is_var_dense_dynamic_test) {

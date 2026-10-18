@@ -1,8 +1,6 @@
 // Arguments: Ints, Doubles, Doubles
 #include <stan/math/prim/prob/neg_binomial_2_lpmf.hpp>
-#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
-#include <boost/math/special_functions/binomial.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

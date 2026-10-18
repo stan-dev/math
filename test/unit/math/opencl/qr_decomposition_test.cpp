@@ -2,7 +2,6 @@
 
 #include <stan/math/opencl/prim.hpp>
 #include <gtest/gtest.h>
-#include <algorithm>
 
 using stan::math::matrix_cl;
 

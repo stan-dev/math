@@ -14,9 +14,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/eval.hpp>
-#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/sum.hpp>
-#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 
 namespace stan {

@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_FUN_IS_UNINITIALIZED_HPP
 #define STAN_MATH_PRIM_FUN_IS_UNINITIALIZED_HPP
 
-#include <stan/math/prim/meta.hpp>
 namespace stan {
 namespace math {
 

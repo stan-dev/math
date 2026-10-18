@@ -4,12 +4,10 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/beta.hpp>
-#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/inv.hpp>
-#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>

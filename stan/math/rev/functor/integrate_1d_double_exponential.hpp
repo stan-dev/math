@@ -10,7 +10,6 @@
 #include <stan/math/prim/functor/integrate_1d_double_exponential.hpp>
 #include <cmath>
 #include <ostream>
-#include <vector>
 
 namespace stan {
 namespace math {

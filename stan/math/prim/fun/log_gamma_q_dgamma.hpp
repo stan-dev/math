@@ -7,7 +7,6 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/gamma_p.hpp>
-#include <stan/math/prim/fun/gamma_q.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>

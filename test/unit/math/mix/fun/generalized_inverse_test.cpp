@@ -1,5 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <vector>
 #include <gtest/gtest.h>
 
 TEST(mathMixMatFun, gen_inv_test_1) {

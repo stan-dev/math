@@ -1,6 +1,5 @@
 // Arguments: Doubles, Doubles
 #include <stan/math/prim/prob/rayleigh_lpdf.hpp>
-#include <stan/math/prim/fun/log.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

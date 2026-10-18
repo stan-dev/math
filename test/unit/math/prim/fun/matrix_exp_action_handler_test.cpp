@@ -1,7 +1,5 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/prim/util.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 
 TEST(MathMatrixRevMat, matrix_exp_action_diag) {
   using Eigen::MatrixXd;

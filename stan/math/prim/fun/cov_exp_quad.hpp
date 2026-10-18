@@ -4,7 +4,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/gp_exp_quad_cov.hpp>
-#include <stan/math/prim/fun/squared_distance.hpp>
 #include <vector>
 #include <cmath>
 

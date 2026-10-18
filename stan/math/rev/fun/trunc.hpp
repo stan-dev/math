@@ -1,10 +1,7 @@
 #ifndef STAN_MATH_REV_FUN_TRUNC_HPP
 #define STAN_MATH_REV_FUN_TRUNC_HPP
 
-#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/is_nan.hpp>
 #include <stan/math/prim/fun/trunc.hpp>
 
 namespace stan {

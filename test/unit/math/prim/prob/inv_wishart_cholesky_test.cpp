@@ -1,8 +1,5 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/math/distributions.hpp>
-#include <boost/math/special_functions/digamma.hpp>
 
 TEST(ProbDistributionsInvWishartCholesky, inv_wishart_cholesky_4x4) {
   using Eigen::Dynamic;

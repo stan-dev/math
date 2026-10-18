@@ -2,11 +2,6 @@
 #include <stan/math.hpp>
 #include <stan/math/mix.hpp>
 #include <test/unit/math/laplace/laplace_utility.hpp>
-#include <test/unit/math/rev/fun/util.hpp>
-#include <stan/math/prim/fun/lgamma.hpp>
-#include <test/unit/math/laplace/aki_synth_data/x1.hpp>
-#include <test/unit/math/laplace/motorcycle_gp/x_vec.hpp>
-#include <test/unit/pretty_print_types.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
 #include <sstream>

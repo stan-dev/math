@@ -1,5 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <stdexcept>
 
 TEST(MathMixMatFun, singularValues) {
   auto f = [](const auto& x) { return stan::math::singular_values(x); };

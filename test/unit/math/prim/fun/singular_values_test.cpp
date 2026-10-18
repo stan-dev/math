@@ -1,7 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
-#include <stdexcept>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <complex>
 

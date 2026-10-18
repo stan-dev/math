@@ -1,6 +1,5 @@
 #include <stan/math/fwd.hpp>
 #include <gtest/gtest.h>
-#include <stdexcept>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;

@@ -6,10 +6,7 @@
 #include <stan/math/mix/functor/wolfe_line_search.hpp>
 #include <stan/math/mix/functor/barzilai_borwein_step_size.hpp>
 #include <stan/math/mix/meta.hpp>
-#include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/fun/quad_form_diag.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/iter_tuple_nested.hpp>
 #include <algorithm>
 #include <cmath>
 #include <limits>

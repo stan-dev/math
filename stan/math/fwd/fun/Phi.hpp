@@ -3,7 +3,6 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/fun/pow.hpp>
 #include <stan/math/fwd/fun/exp.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/Phi.hpp>

@@ -3,27 +3,17 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/exp.hpp>
 #include <stan/math/rev/fun/inv.hpp>
 #include <stan/math/rev/fun/inv_sqrt.hpp>
 #include <stan/math/rev/fun/inv_square.hpp>
-#include <stan/math/rev/fun/is_nan.hpp>
 #include <stan/math/rev/fun/log.hpp>
 #include <stan/math/rev/fun/sqrt.hpp>
 #include <stan/math/rev/fun/square.hpp>
-#include <stan/math/rev/fun/value_of_rec.hpp>
-#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/copysign.hpp>
-#include <stan/math/prim/fun/is_any_nan.hpp>
-#include <stan/math/prim/fun/isnan.hpp>
-#include <stan/math/prim/fun/is_nan.hpp>
 #include <stan/math/prim/fun/pow.hpp>
 
 #include <cmath>
-#include <complex>
 #include <type_traits>
 
 namespace stan {

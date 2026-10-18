@@ -1,9 +1,6 @@
-#include <stan/math/prim/meta.hpp>
-#include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/mix/functor/reduce_sum_util.hpp>
 #include <test/unit/math/rev/util.hpp>
 
-#include <limits>
 #include <vector>
 
 // Reduce sum tests are broken up into four files to avoid windows compiler

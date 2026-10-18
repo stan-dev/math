@@ -1,6 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/fun/util.hpp>
 
 TEST(ProbInternalMath, F32_fd) {
   using stan::math::fvar;

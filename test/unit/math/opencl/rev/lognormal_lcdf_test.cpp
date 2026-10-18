@@ -3,7 +3,6 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
-#include <vector>
 
 TEST(ProbDistributionsLognormalLcdf, error_checking) {
   int N = 3;

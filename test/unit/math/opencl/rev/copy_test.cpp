@@ -2,7 +2,6 @@
 #include <stan/math/opencl/rev.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-#include <algorithm>
 #include <vector>
 
 TEST(VariCL, var_matrix_to_matrix_cl) {

@@ -4,9 +4,7 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
-#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernels/device_functions/atomic_add_double.hpp>
-#include <string>
 
 namespace stan {
 namespace math {

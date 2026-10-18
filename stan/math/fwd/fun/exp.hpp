@@ -3,8 +3,6 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/fun/cos.hpp>
-#include <stan/math/fwd/fun/sin.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <cmath>
 #include <complex>

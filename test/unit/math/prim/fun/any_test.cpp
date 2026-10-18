@@ -1,7 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
-#include <limits>
 
 TEST(MathFunctions, any) {
   using stan::math::any;

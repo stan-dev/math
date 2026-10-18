@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/mix/functor/laplace_marginal_density.hpp>
-#include <stan/math/prim/prob/multi_normal_cholesky_rng.hpp>
 #include <stan/math/prim/prob/multi_normal_rng.hpp>
 #include <stan/math/prim/fun/cholesky_decompose.hpp>
 

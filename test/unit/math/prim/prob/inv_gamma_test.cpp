@@ -2,7 +2,6 @@
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 #include <test/unit/math/prim/prob/util.hpp>
 #include <boost/random/mersenne_twister.hpp>
-#include <boost/math/distributions.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <limits>

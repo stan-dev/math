@@ -5,7 +5,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/LDLT_factor.hpp>
 #include <stan/math/prim/fun/mdivide_left_ldlt.hpp>
-#include <stan/math/prim/fun/transpose.hpp>
 
 namespace stan {
 namespace math {

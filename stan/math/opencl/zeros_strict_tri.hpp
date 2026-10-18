@@ -7,7 +7,6 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/err.hpp>
 #include <stan/math/opencl/kernels/fill_strict_tri.hpp>
-#include <stan/math/prim/meta.hpp>
 
 #include <CL/opencl.hpp>
 

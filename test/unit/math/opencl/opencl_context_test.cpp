@@ -3,7 +3,6 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
-#include <fstream>
 #include <string>
 
 TEST(MathGpu, getInfo) {

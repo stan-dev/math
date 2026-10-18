@@ -2,16 +2,9 @@
 #define STAN_MATH_REV_FUNCTOR_KINSOL_SOLVE_HPP
 
 #include <stan/math/rev/functor/kinsol_data.hpp>
-#include <stan/math/rev/functor/algebra_system.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/to_array_1d.hpp>
-#include <stan/math/prim/fun/to_vector.hpp>
-#include <sundials/sundials_context.h>
 #include <kinsol/kinsol.h>
-#include <sunmatrix/sunmatrix_dense.h>
-#include <sunlinsol/sunlinsol_dense.h>
 #include <nvector/nvector_serial.h>
-#include <vector>
 
 namespace stan {
 namespace math {

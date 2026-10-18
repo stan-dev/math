@@ -17,7 +17,6 @@
 #include <tbb/concurrent_vector.h>
 #include <string>
 #include <iostream>
-#include <fstream>
 #include <unordered_map>
 #include <vector>
 #include <cmath>

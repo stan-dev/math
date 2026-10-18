@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include <stan/math/rev/core.hpp>
-#include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/util.hpp>
 
 #include <thread>

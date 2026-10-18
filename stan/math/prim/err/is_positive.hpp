@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_ERR_IS_POSITIVE_HPP
 #define STAN_MATH_PRIM_ERR_IS_POSITIVE_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/size.hpp>
 

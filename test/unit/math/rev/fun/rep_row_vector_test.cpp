@@ -1,6 +1,5 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
-#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
 TEST_F(AgradRev, MathMixMatFun_repRowVectorVar) {

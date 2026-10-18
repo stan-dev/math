@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/domain_error.hpp>
-#include <kinsol/kinsol.h>
 #include <cvodes/cvodes.h>
 #include <idas/idas.h>
 #include <arkode/arkode.h>

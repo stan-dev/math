@@ -1,9 +1,7 @@
 #ifdef STAN_OPENCL
 #include <stan/math.hpp>
 #include <test/unit/math/opencl/util.hpp>
-#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-#include <algorithm>
 
 auto ldexp_functor
     = [](const auto& a, const auto& b) { return stan::math::ldexp(a, b); };

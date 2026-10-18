@@ -4,7 +4,6 @@
 
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/prim/multiply.hpp>
-#include <stan/math/opencl/kernel_generator.hpp>
 
 namespace stan {
 namespace math {

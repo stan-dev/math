@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/rev/meta/is_var.hpp>
-#include <type_traits>
 
 namespace stan {
 

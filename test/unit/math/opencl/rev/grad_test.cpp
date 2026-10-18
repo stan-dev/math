@@ -1,9 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math.hpp>
-#include <test/unit/math/opencl/util.hpp>
-#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-#include <algorithm>
 
 TEST(OpenCLGradTest, exceptions) {
   using stan::math::matrix_cl;

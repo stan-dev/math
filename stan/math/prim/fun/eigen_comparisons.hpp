@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_FUN_EIGEN_COMPARISONS_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 
 namespace stan {

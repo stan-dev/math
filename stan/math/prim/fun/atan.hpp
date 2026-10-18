@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_PRIM_FUN_ATAN_HPP
 #define STAN_MATH_PRIM_FUN_ATAN_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/atanh.hpp>
 #include <stan/math/prim/fun/i_times.hpp>

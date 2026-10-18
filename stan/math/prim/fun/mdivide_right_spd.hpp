@@ -4,7 +4,6 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/mdivide_left_spd.hpp>
-#include <stan/math/prim/fun/transpose.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {
