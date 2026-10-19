@@ -15,17 +15,8 @@ namespace math {
 /**
  * Precompute storage for cubic Hermite interpolation.
  *
- * This function sets up cubic Hermite interpolation by computing, for each
- * interval `[xk(i), xk(i + 1)]`, the coefficients of the cubic polynomial
- *   y(x) = a0 + a1 * dx + a2 * dx^2 + a3 * dx^3,
- * where `dx = x - xk(i)`. These coefficients are obtained by rewriting the
- * cubic Hermite basis representation
- *   y(t) = (1-t)^2 * (y0*(1+2*t) + s0*(x-x0)) + t^2 * (y1*(3-2*t) + dx*s1*(t-1))
- * (with `t = (x - x0) / (x1 - x0)`, `x0 = xk(i)`, `x1 = xk(i + 1)`,
- * `y0 = yk(i)`, `y1 = yk(i + 1)`, `s0 = dydxk(i)`, `s1 = dydxk(i + 1)`) as a
- * polynomial in `dx` rather than in `t`. See
- * boost/math/interpolators/detail/cubic_hermite_detail.hpp for background on
- * the cubic Hermite spline.
+ * This function validates the input knot locations, values, and derivatives,
+ * then stores them in a tuple for use with `interp1_cubic_hermite_eval`.
  *
  * @tparam EigVecX type of the knot locations
  * @tparam EigVecY type of the knot values
@@ -33,8 +24,10 @@ namespace math {
  * @param xk Strictly increasing interpolation knot locations.
  * @param yk Interpolation values at the knots.
  * @param dydxk Derivative values at the knots (user-provided).
- * @return A tuple containing a (K-1) x 4 coefficient matrix and the knot
- *   locations.
+ * @return A tuple containing:
+ *   - Knot locations `xk`
+ *   - Knot values `yk`
+ *   - Derivative values `dydxk`
  * @throw std::invalid_argument if `xk`, `yk`, and `dydxk` do not have the same
  *   sizes
  * @throw std::domain_error if there are fewer than two knots, any input is
@@ -43,9 +36,9 @@ namespace math {
 template <typename EigVecX, typename EigVecY, typename EigVecDyDx,
           require_all_eigen_col_vector_t<EigVecX, EigVecY, EigVecDyDx>* = nullptr>
 inline std::tuple<
-    Eigen::Matrix<return_type_t<EigVecX, EigVecY, EigVecDyDx>, Eigen::Dynamic,
-                  Eigen::Dynamic>,
-    Eigen::Matrix<return_type_t<EigVecX>, Eigen::Dynamic, 1>>
+    Eigen::Matrix<return_type_t<EigVecX>, Eigen::Dynamic, 1>,
+    Eigen::Matrix<return_type_t<EigVecY>, Eigen::Dynamic, 1>,
+    Eigen::Matrix<return_type_t<EigVecDyDx>, Eigen::Dynamic, 1>>
 interp1_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
                             const EigVecDyDx& dydxk) {
   static constexpr const char* function = "interp1_cubic_hermite_setup";
@@ -61,80 +54,54 @@ interp1_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
   check_finite(function, "dydxk", dydxk_ref);
   check_ordered(function, "xk", xk_ref);
 
-  using coef_t = return_type_t<EigVecX, EigVecY, EigVecDyDx>;
   using xk_t = return_type_t<EigVecX>;
-  const Eigen::Index K = xk_ref.size();
-  Eigen::Matrix<coef_t, Eigen::Dynamic, Eigen::Dynamic> coef(K - 1, 4);
+  using yk_t = return_type_t<EigVecY>;
+  using dydxk_t = return_type_t<EigVecDyDx>;
 
-  for (Eigen::Index i = 0; i < K - 1; ++i) {
-    const coef_t h = xk_ref.coeff(i + 1) - xk_ref.coeff(i);
-    const coef_t y0 = yk_ref.coeff(i);
-    const coef_t y1 = yk_ref.coeff(i + 1);
-    const coef_t s0 = dydxk_ref.coeff(i);
-    const coef_t s1 = dydxk_ref.coeff(i + 1);
-    const coef_t h2 = h * h;
-    const coef_t h3 = h2 * h;
+  Eigen::Matrix<xk_t, Eigen::Dynamic, 1> xk_out = xk_ref;
+  Eigen::Matrix<yk_t, Eigen::Dynamic, 1> yk_out = yk_ref;
+  Eigen::Matrix<dydxk_t, Eigen::Dynamic, 1> dydxk_out = dydxk_ref;
 
-    coef(i, 0) = y0;
-    coef(i, 1) = s0;
-    coef(i, 2) = (3 * (y1 - y0) - h * (2 * s0 + s1)) / h2;
-    coef(i, 3) = (2 * (y0 - y1) + h * (s0 + s1)) / h3;
-  }
-
-  Eigen::Matrix<xk_t, Eigen::Dynamic, 1> knots = xk_ref;
-  return std::make_tuple(std::move(coef), std::move(knots));
+  return std::make_tuple(std::move(xk_out), std::move(yk_out), std::move(dydxk_out));
 }
-
 /**
  * Evaluate cubic Hermite interpolation.
  *
- * This function evaluates the cubic Hermite interpolant built by
- * `interp1_cubic_hermite_setup` at the location `x`. It first locates the
- * interval `[xk(i), xk(i + 1)]` containing `x` (mirroring the search
- * performed in `cubic_hermite_detail::operator()` in
- * boost/math/interpolators/detail/cubic_hermite_detail.hpp), and then
- * evaluates the corresponding cubic polynomial
- *   y(x) = a0 + a1 * dx + a2 * dx^2 + a3 * dx^3,
- * with `dx = x - xk(i)`, using Horner's method. Because the coefficients
- * were derived so that this polynomial agrees exactly with the Hermite basis
- * representation on `[xk(i), xk(i + 1)]`, this reproduces the values that
- * would be returned by `cubic_hermite_detail::operator()`, including the
- * special handling at the right endpoint `x = xk(K - 1)`.
+ * This function evaluates the cubic Hermite interpolant at location `x` using
+ * the standard scaled cubic Hermite basis functions:
+ *   y(x) = (1-t)^2 * (y0*(1+2*t) + h*s0*t) + t^2 * (y1*(3-2*t) + h*s1*(t-1))
+ * where `t = (x - xk(i)) / h`, `h = xk(i+1) - xk(i)`, `y0 = yk(i)`,
+ * `y1 = yk(i+1)`, `s0 = dydxk(i)`, `s1 = dydxk(i+1)`.
  *
  * @tparam T type of the evaluation location
- * @tparam Coef type of the coefficient matrix
- * @tparam Knots type of the knot locations
+ * @tparam XkType type of the knot locations
+ * @tparam YkType type of the knot values
+ * @tparam DydxkType type of the derivative values
  * @param x Location at which to evaluate the interpolation.
- * @param W Tuple returned by `interp1_cubic_hermite_setup`.
+ * @param W Tuple returned by `interp1_cubic_hermite_setup` containing (xk, yk, dydxk).
  * @return The interpolated value at `x`.
- * @throw std::invalid_argument if `W` does not have the expected dimensions
+ * @throw std::invalid_argument if `W` does not have the expected structure
  * @throw std::domain_error if `x` is not finite or is outside of the range
  *   spanned by the knots
  */
-template <typename T, typename Coef, typename Knots,
-          require_stan_scalar_t<T>* = nullptr>
-inline return_type_t<T, Coef, Knots> interp1_cubic_hermite_eval(
-    const T& x, const std::tuple<Coef, Knots>& W) {
-  static constexpr const char* function = "interp1_cubic_hermite_eval";
-  const auto& coef = std::get<0>(W);
-  const auto& xk = std::get<1>(W);
 
-  check_size_match(function, "columns of coefficient matrix", coef.cols(), "4",
-                   4);
-  check_size_match(function, "rows of coefficient matrix plus one",
-                   coef.rows() + 1, "size of xk", xk.size());
+ template <typename T, typename XkType, typename YkType, typename DydxkType,
+          require_stan_scalar_t<T>* = nullptr>
+inline return_type_t<T, XkType, YkType, DydxkType> interp1_cubic_hermite_eval(
+    const T& x, const std::tuple<XkType, YkType, DydxkType>& W) {
+  static constexpr const char* function = "interp1_cubic_hermite_eval";
+  const auto& xk = std::get<0>(W);
+  const auto& yk = std::get<1>(W);
+  const auto& dydxk = std::get<2>(W);
+
+  check_size_match(function, "xk", xk.size(), "yk", yk.size());
+  check_size_match(function, "xk", xk.size(), "dydxk", dydxk.size());
   check_finite(function, "x", x);
 
   const Eigen::Index K = xk.size();
   check_bounded(function, "x", x, xk.coeff(0), xk.coeff(K - 1));
 
-  // Locate the interval i such that xk(i) <= x <= xk(i + 1). This mirrors
-  // the std::upper_bound-based search in cubic_hermite_detail::operator():
-  // `it` points to the first knot strictly greater than `x`, so `i` (one
-  // less than the resulting index) is the interval containing `x`. When
-  // `x` equals the last knot, `it == end`, giving `i == K - 1`; in that
-  // case we fall back to the last interval, exactly as the reference
-  // implementation special-cases `x == x_.back()`.
+  // Locate the interval i such that xk(i) <= x <= xk(i + 1)
   const auto* begin = xk.data();
   const auto* end = begin + K;
   const auto it = std::upper_bound(begin, end, x);
@@ -143,9 +110,21 @@ inline return_type_t<T, Coef, Knots> interp1_cubic_hermite_eval(
     --i;
   }
 
-  const auto dx = x - xk.coeff(i);
-  return coef(i, 0)
-         + dx * (coef(i, 1) + dx * (coef(i, 2) + dx * coef(i, 3)));
+  // Compute scaled parameter t and interval width h
+  const auto h = xk.coeff(i + 1) - xk.coeff(i);
+  const auto t = (x - xk.coeff(i)) / h;
+  const auto t_minus_1 = t - 1.0;
+
+  // Evaluate using standard cubic Hermite basis functions
+  const auto y0 = yk.coeff(i);
+  const auto y1 = yk.coeff(i + 1);
+  const auto s0 = dydxk.coeff(i);
+  const auto s1 = dydxk.coeff(i + 1);  
+  
+  const auto h0 = t_minus_1 * t_minus_1 * (y0 * (1.0 + 2.0 * t) + h * s0 * t);
+  const auto h1 = t * t * (y1 * (3.0 - 2.0 * t) + h * s1 * t_minus_1);
+
+  return h0 + h1;
 }
 
 // Forward to your actual implementation
