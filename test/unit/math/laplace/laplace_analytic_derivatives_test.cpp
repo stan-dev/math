@@ -88,7 +88,7 @@ const std::vector<int> y_index{1, 1, 1, 2, 3, 3, 4, 4};
 struct counted_poisson_likelihood {
   template <typename... Args>
   auto operator()(Args&&... args) const {
-    return poisson_log_likelihood{}(std::forward<Args>(args)...);
+    return poisson_log_likelihood()(std::forward<Args>(args)...);
   }
 };
 int n_analytic_calls = 0;
