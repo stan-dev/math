@@ -8,7 +8,6 @@
 #include <stan/math/prim/fun/erfcx.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/inv.hpp>
-#include <stan/math/prim/fun/inv_square.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -16,89 +15,30 @@
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
-#include <array>
 #include <utility>
 
 namespace stan {
 namespace math {
 namespace internal {
 
-// Rational approximations from Cody (1969), Math. Comp. 23:631-637 (SPECFUN
-// CALERF). The erfcx coefficients are erfcx.hpp's, lowest power first.
-
-inline constexpr std::array<double, 5> std_normal_erf_small_num
-    = {1.85777706184603153e-1, 3.16112374387056560, 1.13864154151050156e2,
-       3.77485237685302021e2, 3.20937758913846947e3};
-// Highest power first, after a leading coefficient of 1.
-inline constexpr std::array<double, 4> std_normal_erf_small_den
-    = {2.36012909523441209e1, 2.44024637934444173e2, 1.28261652607737228e3,
-       2.84423683343917062e3};
-
-/** erf(x) for |x| < 0.46875, given x_sq = x^2. */
-template <typename T, typename T_x_sq>
-inline auto std_normal_erf_small(const T& x, const T_x_sq& x_sq) {
-  constexpr auto& num = std_normal_erf_small_num;
-  constexpr auto& den = std_normal_erf_small_den;
-  const auto numerator
-      = (((num[0] * x_sq + num[1]) * x_sq + num[2]) * x_sq + num[3]) * x_sq
-        + num[4];
-  const auto denominator
-      = (((x_sq + den[0]) * x_sq + den[1]) * x_sq + den[2]) * x_sq + den[3];
-  return x * numerator / denominator;
-}
+// The erfcx pieces (Cody 1969 rationals and the small-argument polynomial)
+// come from erfcx.hpp.
 
 /** Tail factor in inv_x_sq = 1/x^2:
  * erfcx(x) = (1 + inv_x_sq * correction) / (sqrt(pi) x).
  */
 template <typename T>
 inline auto std_normal_tail_correction(const T& inv_x_sq) {
-  constexpr auto& num = erfcx_tail_p;
-  constexpr auto& den = erfcx_tail_q;
-  const auto numerator
-      = ((((num[5] * inv_x_sq + num[4]) * inv_x_sq + num[3]) * inv_x_sq
-          + num[2])
-             * inv_x_sq
-         + num[1])
-            * inv_x_sq
-        + num[0];
-  const auto denominator
-      = ((((den[5] * inv_x_sq + den[4]) * inv_x_sq + den[3]) * inv_x_sq
-          + den[2])
-             * inv_x_sq
-         + den[1])
-            * inv_x_sq
-        + den[0];
-  return (numerator / denominator) / INV_SQRT_PI;
-}
-
-/** erfcx(x) = exp(x^2) erfc(x) for 0.46875 <= x <= 4. */
-template <typename T>
-inline auto std_normal_erfcx_middle(const T& x) {
-  constexpr auto& num = erfcx_middle_p;
-  constexpr auto& den = erfcx_middle_q;
-  const auto numerator_high
-      = ((((num[8] * x + num[7]) * x + num[6]) * x + num[5]) * x + num[4]) * x
-        + num[3];
-  const auto numerator
-      = ((numerator_high * x + num[2]) * x + num[1]) * x + num[0];
-  // den[8] is 1.
-  const auto denominator_high
-      = ((((x + den[7]) * x + den[6]) * x + den[5]) * x + den[4]) * x + den[3];
-  const auto denominator
-      = ((denominator_high * x + den[2]) * x + den[1]) * x + den[0];
-  return numerator / denominator;
-}
-
-/** erfcx(x) = exp(x^2) erfc(x) for x > 4, given inv_x_sq = 1/x^2. */
-template <typename T, typename T_inv_x_sq>
-inline auto std_normal_erfcx_tail(const T& x, const T_inv_x_sq& inv_x_sq) {
-  return (1 + inv_x_sq * std_normal_tail_correction(inv_x_sq)) * INV_SQRT_PI
-         / x;
+  // The arrays ascend in 1/x^2; reversed, they are Horner order.
+  const auto pq = erfcx_tail_polynomials<erfcx_tail_p.size()>(
+      erfcx_tail_p.crbegin(), erfcx_tail_q.crbegin(), inv_x_sq);
+  return (pq.first / pq.second) / INV_SQRT_PI;
 }
 
 /** Scalar log Phi(z) and its slope phi(z) / Phi(z).
- * For z < 0 both come from erfcx with no exp; z > 0 needs one exp for the
- * complement. Infinite z gives -inf/0 values and inf/0 slopes.
+ * For z < 0.46875 sqrt(2) both come from erfcx with no exp; larger z needs
+ * one exp for the complement. Infinite z gives -inf/0 values and inf/0
+ * slopes.
  * The lower tail keeps log1p, inv_x_sq = 2 (1/neg_z)^2 and
  * neg_z / (1 + tail_term) so nested autodiff neither overflows nor loses the
  * 2 / neg_z^3 third derivative; the z > 40 return keeps derivatives finite
@@ -129,18 +69,17 @@ inline auto std_normal_lcdf_value_grad(const T& z_in) {
   // Not abs(z): its autodiff tangent is 0 at z == 0, which the slope needs.
   const auto x = (z < 0 ? -z : z) * INV_SQRT_TWO;
   if (x < 0.46875) {
-    const auto erf_x = std_normal_erf_small(x, square(x));
-    const auto value = LOG_HALF + log1p(z < 0 ? -erf_x : erf_x);
+    // Phi(z) = exp(-z^2 / 2) erfcx(-z / sqrt(2)) / 2 for either sign.
+    const auto erfcx_neg = erfcx_small(-z * INV_SQRT_TWO);
+    const auto value = LOG_HALF - (0.5 * z) * z + log(erfcx_neg);
     if constexpr (calc_grad) {
-      return std::pair<T_return, T_return>{
-          value, SQRT_TWO_OVER_SQRT_PI * exp(-square(x))
-                     / (z < 0 ? 1 - erf_x : 1 + erf_x)};
+      return std::pair<T_return, T_return>{value,
+                                           SQRT_TWO_OVER_SQRT_PI / erfcx_neg};
     } else {
       return T_return(value);
     }
   }
-  const auto erfcx_x = x > 4 ? std_normal_erfcx_tail(x, inv_square(x))
-                             : std_normal_erfcx_middle(x);
+  const auto erfcx_x = x >= 4 ? erfcx_cody_tail(x) : erfcx_cody_middle(x);
   if (z < 0) {
     const auto value = -(0.5 * z) * z + LOG_HALF + log(erfcx_x);
     if constexpr (calc_grad) {

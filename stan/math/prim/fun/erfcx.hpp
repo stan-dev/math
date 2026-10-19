@@ -89,14 +89,16 @@ inline T erfcx_paired_horner(const std::array<double, N>& c, const T& y,
  * Cody correction. `u * C(u)` is formed from the coefficients in `x^2`, so
  * `1 / x^2` is never formed.
  *
+ * @tparam T scalar type
  * @param x argument, `x >= 4`
  * @return scaled complementary error function
  */
-inline double erfcx_cody_tail(double x) {
+template <typename T>
+inline T erfcx_cody_tail(const T& x) {
   if (x > erfcx_tail_leading_only) {
     return INV_SQRT_PI / x;
   }
-  const double s = x * x;
+  const T s = x * x;
   const auto pq = erfcx_tail_polynomials<erfcx_tail_p.size()>(
       erfcx_tail_p.cbegin(), erfcx_tail_q.cbegin(), s);
   return (INV_SQRT_PI + pq.first / (s * pq.second)) / x;
@@ -150,11 +152,13 @@ inline T erfcx_derivative(const T& x, const T& value) {
  * is `R(x)` with the exponential cancelled analytically: no `exp` and no
  * `erfc` call.
  *
+ * @tparam T scalar type
  * @param y argument, `0.46875 <= y <= 4`
  * @return scaled complementary error function
  */
-inline double erfcx_cody_middle(double y) {
-  const double y2 = y * y;
+template <typename T>
+inline T erfcx_cody_middle(const T& y) {
+  const T y2 = y * y;
   return erfcx_paired_horner(erfcx_middle_p, y, y2)
          / erfcx_paired_horner(erfcx_middle_q, y, y2);
 }
@@ -170,10 +174,12 @@ inline double erfcx_cody_middle(double y) {
  * Evaluated by Estrin's method: four independent degree-3 blocks are
  * combined in `x^4` and `x^8`.
  *
+ * @tparam T scalar type
  * @param x argument, `|x| < 0.46875`
  * @return scaled complementary error function
  */
-inline double erfcx_small(double x) {
+template <typename T>
+inline T erfcx_small(const T& x) {
   static constexpr std::array<double, 19> c{1.0,
                                             -1.12837916709551256,
                                             1.0,
@@ -193,15 +199,15 @@ inline double erfcx_small(double x) {
                                             2.46655529768908249e-05,
                                             -9.35890030086883823e-06,
                                             3.05977060678449757e-06};
-  const double x2 = x * x;
-  const double x4 = x2 * x2;
-  const double x8 = x4 * x4;
-  std::array<double, 4> quad;
+  const T x2 = x * x;
+  const T x4 = x2 * x2;
+  const T x8 = x4 * x4;
+  std::array<T, 4> quad;
   for (int i = 0; i < 4; ++i) {
     const int j = 4 * i + 2;
     quad[i] = (c[j] + c[j + 1] * x) + (c[j + 2] + c[j + 3] * x) * x2;
   }
-  const double rest
+  const T rest
       = (quad[0] + quad[1] * x4) + (quad[2] + quad[3] * x4 + c[18] * x8) * x8;
   return (c[0] + c[1] * x) + x2 * rest;
 }
