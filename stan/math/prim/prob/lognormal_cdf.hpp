@@ -62,7 +62,9 @@ inline return_type_t<T_y, T_loc, T_scale> lognormal_cdf(T_y&& y, T_loc&& mu,
     return ops_partials.build(0.0);
   }
 
-  auto z = (log(y_val) - mu_val) / sigma_val;
+  // Evaluated once: the sigma partial reads z again, and a lazy z would
+  // compute the log a second time.
+  auto z = eval((log(y_val) - mu_val) / sigma_val);
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
     const auto [values, ratios] = internal::std_normal_cdf_value_ratio<true>(z);
     const auto cdf = prod(values);
