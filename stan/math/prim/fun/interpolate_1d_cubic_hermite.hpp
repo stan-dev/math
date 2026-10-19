@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUN_INTERP1_CUBIC_HERMITE_HPP
-#define STAN_MATH_PRIM_FUN_INTERP1_CUBIC_HERMITE_HPP
+#ifndef STAN_MATH_PRIM_FUN_INTERPOLATE_1D_CUBIC_HERMITE_HPP
+#define STAN_MATH_PRIM_FUN_INTERPOLATE_1D_CUBIC_HERMITE_HPP
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
@@ -16,7 +16,7 @@ namespace math {
  * Precompute storage for cubic Hermite interpolation.
  *
  * This function validates the input knot locations, values, and derivatives,
- * then stores them in a tuple for use with `interp1_cubic_hermite_eval`.
+ * then stores them in a tuple for use with `interpolate_1d_cubic_hermite_eval`.
  *
  * @tparam EigVecX type of the knot locations
  * @tparam EigVecY type of the knot values
@@ -39,9 +39,9 @@ inline std::tuple<
     Eigen::Matrix<return_type_t<EigVecX>, Eigen::Dynamic, 1>,
     Eigen::Matrix<return_type_t<EigVecY>, Eigen::Dynamic, 1>,
     Eigen::Matrix<return_type_t<EigVecDyDx>, Eigen::Dynamic, 1>>
-interp1_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
+interpolate_1d_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
                             const EigVecDyDx& dydxk) {
-  static constexpr const char* function = "interp1_cubic_hermite_setup";
+  static constexpr const char* function = "interpolate_1d_cubic_hermite_setup";
   const auto& xk_ref = to_ref(xk);
   const auto& yk_ref = to_ref(yk);
   const auto& dydxk_ref = to_ref(dydxk);
@@ -78,7 +78,7 @@ interp1_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
  * @tparam YkType type of the knot values
  * @tparam DydxkType type of the derivative values
  * @param x Location at which to evaluate the interpolation.
- * @param W Tuple returned by `interp1_cubic_hermite_setup` containing (xk, yk, dydxk).
+ * @param W Tuple returned by `interpolate_1d_cubic_hermite_setup` containing (xk, yk, dydxk).
  * @return The interpolated value at `x`.
  * @throw std::invalid_argument if `W` does not have the expected structure
  * @throw std::domain_error if `x` is not finite or is outside of the range
@@ -87,9 +87,9 @@ interp1_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
 
  template <typename T, typename XkType, typename YkType, typename DydxkType,
           require_stan_scalar_t<T>* = nullptr>
-inline return_type_t<T, XkType, YkType, DydxkType> interp1_cubic_hermite_eval(
+inline return_type_t<T, XkType, YkType, DydxkType> interpolate_1d_cubic_hermite_eval(
     const T& x, const std::tuple<XkType, YkType, DydxkType>& W) {
-  static constexpr const char* function = "interp1_cubic_hermite_eval";
+  static constexpr const char* function = "interpolate_1d_cubic_hermite_eval";
   const auto& xk = std::get<0>(W);
   const auto& yk = std::get<1>(W);
   const auto& dydxk = std::get<2>(W);
@@ -127,17 +127,23 @@ inline return_type_t<T, XkType, YkType, DydxkType> interp1_cubic_hermite_eval(
   return h0 + h1;
 }
 
-// Forward to your actual implementation
-template <typename EigVecX, typename EigVecY, typename EigVecDyDx>
-inline auto interp1_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
-                                      const EigVecDyDx& dydxk, std::ostream* pstream__) {
-  return interp1_cubic_hermite_setup(xk, yk, dydxk); // calls your version without pstream
+// generic spline evaluation function 
+template <typename T, typename XkType, typename YkType, typename DydxkType>
+inline auto interpolate_1d_cubic_spline_eval(const T& x, const std::tuple<XkType, YkType, DydxkType>& W) {
+  return interpolate_1d_cubic_hermite_eval(x, W);
 }
 
-template <typename T, typename Coef, typename Knots>
-inline auto interp1_cubic_hermite_eval(const T& x, const std::tuple<Coef, Knots>& W,
+// Forward to your actual implementation
+template <typename EigVecX, typename EigVecY, typename EigVecDyDx>
+inline auto interpolate_1d_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
+                                      const EigVecDyDx& dydxk, std::ostream* pstream__) {
+  return interpolate_1d_cubic_hermite_setup(xk, yk, dydxk);
+}
+
+template <typename T, typename XkType, typename YkType, typename DydxkType>
+inline auto interpolate_1d_cubic_hermite_eval(const T& x, const std::tuple<XkType, YkType, DydxkType>& W,
                                      std::ostream* pstream__) {
-  return interp1_cubic_hermite_eval(x, W); // calls your version without pstream
+  return interpolate_1d_cubic_hermite_eval(x, W);
 }
 
 }  // namespace math
