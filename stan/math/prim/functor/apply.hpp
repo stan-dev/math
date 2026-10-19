@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUNCTOR_APPLY_HPP
 #define STAN_MATH_PRIM_FUNCTOR_APPLY_HPP
 
+#include <functional>
 #include <tuple>
 #include <utility>
 namespace stan {

@@ -8,6 +8,7 @@
 #include <test/unit/math/prim/meta/apply_template_permutations.hpp>
 #include <test/unit/math/prim/prob/util.hpp>
 #include <test/unit/math/prim/prob/VectorRealRNGTestRig.hpp>
+#include <test/unit/math/prim/prob/VectorIntRNGTestRig.hpp>
 #include <algorithm>
 #include <map>
 #include <random>
