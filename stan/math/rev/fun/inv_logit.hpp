@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -50,7 +51,8 @@ inline auto inv_logit(T&& a) {
  * The derivative of inverse logit is
  *
  * \f$\frac{d}{dx} \mbox{logit}^{-1}(x) = \frac{e}{(1 + e)^2}\f$
- * with \f$e = \exp(-|x|)\f$.
+ * with \f$e = \exp(-|x|)\f$. It is computed in the same pass as the value
+ * and stored for the reverse pass.
  *
  * @tparam T type of Eigen expression
  * @param x Eigen expression
@@ -59,11 +61,17 @@ inline auto inv_logit(T&& a) {
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
 inline auto inv_logit(T&& x) {
   auto x_arena = to_arena(std::forward<T>(x));
-  const auto x_val = x_arena.val().array().eval();
-  arena_t<plain_type_t<decltype(x_val)>> e = (-x_val.abs()).exp();
-  arena_t<T> ret = ((x_val >= 0).select(1.0, e) / (1.0 + e)).matrix();
-  reverse_pass_callback([x_arena, ret, e]() mutable {
-    x_arena.adj().array() += ret.adj().array() * e / (1.0 + e).square();
+  arena_t<T> ret(x_arena.rows(), x_arena.cols());
+  arena_t<plain_type_t<decltype(x_arena.val())>> d(x_arena.rows(),
+                                                   x_arena.cols());
+  for (Eigen::Index i = 0; i < x_arena.size(); ++i) {
+    const double xi = x_arena.coeff(i).val();
+    const double e = std::exp(-std::fabs(xi));
+    ret.coeffRef(i) = (xi >= 0 ? 1.0 : e) / (1.0 + e);
+    d.coeffRef(i) = e / ((1.0 + e) * (1.0 + e));
+  }
+  reverse_pass_callback([x_arena, ret, d]() mutable {
+    x_arena.adj().array() += ret.adj().array() * d.array();
   });
   return ret;
 }
