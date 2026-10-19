@@ -5,6 +5,7 @@
 #include <stan/math/prim/err/check_not_nan.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/erfc.hpp>
 #include <stan/math/prim/fun/erfcx.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/inv.hpp>
@@ -121,6 +122,46 @@ inline auto std_normal_lcdf_value_grad(T&& z) {
     Array values(std::forward<T>(z));
     for (Eigen::Index i = 0; i < values.size(); ++i) {
       values[i] = std_normal_lcdf_value_grad<false>(values[i]);
+    }
+    return values;
+  }
+}
+
+/** Scalar Phi(z) and the ratio phi(z) / Phi(z), without a log.
+ * erfc of the negated argument has no cancellation for either sign. The
+ * ratio is 0 where Phi underflows; the cdf product is then 0 too.
+ */
+template <bool calc_grad, typename T, require_stan_scalar_t<T>* = nullptr>
+inline auto std_normal_cdf_value_ratio(const T& z) {
+  using T_return = return_type_t<T>;
+  const T_return cdf = 0.5 * erfc(-INV_SQRT_TWO * z);
+  if constexpr (calc_grad) {
+    const T_return ratio
+        = cdf > 0 ? T_return(INV_SQRT_TWO_PI * exp(-(0.5 * z) * z) / cdf)
+                  : T_return(0);
+    return std::pair<T_return, T_return>{cdf, ratio};
+  } else {
+    return cdf;
+  }
+}
+
+/** Elementwise Phi and ratios; only Phi when the gradient is off. */
+template <bool calc_grad, typename T, require_eigen_t<T>* = nullptr>
+inline auto std_normal_cdf_value_ratio(T&& z) {
+  using T_return = return_type_t<scalar_type_t<T>>;
+  using Array = Eigen::Array<T_return, Eigen::Dynamic, 1>;
+  Array values(std::forward<T>(z));
+  if constexpr (calc_grad) {
+    Array ratios(values.size());
+    for (Eigen::Index i = 0; i < values.size(); ++i) {
+      auto [value, ratio] = std_normal_cdf_value_ratio<true>(values[i]);
+      values[i] = value;
+      ratios[i] = ratio;
+    }
+    return std::make_pair(std::move(values), std::move(ratios));
+  } else {
+    for (Eigen::Index i = 0; i < values.size(); ++i) {
+      values[i] = std_normal_cdf_value_ratio<false>(values[i]);
     }
     return values;
   }
