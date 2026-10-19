@@ -3,6 +3,7 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
+#include <test/unit/math/opencl/rev/bernoulli_logit_tail_refs.hpp>
 #include <vector>
 
 TEST(ProbDistributionsBernoulliLogit, error_checking) {
@@ -107,6 +108,26 @@ TEST(ProbDistributionsBernoulliLogit, opencl_matches_cpu_big) {
                                                 theta.transpose().eval());
   stan::math::test::compare_cpu_opencl_prim_rev(
       bernoulli_logit_lpmf_functor_propto, n, theta.transpose().eval());
+}
+
+TEST(ProbDistributionsBernoulliLogit, opencl_rev_tails_against_references) {
+  using bernoulli_logit_tail_refs::expect_rel;
+  using stan::math::matrix_cl;
+  using stan::math::var;
+  using stan::math::var_value;
+  for (const auto& r : bernoulli_logit_tail_refs::refs()) {
+    std::vector<int> n{r.y};
+    Eigen::VectorXd theta(1);
+    theta << r.theta;
+    matrix_cl<int> n_cl(n);
+    var_value<matrix_cl<double>> theta_cl = stan::math::to_matrix_cl(theta);
+    var lp = stan::math::bernoulli_logit_lpmf(n_cl, theta_cl);
+    lp.grad();
+    Eigen::VectorXd d_theta = stan::math::from_matrix_cl(theta_cl.adj());
+    expect_rel(r.val, lp.val(), "value", r);
+    expect_rel(r.d_theta, d_theta(0), "d/dtheta", r);
+    stan::math::recover_memory();
+  }
 }
 
 #endif
