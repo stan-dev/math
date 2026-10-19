@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/std_normal_lcdf_impl.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/erfc.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 
 namespace stan {
@@ -22,12 +22,15 @@ namespace math {
  * This function can be used to implement the inverse link function
  * for probit regression.
  *
+ * `erfc` of the negated argument has no cancellation for either sign, so
+ * the lower tail keeps its relative accuracy down to underflow.
+ *
  * @param x Argument.
  * @return Probability random sample is less than or equal to argument.
  */
 inline double Phi(double x) {
   check_not_nan("Phi", "x", x);
-  return exp(internal::std_normal_lcdf_value_grad<false>(x));
+  return 0.5 * erfc(-INV_SQRT_TWO * x);
 }
 
 /**
