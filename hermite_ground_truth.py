@@ -1,6 +1,11 @@
 import numpy as np
 from scipy.interpolate import CubicHermiteSpline
 
+
+# script to produce the numerical values that 
+# are used in tests of the interp1_cubic_hermite
+# functionality. Should probably be removed 
+# in the final pull request. 
 ############################################
 # Ground truth for interp1CubicHermiteSetupCoefficients test
 ############################################

@@ -1,3 +1,8 @@
+# R script to run a stan trest of the interp1_cubic_hermite 
+# interpolation functionality when supplied as a local clone 
+# of stan math. Probably to not include in the final pull 
+# request. Martin Lindén 2026-10-13
+
 require(tidyverse)
 library(cmdstanr)
 require(posterior)
