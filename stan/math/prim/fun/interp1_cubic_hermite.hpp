@@ -29,6 +29,7 @@ namespace math {
  *
  * @tparam EigVecX type of the knot locations
  * @tparam EigVecY type of the knot values
+ * @tparam EigVecDyDx type of the derivative values
  * @param xk Strictly increasing interpolation knot locations.
  * @param yk Interpolation values at the knots.
  * @param dydxk Derivative values at the knots (user-provided).
@@ -39,14 +40,14 @@ namespace math {
  * @throw std::domain_error if there are fewer than two knots, any input is
  *   not finite, or `xk` is not strictly increasing
  */
-template <typename EigVecX, typename EigVecY,
-          require_all_eigen_col_vector_t<EigVecX, EigVecY>* = nullptr>
+template <typename EigVecX, typename EigVecY, typename EigVecDyDx,
+          require_all_eigen_col_vector_t<EigVecX, EigVecY, EigVecDyDx>* = nullptr>
 inline std::tuple<
-    Eigen::Matrix<return_type_t<EigVecX, EigVecY>, Eigen::Dynamic,
+    Eigen::Matrix<return_type_t<EigVecX, EigVecY, EigVecDyDx>, Eigen::Dynamic,
                   Eigen::Dynamic>,
     Eigen::Matrix<return_type_t<EigVecX>, Eigen::Dynamic, 1>>
 interp1_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
-                            const EigVecY& dydxk) {
+                            const EigVecDyDx& dydxk) {
   static constexpr const char* function = "interp1_cubic_hermite_setup";
   const auto& xk_ref = to_ref(xk);
   const auto& yk_ref = to_ref(yk);
@@ -60,7 +61,7 @@ interp1_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
   check_finite(function, "dydxk", dydxk_ref);
   check_ordered(function, "xk", xk_ref);
 
-  using coef_t = return_type_t<EigVecX, EigVecY>;
+  using coef_t = return_type_t<EigVecX, EigVecY, EigVecDyDx>;
   using xk_t = return_type_t<EigVecX>;
   const Eigen::Index K = xk_ref.size();
   Eigen::Matrix<coef_t, Eigen::Dynamic, Eigen::Dynamic> coef(K - 1, 4);
@@ -74,10 +75,6 @@ interp1_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
     const coef_t h2 = h * h;
     const coef_t h3 = h2 * h;
 
-    // Coefficients of y(x) = a0 + a1 * dx + a2 * dx^2 + a3 * dx^3, with
-    // dx = x - xk(i), obtained by expressing the cubic Hermite basis
-    // representation as a polynomial in dx rather than in
-    // t = dx / h.
     coef(i, 0) = y0;
     coef(i, 1) = s0;
     coef(i, 2) = (3 * (y1 - y0) - h * (2 * s0 + s1)) / h2;
@@ -152,9 +149,9 @@ inline return_type_t<T, Coef, Knots> interp1_cubic_hermite_eval(
 }
 
 // Forward to your actual implementation
-template <typename EigVecX, typename EigVecY>
+template <typename EigVecX, typename EigVecY, typename EigVecDyDx>
 inline auto interp1_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
-                                      const EigVecY& dydxk, std::ostream* pstream__) {
+                                      const EigVecDyDx& dydxk, std::ostream* pstream__) {
   return interp1_cubic_hermite_setup(xk, yk, dydxk); // calls your version without pstream
 }
 
