@@ -2,6 +2,7 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_CONSTANT_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <limits>

@@ -1,3 +1,4 @@
+#include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/mix/functor/reduce_sum_util.hpp>
 #include <test/unit/math/rev/util.hpp>
 

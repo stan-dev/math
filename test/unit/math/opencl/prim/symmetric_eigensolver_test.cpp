@@ -1,4 +1,5 @@
 #ifdef STAN_OPENCL
+#include <stan/math/opencl/mrrr.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>

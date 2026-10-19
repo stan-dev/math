@@ -10,6 +10,7 @@
 #include <stan/math/rev/fun/log_sum_exp.hpp>
 #include <stan/math/rev/fun/multiply.hpp>
 #include <stan/math/rev/fun/sum.hpp>
+#include <stan/math/fwd/fun/lgamma.hpp>
 #include <stan/math/fwd/fun/log.hpp>
 #include <stan/math/fwd/fun/log_sum_exp.hpp>
 #include <stan/math/fwd/fun/sum.hpp>

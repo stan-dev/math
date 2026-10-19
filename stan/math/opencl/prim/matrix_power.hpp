@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_OPENCL_PRIM_MATRIX_POWER_HPP
 #define STAN_MATH_OPENCL_PRIM_MATRIX_POWER_HPP
 #ifdef STAN_OPENCL
+#include <stan/math/opencl/prim/size.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/diag_matrix.hpp>
 #include <stan/math/prim/meta.hpp>
