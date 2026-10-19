@@ -13,6 +13,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/fun/std_normal_lcdf_impl.hpp>
@@ -73,9 +74,10 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
     return upper ? NEGATIVE_INFTY : 0.0;
   }
 
-  auto diff = y_val - mu_val;
-  auto z = diff / sigma_val;
-  auto v = lambda_val * sigma_val;
+  // The temporaries that are read more than once are evaluated once.
+  auto diff = eval(y_val - mu_val);
+  auto z = eval(diff / sigma_val);
+  auto v = eval(lambda_val * sigma_val);
   auto log_b_offset = 0.5 * square(v) - lambda_val * diff;
   if constexpr (any_autodiff) {
     auto ops_partials
@@ -84,13 +86,13 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
         = internal::std_normal_lcdf_value_grad<true>(sign * z);
     const auto [log_phi_b, slope_b]
         = internal::std_normal_lcdf_value_grad<true>(z - v);
-    auto log_b = std::move(log_b_offset) + log_phi_b;
-    auto lp = exp_mod_normal_log_combine<upper>(log_a, log_b);
+    auto log_b = eval(std::move(log_b_offset) + log_phi_b);
+    auto lp = eval(exp_mod_normal_log_combine<upper>(log_a, log_b));
     // Weights of the two terms in the total; the second is signed.
     auto w_b = eval(-sign * exp(log_b - lp));
-    auto s_b = w_b * slope_b;
+    auto s_b = eval(w_b * slope_b);
     auto s = eval((sign * exp(log_a - lp) * slope_a + s_b) / sigma_val);
-    auto q = w_b * v - s_b;
+    auto q = eval(w_b * v - s_b);
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = s - w_b * lambda_val;
     }

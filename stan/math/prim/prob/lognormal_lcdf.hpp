@@ -54,7 +54,7 @@ inline return_type_t<T_y, T_loc, T_scale> lognormal_lcdf_impl(
   auto z = eval(sign * (log(y_val) - mu_val) / sigma_val);
   if constexpr (any_autodiff) {
     const auto [values, slopes] = internal::std_normal_lcdf_value_grad<true>(z);
-    auto scaled_slope = slopes / sigma_val;
+    auto scaled_slope = eval(slopes / sigma_val);
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = sign * scaled_slope / y_val;
     }
