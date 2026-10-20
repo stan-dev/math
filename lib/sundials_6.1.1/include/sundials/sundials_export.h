@@ -33,6 +33,7 @@
 #  define SUNDIALS_DEPRECATED_NO_EXPORT SUNDIALS_NO_EXPORT SUNDIALS_DEPRECATED
 #endif
 
+/* NOLINTNEXTLINE(readability-avoid-unconditional-preprocessor-if) */
 #if 0 /* DEFINE_NO_DEPRECATED */
 #  ifndef SUNDIALS_NO_DEPRECATED
 #    define SUNDIALS_NO_DEPRECATED

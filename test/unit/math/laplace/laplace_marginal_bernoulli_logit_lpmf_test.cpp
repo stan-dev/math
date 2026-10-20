@@ -78,4 +78,74 @@ TEST_P(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
 
 LAPLACE_INSTANTIATE_TEST_SUITE_P(laplace_marginal_bernoulli_logit_lpmf);
 
+// Reference likelihood computed per observation, without the grouped
+// sufficient-statistics shortcut used by bernoulli_logit_likelihood.
+struct bernoulli_logit_obs_likelihood {
+  template <typename Theta, typename Mean>
+  auto operator()(const Theta& theta, const std::vector<int>& y,
+                  const std::vector<int>& y_index, const Mean& mean,
+                  std::ostream* /*pstream*/) const {
+    Eigen::Matrix<stan::return_type_t<Theta, Mean>, Eigen::Dynamic, 1>
+        theta_obs(y.size());
+    for (size_t i = 0; i < y.size(); ++i) {
+      theta_obs(i) = theta(y_index[i] - 1) + mean(y_index[i] - 1);
+    }
+    return stan::math::bernoulli_logit_lpmf(y, theta_obs);
+  }
+};
+
+// More observations than latent variables: groups with several observations
+// must aggregate all of them, not just the first theta.size() entries.
+TEST(laplace_marginal_bernoulli_logit_lpmf_grouped, multiple_obs_per_group) {
+  using stan::math::laplace_marginal_tol;
+  using stan::math::laplace_marginal_tol_bernoulli_logit_lpmf;
+
+  constexpr int dim_theta = 3;
+  const std::vector<int> y{1, 0, 1, 1, 1, 0};
+  const std::vector<int> y_index{1, 2, 3, 1, 2, 1};
+  const Eigen::VectorXd mean{{0.3, -0.2, 0.1}};
+  const std::vector<Eigen::VectorXd> x{
+      Eigen::VectorXd{{0.05100797, 0.16086164}},
+      Eigen::VectorXd{{-0.59823393, 0.98701425}},
+      Eigen::VectorXd{{0.31296868, -0.68926772}}};
+  const Eigen::VectorXd theta_0 = Eigen::VectorXd::Zero(dim_theta);
+  constexpr double alpha = 1.6;
+  constexpr double rho = 0.45;
+  constexpr double tolerance = 1e-12;
+  constexpr int max_num_steps = 1000;
+  constexpr int hessian_block_size = 1;
+  constexpr int solver = 1;
+  constexpr int max_steps_line_search = 0;
+
+  const double marginal = laplace_marginal_tol_bernoulli_logit_lpmf(
+      y, y_index, mean, hessian_block_size,
+      stan::math::test::squared_kernel_functor{},
+      std::forward_as_tuple(x, alpha, rho),
+      std::make_tuple(theta_0, tolerance, max_num_steps, solver,
+                      max_steps_line_search, true),
+      nullptr);
+  const double reference = laplace_marginal_tol<false>(
+      bernoulli_logit_obs_likelihood{}, std::forward_as_tuple(y, y_index, mean),
+      hessian_block_size, stan::math::test::squared_kernel_functor{},
+      std::forward_as_tuple(x, alpha, rho),
+      std::make_tuple(theta_0, tolerance, max_num_steps, solver,
+                      max_steps_line_search, true),
+      nullptr);
+  EXPECT_NEAR(reference, marginal, 1e-6);
+
+  // derivatives w.r.t. the mean with more observations than latents
+  constexpr stan::test::ad_tolerances tols{
+      stan::test::ad_gradient_tols{1e-8, 1e-3}};
+  auto f = [&](auto&& mean_arg) {
+    return laplace_marginal_tol_bernoulli_logit_lpmf(
+        y, y_index, mean_arg, hessian_block_size,
+        stan::math::test::squared_kernel_functor{},
+        std::forward_as_tuple(x, alpha, rho),
+        std::make_tuple(theta_0, tolerance, max_num_steps, solver,
+                        max_steps_line_search, true),
+        nullptr);
+  };
+  stan::test::expect_ad<true>(tols, f, mean);
+}
+
 }  // namespace
