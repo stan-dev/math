@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -70,8 +71,11 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
         = internal::std_normal_lcdf_value_grad<true>(az);
     auto ops_partials
         = make_partials_propagator(y_ref, mu_ref, sigma_ref, alpha_ref);
+    // The partials read z and score several times, so both are evaluated
+    // once; the value-only branch reads z twice and keeps it lazy.
+    auto z_eval = eval(z);
     if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
-      auto score = (slopes * alpha_val - z) * inv_sigma;
+      auto score = eval((slopes * alpha_val - z_eval) * inv_sigma);
       if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials) = score;
       }
@@ -79,19 +83,20 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
         partials<1>(ops_partials) = -score;
       }
       if constexpr (is_autodiff_v<T_scale>) {
-        partials<2>(ops_partials) = -score * z - inv_sigma;
+        partials<2>(ops_partials) = -score * z_eval - inv_sigma;
       }
     }
     if constexpr (is_autodiff_v<T_shape>) {
-      partials<3>(ops_partials) = slopes * z;
+      partials<3>(ops_partials) = slopes * z_eval;
     }
     // Scalar terms broadcast over the N elements of values, so one sum scales
     // each term by N / size(term).
     if constexpr (!propto || is_autodiff_v<T_scale>) {
-      return ops_partials.build(sum(values - 0.5 * square(z) - log(sigma_val))
-                                + log_normalizer);
+      return ops_partials.build(
+          sum(values - 0.5 * square(z_eval) - log(sigma_val)) + log_normalizer);
     } else if constexpr (is_any_autodiff_v<T_y, T_loc>) {
-      return ops_partials.build(sum(values - 0.5 * square(z)) + log_normalizer);
+      return ops_partials.build(sum(values - 0.5 * square(z_eval))
+                                + log_normalizer);
     } else {
       return ops_partials.build(sum(values) + log_normalizer);
     }
