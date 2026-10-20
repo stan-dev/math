@@ -16,6 +16,7 @@
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/fun/std_normal_lcdf_impl.hpp>
+#include <stan/math/prim/prob/exp_mod_normal_check_args.hpp>
 #include <cmath>
 #include <utility>
 
@@ -49,10 +50,8 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
   decltype(auto) lambda_val
       = to_ref(as_value_column_array_or_scalar(lambda_ref));
 
-  check_not_nan(function, "Random variable", y_val);
-  check_finite(function, "Location parameter", mu_val);
-  check_positive_finite(function, "Scale parameter", sigma_val);
-  check_positive_finite(function, "Inv_scale parameter", lambda_val);
+  internal::exp_mod_normal_check_args(function, y_val, mu_val, sigma_val,
+                                      lambda_val);
 
   if (size_zero(y_ref, mu_ref, sigma_ref, lambda_ref)) {
     return 0.0;
@@ -75,7 +74,9 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     auto ops_partials
         = make_partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref);
     if constexpr (is_any_autodiff_v<T_y, T_loc>) {
-      auto deriv = lambda_val - slopes * inv_sigma;
+      // Evaluated once when both y and mu need it.
+      const auto& deriv = to_ref_if<is_all_autodiff_v<T_y, T_loc>>(
+          lambda_val - slopes * inv_sigma);
       if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials) = -deriv;
       }

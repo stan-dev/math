@@ -15,9 +15,11 @@
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/prim/prob/exp_mod_normal_check_args.hpp>
 #include <cstddef>
 #include <utility>
 
@@ -159,9 +161,10 @@ struct exp_mod_normal_lcdf_terms {
  * The terms from F = g Delta, Delta = E(u) - E(t) with t >= 0, for F <= 1/2.
  * The partials of F are g times (v E(t), -E'(t) / sqrt 2,
  * v sqrt 2 (u E(t) - E'(t) / 2)). The log cdf divides them by F, the log ccdf
- * by -(1 - F). The log ccdf needs no log of Delta.
+ * by -(1 - F). The log ccdf needs no log of Delta, and the cdf (log_value
+ * unset) takes F = g Delta itself.
  */
-template <bool upper, bool calc_grad, typename T>
+template <bool upper, bool calc_grad, bool log_value, typename T>
 inline exp_mod_normal_lcdf_terms<T> exp_mod_normal_lcdf_from_delta(
     const T& u, const T& t, const T& v, const T& log_g, const T& e_t,
     const exp_mod_normal_erfcx_diff_result<T>& dl) {
@@ -172,9 +175,12 @@ inline exp_mod_normal_lcdf_terms<T> exp_mod_normal_lcdf_from_delta(
     const T f = g * dl.delta;
     r.value = exp_mod_normal_log1m(f);
     scale = -g / (1 - f);
-  } else {
+  } else if constexpr (log_value) {
     r.value = log_g + dl.log_delta;
     scale = dl.delta > 1e-300 ? T(inv(dl.delta)) : T(exp(-dl.log_delta));
+  } else {
+    r.value = exp(log_g) * dl.delta;
+    scale = inv(dl.delta);
   }
   if constexpr (calc_grad) {
     const T de_t = erfcx_derivative(t, e_t);
@@ -226,10 +232,14 @@ STAN_COLD_PATH exp_mod_normal_lcdf_terms<T> exp_mod_normal_lccdf_tiny(
  * F < 1/4: F = g (E(u) - E(t)), or for t < 0,
  * F = -expm1(d (2u + d)) + g (E(-t) - E(-u)) with both terms positive.
  * Otherwise F = 1 - P with P = Phi(-z) + b.
+ * With log_value unset (the cdf, lower tail only) the value is F itself and
+ * the partials are still those of log F.
  */
-template <bool upper, bool calc_grad, typename T>
+template <bool upper, bool calc_grad, bool log_value, typename T>
 inline exp_mod_normal_lcdf_terms<T> exp_mod_normal_lcdf_kernel(const T& z,
                                                                const T& v) {
+  static_assert(log_value || !upper, "the ccdf has no plain value kernel");
+  constexpr bool need_log = !upper && log_value;
   const T u = -z * INV_SQRT_TWO;
   const T d = v * INV_SQRT_TWO;
   const T t = u + d;
@@ -238,9 +248,9 @@ inline exp_mod_normal_lcdf_terms<T> exp_mod_normal_lcdf_kernel(const T& z,
     // F <= Phi(z) <= 1/2.
     const T e_t = erfcx(t);
     const auto dl
-        = exp_mod_normal_erfcx_diff<false, !upper>(u, t, d, T(erfcx(u)), e_t);
-    return exp_mod_normal_lcdf_from_delta<upper, calc_grad>(u, t, v, log_g, e_t,
-                                                            dl);
+        = exp_mod_normal_erfcx_diff<false, need_log>(u, t, d, T(erfcx(u)), e_t);
+    return exp_mod_normal_lcdf_from_delta<upper, calc_grad, log_value>(
+        u, t, v, log_g, e_t, dl);
   }
   const T log_b = d * (2 * u + d);
   if (t < -6.5 && log_b < -0.2877) {
@@ -251,7 +261,8 @@ inline exp_mod_normal_lcdf_terms<T> exp_mod_normal_lcdf_kernel(const T& z,
     } else {
       const T b = exp(log_b);
       const T r = b / (1 - b);
-      return {exp_mod_normal_log1m(b), v * r, (z - v) * r, -v * v * r};
+      return {log_value ? exp_mod_normal_log1m(b) : T(1 - b), v * r,
+              (z - v) * r, -v * v * r};
     }
   }
   const T g = exp(log_g);
@@ -272,9 +283,9 @@ inline exp_mod_normal_lcdf_terms<T> exp_mod_normal_lcdf_kernel(const T& z,
   const bool small_f = p > 0.75;
   if (small_f && t >= 0) {
     const auto dl
-        = exp_mod_normal_erfcx_diff<false, !upper>(u, t, d, T(erfcx(u)), e_t);
-    return exp_mod_normal_lcdf_from_delta<upper, calc_grad>(u, t, v, log_g, e_t,
-                                                            dl);
+        = exp_mod_normal_erfcx_diff<false, need_log>(u, t, d, T(erfcx(u)), e_t);
+    return exp_mod_normal_lcdf_from_delta<upper, calc_grad, log_value>(
+        u, t, v, log_g, e_t, dl);
   }
   // The partials of F: f_z, f_v, f_s.
   T f_z = 0;
@@ -298,7 +309,7 @@ inline exp_mod_normal_lcdf_terms<T> exp_mod_normal_lcdf_kernel(const T& z,
         = exp_mod_normal_erfcx_diff<true, false>(T(-t), T(-u), d, e_mt, e_mu);
     const T f = -expm1(log_b) + g * dl.delta;
     if constexpr (!upper) {
-      return {log(f), f_z / f, f_v / f, f_s / f};
+      return {log_value ? T(log(f)) : f, f_z / f, f_v / f, f_s / f};
     } else {
       const T one_m_f = 1 - f;
       return {log1p(-f), -f_z / one_m_f, -f_v / one_m_f, -f_s / one_m_f};
@@ -308,6 +319,9 @@ inline exp_mod_normal_lcdf_terms<T> exp_mod_normal_lcdf_kernel(const T& z,
   if constexpr (!upper) {
     // log1p only where log F is small: for p >= 1/4, |log F| >= 0.29.
     const T f = 1 - p;
+    if constexpr (!log_value) {
+      return {f, f_z / f, f_v / f, f_s / f};
+    }
     return {p < 0.25 ? exp_mod_normal_log1m(p) : T(log(f)), f_z / f, f_v / f,
             f_s / f};
   } else {
@@ -319,9 +333,13 @@ inline exp_mod_normal_lcdf_terms<T> exp_mod_normal_lcdf_kernel(const T& z,
   }
 }
 
-/** log F, or log(1 - F) when upper is set, summed over the elements. */
-template <bool upper, typename T_y, typename T_loc, typename T_scale,
-          typename T_inv_scale>
+/**
+ * log F, or log(1 - F) when upper is set, summed over the elements. With
+ * log_value unset the result is the product of the F, the cdf, with no log
+ * or exp of each element.
+ */
+template <bool upper, bool log_value = true, typename T_y, typename T_loc,
+          typename T_scale, typename T_inv_scale>
 inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
     const char* function, T_y&& y, T_loc&& mu, T_scale&& sigma,
     T_inv_scale&& lambda) {
@@ -341,21 +359,23 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
   T_lambda_ref lambda_ref = std::forward<T_inv_scale>(lambda);
   // to_ref only reduces compile memory by evaluating expression arguments.
   decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
-  check_not_nan(function, "Random variable", y_val);
   decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
-  check_finite(function, "Location parameter", mu_val);
   decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
-  check_positive_finite(function, "Scale parameter", sigma_val);
   decltype(auto) lambda_val
       = to_ref(as_value_column_array_or_scalar(lambda_ref));
-  check_positive_finite(function, "Inv_scale parameter", lambda_val);
+  const bool y_inf = exp_mod_normal_check_args(function, y_val, mu_val,
+                                               sigma_val, lambda_val);
 
+  // The cdf of no elements is 1 and F is 0 or 1 at y = -inf or inf.
+  constexpr double zero_value = log_value ? NEGATIVE_INFTY : 0.0;
+  constexpr double one_value = log_value ? 0.0 : 1.0;
   if (size_zero(y_ref, mu_ref, sigma_ref, lambda_ref)) {
-    return 0;
-  } else if (any(y_val == NEGATIVE_INFTY)) {
-    return upper ? 0.0 : NEGATIVE_INFTY;
-  } else if (any(y_val == INFTY)) {
-    return upper ? NEGATIVE_INFTY : 0.0;
+    return one_value;
+  } else if (unlikely(y_inf)) {
+    if (any(y_val == NEGATIVE_INFTY)) {
+      return upper ? 0.0 : zero_value;
+    }
+    return upper ? NEGATIVE_INFTY : one_value;
   }
 
   scalar_seq_view<std::decay_t<decltype(y_val)>> y_vec(y_val);
@@ -365,13 +385,18 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
   const std::size_t N = max_size(y_ref, mu_ref, sigma_ref, lambda_ref);
   auto ops_partials
       = make_partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref);
-  T_partials lp = 0;
+  T_partials lp = one_value;
   for (std::size_t n = 0; n < N; ++n) {
     const T_partials sigma_n = sigma_vec[n];
     const T_partials z = (y_vec[n] - mu_vec[n]) / sigma_n;
     const T_partials v = lambda_vec[n] * sigma_n;
-    const auto r = exp_mod_normal_lcdf_kernel<upper, any_autodiff>(z, v);
-    lp += r.value;
+    const auto r
+        = exp_mod_normal_lcdf_kernel<upper, any_autodiff, log_value>(z, v);
+    if constexpr (log_value) {
+      lp += r.value;
+    } else {
+      lp *= r.value;
+    }
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)[n] += r.d_z / sigma_n;
     }
@@ -383,6 +408,29 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
     }
     if constexpr (is_autodiff_v<T_inv_scale>) {
       partials<3>(ops_partials)[n] += r.d_v * sigma_n;
+    }
+  }
+  if constexpr (!log_value) {
+    // The partials so far are those of log F; those of the cdf scale by it.
+    if constexpr (is_autodiff_v<T_y>) {
+      for (std::size_t n = 0; n < stan::math::size(y_ref); ++n) {
+        partials<0>(ops_partials)[n] *= lp;
+      }
+    }
+    if constexpr (is_autodiff_v<T_loc>) {
+      for (std::size_t n = 0; n < stan::math::size(mu_ref); ++n) {
+        partials<1>(ops_partials)[n] *= lp;
+      }
+    }
+    if constexpr (is_autodiff_v<T_scale>) {
+      for (std::size_t n = 0; n < stan::math::size(sigma_ref); ++n) {
+        partials<2>(ops_partials)[n] *= lp;
+      }
+    }
+    if constexpr (is_autodiff_v<T_inv_scale>) {
+      for (std::size_t n = 0; n < stan::math::size(lambda_ref); ++n) {
+        partials<3>(ops_partials)[n] *= lp;
+      }
     }
   }
   return ops_partials.build(lp);
