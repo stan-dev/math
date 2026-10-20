@@ -44,7 +44,8 @@ TEST(mathMixMatFun, sylvester_solver) {
   // size mismatch must throw for every autodiff type, as it does for double
   Eigen::MatrixXd C_bad(3, 3);
   C_bad.setOnes();
-  EXPECT_THROW(stan::math::sylvester_solver(A, B, C_bad), std::invalid_argument);
+  EXPECT_THROW(stan::math::sylvester_solver(A, B, C_bad),
+               std::invalid_argument);
 
   auto A_v = stan::math::to_var(A);
   auto B_v = stan::math::to_var(B);
