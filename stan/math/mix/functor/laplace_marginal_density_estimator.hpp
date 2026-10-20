@@ -892,6 +892,17 @@ struct LUSolver {
     // 2. Factorize B = I + Sigma * W
     lu.compute(Eigen::MatrixXd::Identity(theta_size, theta_size)
                + covariance * W_full);
+    // det(B) >= 1 for a positive definite Sigma. A zero pivot means that B
+    // is singular in floating point (Sigma * W swamps the identity when
+    // Sigma is numerically rank deficient), so that neither the Newton step
+    // nor the log determinant can be computed. Solvers 1 and 2 throw in the
+    // same situation when their Cholesky factorization fails.
+    if ((lu.matrixLU().diagonal().array() == 0.0).any()) {
+      throw std::domain_error(
+          "laplace_marginal_density: det(I + Sigma * W) is zero at the "
+          "current iterate, so the Laplace approximation is not defined "
+          "there");
+    }
 
     // 3. Solve for the raw Newton proposal in a-space.
     state.b.noalias()
@@ -1043,8 +1054,28 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
       state.wolfe_info.init_dir_ = state.prev_g.dot(state.wolfe_info.p_);
       // Flip direction if not ascending
       state.wolfe_info.flip_direction();
-      const bool search_failed
+      bool search_failed
           = line_search_fails(state, options, covariance, update_fun, msgs);
+      // The Newton step can overshoot the mode by more than 1 / min_alpha
+      // (where W is far smaller than at the mode), so that no step the
+      // line search tried improves the objective. Steps shorter than
+      // min_alpha * p gain at most min_alpha * init_dir when the objective
+      // is concave: search them unless that is below the tolerance or the
+      // rounding error of the objective.
+      while (search_failed && options.line_search.min_alpha < 1) {
+        const double shorter_gain
+            = options.line_search.min_alpha * state.wolfe_info.init_dir_;
+        if (!std::isfinite(shorter_gain)
+            || shorter_gain <= std::max(options.tolerance,
+                                        std::numeric_limits<double>::epsilon()
+                                            * std::abs(state.prev().obj()))) {
+          break;
+        }
+        state.wolfe_info.p_ *= options.line_search.min_alpha;
+        state.wolfe_info.init_dir_ = shorter_gain;
+        search_failed
+            = line_search_fails(state, options, covariance, update_fun, msgs);
+      }
       bool objective_converged
           = state.wolfe_status.accept_
             && std::abs(state.curr().obj() - state.prev().obj())
@@ -1232,6 +1263,9 @@ static STAN_THREADS_DEF std::once_flag fallback_warning_2_3;
  * 8. `K_root`: Cholesky factor of the covariance (solver 2 only)
  * 9. `solver_used`: the solver policy that produced the result
  *
+ * @throw std::domain_error if the log marginal density at the final
+ * iterate is not finite, for example when the factorization of
+ * `I + Sigma * W` is singular in floating point
  */
 template <typename LLFun, typename LLTupleArgs, typename CovarMat,
           bool InitTheta,
@@ -1264,62 +1298,75 @@ inline auto laplace_marginal_density_est(
   auto update_fun = create_update_fun(
       std::move(obj_fun), std::move(theta_grad_f), covariance, options);
   Eigen::Index step_iter = 0;
-  try {
-    if (options.solver == 1) {
-      if (options.hessian_block_size == 1) {
-        CholeskyWSolverDiag solver(state, covariance);
-        return run_newton_loop(solver, state, options, step_iter, ll_fun,
-                               ll_args, covariance, update_fun, msgs);
-      } else {
-        CholeskyWSolverBlock solver(state, options.hessian_block_size);
+  auto est = [&]() {
+    try {
+      if (options.solver == 1) {
+        if (options.hessian_block_size == 1) {
+          CholeskyWSolverDiag solver(state, covariance);
+          return run_newton_loop(solver, state, options, step_iter, ll_fun,
+                                 ll_args, covariance, update_fun, msgs);
+        } else {
+          CholeskyWSolverBlock solver(state, options.hessian_block_size);
+          return run_newton_loop(solver, state, options, step_iter, ll_fun,
+                                 ll_args, covariance, update_fun, msgs);
+        }
+      }
+    } catch (const std::exception& e) {
+      const std::string solver_type
+          = (options.hessian_block_size == 1) ? "Diagonal" : "Block";
+      std::string failed
+          = "solver 1 (" + solver_type + " Hessian-root Cholesky)";
+      if (!options.allow_fallthrough) {
+        throw_solver_failure("laplace_marginal_density", step_iter, failed, e);
+      }
+      std::call_once(
+          fallback_warning_1_2,
+          [](auto&&... args) STAN_COLD_PATH {
+            log_solver_fallback(std::forward<decltype(args)>(args)...);
+          },
+          msgs, "laplace_marginal_density", step_iter, std::move(failed),
+          "solver 2 (Covariance-root Cholesky)", e);
+    }
+    try {
+      if (options.solver == 2
+          || (options.allow_fallthrough && options.solver == 1)) {
+        CholeskyKSolver solver(state, covariance);
         return run_newton_loop(solver, state, options, step_iter, ll_fun,
                                ll_args, covariance, update_fun, msgs);
       }
+    } catch (const std::exception& e) {
+      if (!options.allow_fallthrough) {
+        throw_solver_failure("laplace_marginal_density", step_iter,
+                             "solver 2 (Covariance-root Cholesky)", e);
+      }
+      std::call_once(
+          fallback_warning_2_3,
+          [](auto&&... args) STAN_COLD_PATH {
+            log_solver_fallback(std::forward<decltype(args)>(args)...);
+          },
+          msgs, "laplace_marginal_density", step_iter,
+          "solver 2 (Covariance-root Cholesky)", "solver 3 (General LU solver)",
+          e);
     }
-  } catch (const std::exception& e) {
-    const std::string solver_type
-        = (options.hessian_block_size == 1) ? "Diagonal" : "Block";
-    std::string failed = "solver 1 (" + solver_type + " Hessian-root Cholesky)";
-    if (!options.allow_fallthrough) {
-      throw_solver_failure("laplace_marginal_density", step_iter, failed, e);
-    }
-    std::call_once(
-        fallback_warning_1_2,
-        [](auto&&... args) STAN_COLD_PATH {
-          log_solver_fallback(std::forward<decltype(args)>(args)...);
-        },
-        msgs, "laplace_marginal_density", step_iter, std::move(failed),
-        "solver 2 (Covariance-root Cholesky)", e);
-  }
-  try {
-    if (options.solver == 2
-        || (options.allow_fallthrough && options.solver == 1)) {
-      CholeskyKSolver solver(state, covariance);
+    if (options.solver == 3 || options.allow_fallthrough) {
+      LUSolver solver;
       return run_newton_loop(solver, state, options, step_iter, ll_fun, ll_args,
                              covariance, update_fun, msgs);
     }
-  } catch (const std::exception& e) {
-    if (!options.allow_fallthrough) {
-      throw_solver_failure("laplace_marginal_density", step_iter,
-                           "solver 2 (Covariance-root Cholesky)", e);
-    }
-    std::call_once(
-        fallback_warning_2_3,
-        [](auto&&... args) STAN_COLD_PATH {
-          log_solver_fallback(std::forward<decltype(args)>(args)...);
-        },
-        msgs, "laplace_marginal_density", step_iter,
-        "solver 2 (Covariance-root Cholesky)", "solver 3 (General LU solver)",
-        e);
+    throw std::domain_error(
+        std::string("You chose a solver (") + std::to_string(options.solver)
+        + ") that is not valid. Please choose either 1, 2, or 3.");
+  }();
+  // det(I + Sigma * W) is positive at a mode, so the log marginal density is
+  // finite there; a non-finite value, for example from a factorization of an
+  // I + Sigma * W that is singular in floating point, is not a valid estimate.
+  if (!std::isfinite(est.lmd)) {
+    throw std::domain_error(
+        "laplace_marginal_density: the log marginal density is not finite at "
+        "the final iterate: log(det(I + Sigma * W)) or the log likelihood is "
+        "not finite there");
   }
-  if (options.solver == 3 || options.allow_fallthrough) {
-    LUSolver solver;
-    return run_newton_loop(solver, state, options, step_iter, ll_fun, ll_args,
-                           covariance, update_fun, msgs);
-  }
-  throw std::domain_error(
-      std::string("You chose a solver (") + std::to_string(options.solver)
-      + ") that is not valid. Please choose either 1, 2, or 3.");
+  return est;
 }
 }  // namespace internal
 }  // namespace math

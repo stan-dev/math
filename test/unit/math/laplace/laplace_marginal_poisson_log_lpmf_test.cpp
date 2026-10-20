@@ -305,4 +305,49 @@ TEST(laplace_marginal_poisson_log_lpmf_grouped, multiple_obs_per_group) {
   stan::test::expect_ad<true>(tols, f, mean);
 }
 
+struct constant_covariance {
+  template <typename T>
+  Eigen::Matrix<T, -1, -1> operator()(const T& alpha, int n,
+                                      std::ostream* /*msgs*/) const {
+    return stan::math::add_diag(
+        Eigen::Matrix<T, -1, -1>::Constant(n, n, alpha * alpha), 1e-8);
+  }
+};
+
+// At mean -30 the mode is at theta = 31, but the Newton step from theta = 0 is
+// about 1e10 (alpha = 3e4) or 1e11 (alpha = 1e5): every step down to
+// min_alpha times it lowers the objective (3e4, where the line search must not
+// fall back to the zero step) or overflows exp(mean + theta) (1e5).
+TEST(laplace_marginal_poisson_log_lpmf_newton, step_overshoots_mode) {
+  const std::vector<int> y{3, 1, 4, 1, 5};
+  const std::vector<int> y_index{1, 2, 3, 4, 5};
+  const Eigen::VectorXd mean = Eigen::VectorXd::Constant(5, -30.0);
+  auto marginal = [&](double alpha) {
+    return stan::math::laplace_marginal_poisson_log_lpmf(
+        y, y_index, mean, 1, constant_covariance{},
+        std::forward_as_tuple(alpha, 5), nullptr);
+  };
+  // Laplace approximation at the mode in 80-digit arithmetic (mpmath). The
+  // Newton loop stops within its tolerance of the mode, where the log
+  // determinant term still changes by up to 1e-5, hence the tolerance.
+  EXPECT_NEAR(-20.971115053, marginal(3e4), 1e-4);
+  EXPECT_NEAR(-22.1750873716, marginal(1e5), 1e-4);
+}
+
+// K = 1e18 J in double precision (the jitter 1e-8 is below its ulp), so all
+// rows of I + K W are equal and the LU factorization of solver 3 has zero
+// pivots: the Laplace approximation is not defined and the solver throws.
+TEST(laplace_marginal_poisson_log_lpmf_newton, singular_log_determinant) {
+  const std::vector<int> y{3, 1, 4, 1, 5};
+  const std::vector<int> y_index{1, 2, 3, 4, 5};
+  const Eigen::VectorXd mean = Eigen::VectorXd::Constant(5, 1.0);
+  const Eigen::VectorXd theta_0 = Eigen::VectorXd::Zero(5);
+  EXPECT_THROW_MSG(
+      stan::math::laplace_marginal_tol_poisson_log_lpmf(
+          y, y_index, mean, 1, constant_covariance{},
+          std::forward_as_tuple(1e9, 5),
+          std::make_tuple(theta_0, 1e-8, 100, 3, 1000, false), nullptr),
+      std::domain_error, "det(I + Sigma * W)");
+}
+
 }  // namespace
