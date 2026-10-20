@@ -3,9 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_not_nan.hpp>
+#include <stan/math/prim/fun/Phi.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/erfc.hpp>
 #include <stan/math/prim/fun/erfcx.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/inv.hpp>
@@ -127,19 +127,45 @@ inline auto std_normal_lcdf_value_grad(T&& z) {
   }
 }
 
-/** Scalar Phi(z) and the ratio phi(z) / Phi(z), without a log.
- * erfc of the negated argument has no cancellation for either sign. The
- * ratio is 0 where Phi underflows; the cdf product is then 0 too.
+/** Scalar Phi(z) and the ratio phi(z) / Phi(z), without a log and without
+ * the C-library erf and erfc. With u = z / sqrt(2) and
+ * g = exp(-z^2 / 2) / 2:
+ * - |u| < 0.46875: Phi = (1 + erf(u)) / 2, ratio = sqrt(2 / pi) / erfcx(-u);
+ * - z < 0: Phi = g erfcx(-u), ratio = sqrt(2 / pi) / erfcx(-u);
+ * - z > 0: Phi = 1 - g erfcx(u) (no cancellation, Phi >= 1/2),
+ *   ratio = sqrt(2 / pi) g / Phi.
+ * The values equal those of Phi(double). At z = -infinity erfcx(-u) is 0;
+ * the ratio is then 0, as the cdf is.
  */
 template <bool calc_grad, typename T, require_stan_scalar_t<T>* = nullptr>
 inline auto std_normal_cdf_value_ratio(const T& z) {
   using T_return = return_type_t<T>;
-  const T_return cdf = 0.5 * erfc(-INV_SQRT_TWO * z);
+  const T_return u = INV_SQRT_TWO * z;
+  // Not abs(u): its autodiff tangent is 0 at u == 0.
+  const T_return a = u < 0 ? T_return(-u) : u;
+  if (a < 0.46875) {
+    const T_return cdf = 0.5 + 0.5 * erf_cody_small(u);
+    if constexpr (calc_grad) {
+      return std::pair<T_return, T_return>{
+          cdf, SQRT_TWO_OVER_SQRT_PI / erfcx_small(T_return(-u))};
+    } else {
+      return cdf;
+    }
+  }
+  const T_return g = 0.5 * exp(-(0.5 * z) * z);
+  const T_return c = a >= 4 ? erfcx_cody_tail(a) : erfcx_cody_middle(a);
+  if (z < 0) {
+    const T_return cdf = g * c;
+    if constexpr (calc_grad) {
+      return std::pair<T_return, T_return>{
+          cdf, c > 0 ? T_return(SQRT_TWO_OVER_SQRT_PI / c) : T_return(0)};
+    } else {
+      return cdf;
+    }
+  }
+  const T_return cdf = 1.0 - g * c;
   if constexpr (calc_grad) {
-    const T_return ratio
-        = cdf > 0 ? T_return(INV_SQRT_TWO_PI * exp(-(0.5 * z) * z) / cdf)
-                  : T_return(0);
-    return std::pair<T_return, T_return>{cdf, ratio};
+    return std::pair<T_return, T_return>{cdf, SQRT_TWO_OVER_SQRT_PI * g / cdf};
   } else {
     return cdf;
   }
