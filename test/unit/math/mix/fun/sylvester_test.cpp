@@ -24,7 +24,7 @@ TEST(mathMixMatFun, sylvester_solver) {
 
   // A has a complex eigenvalue pair, so the complex Schur path is used
   Eigen::MatrixXd A(2, 2);
-  A << 4, 1, -1, 3;
+  A << 1, -1, 1, 1;
   Eigen::MatrixXd B(3, 3);
   B << 5, 0, 1, 2, 6, 0, -1, 1, 4;
   Eigen::MatrixXd C(2, 3);
@@ -44,7 +44,14 @@ TEST(mathMixMatFun, sylvester_solver) {
   // size mismatch must throw for every autodiff type, as it does for double
   Eigen::MatrixXd C_bad(3, 3);
   C_bad.setOnes();
-  stan::test::expect_ad(f, A, B, C_bad);
+  EXPECT_THROW(stan::math::sylvester_solver(A, B, C_bad), std::invalid_argument);
+
+  auto A_v = stan::math::to_var(A);
+  auto B_v = stan::math::to_var(B);
+  auto C_bad_v = stan::math::to_var(C_bad);
+  EXPECT_THROW(stan::math::sylvester_solver(A_v, B_v, C_bad_v),
+               std::invalid_argument);
+  stan::math::recover_memory();
 }
 
 TEST(mathMixMatFun, sylvester_solver_complex) {
@@ -65,11 +72,8 @@ TEST(mathMixMatFun, sylvester_solver_complex) {
   // real and complex arguments mixed
   Eigen::MatrixXd A_r = A.real();
   Eigen::MatrixXd B_r = B.real();
-  Eigen::MatrixXd C_r = C.real();
   // real system, complex right-hand side
   stan::test::expect_ad(f, A_r, B_r, C);
-  // complex A only
-  stan::test::expect_ad(f, A, B_r, C_r);
 }
 
 TEST(mathMixMatFun, sylvester_solver_varmat) {

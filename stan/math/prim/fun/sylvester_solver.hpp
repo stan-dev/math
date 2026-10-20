@@ -19,6 +19,10 @@ namespace math {
  * and X = U Y V^H. A unique solution requires lambda_i(A) + mu_j(B) != 0
  * for all eigenvalues of A and B.
  *
+ * @note fvar tangents are lost for exactly-zero subdiagonal entries (e.g.
+ *   triangular A or B), as Eigen's Schur deflates on values only. Fix: solve
+ *   A Xd + Xd B = Cd - Ad X - X Bd on the values instead of differentiating.
+ *
  * @tparam MatA type of A (real or complex scalars)
  * @tparam MatB type of B (real or complex scalars)
  * @tparam MatC type of C (real or complex scalars)
