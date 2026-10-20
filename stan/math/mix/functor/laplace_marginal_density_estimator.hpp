@@ -970,13 +970,12 @@ struct LUSolver {
 template <typename NewtonStateT, typename OptionsT, typename CovarMatT,
           typename UpdateFun>
 inline bool line_search_fails(NewtonStateT& state, const OptionsT& options,
-                             const CovarMatT& covariance,
-                             UpdateFun&& update_fun, std::ostream* msgs) {
+                              const CovarMatT& covariance,
+                              UpdateFun&& update_fun, std::ostream* msgs) {
   auto&& proposal = state.proposal_step();
   proposal.eval_.alpha() = 1.0;
-  const bool proposal_valid
-      = update_fun(proposal, state.curr(), state.prev(), proposal.eval_,
-                   state.wolfe_info.p_);
+  const bool proposal_valid = update_fun(proposal, state.curr(), state.prev(),
+                                         proposal.eval_, state.wolfe_info.p_);
   const bool cached_proposal_ok
       = proposal_valid && std::isfinite(proposal.obj())
         && std::isfinite(proposal.dir())
