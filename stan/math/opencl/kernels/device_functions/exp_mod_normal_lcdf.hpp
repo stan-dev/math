@@ -242,10 +242,9 @@ static constexpr const char* exp_mod_normal_lcdf_device_function
             const double log_b = d * (2.0 * u + d);
             if (t < -6.5 && log_b < -0.2877) {
               if (upper) {
-                return which == 0   ? log_b
-                       : which == 1 ? -v
-                       : which == 2 ? v - z
-                                    : v * v;
+                return which == 0
+                           ? log_b
+                           : which == 1 ? -v : which == 2 ? v - z : v * v;
               }
               const double b = exp(log_b);
               if (which == 0) {
