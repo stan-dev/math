@@ -936,6 +936,72 @@ struct LUSolver {
 };
 
 /**
+ * @brief Search for a step along `state.wolfe_info.p_` from `state.prev()`
+ * and accept it into `state.curr()`.
+ *
+ * Evaluates the full step first. If it is finite, runs the Wolfe line
+ * search from the Barzilai-Borwein step size, or accepts the full step
+ * without a search when `options.line_search.max_iterations == 0`. When the
+ * search fails but the full step satisfies the Armijo condition, the full
+ * step is accepted. `state.wolfe_status` records the outcome.
+ *
+ * @tparam NewtonStateT Type holding state with solver
+ * @tparam OptionsT struct of options for laplace
+ * @tparam CovarMatT Type of the covariance matrix
+ * @tparam UpdateFun Callable to update proposal state in line search
+ * @param[in,out] state Shared Newton optimization state
+ * @param[in] options Solver options
+ * @param[in] covariance Prior covariance matrix Sigma
+ * @param[in] update_fun Callable to update proposal state in line search
+ * @param[in,out] msgs Output stream for diagnostic messages (may be nullptr)
+ * @return true if no step was accepted
+ */
+template <typename NewtonStateT, typename OptionsT, typename CovarMatT,
+          typename UpdateFun>
+inline bool line_search_fails(NewtonStateT& state, const OptionsT& options,
+                             const CovarMatT& covariance,
+                             UpdateFun&& update_fun, std::ostream* msgs) {
+  auto&& proposal = state.proposal_step();
+  proposal.eval_.alpha() = 1.0;
+  const bool proposal_valid
+      = update_fun(proposal, state.curr(), state.prev(), proposal.eval_,
+                   state.wolfe_info.p_);
+  const bool cached_proposal_ok
+      = proposal_valid && std::isfinite(proposal.obj())
+        && std::isfinite(proposal.dir())
+        && proposal.alpha() > options.line_search.min_alpha;
+  if (!cached_proposal_ok) {
+    state.wolfe_status = WolfeStatus{WolfeReturn::StepTooSmall, 1, 0, false};
+  } else if (options.line_search.max_iterations == 0) {
+    state.curr().update(proposal);
+    state.wolfe_status = WolfeStatus{WolfeReturn::Continue, 1, 0, true};
+  } else {
+    Eigen::VectorXd s = proposal.a() - state.prev().a();
+    auto full_step_grad
+        = (-covariance * proposal.a() + covariance * proposal.theta_grad())
+              .eval();
+    state.curr().alpha() = barzilai_borwein_step_size(
+        s, full_step_grad, state.prev_g, state.prev().alpha(),
+        state.wolfe_status.num_backtracks_, options.line_search.min_alpha,
+        options.line_search.max_alpha);
+    state.wolfe_status = internal::wolfe_line_search(
+        state.wolfe_info, update_fun, options.line_search, msgs);
+  }
+  const bool proposal_armijo_ok
+      = cached_proposal_ok
+        && internal::check_armijo(proposal.obj(), state.prev().obj(),
+                                  proposal.alpha(), state.wolfe_info.init_dir_,
+                                  options.line_search);
+  if (!state.wolfe_status.accept_ && proposal_armijo_ok) {
+    state.curr().update(proposal);
+    state.wolfe_status
+        = WolfeStatus{WolfeReturn::Armijo, state.wolfe_status.num_evals_,
+                      state.wolfe_status.num_backtracks_, true};
+  }
+  return !state.wolfe_status.accept_;
+}
+
+/**
  * @brief Run a Newton loop with a solver policy, updating the shared state.
  *
  * This helper centralizes the iteration/line-search logic shared across
@@ -977,46 +1043,8 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
       state.wolfe_info.init_dir_ = state.prev_g.dot(state.wolfe_info.p_);
       // Flip direction if not ascending
       state.wolfe_info.flip_direction();
-      auto&& scratch = state.wolfe_info.scratch_;
-      proposal.eval_.alpha() = 1.0;
-      const bool proposal_valid
-          = update_fun(proposal, state.curr(), state.prev(), proposal.eval_,
-                       state.wolfe_info.p_);
-      const bool cached_proposal_ok
-          = proposal_valid && std::isfinite(proposal.obj())
-            && std::isfinite(proposal.dir())
-            && proposal.alpha() > options.line_search.min_alpha;
-      if (!cached_proposal_ok) {
-        state.wolfe_status
-            = WolfeStatus{WolfeReturn::StepTooSmall, 1, 0, false};
-      } else if (options.line_search.max_iterations == 0) {
-        state.curr().update(proposal);
-        state.wolfe_status = WolfeStatus{WolfeReturn::Continue, 1, 0, true};
-      } else {
-        Eigen::VectorXd s = proposal.a() - state.prev().a();
-        auto full_step_grad
-            = (-covariance * proposal.a() + covariance * proposal.theta_grad())
-                  .eval();
-        state.curr().alpha() = barzilai_borwein_step_size(
-            s, full_step_grad, state.prev_g, state.prev().alpha(),
-            state.wolfe_status.num_backtracks_, options.line_search.min_alpha,
-            options.line_search.max_alpha);
-        state.wolfe_status = internal::wolfe_line_search(
-            state.wolfe_info, update_fun, options.line_search, msgs);
-      }
-      bool search_failed = !state.wolfe_status.accept_;
-      const bool proposal_armijo_ok
-          = cached_proposal_ok
-            && internal::check_armijo(
-                proposal.obj(), state.prev().obj(), proposal.alpha(),
-                state.wolfe_info.init_dir_, options.line_search);
-      if (search_failed && proposal_armijo_ok) {
-        state.curr().update(proposal);
-        state.wolfe_status
-            = WolfeStatus{WolfeReturn::Armijo, state.wolfe_status.num_evals_,
-                          state.wolfe_status.num_backtracks_, true};
-        search_failed = false;
-      }
+      const bool search_failed
+          = line_search_fails(state, options, covariance, update_fun, msgs);
       bool objective_converged
           = state.wolfe_status.accept_
             && std::abs(state.curr().obj() - state.prev().obj())
