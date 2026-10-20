@@ -14,14 +14,13 @@ namespace stan {
 namespace math {
 namespace internal {
 
-/** Same log-space formulation as the prim exp_mod_normal_lcdf_impl. */
+/** The algorithm of the prim exp_mod_normal_lcdf_impl, on the device. */
 template <bool upper, typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
           typename T_inv_scale_cl>
 inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>
 exp_mod_normal_lcdf_opencl_impl(const char* function, const T_y_cl& y,
                                 const T_loc_cl& mu, const T_scale_cl& sigma,
                                 const T_inv_scale_cl& lambda) {
-  constexpr double sign = upper ? -1.0 : 1.0;
   using std::isfinite;
   using std::isnan;
 
@@ -58,35 +57,43 @@ exp_mod_normal_lcdf_opencl_impl(const char* function, const T_y_cl& y,
 
   auto any_y_neg_inf = colwise_max(cast<char>(y_val == NEGATIVE_INFTY));
   auto any_y_pos_inf = colwise_max(cast<char>(y_val == INFTY));
-  auto diff = y_val - mu_val;
-  auto z = elt_divide(diff, sigma_val);
+  auto z = elt_divide(y_val - mu_val, sigma_val);
   auto v = elt_multiply(lambda_val, sigma_val);
-  auto z_a = sign * z;
-  auto z_b = z - v;
-  auto log_a = math::std_normal_lcdf_impl(z_a);
-  auto log_b = 0.5 * square(v) - elt_multiply(lambda_val, diff)
-               + math::std_normal_lcdf_impl(z_b);
+  // Value and partials with respect to z, v and sigma d/dsigma at fixed y,
+  // mu and lambda. The four device functions share one implementation.
   auto lp = [&]() {
     if constexpr (upper) {
-      return fmax(log_a, log_b) + log1p_exp(-fabs(log_a - log_b));
+      return exp_mod_normal_lccdf_value(z, v);
     } else {
-      return log_diff_exp(log_a, log_b);
+      return exp_mod_normal_lcdf_value(z, v);
+    }
+  }();
+  auto d_z = [&]() {
+    if constexpr (upper) {
+      return exp_mod_normal_lccdf_d_z(z, v);
+    } else {
+      return exp_mod_normal_lcdf_d_z(z, v);
+    }
+  }();
+  auto d_v = [&]() {
+    if constexpr (upper) {
+      return exp_mod_normal_lccdf_d_v(z, v);
+    } else {
+      return exp_mod_normal_lcdf_d_v(z, v);
+    }
+  }();
+  auto d_s = [&]() {
+    if constexpr (upper) {
+      return exp_mod_normal_lccdf_d_s(z, v);
+    } else {
+      return exp_mod_normal_lcdf_d_s(z, v);
     }
   }();
   auto cdf_log_expr = colwise_sum(lp);
-
-  auto w_b = -sign * exp(log_b - lp);
-  auto s_b = elt_multiply(w_b, std_normal_lcdf_derivative(z_b));
-  auto s = elt_divide(
-      sign * elt_multiply(exp(log_a - lp), std_normal_lcdf_derivative(z_a))
-          + s_b,
-      sigma_val);
-  auto q = elt_multiply(w_b, v) - s_b;
-  auto y_deriv = s - elt_multiply(w_b, lambda_val);
+  auto y_deriv = elt_divide(d_z, sigma_val);
   auto mu_deriv = -y_deriv;
-  auto sigma_deriv
-      = select(s == 0, 0.0, -elt_multiply(s, z)) + elt_multiply(lambda_val, q);
-  auto lambda_deriv = elt_multiply(sigma_val, q) - elt_multiply(w_b, diff);
+  auto sigma_deriv = elt_divide(d_s, sigma_val);
+  auto lambda_deriv = elt_multiply(d_v, sigma_val);
 
   matrix_cl<char> any_y_neg_inf_cl;
   matrix_cl<char> any_y_pos_inf_cl;
