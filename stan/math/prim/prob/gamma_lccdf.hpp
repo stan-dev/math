@@ -31,8 +31,7 @@ namespace internal {
 /**
  * Computes log q and d(log q) / d(alpha) using continued fraction.
  */
-template <bool any_fvar, bool partials_fvar, typename T_shape, typename T1,
-          typename T2>
+template <bool any_fvar, typename T_shape, typename T1, typename T2>
 inline std::optional<std::pair<return_type_t<T1, T2>, return_type_t<T1, T2>>>
 eval_q_cf(const T1& alpha, const T2& beta_y) {
   using scalar_t = return_type_t<T1, T2>;
@@ -51,17 +50,16 @@ eval_q_cf(const T1& alpha, const T2& beta_y) {
       return std::optional<ret_t>{std::nullopt};
     }
     if constexpr (is_autodiff_v<T_shape>) {
-      if constexpr (!partials_fvar) {
+      if constexpr (is_autodiff_v<scalar_t>) {
+        // The partial is differentiated again, so it is computed with the
+        // derivative recurrence in the autodiff type.
+        out.second = internal::log_q_gamma_cf_and_da(alpha, beta_y).second;
+      } else if (value_of_rec(out.first) < internal::log_q_gamma_ratio_min()) {
+        out.second = internal::log_q_gamma_cf_and_da(alpha, beta_y).second;
+      } else {
         out.second
             = grad_reg_inc_gamma(alpha, beta_y, tgamma(alpha), digamma(alpha))
               / exp(out.first);
-      } else {
-        auto alpha_unit = alpha;
-        alpha_unit.d_ = 1;
-        auto beta_y_unit = beta_y;
-        beta_y_unit.d_ = 0;
-        auto log_Q_fvar = internal::log_q_gamma_cf(alpha_unit, beta_y_unit);
-        out.second = log_Q_fvar.d_;
       }
     }
     return std::optional{out};
@@ -71,7 +69,7 @@ eval_q_cf(const T1& alpha, const T2& beta_y) {
 /**
  * Computes log q and d(log q) / d(alpha) using log1m.
  */
-template <bool partials_fvar, typename T_shape, typename T1, typename T2>
+template <typename T_shape, typename T1, typename T2>
 inline std::optional<std::pair<return_type_t<T1, T2>, return_type_t<T1, T2>>>
 eval_q_log1m(const T1& alpha, const T2& beta_y) {
   using scalar_t = return_type_t<T1, T2>;
@@ -81,16 +79,7 @@ eval_q_log1m(const T1& alpha, const T2& beta_y) {
     return std::optional<ret_t>{std::nullopt};
   }
   if constexpr (is_autodiff_v<T_shape>) {
-    if constexpr (partials_fvar) {
-      auto alpha_unit = alpha;
-      alpha_unit.d_ = 1;
-      auto beta_unit = beta_y;
-      beta_unit.d_ = 0;
-      auto log_Q_fvar = log1m(gamma_p(alpha_unit, beta_unit));
-      out.second = log_Q_fvar.d_;
-    } else {
-      out.second = -grad_reg_lower_inc_gamma(alpha, beta_y) / exp(out.first);
-    }
+    out.second = -grad_reg_lower_inc_gamma(alpha, beta_y) / exp(out.first);
   }
   return std::optional{out};
 }
@@ -131,7 +120,6 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
   constexpr bool is_shape_fvar = is_fvar_v<scalar_type_t<T_shape>>;
   constexpr bool is_beta_fvar = is_fvar_v<scalar_type_t<T_inv_scale>>;
   constexpr bool any_fvar = is_y_fvar || is_shape_fvar || is_beta_fvar;
-  constexpr bool partials_fvar = is_fvar_v<T_partials_return>;
 
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
@@ -153,15 +141,12 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
     }
     std::optional<std::pair<T_partials_return, T_partials_return>> result;
     if (beta_y > alpha_val + 1.0) {
-      result = internal::eval_q_cf<any_fvar, partials_fvar, T_shape>(alpha_val,
-                                                                     beta_y);
+      result = internal::eval_q_cf<any_fvar, T_shape>(alpha_val, beta_y);
     } else {
-      result
-          = internal::eval_q_log1m<partials_fvar, T_shape>(alpha_val, beta_y);
+      result = internal::eval_q_log1m<T_shape>(alpha_val, beta_y);
       if (!result && beta_y > 0.0) {
         // Fallback to continued fraction if log1m fails
-        result = internal::eval_q_cf<any_fvar, partials_fvar, T_shape>(
-            alpha_val, beta_y);
+        result = internal::eval_q_cf<any_fvar, T_shape>(alpha_val, beta_y);
       }
     }
     if (unlikely(!result)) {

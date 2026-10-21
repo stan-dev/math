@@ -1,5 +1,6 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <test/unit/math/rev/prob/gamma_lccdf_tail_reference.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <limits>
@@ -478,5 +479,27 @@ TEST_F(AgradRev,
           << "NaN gradient " << i << " for y=" << y_d << ", alpha=" << alpha_d
           << ", beta=" << beta_d;
     }
+  }
+}
+
+TEST_F(AgradRev, ProbDistributionsGamma_lccdf_upper_tail_reference) {
+  using stan::math::gamma_lccdf;
+  using stan::math::var;
+  namespace ref = stan::test::gamma_lccdf_tail;
+
+  for (const auto& r : ref::rows()) {
+    const std::string at = ref::label(r);
+    var y = r.y;
+    var alpha = r.alpha;
+    var beta = r.beta;
+    var lp = gamma_lccdf(y, alpha, beta);
+    lp.grad();
+    // The value is limited by the cancellation in
+    // alpha log(z) - z - lgamma(alpha) at large alpha.
+    ref::expect_rel(r.value, lp.val(), 1e-10, "value " + at);
+    ref::expect_rel(r.d_alpha, alpha.adj(), 1e-11, "d/dalpha " + at);
+    ref::expect_rel(r.d_y, y.adj(), 1e-8, "d/dy " + at);
+    ref::expect_rel(r.d_y * r.y / r.beta, beta.adj(), 1e-8, "d/dbeta " + at);
+    stan::math::recover_memory();
   }
 }
