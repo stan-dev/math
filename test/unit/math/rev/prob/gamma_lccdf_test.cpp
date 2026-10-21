@@ -275,27 +275,28 @@ TEST_F(
   EXPECT_LE(grads[0], 0.0);
 }
 
-TEST_F(AgradRev, ProbDistributionsGammalccdf_log1m_exp_lcdf_rounds_to_inf) {
+TEST_F(AgradRev, ProbDistributionsGammalccdf_far_tail_matches_log1m_exp_lcdf) {
   using stan::math::gamma_lccdf;
   using stan::math::gamma_lcdf;
   using stan::math::log1m_exp;
-  using stan::math::negative_infinity;
   using stan::math::var;
 
   double y_d = 20000.0;
   double alpha_d = 800.0;
   double beta_d = 0.1;
 
+  // lcdf is about -1e-204, so it does not round to 0, and
+  // log1m_exp(lcdf) recovers lccdf
   double lcdf = gamma_lcdf(y_d, alpha_d, beta_d);
-  double log1m_lcdf = log1m_exp(lcdf);
 
   var y_v = y_d;
   var alpha_v = alpha_d;
   var beta_v = beta_d;
   var lccdf_var = gamma_lccdf(y_v, alpha_v, beta_v);
 
-  EXPECT_EQ(lcdf, 0.0);
-  EXPECT_EQ(log1m_lcdf, negative_infinity());
+  EXPECT_LT(lcdf, 0.0);
+  EXPECT_NEAR(log1m_exp(lcdf), lccdf_var.val(),
+              1e-12 * std::fabs(lccdf_var.val()));
   EXPECT_TRUE(std::isfinite(lccdf_var.val()));
   EXPECT_LT(lccdf_var.val(), 0.0);
 }
