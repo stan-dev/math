@@ -115,3 +115,13 @@ TEST_F(AgradRev, ProbDistributionsCategoricalLogit_fvar_fvar_var_vectorized) {
                       + theta_log_softmax[0].d_.val_.val(),
                   stan::math::categorical_logit_lpmf(ms, theta).d_.val_.val());
 }
+
+TEST_F(AgradRev, ProbDistributionsCategoricalLogit_var_infinity_throws) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  // autodiff args must be finite
+  Matrix<var, Dynamic, 1> theta(3);
+  theta << -std::numeric_limits<double>::infinity(), 2, -10;
+  EXPECT_THROW(stan::math::categorical_logit_lpmf(2, theta), std::domain_error);
+}

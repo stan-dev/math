@@ -32,3 +32,18 @@ TEST(mathMixScalFun, binomial_logit_glm_lpmf) {
   stan::test::expect_ad(f(n_arr, N_arr[0]), x_rowvec, alpha[0], beta);
   stan::test::expect_ad(f(n_arr, N_arr), x_rowvec, alpha[0], beta);
 }
+
+// x is a column vector: a design matrix with a single attribute
+TEST(mathMixScalFun, binomial_logit_glm_lpmf_x_column_vector) {
+  std::vector<int> n{1, 4};
+  std::vector<int> N{10, 45};
+  auto f = [n, N](const auto& x, const auto& alpha, const auto& beta) {
+    return stan::math::binomial_logit_glm_lpmf(n, N, x, alpha, beta);
+  };
+
+  Eigen::VectorXd x = Eigen::VectorXd::Random(2);
+  Eigen::VectorXd alpha = Eigen::VectorXd::Random(2);
+  Eigen::VectorXd beta = Eigen::VectorXd::Random(1);
+
+  stan::test::expect_ad(f, x, alpha, beta);
+}
