@@ -2,6 +2,7 @@
 #include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
+#include <limits>
 #include <type_traits>
 #include <vector>
 
@@ -70,9 +71,13 @@ const std::vector<double> dlogj{1.0,
 constexpr double lb = -2.0;
 constexpr double ub = 3.0;
 
+// Relative check, absolute below the smallest normal double.
 inline void expect_rel(double expected, double actual, const char* what,
                        size_t i) {
-  EXPECT_NEAR(expected, actual, 1e-13 * std::fabs(expected))
+  EXPECT_NEAR(
+      expected, actual,
+      1e-13
+          * std::fmax(std::fabs(expected), std::numeric_limits<double>::min()))
       << what << " at x = " << xs[i];
 }
 

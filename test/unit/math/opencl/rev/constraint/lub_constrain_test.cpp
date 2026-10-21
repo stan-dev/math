@@ -3,6 +3,8 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
+#include <cmath>
+#include <limits>
 
 auto lub_constrain_functor = [](const auto& a, const auto& b, const auto& c) {
   return stan::math::lub_constrain(a, b, c);
@@ -149,6 +151,11 @@ TEST(OpenCLLubConstrain, rev_derivatives_tails) {
       -9.9999999999999999e-1;
   Eigen::VectorXd lb = Eigen::VectorXd::Constant(7, -2.0);
   Eigen::VectorXd ub = Eigen::VectorXd::Constant(7, 3.0);
+  // relative, absolute below the smallest normal double
+  auto tol = [](double expected) {
+    return 1e-13
+           * std::fmax(std::fabs(expected), std::numeric_limits<double>::min());
+  };
   for (bool use_lp : {false, true}) {
     var_value<matrix_cl<double>> x_cl = to_matrix_cl(x);
     var_value<matrix_cl<double>> lb_cl = to_matrix_cl(lb);
@@ -163,15 +170,15 @@ TEST(OpenCLLubConstrain, rev_derivatives_tails) {
     Eigen::VectorXd x_adj = from_matrix_cl(x_cl.adj());
     Eigen::VectorXd lb_adj = from_matrix_cl(lb_cl.adj());
     for (int i = 0; i < x.size(); ++i) {
-      EXPECT_NEAR(dx(i), x_adj(i), 1e-13 * dx(i)) << "dx at x = " << x(i);
-      EXPECT_NEAR(dlb(i), lb_adj(i), 1e-13 * dlb(i)) << "dlb at x = " << x(i);
+      EXPECT_NEAR(dx(i), x_adj(i), tol(dx(i))) << "dx at x = " << x(i);
+      EXPECT_NEAR(dlb(i), lb_adj(i), tol(dlb(i))) << "dlb at x = " << x(i);
     }
     if (use_lp) {
       stan::math::set_zero_all_adjoints();
       lp.grad();
       x_adj = from_matrix_cl(x_cl.adj());
       for (int i = 0; i < x.size(); ++i) {
-        EXPECT_NEAR(dlogj(i), x_adj(i), 1e-13 * std::fabs(dlogj(i)))
+        EXPECT_NEAR(dlogj(i), x_adj(i), tol(dlogj(i)))
             << "dlogJ/dx at x = " << x(i);
       }
     }
