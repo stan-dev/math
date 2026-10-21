@@ -43,7 +43,7 @@ static constexpr const char* cholesky_decompose_kernel_code = STRINGIFY(
           for (int k = 0; k < j; k++) {
             const double a = A(j, k);
             row_j[k] = a;
-            sum = sum + a * a;
+            sum += a * a;
           }
           A(j, j) = sqrt(A(j, j) - sum);
           row_j[j] = A(j, j);
@@ -56,7 +56,7 @@ static constexpr const char* cholesky_decompose_kernel_code = STRINGIFY(
         } else if (local_index > j) {
           double sum = 0.0;
           for (int k = 0; k < j; k++)
-            sum = sum + A(local_index, k) * row_j[k];
+            sum += A(local_index, k) * row_j[k];
           A(local_index, j) = (A(local_index, j) - sum) / row_j[j];
         }
         barrier(CLK_LOCAL_MEM_FENCE);
