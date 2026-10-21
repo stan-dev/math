@@ -7,10 +7,8 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log_gamma_q_dgamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
-#include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
@@ -47,7 +45,6 @@ inline return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
   T_n_ref n_ref = n;
   T_lambda_ref lambda_ref = lambda;
 
-  decltype(auto) n_val = to_ref(as_value_column_array_or_scalar(n_ref));
   decltype(auto) lambda_val
       = to_ref(as_value_column_array_or_scalar(lambda_ref));
 
@@ -59,26 +56,27 @@ inline return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
 
   auto ops_partials = make_partials_propagator(lambda_ref);
 
-  if (sum(promote_scalar<int>(n_val < 0))) {
-    return ops_partials.build(0.0);
-  }
-
   scalar_seq_view<T_n_ref> n_vec(n_ref);
   scalar_seq_view<T_lambda_ref> lambda_vec(lambda_ref);
   const size_t N = max_size(n, lambda);
 
-  // An element with probability 0 (lambda = 0, or n = INT_MAX, which
-  // stands for an infinite count) makes the result -inf; the gradients are
-  // treated as zero
+  // An element with probability 0 (n >= 0 with lambda = 0, or n = INT_MAX,
+  // which stands for an infinite count) makes the result -inf; the
+  // gradients are treated as zero
   for (size_t i = 0; i < N; i++) {
-    if (value_of_rec(lambda_vec.val(i)) == 0
-        || n_vec.val(i) == std::numeric_limits<int>::max()) {
+    if (n_vec.val(i) >= 0
+        && (value_of_rec(lambda_vec.val(i)) == 0
+            || n_vec.val(i) == std::numeric_limits<int>::max())) {
       return ops_partials.build(negative_infinity());
     }
   }
 
   T_partials_return log_P(0.0);
   for (size_t i = 0; i < N; i++) {
+    // An element with probability 1 (n < 0) contributes nothing
+    if (n_vec.val(i) < 0) {
+      continue;
+    }
     const T_partials_return lambda_dbl = lambda_vec.val(i);
     const auto tail
         = internal::log_gamma_tail<false, false, is_autodiff_v<T_rate>>(
