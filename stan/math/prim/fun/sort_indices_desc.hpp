@@ -1,10 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_SORT_INDICES_DESC_HPP
 #define STAN_MATH_PRIM_FUN_SORT_INDICES_DESC_HPP
 
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/sort_indices.hpp>
-#include <algorithm>
 #include <vector>
 
 namespace stan {

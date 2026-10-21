@@ -1,5 +1,4 @@
 #include <stan/math/mix.hpp>
-#include <stan/math/prim/core/operator_addition.hpp>
 #include <test/unit/math/test_ad.hpp>
 
 TEST(mathMixCore, operatorAddition) {

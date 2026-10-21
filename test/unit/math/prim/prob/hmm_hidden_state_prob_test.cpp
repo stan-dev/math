@@ -1,12 +1,6 @@
 #include <test/unit/math/prim/prob/hmm_util.hpp>
 #include <stan/math/prim/prob/hmm_hidden_state_prob.hpp>
-#include <boost/math/distributions.hpp>
-#include <boost/random.hpp>
-#include <test/unit/math/test_ad.hpp>
-#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-#include <limits>
-#include <vector>
 
 TEST_F(hmm_test, hidden_state_single_outcome) {
   using stan::math::hmm_hidden_state_prob;

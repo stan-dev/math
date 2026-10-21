@@ -3,18 +3,8 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/fabs.hpp>
 #include <stan/math/rev/fun/inc_beta.hpp>
-#include <stan/math/rev/fun/digamma.hpp>
-#include <stan/math/rev/fun/exp.hpp>
-#include <stan/math/rev/fun/hypergeometric_pFq.hpp>
-#include <stan/math/rev/fun/log.hpp>
-#include <stan/math/rev/fun/log_diff_exp.hpp>
 #include <stan/math/rev/fun/lbeta.hpp>
-#include <stan/math/rev/fun/lgamma.hpp>
-#include <stan/math/rev/fun/sum.hpp>
-#include <stan/math/prim/fun/is_any_nan.hpp>
-#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/hypergeometric_3F2.hpp>
 #include <stan/math/prim/fun/inv_inc_beta.hpp>
 

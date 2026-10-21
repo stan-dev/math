@@ -9,7 +9,6 @@
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <sstream>
 #include <string>
-#include <vector>
 
 namespace stan {
 namespace math {

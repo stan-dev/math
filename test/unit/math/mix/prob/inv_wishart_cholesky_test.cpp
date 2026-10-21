@@ -1,5 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <test/unit/math/rev/fun/util.hpp>
 
 TEST_F(AgradRev, ProbDistributionsInvWishartCholesky_matvar) {
   auto f = [](const auto& Y, const auto& dof, const auto& Sigma) {

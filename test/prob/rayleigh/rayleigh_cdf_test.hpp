@@ -1,6 +1,5 @@
 // Arguments: Doubles, Doubles
 #include <stan/math/prim/prob/rayleigh_cdf.hpp>
-#include <stan/math/prim/fun/exp.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

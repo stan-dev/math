@@ -1,11 +1,9 @@
 #ifndef STAN_MATH_PRIM_META_IS_DENSE_DYNAMIC_HPP
 #define STAN_MATH_PRIM_META_IS_DENSE_DYNAMIC_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/is_base_pointer_convertible.hpp>
 #include <stan/math/prim/meta/is_eigen_matrix.hpp>
-#include <stan/math/prim/meta/is_eigen_dense_base.hpp>
 #include <stan/math/prim/meta/is_eigen_dense_dynamic.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>

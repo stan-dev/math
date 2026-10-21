@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim.hpp>
-#include <vector>
 
 TEST(MathPrimScalFun, grad2F1_negative_z) {
   double a1 = 3.70975;

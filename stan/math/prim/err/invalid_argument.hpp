@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_ERR_INVALID_ARGUMENT_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <typeinfo>
 #include <sstream>
 #include <stdexcept>
 

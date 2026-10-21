@@ -3,7 +3,6 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/prob/test_gradients.hpp>
 #include <test/unit/math/rev/prob/test_gradients_multi_normal.hpp>
-#include <test/unit/math/rev/prob/expect_eq_diffs.hpp>
 #include <vector>
 
 struct multi_normal_cholesky_fun {

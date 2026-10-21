@@ -1,9 +1,7 @@
-#include <test/unit/pretty_print_types.hpp>
 #include <test/unit/math/test_ad.hpp>
 #include <stan/math.hpp>
 #include <stan/math/mix.hpp>
 #include <test/unit/math/laplace/laplace_utility.hpp>
-#include <test/unit/math/rev/fun/util.hpp>
 
 #include <gtest/gtest.h>
 #include <sstream>

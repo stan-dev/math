@@ -1,5 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <limits>
 #include <vector>
 
 inline void expect_log_mix(const std::vector<double>& p,

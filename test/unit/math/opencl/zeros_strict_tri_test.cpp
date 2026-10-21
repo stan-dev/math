@@ -3,7 +3,6 @@
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <gtest/gtest.h>
-#include <algorithm>
 
 TEST(MathMatrixCL, zeros_strict_m_value_check) {
   stan::math::matrix_d m0(2, 2);

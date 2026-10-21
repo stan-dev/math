@@ -2,7 +2,6 @@
 #include <stan/math/prim.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 #include <vector>
 
 namespace elementwise_check_test {

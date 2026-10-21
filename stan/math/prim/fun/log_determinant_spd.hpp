@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_FUN_LOG_DETERMINANT_SPD_HPP
 
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>

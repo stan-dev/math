@@ -7,8 +7,6 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
-#include <stan/math/prim/prob/exponential_rng.hpp>
-#include <stan/math/prim/prob/normal_rng.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>

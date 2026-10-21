@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_PROB_DIRICHLET_MULTINOMIAL_RNG_HPP
 #define STAN_MATH_PRIM_PROB_DIRICHLET_MULTINOMIAL_RNG_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/prob/dirichlet_rng.hpp>

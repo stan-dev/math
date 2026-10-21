@@ -4,7 +4,6 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
-#include <string>
 
 namespace stan {
 namespace math {

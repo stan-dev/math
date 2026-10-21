@@ -5,11 +5,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/asin.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/isinf.hpp>
-#include <stan/math/prim/fun/isfinite.hpp>
-#include <stan/math/prim/fun/isnan.hpp>
-#include <stan/math/prim/fun/polar.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>

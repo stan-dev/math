@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_FUN_BOOST_POLICY_HPP
 #define STAN_MATH_PRIM_FUN_BOOST_POLICY_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <boost/math/policies/policy.hpp>
 
 namespace stan {

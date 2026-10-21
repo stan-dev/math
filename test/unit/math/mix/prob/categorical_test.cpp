@@ -1,8 +1,6 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/math/distributions.hpp>
 #include <vector>
 
 TEST_F(AgradRev, ProbDistributionsCategorical_fvar_var) {

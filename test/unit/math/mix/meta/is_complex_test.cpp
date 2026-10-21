@@ -1,6 +1,5 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/util.hpp>
 #include <complex>
 #include <string>
 

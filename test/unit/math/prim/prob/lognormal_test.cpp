@@ -3,7 +3,6 @@
 #include <test/unit/math/prim/prob/util.hpp>
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
-#include <boost/math/distributions.hpp>
 #include <limits>
 #include <vector>
 

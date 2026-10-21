@@ -1,6 +1,5 @@
 #include <stan/math/prim/core.hpp>
 
-#include <test/unit/util.hpp>
 #include <test/unit/math/prim/functor/utils_threads.hpp>
 #include <tbb/task_arena.h>
 #include <gtest/gtest.h>

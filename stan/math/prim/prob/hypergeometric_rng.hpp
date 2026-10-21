@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_PROB_HYPERGEOMETRIC_RNG_HPP
 #define STAN_MATH_PRIM_PROB_HYPERGEOMETRIC_RNG_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <boost/math/distributions/hypergeometric.hpp>
 
 #include <stan/math/prim/err.hpp>

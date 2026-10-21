@@ -3,7 +3,6 @@
 #include <test/unit/math/prim/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
-#include <stdexcept>
 namespace {
 template <typename T>
 using is_floating_point_decay = std::is_floating_point<std::decay_t<T>>;

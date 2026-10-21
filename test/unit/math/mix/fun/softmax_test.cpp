@@ -1,5 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <test/unit/util.hpp>
 
 TEST(MathMixMatFun, softmax) {
   using stan::test::expect_ad_matvar;

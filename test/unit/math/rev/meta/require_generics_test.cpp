@@ -6,7 +6,6 @@
 #include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <type_traits>
-#include <vector>
 #include <string>
 
 TEST_F(AgradRev, requires_rev_scal_var_test) {

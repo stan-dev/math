@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_ERR_DOMAIN_ERROR_HPP
 #define STAN_MATH_PRIM_ERR_DOMAIN_ERROR_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
 
 namespace stan {

@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_FUN_DIAGONAL_HPP
 #define STAN_MATH_PRIM_FUN_DIAGONAL_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 
 namespace stan {

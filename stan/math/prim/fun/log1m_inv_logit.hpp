@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_FUN_LOG1M_INV_LOGIT_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>

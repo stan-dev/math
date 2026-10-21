@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_FUN_INV_SQRT_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>

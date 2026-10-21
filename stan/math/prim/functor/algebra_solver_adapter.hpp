@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_FUNCTOR_ALGEBRA_SOLVER_ADAPTER_HPP
 
 #include <ostream>
-#include <vector>
 
 /**
  * Adapt the non-variadic algebra_solver_newton and algebra_solver_powell

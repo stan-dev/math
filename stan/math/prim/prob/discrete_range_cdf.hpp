@@ -1,11 +1,7 @@
 #ifndef STAN_MATH_PRIM_PROB_DISCRETE_RANGE_CDF_HPP
 #define STAN_MATH_PRIM_PROB_DISCRETE_RANGE_CDF_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/inv.hpp>
-#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>

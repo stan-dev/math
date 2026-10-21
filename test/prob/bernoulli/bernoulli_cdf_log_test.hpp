@@ -1,7 +1,6 @@
 // Arguments: Ints, Doubles
 #include <stan/math/prim/prob/bernoulli_cdf_log.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/log.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

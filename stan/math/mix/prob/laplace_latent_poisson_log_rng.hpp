@@ -2,7 +2,6 @@
 #define STAN_MATH_MIX_PROB_LAPLACE_LATENT_POISSON_LOG_RNG_HPP
 
 #include <stan/math/mix/functor/laplace_base_rng.hpp>
-#include <stan/math/mix/functor/laplace_likelihood.hpp>
 #include <stan/math/mix/prob/laplace_marginal_poisson_log_lpmf.hpp>
 
 namespace stan {

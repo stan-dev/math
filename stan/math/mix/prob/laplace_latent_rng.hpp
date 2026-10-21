@@ -2,8 +2,6 @@
 #define STAN_MATH_MIX_PROB_LAPLACE_LATENT_RNG_HPP
 
 #include <stan/math/mix/functor/laplace_base_rng.hpp>
-#include <stan/math/mix/functor/laplace_likelihood.hpp>
-#include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {
 namespace math {

@@ -1,5 +1,3 @@
-#include <stan/math/prim/functor.hpp>
-#include <stan/math/prim/fun.hpp>
 #include <stan/math/prim/prob.hpp>
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>

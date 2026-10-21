@@ -2,20 +2,15 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_APPEND_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/matrix_cl_view.hpp>
-#include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/scalar.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
 #include <algorithm>
 #include <string>
-#include <tuple>
 #include <type_traits>
-#include <map>
 #include <utility>
 
 namespace stan {

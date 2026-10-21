@@ -1,7 +1,6 @@
 // Arguments: Ints, Doubles
 #include <stan/math/prim/prob/poisson_log_lpmf.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 
 using stan::math::var;

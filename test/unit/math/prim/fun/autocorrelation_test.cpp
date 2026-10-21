@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 #include <fstream>
 #include <vector>
-#include <stdexcept>
 
 TEST(ProbAutocorrelation, test1) {
   // ar1.csv generated in R with

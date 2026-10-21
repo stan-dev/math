@@ -7,7 +7,6 @@
 #include <stan/math/prim/constraint/identity_free.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/subtract.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
 namespace stan {

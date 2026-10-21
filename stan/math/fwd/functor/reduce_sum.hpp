@@ -5,8 +5,6 @@
 #include <stan/math/prim/err.hpp>
 
 #include <algorithm>
-#include <tuple>
-#include <vector>
 
 namespace stan {
 namespace math {

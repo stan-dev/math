@@ -2,13 +2,9 @@
 #include <vector>
 #include <gtest/gtest.h>
 
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/math/distributions.hpp>
 #include <boost/math/tools/promotion.hpp>
 
 #include <stan/math/rev.hpp>
-#include <stan/math/prim/fun/sign.hpp>
-#include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 
 template <typename T1, typename T2, typename T3, typename T4>

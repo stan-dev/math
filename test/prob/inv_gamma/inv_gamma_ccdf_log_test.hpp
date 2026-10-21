@@ -1,6 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/math/prim/prob/inv_gamma_ccdf_log.hpp>
-#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/gamma_p.hpp>
 
 using stan::math::var;

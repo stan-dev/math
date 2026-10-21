@@ -1,6 +1,5 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 
 // Test that values from a dense matrix in sparse format are extracted.
 TEST(SparseStuff, csr_extract_w_dense) {

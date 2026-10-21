@@ -2,7 +2,6 @@
 #define STAN_MATH_FWD_FUN_IS_NAN_HPP
 
 #include <stan/math/fwd/meta.hpp>
-#include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
 

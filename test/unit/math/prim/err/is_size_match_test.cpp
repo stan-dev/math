@@ -1,6 +1,5 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/util.hpp>
 
 TEST(ErrorHandlingMatrix, is_size_match) {
   using stan::math::is_size_match;

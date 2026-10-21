@@ -8,7 +8,6 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/opencl/prim/std_normal_lcdf.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {

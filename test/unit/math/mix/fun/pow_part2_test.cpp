@@ -1,6 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
 #include <cmath>
-#include <limits>
 #include <vector>
 
 TEST(mathMixFun, complexPow) {

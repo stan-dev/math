@@ -1,9 +1,7 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/rev.hpp>
 #include <test/unit/math/opencl/util.hpp>
-#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-#include <algorithm>
 
 auto mdivide_right_tri_low_functor = [](const auto& a, const auto& b) {
   return stan::math::mdivide_right_tri_low(a, b);

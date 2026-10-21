@@ -5,9 +5,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <unsupported/Eigen/FFT>
 #include <Eigen/Dense>
-#include <complex>
-#include <type_traits>
-#include <vector>
 
 namespace stan {
 namespace math {

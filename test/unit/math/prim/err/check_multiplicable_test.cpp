@@ -1,6 +1,5 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <iostream>
 #include <limits>
 
 TEST(ErrorHandlingMatrix, checkMultiplicableMatrix) {

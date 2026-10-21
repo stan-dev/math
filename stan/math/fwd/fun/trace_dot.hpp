@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_FWD_FUN_TRACE_DOT_HPP
 #define STAN_MATH_FWD_FUN_TRACE_DOT_HPP
 
-#include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/multiply.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/trace.hpp>

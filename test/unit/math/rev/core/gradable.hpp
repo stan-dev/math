@@ -4,7 +4,6 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
 #include <stan/math/rev/fun/quad_form.hpp>
-#include <test/unit/math/rev/fun/util.hpp>
 #include <vector>
 
 struct gradable {

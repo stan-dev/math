@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_PROB_CATEGORICAL_LOGIT_RNG_HPP
 #define STAN_MATH_PRIM_PROB_CATEGORICAL_LOGIT_RNG_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/cumulative_sum.hpp>
 #include <stan/math/prim/fun/softmax.hpp>

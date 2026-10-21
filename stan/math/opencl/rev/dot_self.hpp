@@ -2,7 +2,6 @@
 #define STAN_MATH_OPENCL_REV_DOT_SELF_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/dot_self.hpp>
 #include <stan/math/rev/core.hpp>
 

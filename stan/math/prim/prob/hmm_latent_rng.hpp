@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_PROB_HMM_LATENT_RNG_HPP
 #define STAN_MATH_PRIM_PROB_HMM_LATENT_RNG_HPP
 
-#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/hmm_check.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>

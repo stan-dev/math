@@ -1,7 +1,5 @@
 #include <stan/math/fwd.hpp>
 #include <gtest/gtest.h>
-#include <iostream>
-#include <fstream>
 #include <string>
 #include <vector>
 

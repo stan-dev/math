@@ -3,7 +3,6 @@
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/prim/divide_columns.hpp>
 #include <gtest/gtest.h>
-#include <algorithm>
 
 using stan::math::divide_columns;
 using stan::math::from_matrix_cl;

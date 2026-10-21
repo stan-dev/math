@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_REV_CORE_GRAD_HPP
 #define STAN_MATH_REV_CORE_GRAD_HPP
 
-#include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/empty_nested.hpp>
 #include <stan/math/rev/core/nested_size.hpp>

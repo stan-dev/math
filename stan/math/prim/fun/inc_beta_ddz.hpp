@@ -1,10 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_INC_BETA_DDZ_HPP
 #define STAN_MATH_PRIM_FUN_INC_BETA_DDZ_HPP
 
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
-#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <boost/math/special_functions/beta.hpp>
 #include <cmath>

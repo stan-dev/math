@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_PROB_LKJ_CORR_CHOLESKY_RNG_HPP
 #define STAN_MATH_PRIM_PROB_LKJ_CORR_CHOLESKY_RNG_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/prob/beta_rng.hpp>
 #include <stan/math/prim/fun/read_corr_L.hpp>

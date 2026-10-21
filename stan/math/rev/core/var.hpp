@@ -7,7 +7,6 @@
 #endif
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/grad.hpp>
-#include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/meta/is_vari.hpp>
 #include <stan/math/rev/meta/arena_type.hpp>

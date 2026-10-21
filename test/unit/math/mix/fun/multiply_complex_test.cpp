@@ -1,5 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <test/unit/math/mix/fun/multiply_util.hpp>
 
 TEST(mathMix, complexMultiply) {
   auto f

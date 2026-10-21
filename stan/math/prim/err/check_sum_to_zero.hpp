@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_ERR_CHECK_SUM_TO_ZERO_HPP
 #define STAN_MATH_PRIM_ERR_CHECK_SUM_TO_ZERO_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/constraint_tolerance.hpp>
 #include <stan/math/prim/err/make_iter_name.hpp>

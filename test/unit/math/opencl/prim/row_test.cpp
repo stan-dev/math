@@ -2,7 +2,6 @@
 #include <stan/math/opencl/prim/row.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 
 TEST(MathMatrixCL, row_exception) {
   stan::math::matrix_cl<double> m1_cl(3, 3);

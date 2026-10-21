@@ -3,9 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/fwd/fun/multiply.hpp>
-#include <stan/math/prim/fun/transpose.hpp>
 #include <stan/math/prim/fun/multiply_lower_tri_self_transpose.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {

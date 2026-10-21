@@ -1,8 +1,6 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/util.hpp>
-#include <limits>
 
 TEST_F(AgradRev, ErrorHandlingMatrix_checkMatchingDims_double_var) {
   using stan::math::check_matching_dims;

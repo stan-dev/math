@@ -1,7 +1,6 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/fun/util.hpp>
 
 // Reproduces a compile error: calling `transpose` on a `var_value` that holds
 // a non-plain Eigen expression (e.g. a row/block of a `var_value` matrix). The

@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_ERR_IS_SIZE_MATCH_HPP
 #define STAN_MATH_PRIM_ERR_IS_SIZE_MATCH_HPP
 
-#include <stan/math/prim/meta.hpp>
 namespace stan {
 namespace math {
 

@@ -1,5 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <limits>
 
 TEST(mathMixScalFun, lmultiply2_vec) {
   auto f = [](const auto& x1, const auto& x2) {

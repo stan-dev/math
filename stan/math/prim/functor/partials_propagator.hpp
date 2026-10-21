@@ -1,12 +1,10 @@
 #ifndef STAN_MATH_PRIM_FUNCTOR_PARTIALS_PROPOGATOR_HPP
 #define STAN_MATH_PRIM_FUNCTOR_PARTIALS_PROPOGATOR_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
-#include <vector>
 #include <type_traits>
 #include <tuple>
 

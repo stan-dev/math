@@ -1,12 +1,9 @@
 #ifndef STAN_MATH_PRIM_PROB_HMM_HIDDEN_STATE_PROB_HPP
 #define STAN_MATH_PRIM_PROB_HMM_HIDDEN_STATE_PROB_HPP
 
-#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/hmm_check.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <boost/random.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {

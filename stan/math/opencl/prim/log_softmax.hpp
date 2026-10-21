@@ -3,9 +3,7 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/log_sum_exp.hpp>
-#include <stan/math/opencl/ref_type.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err/check_matching_sizes.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {

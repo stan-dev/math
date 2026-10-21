@@ -1,12 +1,10 @@
 #ifndef STAN_MATH_PRIM_ERR_CHECK_VECTOR_HPP
 #define STAN_MATH_PRIM_ERR_CHECK_VECTOR_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/invalid_argument.hpp>
 #include <sstream>
 #include <string>
-#include <typeinfo>
 
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/value_type.hpp>

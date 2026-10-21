@@ -3,9 +3,6 @@
 
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
-#include <algorithm>
-#include <sstream>
-#include <tuple>
 #include <vector>
 
 namespace stan {

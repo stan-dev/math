@@ -4,7 +4,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/value_of.hpp>
-#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/softmax.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>

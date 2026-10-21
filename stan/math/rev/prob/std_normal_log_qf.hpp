@@ -4,7 +4,6 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/prob/std_normal_log_qf.hpp>
-#include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <cmath>
 

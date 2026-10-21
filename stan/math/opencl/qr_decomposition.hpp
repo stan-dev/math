@@ -4,15 +4,11 @@
 
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/zeros_strict_tri.hpp>
 #include <stan/math/opencl/prim/identity_matrix.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/multiply.hpp>
-#include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/opencl/copy.hpp>
-#include <CL/opencl.hpp>
 #include <algorithm>
-#include <vector>
 #include <cmath>
 
 namespace stan {

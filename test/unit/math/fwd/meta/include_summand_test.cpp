@@ -1,6 +1,5 @@
 #include <stan/math/fwd.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/util.hpp>
 
 using stan::math::fvar;
 using stan::math::include_summand;

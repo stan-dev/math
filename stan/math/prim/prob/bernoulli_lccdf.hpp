@@ -7,7 +7,6 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/select.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 

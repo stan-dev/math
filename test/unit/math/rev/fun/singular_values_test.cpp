@@ -3,7 +3,6 @@
 #include <stan/math/prim.hpp>
 #include <stan/math/rev/fun/singular_values.hpp>
 #include <stan/math/rev/fun/sum.hpp>
-#include <stan/math/rev/fun/log.hpp>
 #include <gtest/gtest.h>
 
 TEST_F(AgradRev, Rev_singularvalues_gradient) {

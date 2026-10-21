@@ -5,8 +5,6 @@
 #include <stan/math/prim/err/invalid_argument.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/meta/is_container.hpp>
-#include <stan/math/prim/meta/require_generics.hpp>
-#include <algorithm>
 #include <sstream>
 #include <string>
 

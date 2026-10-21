@@ -2,7 +2,6 @@
 #define STAN_MATH_FWD_FUN_MDIVIDE_RIGHT_TRI_LOW_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/mdivide_right.hpp>
 #include <stan/math/fwd/fun/multiply.hpp>
 #include <stan/math/fwd/fun/to_fvar.hpp>

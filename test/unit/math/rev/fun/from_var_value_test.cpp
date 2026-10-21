@@ -2,7 +2,6 @@
 #include <test/unit/math/rev/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/pretty_print_types.hpp>
 
 TEST_F(AgradRev, RevMatrix_from_var_value_types) {
   using stan::math::from_var_value;

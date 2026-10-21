@@ -2,7 +2,6 @@
 #include <stan/math/prim/prob/student_t_lpdf.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
-#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 

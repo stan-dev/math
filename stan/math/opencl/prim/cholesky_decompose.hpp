@@ -5,9 +5,6 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/cholesky_decompose.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <CL/opencl.hpp>
-#include <algorithm>
 #include <cmath>
 
 namespace stan {

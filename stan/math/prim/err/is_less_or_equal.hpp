@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_ERR_IS_LESS_OR_EQUAL_HPP
 #define STAN_MATH_PRIM_ERR_IS_LESS_OR_EQUAL_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>

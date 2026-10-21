@@ -1,6 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/math/prim/prob/von_mises_lcdf.hpp>
-#include <stan/math/prim/fun/floor.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 
 using stan::math::var;

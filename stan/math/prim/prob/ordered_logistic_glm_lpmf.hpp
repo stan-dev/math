@@ -7,8 +7,6 @@
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
-#include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/isfinite.hpp>
 #include <stan/math/prim/fun/log1m_exp.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>

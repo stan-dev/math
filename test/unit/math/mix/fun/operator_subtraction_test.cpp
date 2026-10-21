@@ -1,6 +1,5 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/fun/util.hpp>
 
 TEST(AgradMixMatrixOperatorSubtraction, fv_scalar_matrix_1stDeriv) {
   using stan::math::fvar;

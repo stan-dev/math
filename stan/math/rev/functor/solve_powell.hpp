@@ -11,7 +11,6 @@
 #include <stan/math/prim/functor/algebra_solver_adapter.hpp>
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <iostream>
-#include <string>
 #include <vector>
 
 namespace stan {

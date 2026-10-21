@@ -4,7 +4,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
-#include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/rev/constraint/sum_to_zero_constrain.hpp>
 #include <stan/math/prim/constraint/simplex_constrain.hpp>
 #include <cmath>

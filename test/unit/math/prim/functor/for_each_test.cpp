@@ -1,7 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <tuple>
-#include <type_traits>
 #include <vector>
 
 TEST(MathFunctions, for_each_basic_unary) {

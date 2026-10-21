@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_CORE_SET_ZERO_ALL_ADJOINTS_NESTED_HPP
 
 #include <stan/math/rev/core/vari.hpp>
-#include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/empty_nested.hpp>
 #include <stdexcept>

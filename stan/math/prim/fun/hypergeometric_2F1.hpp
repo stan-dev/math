@@ -5,12 +5,9 @@
 #include <stan/math/prim/fun/abs.hpp>
 #include <stan/math/prim/fun/asin.hpp>
 #include <stan/math/prim/fun/asinh.hpp>
-#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/floor.hpp>
 #include <stan/math/prim/fun/inv.hpp>
-#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/pow.hpp>

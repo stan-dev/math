@@ -10,7 +10,6 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
-#include <map>
 #include <string>
 #include <type_traits>
 #include <utility>

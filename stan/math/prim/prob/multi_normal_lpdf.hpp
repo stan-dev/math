@@ -3,18 +3,13 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/prim/fun/eval.hpp>
-#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/fun/max_size_mvt.hpp>
 #include <stan/math/prim/fun/mdivide_left_ldlt.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
-#include <stan/math/prim/fun/sum.hpp>
-#include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/fun/transpose.hpp>
 #include <stan/math/prim/fun/vector_seq_view.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 

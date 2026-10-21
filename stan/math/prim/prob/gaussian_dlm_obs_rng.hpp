@@ -1,12 +1,10 @@
 #ifndef STAN_MATH_PRIM_PROB_GAUSSIAN_DLM_OBS_RNG_HPP
 #define STAN_MATH_PRIM_PROB_GAUSSIAN_DLM_OBS_RNG_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {

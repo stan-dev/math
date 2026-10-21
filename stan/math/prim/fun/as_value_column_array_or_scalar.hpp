@@ -1,12 +1,9 @@
 #ifndef STAN_MATH_PRIM_FUN_AS_VALUE_COLUMN_ARRAY_OR_SCALAR
 #define STAN_MATH_PRIM_FUN_AS_VALUE_COLUMN_ARRAY_OR_SCALAR
 
-#include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {

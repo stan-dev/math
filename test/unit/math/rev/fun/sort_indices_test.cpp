@@ -1,7 +1,6 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/fun/util.hpp>
 #include <vector>
 
 inline void test_sort_indices_asc(std::vector<double> val) {

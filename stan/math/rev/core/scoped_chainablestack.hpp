@@ -5,7 +5,6 @@
 
 #include <mutex>
 #include <stdexcept>
-#include <thread>
 
 namespace stan {
 namespace math {

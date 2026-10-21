@@ -1,5 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <limits>
 
 template <typename T>
 inline void expect_sum(const T& m) {

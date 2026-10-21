@@ -9,7 +9,6 @@
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/abs.hpp>
 #include <stan/math/prim/fun/floor.hpp>
-#include <stan/math/prim/fun/max.hpp>
 #include <stan/math/prim/fun/select.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>

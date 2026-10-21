@@ -3,7 +3,6 @@
 #include <stan/math/opencl/prim.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-#include <algorithm>
 
 TEST(MathMatrixCL, divide_exception_pass) {
   stan::math::matrix_cl<double> m;

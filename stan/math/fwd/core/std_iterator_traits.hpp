@@ -2,7 +2,6 @@
 #define STAN_MATH_FWD_CORE_STD_ITERATOR_TRAITS_HPP
 
 #include <stan/math/fwd/core/fvar.hpp>
-#include <stan/math/prim/meta.hpp>
 #include <iterator>
 
 namespace std {

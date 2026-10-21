@@ -2,10 +2,7 @@
 #define STAN_MATH_OPENCL_PRIM_COLUMNS_DOT_SELF_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err/check_vector.hpp>
-#include <stan/math/prim/err/check_matching_sizes.hpp>
 
 namespace stan {
 namespace math {

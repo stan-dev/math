@@ -1,8 +1,6 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <boost/mp11.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/functor/test_fixture_ode.hpp>
 #include <test/unit/math/rev/functor/test_fixture_dae_chem.hpp>
 #include <test/unit/math/rev/functor/dae_test_functors.hpp>
 

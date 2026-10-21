@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_FUN_ATAN2_HPP
 #define STAN_MATH_PRIM_FUN_ATAN2_HPP
 
-#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <cmath>

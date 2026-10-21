@@ -5,7 +5,6 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
 
 namespace stan {
 namespace math {

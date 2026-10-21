@@ -1,6 +1,5 @@
 #ifndef TEST_UNIT_MATH_PRIM_FUNCTOR_MOCK_ODE_FUNCTOR
 #define TEST_UNIT_MATH_PRIM_FUNCTOR_MOCK_ODE_FUNCTOR
-#include <vector>
 
 struct mock_ode_functor {
   template <typename T0, typename T1, typename T2, typename T3, typename T4>

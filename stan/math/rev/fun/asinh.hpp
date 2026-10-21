@@ -4,15 +4,8 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
-#include <stan/math/rev/fun/abs.hpp>
-#include <stan/math/rev/fun/arg.hpp>
 #include <stan/math/rev/fun/cosh.hpp>
-#include <stan/math/rev/fun/is_inf.hpp>
-#include <stan/math/rev/fun/is_nan.hpp>
 #include <stan/math/rev/fun/log.hpp>
-#include <stan/math/rev/fun/polar.hpp>
-#include <stan/math/rev/fun/sqrt.hpp>
-#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/asinh.hpp>
 #include <cmath>

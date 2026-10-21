@@ -1,9 +1,6 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/pretty_print_types.hpp>
-#include <test/unit/math/prim/util.hpp>
 #include <gtest/gtest.h>
 #include <tuple>
-#include <type_traits>
 #include <vector>
 
 namespace {

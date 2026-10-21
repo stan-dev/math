@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_FUN_IS_ANY_NAN_HPP
 
 #include <stan/math/prim/fun/is_nan.hpp>
-#include <utility>
 
 namespace stan {
 namespace math {

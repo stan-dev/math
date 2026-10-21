@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <cstddef>
 #include <cstdlib>
 
 namespace stan {

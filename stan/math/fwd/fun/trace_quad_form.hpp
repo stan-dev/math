@@ -1,12 +1,9 @@
 #ifndef STAN_MATH_FWD_FUN_TRACE_QUAD_FORM_HPP
 #define STAN_MATH_FWD_FUN_TRACE_QUAD_FORM_HPP
 
-#include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/multiply.hpp>
 #include <stan/math/fwd/fun/sum.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/transpose.hpp>
-#include <stan/math/prim/fun/trace.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {

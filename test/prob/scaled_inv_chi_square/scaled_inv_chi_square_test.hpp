@@ -2,7 +2,6 @@
 #include <stan/math/prim/prob/scaled_inv_chi_square_lpdf.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/square.hpp>
-#include <stan/math/prim/fun/log.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

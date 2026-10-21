@@ -4,7 +4,6 @@
 #include <stan/math/prim/meta/partials_type.hpp>
 #include <stan/math/prim/meta/promote_args.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
-#include <type_traits>
 
 namespace stan {
 

@@ -1,10 +1,8 @@
 #ifndef STAN_MATH_MIX_FUNCTOR_DERIVATIVE_HPP
 #define STAN_MATH_MIX_FUNCTOR_DERIVATIVE_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {

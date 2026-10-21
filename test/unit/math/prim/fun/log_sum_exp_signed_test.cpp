@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 #include <cmath>
 #include <tuple>
-#include <vector>
 
 TEST(MathFunctions, log_sum_exp_signed) {
   using stan::math::exp;

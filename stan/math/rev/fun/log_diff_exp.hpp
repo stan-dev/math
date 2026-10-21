@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_REV_FUN_LOG_DIFF_EXP_HPP
 #define STAN_MATH_REV_FUN_LOG_DIFF_EXP_HPP
 
-#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/expm1.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log_diff_exp.hpp>
 

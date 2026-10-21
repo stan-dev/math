@@ -1,5 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <test/unit/math/laplace/laplace_utility.hpp>
 
 TEST(laplace_utils, tuple_to_laplace_options) {
   using stan::math::laplace_options_user_supplied;

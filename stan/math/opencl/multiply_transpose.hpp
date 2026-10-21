@@ -6,7 +6,6 @@
 #include <stan/math/opencl/kernels/multiply_transpose.hpp>
 #include <stan/math/opencl/err.hpp>
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 
 namespace stan {

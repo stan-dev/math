@@ -5,12 +5,9 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/constraint/identity_constrain.hpp>
-#include <stan/math/prim/constraint/identity_free.hpp>
 #include <stan/math/prim/fun/add.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/eval.hpp>
-#include <stan/math/prim/fun/sum.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
 namespace stan {

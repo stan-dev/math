@@ -27,10 +27,7 @@
 #include <stan/math/opencl/kernels/device_functions/Phi_approx.hpp>
 #include <stan/math/opencl/kernels/device_functions/std_normal_lcdf.hpp>
 #include <stan/math/opencl/kernels/device_functions/trigamma.hpp>
-#include <stan/math/opencl/matrix_cl_view.hpp>
-#include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
-#include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <array>

@@ -3,7 +3,6 @@
 #include <boost/mp11.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/prim/functor/harmonic_oscillator.hpp>
-#include <test/unit/math/rev/functor/test_fixture_ode.hpp>
 #include <test/unit/math/rev/functor/test_fixture_ode_sho.hpp>
 #include <test/unit/math/rev/functor/ode_test_functors.hpp>
 
