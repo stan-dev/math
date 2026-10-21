@@ -166,4 +166,23 @@ TYPED_TEST_P(harmonic_oscillator_analytical_test, vv) {
 REGISTER_TYPED_TEST_SUITE_P(harmonic_oscillator_analytical_test, dv, vd, vv);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanShoOde, harmonic_oscillator_analytical_test,
                                harmonic_oscillator_test_types);
+
+// step size must not be tied to the smallest gap between output times
+TEST_F(AgradRev, uneven_output_times) {
+  harm_osc_ode_fun_eigen f;
+  Eigen::VectorXd y0(2);
+  y0 << 1.0, 0.0;
+  std::vector<double> ts{1e-7, 100.0};
+  std::vector<double> theta{0.0};
+  std::vector<double> x;
+  std::vector<int> x_int;
+
+  auto y_rk45 = stan::math::ode_rk45_tol(f, y0, 0.0, ts, 1e-8, 1e-8, 10000,
+                                         nullptr, theta, x, x_int);
+  EXPECT_NEAR(y_rk45[1](0), std::cos(100.0), 1e-5);
+
+  auto y_ckrk = stan::math::ode_ckrk_tol(f, y0, 0.0, ts, 1e-8, 1e-8, 10000,
+                                         nullptr, theta, x, x_int);
+  EXPECT_NEAR(y_ckrk[1](0), std::cos(100.0), 1e-5);
+}
 }  // namespace sho_ode_typed_test
