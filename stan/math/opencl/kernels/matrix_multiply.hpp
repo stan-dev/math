@@ -315,9 +315,10 @@ static constexpr const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
       const int wgid = get_group_id(0);
 
       const int start = contains_nonzero(view_B, UPPER) ? 0 : wgid;
-      const int stop = contains_nonzero(view_A, UPPER)
-                           ? contains_nonzero(view_B, LOWER) ? N : wgid + 1
-                           : 1;
+      const int stop
+          = contains_nonzero(view_A, UPPER)
+                ? contains_nonzero(view_B, LOWER) ? N : min(N, wgid + 1)
+                : 1;
 
       double acc = 0;
       for (int i = lid + start; i < stop; i += LOCAL_SIZE_) {
