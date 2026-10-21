@@ -83,11 +83,33 @@ inline T erfcx_paired_horner(const std::array<double, N>& c, const T& y,
 }
 
 /**
- * Cody (1969) third-interval rational, valid for `x >= 4`.
+ * Numerator and denominator of the Cody (1969) third-interval rational,
+ * valid for `x >= 4`.
  *
  * `erfcx(x) = (INV_SQRT_PI + u * C(u)) / x` with `u = 1 / x^2` and `C` the
  * Cody correction. `u * C(u)` is formed from the coefficients in `x^2`, so
- * `1 / x^2` is never formed.
+ * `1 / x^2` is never formed, and the sum is put over the common denominator
+ * `x^3 Q(x^2)` so the quotient takes one division. Below
+ * `erfcx_tail_leading_only` that denominator is at most about `2^351`.
+ *
+ * @tparam T scalar type
+ * @param x argument, `x >= 4`
+ * @return numerator and denominator of `erfcx(x)`
+ */
+template <typename T>
+inline std::pair<T, T> erfcx_cody_tail_fraction(const T& x) {
+  if (x > erfcx_tail_leading_only) {
+    return {T(INV_SQRT_PI), x};
+  }
+  const T s = x * x;
+  const auto pq = erfcx_tail_polynomials<erfcx_tail_p.size()>(
+      erfcx_tail_p.cbegin(), erfcx_tail_q.cbegin(), s);
+  const T s_q = s * pq.second;
+  return {INV_SQRT_PI * s_q + pq.first, x * s_q};
+}
+
+/**
+ * Cody (1969) third-interval rational, valid for `x >= 4`.
  *
  * @tparam T scalar type
  * @param x argument, `x >= 4`
@@ -95,13 +117,8 @@ inline T erfcx_paired_horner(const std::array<double, N>& c, const T& y,
  */
 template <typename T>
 inline T erfcx_cody_tail(const T& x) {
-  if (x > erfcx_tail_leading_only) {
-    return INV_SQRT_PI / x;
-  }
-  const T s = x * x;
-  const auto pq = erfcx_tail_polynomials<erfcx_tail_p.size()>(
-      erfcx_tail_p.cbegin(), erfcx_tail_q.cbegin(), s);
-  return (INV_SQRT_PI + pq.first / (s * pq.second)) / x;
+  const auto pq = erfcx_cody_tail_fraction(x);
+  return pq.first / pq.second;
 }
 
 /**
@@ -146,7 +163,8 @@ inline T erfcx_derivative(const T& x, const T& value) {
 }
 
 /**
- * Cody (1969) second-interval rational, valid for `0.46875 <= x <= 4`.
+ * Numerator and denominator of the Cody (1969) second-interval rational,
+ * valid for `0.46875 <= x <= 4`.
  *
  * Cody writes this interval as `erfc(x) = exp(-x*x) * R(x)`, so `erfcx`
  * is `R(x)` with the exponential cancelled analytically: no `exp` and no
@@ -154,13 +172,26 @@ inline T erfcx_derivative(const T& x, const T& value) {
  *
  * @tparam T scalar type
  * @param y argument, `0.46875 <= y <= 4`
+ * @return numerator and denominator of `erfcx(y)`
+ */
+template <typename T>
+inline std::pair<T, T> erfcx_cody_middle_fraction(const T& y) {
+  const T y2 = y * y;
+  return {erfcx_paired_horner(erfcx_middle_p, y, y2),
+          erfcx_paired_horner(erfcx_middle_q, y, y2)};
+}
+
+/**
+ * Cody (1969) second-interval rational, valid for `0.46875 <= x <= 4`.
+ *
+ * @tparam T scalar type
+ * @param y argument, `0.46875 <= y <= 4`
  * @return scaled complementary error function
  */
 template <typename T>
 inline T erfcx_cody_middle(const T& y) {
-  const T y2 = y * y;
-  return erfcx_paired_horner(erfcx_middle_p, y, y2)
-         / erfcx_paired_horner(erfcx_middle_q, y, y2);
+  const auto pq = erfcx_cody_middle_fraction(y);
+  return pq.first / pq.second;
 }
 
 /**

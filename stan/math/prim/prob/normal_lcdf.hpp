@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/eval.hpp>
+#include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/select.hpp>
@@ -45,12 +46,14 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf_impl(const char* function,
     return 0;
   }
 
+  // One division by sigma, shared by z and the slopes.
+  const auto inv_sigma = to_ref(inv(sigma_val));
   // z and scaled_slope are evaluated once: each is read more than once.
-  auto z = eval(sign * (y_val - mu_val) / sigma_val);
+  auto z = eval(sign * (y_val - mu_val) * inv_sigma);
   if constexpr (any_autodiff) {
     const auto [values, slopes] = internal::std_normal_lcdf_value_grad<true>(z);
     auto ops_partials = make_partials_propagator(y_ref, mu_ref, sigma_ref);
-    auto scaled_slope = eval(slopes / sigma_val);
+    auto scaled_slope = eval(slopes * inv_sigma);
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = sign * scaled_slope;
     }

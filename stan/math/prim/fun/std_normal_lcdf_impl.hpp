@@ -16,6 +16,8 @@
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
+#include <cmath>
+#include <type_traits>
 #include <utility>
 
 namespace stan {
@@ -33,17 +35,18 @@ inline auto std_normal_tail_correction(const T& inv_x_sq) {
   // The arrays ascend in 1/x^2; reversed, they are Horner order.
   const auto pq = erfcx_tail_polynomials<erfcx_tail_p.size()>(
       erfcx_tail_p.crbegin(), erfcx_tail_q.crbegin(), inv_x_sq);
-  return (pq.first / pq.second) / INV_SQRT_PI;
+  return (pq.first / pq.second) * SQRT_PI;
 }
 
 /** Scalar log Phi(z) and its slope phi(z) / Phi(z).
  * For z < 0.46875 sqrt(2) both come from erfcx with no exp; larger z needs
  * one exp for the complement. Infinite z gives -inf/0 values and inf/0
  * slopes.
- * The lower tail keeps log1p, inv_x_sq = 2 (1/neg_z)^2 and
+ * For autodiff types the lower tail keeps log1p, inv_x_sq = 2 (1/neg_z)^2 and
  * neg_z / (1 + tail_term) so nested autodiff neither overflows nor loses the
- * 2 / neg_z^3 third derivative; the z > 40 return keeps derivatives finite
- * when x^2 overflows.
+ * 2 / neg_z^3 third derivative; doubles take the z < 0 branch there, with one
+ * log and no log1p. The z > 40 return keeps derivatives finite when x^2
+ * overflows.
  */
 template <bool calc_grad, typename T, require_stan_scalar_t<T>* = nullptr>
 inline auto std_normal_lcdf_value_grad(const T& z_in) {
@@ -55,20 +58,30 @@ inline auto std_normal_lcdf_value_grad(const T& z_in) {
     } else {
       return T_return(0);
     }
-  } else if (z <= -4 * SQRT_TWO) {
-    const auto neg_z = -z;
-    const auto inv_x_sq = 2 * square(inv(neg_z));
-    const auto tail_term = inv_x_sq * std_normal_tail_correction(inv_x_sq);
-    const auto value
-        = -(0.5 * z) * z - HALF_LOG_TWO_PI - log(neg_z) + log1p(tail_term);
-    if constexpr (calc_grad) {
-      return std::pair<T_return, T_return>{value, neg_z / (1.0 + tail_term)};
-    } else {
-      return T_return(value);
+  }
+  if constexpr (!std::is_arithmetic_v<T>) {
+    if (z <= -4 * SQRT_TWO) {
+      const auto neg_z = -z;
+      const auto inv_x_sq = 2 * square(inv(neg_z));
+      const auto tail_term = inv_x_sq * std_normal_tail_correction(inv_x_sq);
+      const auto value
+          = -(0.5 * z) * z - HALF_LOG_TWO_PI - log(neg_z) + log1p(tail_term);
+      if constexpr (calc_grad) {
+        return std::pair<T_return, T_return>{value, neg_z / (1.0 + tail_term)};
+      } else {
+        return T_return(value);
+      }
     }
   }
-  // Not abs(z): its autodiff tangent is 0 at z == 0, which the slope needs.
-  const auto x = (z < 0 ? -z : z) * INV_SQRT_TWO;
+  // Not abs(z) for autodiff types: its tangent is 0 at z == 0, which the
+  // slope needs. For doubles fabs avoids a branch on the sign of z, which
+  // mispredicts when the signs are mixed.
+  T x;
+  if constexpr (std::is_arithmetic_v<T>) {
+    x = std::fabs(z) * INV_SQRT_TWO;
+  } else {
+    x = (z < 0 ? -z : z) * INV_SQRT_TWO;
+  }
   if (x < 0.46875) {
     // Phi(z) = exp(-z^2 / 2) erfcx(-z / sqrt(2)) / 2 for either sign.
     const auto erfcx_neg = erfcx_small(-z * INV_SQRT_TWO);
@@ -80,12 +93,16 @@ inline auto std_normal_lcdf_value_grad(const T& z_in) {
       return T_return(value);
     }
   }
-  const auto erfcx_x = x >= 4 ? erfcx_cody_tail(x) : erfcx_cody_middle(x);
+  // The slope divides by the denominator over the numerator rather than by
+  // erfcx_x, so its division does not wait on the one forming erfcx_x.
+  const auto erfcx_pq
+      = x >= 4 ? erfcx_cody_tail_fraction(x) : erfcx_cody_middle_fraction(x);
+  const auto erfcx_x = erfcx_pq.first / erfcx_pq.second;
   if (z < 0) {
     const auto value = -(0.5 * z) * z + LOG_HALF + log(erfcx_x);
     if constexpr (calc_grad) {
-      return std::pair<T_return, T_return>{value,
-                                           SQRT_TWO_OVER_SQRT_PI / erfcx_x};
+      return std::pair<T_return, T_return>{
+          value, SQRT_TWO_OVER_SQRT_PI * erfcx_pq.second / erfcx_pq.first};
     } else {
       return T_return(value);
     }
@@ -102,26 +119,29 @@ inline auto std_normal_lcdf_value_grad(const T& z_in) {
   }
 }
 
-/** Elementwise values and slopes; only the values when the gradient is off. */
+/**
+ * Elementwise values and slopes; only the values when the gradient is off.
+ * One pass over values, which holds z on entry and log Phi(z) on return.
+ */
 template <bool calc_grad, typename T, require_eigen_t<T>* = nullptr>
 inline auto std_normal_lcdf_value_grad(T&& z) {
   using T_return = return_type_t<scalar_type_t<T>>;
   using Array = Eigen::Array<T_return, Eigen::Dynamic, 1>;
+  Array values(std::forward<T>(z));
+  const Eigen::Index N = values.size();
+  // coeff and coeffRef: i is in range, and operator[]'s range assert costs
+  // about 20 instructions per element.
   if constexpr (calc_grad) {
-    Array values(std::forward<T>(z));
-    Array slopes(values.size());
-    const auto value_size = values.size();
-    for (Eigen::Index i = 0; i < value_size; ++i) {
-      auto [value, grad]
-          = std_normal_lcdf_value_grad<true>(T_return(values[i]));
-      values[i] = value;
-      slopes[i] = grad;
+    Array slopes(N);
+    for (Eigen::Index i = 0; i < N; ++i) {
+      auto [value, grad] = std_normal_lcdf_value_grad<true>(values.coeff(i));
+      values.coeffRef(i) = value;
+      slopes.coeffRef(i) = grad;
     }
     return std::make_pair(std::move(values), std::move(slopes));
   } else {
-    Array values(std::forward<T>(z));
-    for (Eigen::Index i = 0; i < values.size(); ++i) {
-      values[i] = std_normal_lcdf_value_grad<false>(values[i]);
+    for (Eigen::Index i = 0; i < N; ++i) {
+      values.coeffRef(i) = std_normal_lcdf_value_grad<false>(values.coeff(i));
     }
     return values;
   }
