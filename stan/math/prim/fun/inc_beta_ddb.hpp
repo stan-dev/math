@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_FUN_INC_BETA_DDB_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 
 namespace stan {
@@ -12,10 +11,14 @@ namespace math {
  * Returns the partial derivative of the regularized
  * incomplete beta function, I_{z}(a, b) with respect to b.
  *
- * Evaluated by <code>grad_reg_inc_beta</code>, which computes both shape
- * derivatives; call that function directly when both are needed.
+ * Evaluated by <code>grad_reg_inc_beta</code>, computing only the derivative
+ * with respect to b.
  *
- * @tparam T scalar types of arguments
+ * @tparam T1 type of a
+ * @tparam T2 type of b
+ * @tparam T3 type of z
+ * @tparam T4 type of digamma_b
+ * @tparam T5 type of digamma_ab
  * @param a first argument
  * @param b second argument
  * @param z upper bound of the integral
@@ -27,12 +30,12 @@ namespace math {
  * @pre b >= 0
  * @pre 0 <= z <= 1
  */
-template <typename T>
-inline T inc_beta_ddb(T a, T b, T z, T digamma_b, T digamma_ab) {
-  T g1 = 0;
-  T g2 = 0;
-  grad_reg_inc_beta(g1, g2, a, b, z, digamma(a), digamma_b, digamma_ab, T(0));
-  return g2;
+template <typename T1, typename T2, typename T3, typename T4, typename T5,
+          require_all_stan_scalar_t<T1, T2, T3, T4, T5>* = nullptr>
+inline auto inc_beta_ddb(const T1& a, const T2& b, const T3& z,
+                         const T4& digamma_b, const T5& digamma_ab) {
+  return grad_reg_inc_beta<GRAD_RIB::G2>(a, b, z, 0.0, digamma_b, digamma_ab,
+                                         0.0);
 }
 
 }  // namespace math

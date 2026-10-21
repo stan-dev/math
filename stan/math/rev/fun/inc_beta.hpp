@@ -3,41 +3,60 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/beta.hpp>
-#include <stan/math/rev/fun/digamma.hpp>
-#include <stan/math/rev/fun/pow.hpp>
+#include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
-#include <cmath>
+#include <stan/math/prim/fun/inc_beta_ddz.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 
 namespace stan {
 namespace math {
 
-namespace internal {
-
-class inc_beta_vvv_vari : public op_vvv_vari {
- public:
-  inc_beta_vvv_vari(vari* avi, vari* bvi, vari* cvi)
-      : op_vvv_vari(inc_beta(avi->val_, bvi->val_, cvi->val_), avi, bvi, cvi) {}
-  void chain() {
-    double d_a;
-    double d_b;
-    const double beta_ab = beta(avi_->val_, bvi_->val_);
-    grad_reg_inc_beta(d_a, d_b, avi_->val_, bvi_->val_, cvi_->val_,
-                      digamma(avi_->val_), digamma(bvi_->val_),
-                      digamma(avi_->val_ + bvi_->val_), beta_ab);
-
-    avi_->adj_ += adj_ * d_a;
-    bvi_->adj_ += adj_ * d_b;
-    cvi_->adj_ += adj_ * std::pow(1 - cvi_->val_, bvi_->val_ - 1)
-                  * std::pow(cvi_->val_, avi_->val_ - 1) / beta_ab;
-  }
-};
-
-}  // namespace internal
-
-inline var inc_beta(const var& a, const var& b, const var& c) {
-  return var(new internal::inc_beta_vvv_vari(a.vi_, b.vi_, c.vi_));
+/**
+ * The regularized incomplete beta function I_z(a, b) for <code>var</code>
+ * arguments. Only the partials of the <code>var</code> arguments are
+ * computed in the reverse pass. Each argument is a <code>var</code> or
+ * arithmetic; mixing with <code>fvar</code> is not supported.
+ *
+ * @tparam T1 type of a
+ * @tparam T2 type of b
+ * @tparam T3 type of z
+ * @param a first shape, positive
+ * @param b second shape, positive
+ * @param z upper limit, in [0, 1]
+ * @return I_z(a, b)
+ */
+template <typename T1, typename T2, typename T3,
+          require_all_stan_scalar_t<T1, T2, T3>* = nullptr,
+          require_all_var_or_arithmetic_t<T1, T2, T3>* = nullptr,
+          require_any_var_t<T1, T2, T3>* = nullptr>
+inline var inc_beta(const T1& a, const T2& b, const T3& z) {
+  return make_callback_var(
+      inc_beta(value_of(a), value_of(b), value_of(z)), [a, b, z](auto& vi) {
+        const double a_val = value_of(a);
+        const double b_val = value_of(b);
+        const double z_val = value_of(z);
+        if constexpr (is_autodiff_v<T1> && is_autodiff_v<T2>) {
+          const auto [d_a, d_b] = grad_reg_inc_beta<GRAD_RIB::BOTH>(
+              a_val, b_val, z_val, digamma(a_val), digamma(b_val),
+              digamma(a_val + b_val), 0.0);
+          a.adj() += vi.adj() * d_a;
+          b.adj() += vi.adj() * d_b;
+        } else if constexpr (is_autodiff_v<T1>) {
+          a.adj() += vi.adj()
+                     * grad_reg_inc_beta<GRAD_RIB::G1>(
+                         a_val, b_val, z_val, digamma(a_val), 0.0,
+                         digamma(a_val + b_val), 0.0);
+        } else if constexpr (is_autodiff_v<T2>) {
+          b.adj() += vi.adj()
+                     * grad_reg_inc_beta<GRAD_RIB::G2>(
+                         a_val, b_val, z_val, 0.0, digamma(b_val),
+                         digamma(a_val + b_val), 0.0);
+        }
+        if constexpr (is_autodiff_v<T3>) {
+          z.adj() += vi.adj() * inc_beta_ddz(a_val, b_val, z_val);
+        }
+      });
 }
 
 }  // namespace math

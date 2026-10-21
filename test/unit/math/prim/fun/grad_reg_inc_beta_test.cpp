@@ -22,6 +22,22 @@ void expect_grads(double a, double b, double z, double dda, double ddb,
       << "a=" << a << " b=" << b << " z=" << z;
   EXPECT_NEAR(ddb, g2, rtol * std::fabs(ddb))
       << "a=" << a << " b=" << b << " z=" << z;
+
+  // each one-sided request carries only its own derivative through the
+  // expansion, with the other digamma unused
+  using stan::math::GRAD_RIB;
+  const double only_g1 = stan::math::grad_reg_inc_beta<GRAD_RIB::G1>(
+      a, b, z, digamma(a), 0.0, digamma(a + b), 0.0);
+  EXPECT_NEAR(dda, only_g1, rtol * std::fabs(dda))
+      << "G1 a=" << a << " b=" << b << " z=" << z;
+  const double only_g2 = stan::math::grad_reg_inc_beta<GRAD_RIB::G2>(
+      a, b, z, 0.0, digamma(b), digamma(a + b), 0.0);
+  EXPECT_NEAR(ddb, only_g2, rtol * std::fabs(ddb))
+      << "G2 a=" << a << " b=" << b << " z=" << z;
+  const auto both = stan::math::grad_reg_inc_beta<GRAD_RIB::BOTH>(
+      a, b, z, digamma(a), digamma(b), digamma(a + b), 0.0);
+  EXPECT_EQ(g1, both.first) << "BOTH a=" << a << " b=" << b << " z=" << z;
+  EXPECT_EQ(g2, both.second) << "BOTH a=" << a << " b=" << b << " z=" << z;
 }
 
 }  // namespace
