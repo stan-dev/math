@@ -4,6 +4,7 @@
 #include <stan/math/rev.hpp>
 
 #include <gtest/gtest.h>
+#include <array>
 #include <vector>
 
 TEST(mathPrimScalProbWienerFullScal, valid) {
@@ -461,4 +462,72 @@ TEST(mathPrimCorrectValuesFiveParameterModel, wiener_lpdf) {
     EXPECT_NEAR(v.adj(), true_grad_v[i], err_tol);
     EXPECT_NEAR(sv.adj(), true_grad_sv[i], err_tol);
   }
+}
+
+TEST(mathPrimScalProbWienerFullPrecScal, underflowRegression3329) {
+  constexpr double y = 1e-6;
+  constexpr double a = 0.1;
+  constexpr double t0 = 0.0;
+  constexpr double w = 0.0001;
+  constexpr double v = -10.0;
+  constexpr double sv = 0.1;
+  constexpr double precision = 1e-8;
+
+  const std::array<std::pair<double, double>, 3> variability{
+      {{1e-8, 0.0}, {0.0, 0.001}, {1e-8, 0.001}}};
+  const std::array<double, 3> expected{
+      {-4982.6437525638557, -4998.0685384088783, -4998.0685384084609}};
+  for (size_t i = 0; i < variability.size(); ++i) {
+    const double log_density
+        = stan::math::wiener_lpdf(y, a, t0, w, v, sv, variability[i].first,
+                                  variability[i].second, precision);
+    EXPECT_NEAR(expected[i], log_density, precision);
+  }
+}
+
+TEST(mathPrimScalProbWienerFullPrecScal,
+     logScaledNodeUsesRelativeSeriesTolerance) {
+  const stan::math::internal::wiener7_log_params params{
+      3.0, 3.0, -4.0, 0.1, 0.0, 0.0, 0.0, 0.0, std::log(1e-12)};
+  const Eigen::VectorXd x = Eigen::VectorXd::Zero(1);
+  const std::array<bool, stan::math::internal::wiener7_num_partials> active{
+      true, true, true, true, true, true, false, false};
+
+  const auto node
+      = stan::math::internal::wiener7_log_node_value(x, params, active);
+
+  EXPECT_NEAR(-38.699512995035121, node.log_density, 1e-10);
+  const std::array<double, stan::math::internal::wiener7_num_partials>
+      expected_scores{-8.5021097351560204,
+                      -3.2624471963546275,
+                      8.5021097351560204,
+                      21.697496903138553,
+                      14.699999999999999,
+                      0.0,
+                      0.0,
+                      0.0};
+  for (size_t i = 0; i < expected_scores.size(); ++i) {
+    EXPECT_NEAR(expected_scores[i], node.scores[i], 1e-10) << "score " << i;
+  }
+}
+
+TEST(mathPrimScalProbWienerFullPrecScal,
+     logScaledIntegrationReportsNonconvergence) {
+  const stan::math::internal::wiener7_log_params params{
+      1e-6,   0.1,   -10.0,
+      0.0001, 0.0,   0.1,
+      1e-8,   0.001, std::log(1e-12) - stan::math::LOG_TWO};
+  Eigen::VectorXd lower = Eigen::VectorXd::Zero(2);
+  Eigen::VectorXd upper = Eigen::VectorXd::Ones(2);
+  upper[1] = 0.001;
+  const std::array<bool, stan::math::internal::wiener7_num_partials> active{
+      true, true, true, true, true, true, true, true};
+  constexpr int max_evaluations = stan::math::internal::wiener7_rule_size
+                                  * stan::math::internal::wiener7_rule_size;
+
+  const auto result = stan::math::internal::wiener7_log_integrate(
+      params, lower, upper, max_evaluations, 1e-12, 1e-12, active);
+
+  EXPECT_FALSE(result.converged);
+  EXPECT_EQ(max_evaluations, result.evaluations);
 }
