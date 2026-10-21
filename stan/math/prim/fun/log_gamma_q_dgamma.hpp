@@ -18,7 +18,6 @@
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <algorithm>
 #include <cmath>
-#include <limits>
 #include <utility>
 
 namespace stan {
@@ -149,16 +148,6 @@ log_q_gamma_cf_and_da(const T_a& a, const T_z& z,
   return {log_prefactor - log(f), d_log_prefactor - df / f};
 }
 
-/**
- * Lower limit of log(Q(a,z)) for d/da log(Q) = (dQ/da) / Q. Below it Q or
- * dQ/da can be subnormal or zero, and log_q_gamma_cf_and_da must be used.
- */
-inline double log_q_gamma_ratio_min() {
-  static const double log_min
-      = std::log(std::numeric_limits<double>::min()) - LOG_EPSILON;
-  return log_min;
-}
-
 }  // namespace internal
 
 /**
@@ -186,24 +175,12 @@ log_gamma_q_dgamma(const T_a& a, const T_z& z,
   using T_return = return_type_t<T_a, T_z>;
   const double a_val = value_of(a);
   const double z_val = value_of(z);
-  // For z > a + 1, use continued fraction for better numerical stability
+  // For z > a + 1, use the continued fraction, with the derivative carried
+  // through it in log space; it stays finite where Q underflows
   if (z_val > a_val + 1.0) {
-    std::pair<T_return, T_return> result{
-        internal::log_q_gamma_cf(a_val, z_val, precision, max_steps), 0.0};
-    if (value_of_rec(result.first) < internal::log_q_gamma_ratio_min()) {
-      const std::pair<double, double> log_q_and_da
-          = internal::log_q_gamma_cf_and_da(a_val, z_val, precision, max_steps);
-      result.first = log_q_and_da.first;
-      result.second = log_q_and_da.second;
-      return result;
-    }
-    // For gradient, use: d/da log(Q) = (1/Q) * dQ/da
-    // grad_reg_inc_gamma computes dQ/da
-    const T_return Q_val = exp(result.first);
-    const double dQ_da
-        = grad_reg_inc_gamma(a_val, z_val, tgamma(a_val), digamma(a_val));
-    result.second = dQ_da / Q_val;
-    return result;
+    const std::pair<double, double> log_q_and_da
+        = internal::log_q_gamma_cf_and_da(a_val, z_val, precision, max_steps);
+    return {log_q_and_da.first, log_q_and_da.second};
   } else {
     // For z <= a + 1, use log1m(P(a,z)) for better numerical accuracy
     const double P_val = gamma_p(a_val, z_val);

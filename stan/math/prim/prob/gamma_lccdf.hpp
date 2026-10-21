@@ -44,23 +44,22 @@ eval_q_cf(const T1& alpha, const T2& beta_y) {
     } else {
       return std::optional<ret_t>{std::nullopt};
     }
+  } else if constexpr (is_autodiff_v<T_shape> && !is_autodiff_v<scalar_t>) {
+    // One continued fraction gives the value and the derivative.
+    const ret_t out = internal::log_q_gamma_cf_and_da(alpha, beta_y);
+    if (unlikely(!std::isfinite(out.first))) {
+      return std::optional<ret_t>{std::nullopt};
+    }
+    return std::optional{out};
   } else {
     ret_t out{internal::log_q_gamma_cf(alpha, beta_y), 0.0};
     if (unlikely(!std::isfinite(value_of_rec(out.first)))) {
       return std::optional<ret_t>{std::nullopt};
     }
     if constexpr (is_autodiff_v<T_shape>) {
-      if constexpr (is_autodiff_v<scalar_t>) {
-        // The partial is differentiated again, so it is computed with the
-        // derivative recurrence in the autodiff type.
-        out.second = internal::log_q_gamma_cf_and_da(alpha, beta_y).second;
-      } else if (value_of_rec(out.first) < internal::log_q_gamma_ratio_min()) {
-        out.second = internal::log_q_gamma_cf_and_da(alpha, beta_y).second;
-      } else {
-        out.second
-            = grad_reg_inc_gamma(alpha, beta_y, tgamma(alpha), digamma(alpha))
-              / exp(out.first);
-      }
+      // The partial is differentiated again, so it is computed with the
+      // derivative recurrence in the autodiff type.
+      out.second = internal::log_q_gamma_cf_and_da(alpha, beta_y).second;
     }
     return std::optional{out};
   }
