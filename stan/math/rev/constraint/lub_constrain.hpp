@@ -17,8 +17,8 @@ namespace internal {
  * Return in arena memory the inverse logit of x given exp(-|x|).
  *
  * The reverse passes compute inv_logit(-x) from the result without a
- * division: exp(-|x|) * inv_logit(x) for x >= 0, and 1 - inv_logit(x),
- * which is exact for inv_logit(x) <= 1/2, otherwise.
+ * division: exp(-|x|) * inv_logit(x) where inv_logit(x) >= 1/2 (x >= 0),
+ * and 1 - inv_logit(x) otherwise, which does not cancel there.
  *
  * @tparam T_x type of the array of x
  * @tparam T_e type of the array of exp(-|x|)
@@ -238,12 +238,13 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
   } else {
     check_less("lub_constrain", "lb", lb_val, ub_val);
     arena_t<T> arena_x = x;
-    auto neg_abs_x = to_arena(-(value_of(arena_x).array()).abs());
     auto diff = ub_val - lb_val;
     auto exp_neg_abs_x = to_arena((-(value_of(arena_x).array()).abs()).exp());
     auto inv_logit_x
         = internal::lub_inv_logit(value_of(arena_x).array(), exp_neg_abs_x);
-    lp += (log(diff) + (neg_abs_x - (2.0 * exp_neg_abs_x.log1p()))).sum();
+    // separate sums: log1p vectorizes only without the AoS view of x
+    lp += (log(diff) - 2.0 * exp_neg_abs_x.log1p()).sum()
+          - value_of(arena_x).array().abs().sum();
     arena_t<ret_type> ret = diff * inv_logit_x + lb_val;
     reverse_pass_callback(
         [arena_x, ub, lb, ret, lp, diff, exp_neg_abs_x, inv_logit_x]() mutable {
@@ -350,14 +351,14 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
     check_less("lub_constrain", "lb", lb_val, ub_val);
     auto is_lb_inf = to_arena((lb_val == NEGATIVE_INFTY));
     auto diff = to_arena(ub_val - lb_val);
-    auto neg_abs_x = to_arena(-arena_x_val.abs());
     auto exp_neg_abs_x = to_arena((-(arena_x_val).abs()).exp());
     auto inv_logit_x = internal::lub_inv_logit(arena_x_val, exp_neg_abs_x);
     arena_t<ret_type> ret = (is_lb_inf).select(ub_val - arena_x_val.exp(),
                                                diff * inv_logit_x + lb_val);
     lp += (is_lb_inf)
-              .select(arena_x_val,
-                      log(diff) + (neg_abs_x - (2.0 * exp_neg_abs_x.log1p())))
+              .select(arena_x_val, log(diff)
+                                       + (-arena_x_val.abs()
+                                          - (2.0 * exp_neg_abs_x.log1p())))
               .sum();
     reverse_pass_callback([arena_x, arena_x_val, ub, arena_lb, ret, lp, diff,
                            exp_neg_abs_x, inv_logit_x, is_lb_inf]() mutable {
@@ -366,7 +367,6 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
                 .select(exp_neg_abs_x * inv_logit_x, 1.0 - inv_logit_x);
       const auto lp_adj = lp.adj();
       if constexpr (is_autodiff_v<T>) {
-        const auto x_sign = arena_x_val.sign().eval();
         arena_x.adj().array() += (is_lb_inf).select(
             ret.adj().array() * -arena_x_val.exp() + lp_adj,
             ret.adj().array() * diff * inv_logit_x * inv_logit_neg_x
@@ -465,13 +465,14 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
     check_less("lub_constrain", "lb", lb_val, ub_val);
     auto is_ub_inf = to_arena((ub_val.array() == INFTY));
     auto diff = to_arena(ub_val.array() - lb_val);
-    auto neg_abs_x = to_arena(-(arena_x_val.array()).abs());
     auto exp_neg_abs_x = to_arena((-(arena_x_val.array()).abs()).exp());
     auto inv_logit_x
         = internal::lub_inv_logit(arena_x_val.array(), exp_neg_abs_x);
     lp += (is_ub_inf)
               .select(arena_x_val.array(),
-                      log(diff) + (neg_abs_x - (2.0 * exp_neg_abs_x.log1p())))
+                      log(diff)
+                          + (-(arena_x_val.array()).abs()
+                             - (2.0 * exp_neg_abs_x.log1p())))
               .sum();
     arena_t<ret_type> ret = (is_ub_inf).select(
         arena_x_val.array().exp() + lb_val, diff * inv_logit_x + lb_val);
@@ -614,12 +615,11 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
                         ub_val - arena_x.val().array().exp(),
                         (is_ub_inf).select(arena_x_val.array().exp() + lb_val,
                                            diff * inv_logit_x + lb_val)));
-  auto neg_abs_x = to_arena(-(arena_x_val.array()).abs());
   lp += (is_lb_ub_inf)
             .select(0, (is_lb_inf || is_ub_inf)
                            .select(arena_x_val.array(),
                                    log(diff)
-                                       + (neg_abs_x
+                                       + (-(arena_x_val.array()).abs()
                                           - (2.0 * exp_neg_abs_x.log1p()))))
             .sum();
   reverse_pass_callback([arena_x, arena_x_val, exp_neg_abs_x, inv_logit_x,
