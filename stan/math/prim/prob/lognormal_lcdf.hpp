@@ -50,19 +50,13 @@ inline return_type_t<T_y, T_loc, T_scale> lognormal_lcdf_impl(
     return ops_partials.build(reflect ? 0.0 : NEGATIVE_INFTY);
   }
 
-  // One division by sigma, shared by z and the slopes.
-  const auto inv_sigma = to_ref(inv(sigma_val));
   // Evaluated once: the sigma partial reads z again, and a lazy z would
-  // compute the log a second time.
-  auto z = eval(sign * (log(y_val) - mu_val) * inv_sigma);
-  // 1 / sigma overflows for sigma below 1 / DBL_MAX, where y == exp(mu)
-  // would give 0 * inf; divide there.
-  if (unlikely(any(inv_sigma == INFTY))) {
-    z = sign * (log(y_val) - mu_val) / sigma_val;
-  }
+  // compute the log a second time. z divides by sigma: 1 / sigma overflows
+  // for sigma below 1 / DBL_MAX, where y == exp(mu) would give 0 * inf.
+  auto z = eval(sign * (log(y_val) - mu_val) / sigma_val);
   if constexpr (any_autodiff) {
     const auto [values, slopes] = internal::std_normal_lcdf_value_grad<true>(z);
-    auto scaled_slope = eval(slopes * inv_sigma);
+    auto scaled_slope = eval(slopes * inv(sigma_val));
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = sign * scaled_slope / y_val;
     }
