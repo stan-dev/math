@@ -22,38 +22,68 @@ namespace internal {
 
 /**
  * Hessian-vector product H v of the regularized incomplete beta function
- * I_x(a, b), H its Hessian in (a, b), by the power series
+ * I_x(a, b), where H is the Hessian of I_x(a, b) in (a, b), computed from its
+ * power series.
  *
- *   I_x(a, b) = N S,  N = x^a / B(a, b),  S = sum_n P_n / (a + n),
- *   P_n = prod_{k <= n} (k - b) x / k.
+ * As in internal::inc_beta_power_series_kernel, the series is
  *
- * Differentiating I = N S twice,
+ *   I_x(a, b) = N S,  N = x^a / B(a, b),  S = sum_{n >= 0} t_n,
+ *   t_n = P_n / (a + n),  P_0 = 1,  P_n = P_{n-1} (n - b) x / n.
+ *
+ * Write grad for the gradient in (a, b) and D_v for the derivative along v.
+ * Differentiating I = N S twice and applying the result to v gives
  *
  *   H v = N (D_v grad S + grad S D_v log N + grad log N D_v S
- *            + S (grad log N D_v log N + D_v grad log N)),
+ *            + S (grad log N D_v log N + D_v grad log N)).
  *
- * and a diagonal entry is
+ * When only one shape j is requested, the product needs only the diagonal
+ * entry
  *
  *   H_jj = N (d2S + 2 dlog_N dS + S (dlog_N^2 + d2log_N)),
  *
- * d and d2 the first and second derivatives in shape j. The a derivatives
- * of each term t = P_n / (a + n) are closed form, and its b derivatives need
- * those of P_n, carried by recurrence.
+ * where d and d2 are the first and second derivatives in that shape.
  *
- * Names: for <code>G1</code> and <code>G2</code> only the requested shape
- * varies, and dX and d2X are the first and second derivatives of X in it. For
- * <code>BOTH</code>, X_a and X_b are the partials of X and Dv_X its
- * derivative along v.
+ * The derivatives of S are the sums of those of its terms. The a derivatives
+ * of a term are closed form. Its b derivatives come from those of P_n, which
+ * follow from the recurrence for P_n:
+ *
+ *   dt/da = -t / (a + n),           d2t/da2 = 2 t / (a + n)^2,
+ *   dt/db = P'_n / (a + n),         d2t/dadb = -(dt/db) / (a + n),
+ *   d2t/db2 = P''_n / (a + n).
+ *
+ * For n = 0 the term is 1 / a, with a derivatives -1 / a^2 and 2 / a^3, and
+ * it does not depend on b.
+ *
+ * With psi the digamma function and psi1 the trigamma function, the
+ * derivatives of log N = a log x - log B(a, b) are
+ *
+ *   grad log N = (log x - psi(a) + psi(a + b), psi(a + b) - psi(b)),
+ *   Hess log N = [[psi1(a + b) - psi1(a), psi1(a + b)],
+ *                 [psi1(a + b), psi1(a + b) - psi1(b)]].
+ *
+ * psi1 is taken from Boost. stan::math::trigamma(double) is accurate only to
+ * about 1e-9 for arguments below 5, and psi1(a + b) appears alone in H_ab,
+ * where that error does not cancel.
+ *
+ * The loop stops once the terms are below eps / a in magnitude, or after 600
+ * terms. For integer b, t_n and its a derivatives are 0 for n >= b, but its b
+ * derivatives are not. <code>G2</code> and <code>BOTH</code> therefore also
+ * wait for the b derivatives of the terms to be small.
+ *
+ * The variable names follow two conventions. For <code>G1</code> and
+ * <code>G2</code> only the requested shape varies, and dX and d2X are the
+ * first and second derivatives of X in that shape. For <code>BOTH</code>,
+ * X_a and X_b are the partials of X, and Dv_X is the derivative of X along v.
  *
  * @tparam grads <code>G1</code> for H_aa v_a, <code>G2</code> for H_bb v_b,
  *   <code>BOTH</code> for H v
  * @param a first shape
  * @param b second shape
  * @param x upper limit, in (0, 1)
- * @param v_a a component of v; not used for <code>G2</code>
- * @param v_b b component of v; not used for <code>G1</code>
- * @param digamma_a digamma(a); not used for <code>G2</code>
- * @param digamma_b digamma(b); not used for <code>G1</code>
+ * @param v_a a component of v, not used for <code>G2</code>
+ * @param v_b b component of v, not used for <code>G1</code>
+ * @param digamma_a digamma(a), not used for <code>G2</code>
+ * @param digamma_b digamma(b), not used for <code>G1</code>
  * @param digamma_ab digamma(a + b)
  * @return H_aa v_a for <code>G1</code>, H_bb v_b for <code>G2</code>,
  *   ((H v)_a, (H v)_b) for <code>BOTH</code>
@@ -66,11 +96,8 @@ inline auto inc_beta_hvp_power_series(double a, double b, double x, double v_a,
   const double tolerance = std::numeric_limits<double>::epsilon() / a;
   const double log_x = std::log(x);
   const double N = std::exp(a * log_x - lbeta(a, b));
-  // boost's trigamma: stan::math::trigamma(double) is good to about 1e-9 below
-  // 5, and psi1(a + b) enters H_ab alone, where that error does not cancel
   const double trigamma_ab = boost::math::trigamma(a + b, boost_policy_t<>());
-  // n = 0: P_0 = 1 and the term is 1 / a, with a derivatives -1 / a^2 and
-  // 2 / a^3, and it does not depend on b
+  // n = 0: P_0 = 1 and the term is 1 / a
   double product = 1.0;
   double S = 1.0 / a;
   if constexpr (grads == GRAD_RIB::G1) {
@@ -78,7 +105,6 @@ inline auto inc_beta_hvp_power_series(double a, double b, double x, double v_a,
     double d2S = 2.0 * S / (a * a);
     for (int n = 1; n <= max_iterations; ++n) {
       product *= (n - b) * x / n;
-      // dt/da = -t / (a + n), d2t/da2 = 2 t / (a + n)^2
       const double inv_apn = 1.0 / (a + n);
       const double term = product * inv_apn;
       S += term;
@@ -113,8 +139,6 @@ inline auto inc_beta_hvp_power_series(double a, double b, double x, double v_a,
       S += term;
       dS += dterm;
       d2S += d2term;
-      // for integer b the term is 0 from n = b on while its b derivatives are
-      // not, so every carried series has to be small before stopping
       if (std::fabs(term) <= tolerance && std::fabs(dterm) <= tolerance
           && std::fabs(d2term) <= tolerance) {
         break;
@@ -142,8 +166,6 @@ inline auto inc_beta_hvp_power_series(double a, double b, double x, double v_a,
       const double inv_apn = 1.0 / (a + n);
       const double term = product * inv_apn;
       const double term_b = product_b * inv_apn;
-      // d2t/da2 = 2 t / (a + n)^2, d2t/dadb = -t_b / (a + n),
-      // d2t/db2 = P''_n / (a + n)
       const double term_aa = 2.0 * term * inv_apn * inv_apn;
       const double term_ab = -term_b * inv_apn;
       const double term_bb = product_bb * inv_apn;
@@ -152,8 +174,6 @@ inline auto inc_beta_hvp_power_series(double a, double b, double x, double v_a,
       S_b += term_b;
       Dv_S_a += v_a * term_aa + v_b * term_ab;
       Dv_S_b += v_a * term_ab + v_b * term_bb;
-      // for integer b the term is 0 from n = b on while its b derivatives are
-      // not, so every carried series has to be small before stopping
       if (std::fabs(term) <= tolerance && std::fabs(term_b) <= tolerance
           && std::fabs(term_bb) <= tolerance) {
         break;
@@ -163,8 +183,6 @@ inline auto inc_beta_hvp_power_series(double a, double b, double x, double v_a,
     const double log_N_b = digamma_ab - digamma_b;
     const double Dv_log_N = log_N_a * v_a + log_N_b * v_b;
     const double Dv_S = S_a * v_a + S_b * v_b;
-    // the Hessian of log N is
-    // [[psi1(a+b) - psi1(a), psi1(a+b)], [psi1(a+b), psi1(a+b) - psi1(b)]]
     const double Dv_log_N_a
         = (trigamma_ab - boost::math::trigamma(a, boost_policy_t<>())) * v_a
           + trigamma_ab * v_b;
@@ -182,21 +200,36 @@ inline auto inc_beta_hvp_power_series(double a, double b, double x, double v_a,
 
 /**
  * Hessian-vector product H v of the regularized incomplete beta function
- * I_x(a, b), H its Hessian in (a, b), by the continued fraction
- * https://dlmf.nist.gov/8.17.E22, I_x(a, b) = Q h with
- * Q = x^a (1 - x)^b / (a B(a, b)) and h the continued fraction, evaluated
- * with the modified Lentz method. Differentiating I = Q h twice,
+ * I_x(a, b), where H is the Hessian of I_x(a, b) in (a, b), computed from its
+ * continued fraction.
  *
- *   H = I (grad log I grad log I^T + Hess log Q + Hess log h).
+ * As in internal::inc_beta_continued_fraction_kernel, I_x(a, b) = Q h with
+ * Q = x^a (1 - x)^b / (a B(a, b)) and h the continued fraction
+ * https://dlmf.nist.gov/8.17.E22, which is evaluated with the modified Lentz
+ * method. Write grad for the gradient in (a, b), Hess for the Hessian, and
+ * D_v for the derivative along v. Differentiating I = Q h twice gives
  *
- * log h is the sum over the Lentz steps of log C and log D, so its
- * derivatives are sums of theirs. With d the partial numerator, one step
- * takes C' = 1 + d / C and D' = 1 / (1 + d D), and
+ *   H = I (grad log I grad log I^T + Hess log Q + Hess log h),
+ *
+ * with grad log I = grad log Q + grad log h. With psi the digamma function
+ * and psi1 the trigamma function,
+ *
+ *   grad log Q = (log x - 1 / a - psi(a) + psi(a + b),
+ *                 log(1 - x) - psi(b) + psi(a + b)),
+ *   Hess log Q = [[psi1(a + b) - psi1(a) + 1 / a^2, psi1(a + b)],
+ *                 [psi1(a + b), psi1(a + b) - psi1(b)]],
+ *
+ * with psi1 taken from Boost, as in the power series.
+ *
+ * Each Lentz step multiplies h by C D, so log h is the sum of log C and
+ * log D over the steps, and its derivatives are the sums of theirs. With d
+ * the partial numerator of the step, the step sets C' = 1 + d / C and
+ * D' = 1 / (1 + d D). Their log derivatives are
  *
  *   grad log C' = (grad d - d grad log C) / (C + d),
- *   grad log D' = -(grad d + d grad log D) D D'.
+ *   grad log D' = -(grad d + d grad log D) D D',
  *
- * Differentiating those once more along a direction v,
+ * using C C' = C + d. Differentiating these once more along v gives
  *
  *   D_v grad log C' = (Hess d v - D_v d grad log C - d D_v grad log C)
  *                     / (C + d) - grad log C' D_v log(C C'),
@@ -205,23 +238,45 @@ inline auto inc_beta_hvp_power_series(double a, double b, double x, double v_a,
  *                     + grad log D' D_v log(D D'),
  *   D_v log(D D') = D_v log D - D D' (D_v d + d D_v log D).
  *
- * <code>G1</code> and <code>G2</code> take v = (1, 0) and (0, 1), so their
- * D_v are second derivatives in one shape.
+ * The code applies each of the two second-derivative formulas in three parts.
+ * It first computes the part that uses only values from before the step. It
+ * then overwrites grad log C (or grad log D) with its new value, and last it
+ * adds the final term, which uses that new value.
  *
- * Names: for <code>G1</code> and <code>G2</code> only the requested shape
- * varies, and dX and d2X are the first and second derivatives of X in it. For
- * <code>BOTH</code>, X_a and X_b are the partials of X and Dv_X its
- * derivative along v.
+ * <code>G1</code> and <code>G2</code> take v = (1, 0) and v = (0, 1), so D_v
+ * is the derivative in the requested shape, and the result is scaled by v_a
+ * or v_b at the end.
+ *
+ * The partial numerators https://dlmf.nist.gov/8.17.E23 are d_n = num / den,
+ * with den = (a + n - 1)(a + n) and
+ *
+ *   n = 2m:     num = m (b - m) x,           num_b = m x,
+ *   n = 2m + 1: num = -(a + m)(a + b + m) x, num_a = -(2 (a + m) + b) x,
+ *               num_b = -(a + m) x,          num_aa = -2 x, num_ab = -x.
+ *
+ * Every other derivative of num is 0, so d_bb = 0. The derivatives of d_n
+ * follow from the quotient rule, with den_a = 2 (a + n) - 1 and den_aa = 2.
+ * n = 1 is the odd case with m = 0. The first step holds C at 1, so
+ * D = 1 / (1 + d_1).
+ *
+ * The test for stopping runs after each odd n. The loop stops once C D is
+ * within 3 eps of 1 and the second derivatives of log h have changed by at
+ * most a relative 3 eps since the previous test, or after n = 601.
+ *
+ * The variable names follow the same two conventions as in the power series.
+ * For <code>G1</code> and <code>G2</code>, dX and d2X are the first and
+ * second derivatives of X in the requested shape. For <code>BOTH</code>,
+ * X_a and X_b are the partials of X, and Dv_X is the derivative of X along v.
  *
  * @tparam grads <code>G1</code> for H_aa v_a, <code>G2</code> for H_bb v_b,
  *   <code>BOTH</code> for H v
  * @param a first shape
  * @param b second shape
  * @param x upper limit, in (0, 1)
- * @param v_a a component of v; not used for <code>G2</code>
- * @param v_b b component of v; not used for <code>G1</code>
- * @param digamma_a digamma(a); not used for <code>G2</code>
- * @param digamma_b digamma(b); not used for <code>G1</code>
+ * @param v_a a component of v, not used for <code>G2</code>
+ * @param v_b b component of v, not used for <code>G1</code>
+ * @param digamma_a digamma(a), not used for <code>G2</code>
+ * @param digamma_b digamma(b), not used for <code>G1</code>
  * @param digamma_ab digamma(a + b)
  * @return H_aa v_a for <code>G1</code>, H_bb v_b for <code>G2</code>,
  *   ((H v)_a, (H v)_b) for <code>BOTH</code>
@@ -240,15 +295,7 @@ inline auto inc_beta_hvp_continued_fraction(double a, double b, double x,
       = std::exp(a * log_x + b * log1m_x - std::log(a) - lbeta(a, b));
   // boost's trigamma, as in the power series
   const double trigamma_ab = boost::math::trigamma(a + b, boost_policy_t<>());
-
-  // Partial numerator d_n = num / den over den = (a + n - 1)(a + n),
-  // https://dlmf.nist.gov/8.17.E23, with its a and b derivatives:
-  //   n = 2m:     num = m (b - m) x,          num_b = m x
-  //   n = 2m + 1: num = -(a + m)(a + b + m) x, num_a = -(2 (a + m) + b) x,
-  //               num_b = -(a + m) x, num_aa = -2 x, num_ab = -x
-  // n = 1 is the odd case with m = 0, and d_bb = 0 for every n.
-
-  // first step, n = 1, with C held at 1: D = 1 / (1 + d_1)
+  // first step, n = 1, with C held at 1
   const double ap1 = a + 1.0;
   const double d_1 = -(a + b) * x / ap1;
   double D = 1.0 + d_1;
@@ -288,9 +335,7 @@ inline auto inc_beta_hvp_continued_fraction(double a, double b, double x,
       const double dd_n = (dnum - d_n * dden) * inv_den;
       const double d2d_n = (d2num - 2.0 * dd_n * dden - 2.0 * d_n) * inv_den;
 
-      // one step of the modified Lentz method. In each half, the second
-      // derivative takes its old-step part, the first derivative updates in
-      // place, then scales dlog(C C_new) or dlog(D D_new).
+      // one step of the modified Lentz method
       // C_new = 1 + d_n / C, with C C_new = C + d_n
       double C_new = 1.0 + d_n / C;
       double C_C_new = C + d_n;
@@ -461,9 +506,7 @@ inline auto inc_beta_hvp_continued_fraction(double a, double b, double x,
       const double Dv_d_n_a = d_n_aa * v_a + d_n_ab * v_b;
       const double Dv_d_n_b = d_n_ab * v_a;
 
-      // one step of the modified Lentz method. In each half, the Dv_
-      // derivatives take their old-step part, the partials update in place,
-      // then scale D_v log(C C_new) or D_v log(D D_new).
+      // one step of the modified Lentz method
       // C_new = 1 + d_n / C, with C C_new = C + d_n
       double C_new = 1.0 + d_n / C;
       double C_C_new = C + d_n;
@@ -540,25 +583,30 @@ inline auto inc_beta_hvp_continued_fraction(double a, double b, double x,
 
 /**
  * Hessian-vector product H v of the regularized incomplete beta function
- * I_z(a, b), H its Hessian in (a, b): the reverse pass of
- * (d/da I_z(a, b), d/db I_z(a, b)) with output adjoints v.
+ * I_z(a, b), where H is the Hessian of I_z(a, b) in (a, b). When v holds the
+ * adjoints of (d/da I_z(a, b), d/db I_z(a, b)), H v is what the reverse pass
+ * adds to the adjoints of a and b.
  *
- * The branch choice follows grad_reg_inc_beta. Under the symmetry relation
- * I_z(a, b) = 1 - I_{1-z}(b, a), H v = -swap(H' swap(v)), H' the Hessian of
- * I_{1-z}(b, a) in its own arguments, so H_aa = -H'_bb and H_bb = -H'_aa.
+ * The power series or the continued fraction, and whether to apply the
+ * symmetry relation, are chosen by the same rule as in grad_reg_inc_beta.
+ * Under the symmetry relation I_z(a, b) = 1 - I_{1-z}(b, a), let H' be the
+ * Hessian of I_{1-z}(b, a) in its own arguments (b, a), and let P swap the
+ * two components of a vector. Then H = -P H' P, so H v = -P H' (P v). In
+ * particular H_aa = -H'_bb and H_bb = -H'_aa.
  *
  * @tparam grads <code>G1</code> for H_aa v_a, <code>G2</code> for H_bb v_b,
  *   <code>BOTH</code> for H v
  * @param a first shape
  * @param b second shape
  * @param z upper limit, in [0, 1]
- * @param v_a a component of v; not used for <code>G2</code>
- * @param v_b b component of v; not used for <code>G1</code>
- * @param digamma_a digamma(a); not used for <code>G2</code>
- * @param digamma_b digamma(b); not used for <code>G1</code>
+ * @param v_a a component of v, not used for <code>G2</code>
+ * @param v_b b component of v, not used for <code>G1</code>
+ * @param digamma_a digamma(a), not used for <code>G2</code>
+ * @param digamma_b digamma(b), not used for <code>G1</code>
  * @param digamma_ab digamma(a + b)
  * @return H_aa v_a for <code>G1</code>, H_bb v_b for <code>G2</code>,
- *   ((H v)_a, (H v)_b) for <code>BOTH</code>; 0 at z = 0 and z = 1
+ *   ((H v)_a, (H v)_b) for <code>BOTH</code>. The result is 0 at z = 0 and
+ *   z = 1.
  */
 template <GRAD_RIB grads>
 inline std::conditional_t<grads == GRAD_RIB::BOTH, std::pair<double, double>,
@@ -569,7 +617,10 @@ inc_beta_hvp(double a, double b, double z, double v_a, double v_b,
     return {};
   }
   // the symmetry relation swaps which shape is requested
-  constexpr GRAD_RIB swapped_grads = swap_grad_rib(grads);
+  constexpr GRAD_RIB swapped_grads
+      = grads == GRAD_RIB::G1
+            ? GRAD_RIB::G2
+            : grads == GRAD_RIB::G2 ? GRAD_RIB::G1 : GRAD_RIB::BOTH;
   const double mean = a / (a + b);
   // the same branch rule as grad_reg_inc_beta
   const bool use_power_series
@@ -608,29 +659,42 @@ inc_beta_hvp(double a, double b, double z, double v_a, double v_b,
 }  // namespace internal
 
 /**
- * The requested gradients of the regularized incomplete beta function
- * <code>inc_beta(a, b, z)</code> with respect to <code>a</code> and
- * <code>b</code>, for <code>var</code> arguments.
+ * Computes the requested partial derivatives of the regularized incomplete
+ * beta function I_z(a, b) = <code>inc_beta(a, b, z)</code> with respect to
+ * <code>a</code> and <code>b</code>, for <code>var</code> arguments.
  *
- * The values are computed in double by the prim overload. The reverse pass
- * does not differentiate through its series or continued fraction: with
- * output adjoints v, the a and b adjoints are H v for H the Hessian of
- * I_z(a, b) in (a, b), computed directly by internal::inc_beta_hvp, and the
- * z adjoint is the closed form
+ * The values come from the prim overload, evaluated in double. The reverse
+ * pass does not differentiate through that series or continued fraction.
+ * Instead, with v the adjoints of the outputs, it adds H v to the adjoints of
+ * a and b, where H is the Hessian of I_z(a, b) in (a, b), computed directly
+ * by internal::inc_beta_hvp. To the adjoint of z it adds v times the
+ * closed-form mixed derivatives
  *
  *   d/dz d/da I_z(a, b) = inc_beta_ddz(a, b, z) (log z - psi(a) + psi(a+b)),
  *   d/dz d/db I_z(a, b) = inc_beta_ddz(a, b, z) (log1p(-z) - psi(b) +
- *                         psi(a+b)).
+ *                         psi(a+b)),
  *
- * The digamma arguments only make the values cheap and must equal
- * digamma(a), digamma(b) and digamma(a + b); their adjoints are 0 and the
- * a and b adjoints above are total derivatives. The cross derivative needs
- * the digamma value a one-sided call does not take, so the reverse pass of
- * <code>G1</code> computes digamma(b) when b is a var, and that of
- * <code>G2</code> digamma(a) when a is a var. betaAB is not used.
+ * where psi is the digamma function.
  *
- * Each argument is a <code>var</code> or arithmetic; mixing with
- * <code>fvar</code> goes to the prim overload.
+ * The digamma arguments are passed only so that the values are cheap to
+ * compute, and they must equal digamma(a), digamma(b), and digamma(a + b).
+ * They get no adjoint. The a and b adjoints above are total derivatives, so
+ * they already include any dependence on a and b that runs through the
+ * digamma values.
+ *
+ * A one-sided request still needs the cross term of H when both shapes are
+ * vars. For <code>G1</code> the adjoint of b is H_ab v_a, which the
+ * <code>BOTH</code> product gives with v_b = 0. That product needs
+ * digamma(b), which a <code>G1</code> call does not receive, so the reverse
+ * pass computes it when b is a var. When only a is a var, H_aa v_a does not
+ * need digamma(b). <code>G2</code> is the same with a and b swapped.
+ *
+ * For <code>BOTH</code> there are two outputs, and one reverse pass callback
+ * reads both of their adjoints. It runs after every use of the outputs has
+ * added into those adjoints.
+ *
+ * Each argument is a <code>var</code> or arithmetic. Calls that mix in
+ * <code>fvar</code> go to the prim overload.
  *
  * @tparam grads_requested <code>G1</code> for the derivative with respect to
  *   a, <code>G2</code> for the derivative with respect to b,
@@ -645,19 +709,18 @@ inc_beta_hvp(double a, double b, double z, double v_a, double v_b,
  * @param a a
  * @param b b
  * @param z z
- * @param digammaA the value of <code>digamma(a)</code>; not used for
+ * @param digammaA the value of <code>digamma(a)</code>, not used for
  *   <code>G2</code>
- * @param digammaB the value of <code>digamma(b)</code>; not used for
+ * @param digammaB the value of <code>digamma(b)</code>, not used for
  *   <code>G1</code>
  * @param digammaSum the value of <code>digamma(a + b)</code>
- * @param betaAB not used
- * @return d/da I_z(a, b) for <code>G1</code>, d/db for <code>G2</code>, the
- *   pair (d/da, d/db) for <code>BOTH</code>
+ * @param betaAB accepted for interface compatibility and not used
+ * @return d/da I_z(a, b) for <code>G1</code>, d/db for <code>G2</code>, and
+ *   the pair (d/da, d/db) for <code>BOTH</code>
  */
 template <GRAD_RIB grads_requested, typename T1, typename T2, typename T3,
           typename T4, typename T5, typename T6, typename T7,
-          require_t<bool_constant<internal::is_grad_reg_inc_beta_rev_v<
-              T1, T2, T3, T4, T5, T6, T7>>>* = nullptr>
+          require_any_var_t<T1, T2, T3, T4, T5, T6, T7>* = nullptr>
 inline auto grad_reg_inc_beta(const T1& a, const T2& b, const T3& z,
                               const T4& digammaA, const T5& digammaB,
                               const T6& digammaSum, const T7& /* betaAB */) {
@@ -674,8 +737,6 @@ inline auto grad_reg_inc_beta(const T1& a, const T2& b, const T3& z,
           const double b_val = value_of(b);
           const double z_val = value_of(z);
           if constexpr (is_var_v<T1> && is_var_v<T2>) {
-            // the b adjoint is the cross term H_ab v_a, which needs both
-            // sides and digamma(b), which the G1 call does not take
             const auto [hv_a, hv_b] = internal::inc_beta_hvp<GRAD_RIB::BOTH>(
                 a_val, b_val, z_val, vi.adj(), 0.0, digamma_a, digamma(b_val),
                 digamma_ab);
@@ -709,8 +770,6 @@ inline auto grad_reg_inc_beta(const T1& a, const T2& b, const T3& z,
           const double b_val = value_of(b);
           const double z_val = value_of(z);
           if constexpr (is_var_v<T1> && is_var_v<T2>) {
-            // the a adjoint is the cross term H_ab v_b, which needs both
-            // sides and digamma(a), which the G2 call does not take
             const auto [hv_a, hv_b] = internal::inc_beta_hvp<GRAD_RIB::BOTH>(
                 a_val, b_val, z_val, 0.0, vi.adj(), digamma(a_val), digamma_b,
                 digamma_ab);
@@ -738,8 +797,6 @@ inline auto grad_reg_inc_beta(const T1& a, const T2& b, const T3& z,
     const auto [g1_val, g2_val] = grad_reg_inc_beta<GRAD_RIB::BOTH>(
         value_of(a), value_of(b), value_of(z), digamma_a, digamma_b, digamma_ab,
         0.0);
-    // Both outputs feed one reverse pass, which runs after everything that
-    // uses them has added into their adjoints.
     var g1 = g1_val;
     var g2 = g2_val;
     reverse_pass_callback([a, b, z, g1, g2, digamma_a, digamma_b,

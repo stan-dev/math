@@ -6,8 +6,10 @@
 
 namespace {
 
-// Shape gradients of beta_lcdf against a high-precision reference: the
-// reference is (d/da I) / I and (d/db I) / I from mpmath at 80 digits.
+/**
+ * Shape gradients of beta_lcdf against a high-precision reference. The
+ * reference is (d/da I) / I and (d/db I) / I from mpmath at 80 digits.
+ */
 void expect_beta_lcdf_grads(double y, double alpha, double beta, double dalpha,
                             double dbeta, double rtol) {
   using stan::math::var;

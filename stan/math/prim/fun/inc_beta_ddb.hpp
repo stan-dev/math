@@ -8,11 +8,11 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the partial derivative of the regularized
- * incomplete beta function, I_{z}(a, b) with respect to b.
+ * Returns the partial derivative of the regularized incomplete beta function
+ * I_z(a, b) with respect to b.
  *
- * Evaluated by <code>grad_reg_inc_beta</code>, computing only the derivative
- * with respect to b.
+ * This calls <code>grad_reg_inc_beta<GRAD_RIB::G2></code>, which computes
+ * only the derivative with respect to b.
  *
  * @tparam T1 type of a
  * @tparam T2 type of b

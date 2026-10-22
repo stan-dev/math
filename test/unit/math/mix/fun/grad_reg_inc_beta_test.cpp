@@ -3,15 +3,17 @@
 
 namespace {
 
-// Points in each region of grad_reg_inc_beta:
-//   (1, 1, 0.4), (2, 3, 0.25), (0.5, 0.5, 0.3): power series
-//   (10, 1, 0.5): power series, integer b
-//   (2, 3, 0.6): power series through the symmetry relation
-//   (20, 20, 0.3), (5, 30, 0.1): continued fraction
-//   (20, 20, 0.7), (5, 30, 0.3): continued fraction through the symmetry
-//     relation
-//   (10, 1, 0.7), (4, 4, 0.5): continued fraction, integer b, where the
-//     partial numerator d_{2b} is 0 but its b derivative is not
+/**
+ * Runs expect_ad at points in each region of grad_reg_inc_beta:
+ *   (1, 1, 0.4), (2, 3, 0.25), (0.5, 0.5, 0.3): power series
+ *   (10, 1, 0.5): power series, integer b
+ *   (2, 3, 0.6): power series through the symmetry relation
+ *   (20, 20, 0.3), (5, 30, 0.1): continued fraction
+ *   (20, 20, 0.7), (5, 30, 0.3): continued fraction through the symmetry
+ *     relation
+ *   (10, 1, 0.7), (4, 4, 0.5): continued fraction, integer b, where the
+ *     partial numerator d_{2b} is 0 but its b derivative is not
+ */
 template <typename F>
 void expect_ad_grad_reg_inc_beta(const F& f) {
   stan::test::expect_ad(f, 1.0, 1.0, 0.4);
@@ -70,9 +72,11 @@ TEST(mathMixScalFun, grad_reg_inc_beta_student) {
   expect_ad_grad_reg_inc_beta(f);
 }
 
+/**
+ * The overload writing both partials through out-parameters takes every
+ * argument as the same type.
+ */
 TEST(mathMixScalFun, grad_reg_inc_beta_out_params) {
-  // the overload writing both partials through out-parameters takes every
-  // argument as the same type
   auto f = [](const auto& a, const auto& b, const auto& z) {
     using stan::math::digamma;
     using T = stan::return_type_t<decltype(a), decltype(b), decltype(z)>;

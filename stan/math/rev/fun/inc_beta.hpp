@@ -16,7 +16,7 @@ namespace math {
  * The regularized incomplete beta function I_z(a, b) for <code>var</code>
  * arguments. Only the partials of the <code>var</code> arguments are
  * computed in the reverse pass. Each argument is a <code>var</code> or
- * arithmetic; mixing with <code>fvar</code> is not supported.
+ * arithmetic. Mixing with <code>fvar</code> is not supported.
  *
  * @tparam T1 type of a
  * @tparam T2 type of b

@@ -15,7 +15,7 @@ namespace math {
 /**
  * The regularized incomplete beta function I_x(a, b) for <code>fvar</code>
  * arguments. Only the partials of the <code>fvar</code> arguments are
- * computed. Each argument is an <code>fvar</code> or arithmetic; mixing with
+ * computed. Each argument is an <code>fvar</code> or arithmetic. Mixing with
  * <code>var</code> is not supported.
  *
  * @tparam T1 type of a
