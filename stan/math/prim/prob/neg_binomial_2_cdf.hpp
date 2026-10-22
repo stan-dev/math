@@ -94,7 +94,8 @@ inline return_type_t<T_location, T_precision> neg_binomial_2_cdf(
     P *= P_i;
     if constexpr (is_any_autodiff_v<T_location, T_precision>) {
       const auto d_dbl = square(inv_mu_plus_phi);
-      const auto inc_beta_ddz_i = inc_beta_ddz(phi_dbl, n_dbl_p1, p_dbl) * d_dbl / P_i;
+      const auto inc_beta_ddz_i
+          = inc_beta_ddz(phi_dbl, n_dbl_p1, p_dbl) * d_dbl / P_i;
       if constexpr (is_autodiff_v<T_location>) {
         partials<0>(ops_partials)[i] -= inc_beta_ddz_i * phi_dbl;
       }
@@ -102,8 +103,8 @@ inline return_type_t<T_location, T_precision> neg_binomial_2_cdf(
         partials<1>(ops_partials)[i]
             += inc_beta_dda(phi_dbl, n_dbl_p1, p_dbl, digamma_phi_vec[i],
                             digamma_sum_vec[i])
-                  / P_i
-              + inc_beta_ddz_i * mu_dbl;
+                   / P_i
+               + inc_beta_ddz_i * mu_dbl;
       }
     }
   }
