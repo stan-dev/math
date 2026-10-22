@@ -15,9 +15,10 @@ namespace stan {
 namespace math {
 
 /**
- * Return the softmax of the specified vector or row vector.
+ * Return the softmax of the specified vector, row vector, or matrix.
  *
- * @tparam T a `var_value` or Eigen vector/row_vector with `var` scalar
+ * @tparam T a `var_value` or Eigen vector, row_vector, or matrix with
+ *   `var` scalar
  * @param x input
  * @return softmax of the input, or an empty result if the input is empty
  */
@@ -31,17 +32,17 @@ inline auto softmax(T&& x) {
       = return_var_matrix_t<plain_type_t<decltype(x_arena.val())>, T>;
   arena_t<return_t> res = softmax(x_arena.val());
   reverse_pass_callback([x_arena, res]() mutable {
-    x_arena.adj().array()
-        += res.val().array() * (res.adj().array() - res.val().dot(res.adj()));
+    const auto dot_sd = (res.val().array() * res.adj().array()).sum();
+    x_arena.adj().array() += res.val().array() * (res.adj().array() - dot_sd);
   });
   return res;
 }
 
 /**
- * Return the softmax of each vector in an array.
+ * Return the softmax of each vector or matrix in an array.
  *
  * @tparam T `std::vector` whose scalar type is `var`
- * @param x array of vectors to transform
+ * @param x array of vectors or matrices to transform
  * @return array of softmax results
  */
 template <typename T, require_std_vector_st<is_var, T>* = nullptr>
