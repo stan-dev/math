@@ -17,7 +17,7 @@ namespace math {
 /**
  * Return the log softmax of the specified vector, row vector, or matrix.
  *
- * @tparam T a `var_value` or Eigen vector, row_vector, or matrix with 
+ * @tparam T a `var_value` or Eigen vector, row_vector, or matrix with
  *   `var` scalar
  * @param x input
  * @return log softmax of the input, or an empty result if the input is empty

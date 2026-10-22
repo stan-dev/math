@@ -40,8 +40,8 @@ namespace math {
  * \end{array}
  * \f$
  *
- * @tparam Container type of input: an Eigen vector, Eigen matrix, 
- *   `std::vector` of vectors or matrices, or nested container whose scalar 
+ * @tparam Container type of input: an Eigen vector, Eigen matrix,
+ *   `std::vector` of vectors or matrices, or nested container whose scalar
  *   type is arithmetic
  * @param x vector, matrix, or container to transform.
  * @return softmax of the input, preserving the container structure; an empty
@@ -58,7 +58,7 @@ inline auto softmax(Container&& x) {
               if (v.size() == 0) {
                 return v;
               }
-              const auto theta = (v.array() - v.maxCoeff()).exp();
+              const auto theta = (v.array() - v.maxCoeff()).exp().eval();
               return (theta / theta.sum()).matrix();
             });
       },

@@ -295,6 +295,7 @@
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/softmax.hpp>
+#include <stan/math/prim/fun/softmax_log_sum_exp.hpp>
 #include <stan/math/prim/fun/sort_asc.hpp>
 #include <stan/math/prim/fun/sort_desc.hpp>
 #include <stan/math/prim/fun/sort_indices.hpp>

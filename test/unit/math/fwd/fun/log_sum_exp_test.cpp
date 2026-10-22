@@ -13,21 +13,11 @@ TEST(AgradFwd, log_sum_exp_derivative_does_not_overflow) {
   x(2) = fvar<double>(999.0, 3.0);
 
   auto y = log_sum_exp(x);
-  // log_sum_exp([1000, 1001, 999])
-  //
-  // = 1001 + log(exp(-1) + 1 + exp(-2)).
   const double expected_value
       = 1001.0 + std::log(std::exp(-1.0) + 1.0 + std::exp(-2.0));
 
   EXPECT_NEAR(expected_value, y.val(), 1e-12);
   EXPECT_TRUE(std::isfinite(y.val()));
-
-  // The derivative is
-  //
-  // softmax(x) dot x.d().
-  //
-  // The old implementation formed exp(x) directly in the derivative,
-  // which gives inf / inf for these values.
 
   const double denom = std::exp(-1.0) + 1.0 + std::exp(-2.0);
 
