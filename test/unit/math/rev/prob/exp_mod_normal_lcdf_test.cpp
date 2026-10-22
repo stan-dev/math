@@ -47,11 +47,12 @@ std::array<double, 5> expected(const std::array<double, 14>& r) {
 }
 
 template <int Kind>
-void expect_rows_match_reference() {
+void expect_rows_match_reference(
+    const std::vector<std::array<double, 14>>& rows) {
   using stan::math::var;
-  for (std::size_t n = 0; n < ref_rows.size(); ++n) {
+  for (std::size_t n = 0; n < rows.size(); ++n) {
     SCOPED_TRACE(n);
-    const auto& r = ref_rows[n];
+    const auto& r = rows[n];
     const auto e = expected<Kind>(r);
     expect_rel(e[0], emg_fun<Kind>::f(r[0], r[1], r[2], r[3]));
     var y = r[0];
@@ -110,15 +111,15 @@ void expect_vectorized_sum_matches_reference() {
 }  // namespace
 
 TEST_F(AgradRev, ProbDistributionsExpModNormal_lcdf_reference) {
-  expect_rows_match_reference<0>();
+  expect_rows_match_reference<0>(ref_rows);
 }
 
 TEST_F(AgradRev, ProbDistributionsExpModNormal_lccdf_reference) {
-  expect_rows_match_reference<1>();
+  expect_rows_match_reference<1>(ref_rows);
 }
 
 TEST_F(AgradRev, ProbDistributionsExpModNormal_cdf_reference) {
-  expect_rows_match_reference<2>();
+  expect_rows_match_reference<2>(ref_rows);
 }
 
 TEST_F(AgradRev, ProbDistributionsExpModNormal_lcdf_vectorized_reference) {
@@ -127,4 +128,56 @@ TEST_F(AgradRev, ProbDistributionsExpModNormal_lcdf_vectorized_reference) {
 
 TEST_F(AgradRev, ProbDistributionsExpModNormal_lccdf_vectorized_reference) {
   expect_vectorized_sum_matches_reference<1>();
+}
+
+TEST_F(AgradRev, ProbDistributionsExpModNormal_deep_tail_reference) {
+  const auto& rows = stan::test::exp_mod_normal_lcdf_deep_tail_reference;
+  expect_rows_match_reference<0>(rows);
+  expect_rows_match_reference<1>(rows);
+  expect_rows_match_reference<2>(rows);
+}
+
+// Beyond z = -1.9e154, log F = -z^2 / 2 and its sigma partial overflow. The
+// value is -inf (lcdf), 0 (lccdf) or 0 (cdf), never NaN; the other partials
+// stay finite, and the cdf has zero partials.
+TEST_F(AgradRev, ProbDistributionsExpModNormal_overflowing_tail) {
+  using stan::math::var;
+  for (double z : {-1e155, -1e200, -1e300}) {
+    for (double v : {1e-300, 1.0, 1e10}) {
+      SCOPED_TRACE(z);
+      SCOPED_TRACE(v);
+      {
+        var y = z, mu = 0.0, sigma = 1.0, lambda = v;
+        var lp = stan::math::exp_mod_normal_lcdf(y, mu, sigma, lambda);
+        lp.grad();
+        EXPECT_EQ(lp.val(), stan::math::NEGATIVE_INFTY);
+        // d log F / dz = -z + v + O(1 / z) here
+        EXPECT_FLOAT_EQ(y.adj(), -z);
+        EXPECT_FLOAT_EQ(mu.adj(), z);
+        EXPECT_TRUE(std::isfinite(lambda.adj()));
+        stan::math::recover_memory();
+      }
+      {
+        var y = z, mu = 0.0, sigma = 1.0, lambda = v;
+        var lp = stan::math::exp_mod_normal_lccdf(y, mu, sigma, lambda);
+        lp.grad();
+        EXPECT_EQ(lp.val(), 0.0);
+        EXPECT_TRUE(std::isfinite(y.adj()));
+        EXPECT_TRUE(std::isfinite(sigma.adj()));
+        EXPECT_TRUE(std::isfinite(lambda.adj()));
+        stan::math::recover_memory();
+      }
+      {
+        var y = z, mu = 0.0, sigma = 1.0, lambda = v;
+        var lp = stan::math::exp_mod_normal_cdf(y, mu, sigma, lambda);
+        lp.grad();
+        EXPECT_EQ(lp.val(), 0.0);
+        EXPECT_EQ(y.adj(), 0.0);
+        EXPECT_EQ(mu.adj(), 0.0);
+        EXPECT_EQ(sigma.adj(), 0.0);
+        EXPECT_EQ(lambda.adj(), 0.0);
+        stan::math::recover_memory();
+      }
+    }
+  }
 }

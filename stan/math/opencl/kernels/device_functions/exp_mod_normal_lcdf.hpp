@@ -52,7 +52,7 @@ static constexpr const char* exp_mod_normal_lcdf_device_function
                    -2.56852019228982242072,    -1.0};
             const double w0 = 1.0 / (x * x);
             const double w1 = 1.0 / (y * y);
-            const double dw = -delta * (y + x) * w0 * w1;
+            const double dw = -(delta * w0) * ((y + x) * w1);
             double a0 = 0.0;
             double q0 = 0.0;
             double q1 = 0.0;
@@ -78,8 +78,41 @@ static constexpr const char* exp_mod_normal_lcdf_device_function
           }
 
           /** \ingroup opencl_kernels
+           * log1p(x) / x, 1 at x == 0.
+           *
+           * @param x argument
+           * @return log1p(x) / x
+           */
+          double exp_mod_normal_log1p_over_x(double x) {
+            return x == 0.0 ? 1.0 : log1p(x) / x;
+          }
+
+          /** \ingroup opencl_kernels
+           * Whether the partials of log F need d erfcx(hi) / delta.
+           *
+           * @param delta erfcx(lo) - erfcx(hi)
+           * @param hi upper argument
+           * @return nonzero if 1 / delta or erfcx'(hi) is out of range
+           */
+          int exp_mod_normal_use_ratio(double delta, double hi) {
+            return !(delta > 1e-300 && hi < 1e150);
+          }
+
+          /** \ingroup opencl_kernels
+           * erfcx'(t) / erfcx(t); -1 / t above t = 1e150.
+           *
+           * @param t argument
+           * @param e_t erfcx(t)
+           * @return erfcx'(t) / erfcx(t)
+           */
+          double exp_mod_normal_erfcx_log_slope(double t, double e_t) {
+            return t > 1e150 ? -1.0 / t : erfcx_derivative(t, e_t) / e_t;
+          }
+
+          /** \ingroup opencl_kernels
            * erfcx(lo) - erfcx(hi) for hi - lo = d > 0 with d given exactly,
-           * and its log.
+           * its log, and d erfcx(hi) / delta where
+           * exp_mod_normal_use_ratio holds or the difference is close.
            *
            * @param lo lower argument
            * @param hi upper argument
@@ -88,26 +121,36 @@ static constexpr const char* exp_mod_normal_lcdf_device_function
            * @param e_hi erfcx(hi)
            * @param upper_exact nonzero if hi is the exact end
            * @param[out] log_delta log of the result
+           * @param[out] ratio d erfcx(hi) / delta, or 0 where not needed
            * @return erfcx(lo) - erfcx(hi)
            */
-          double exp_mod_normal_erfcx_diff(double lo, double hi, double d,
-                                           double e_lo, double e_hi,
-                                           int upper_exact, double* log_delta) {
+          double exp_mod_normal_erfcx_diff(
+              double lo, double hi, double d, double e_lo, double e_hi,
+              int upper_exact, double* log_delta, double* ratio) {
+            *ratio = 0.0;
             if (e_hi < 0.99 * e_lo) {
               const double delta = e_lo - e_hi;
               *log_delta = log(delta);
+              if (exp_mod_normal_use_ratio(delta, hi)) {
+                *ratio = d * (e_hi / delta);
+              }
               return delta;
             }
             if (lo >= 4.0) {
-              const double log_ratio_x
-                  = upper_exact ? log1p(-d / hi) : -log1p(d / lo);
-              const double log_r
-                  = log_ratio_x
-                    + log1p(exp_mod_normal_erfcx_h_diff(lo, hi, d)
-                            / (1.0 + exp_mod_normal_erfcx_h(lo)));
-              const double one_minus_r = -expm1(log_r);
-              *log_delta = log(e_lo) + log(one_minus_r);
-              return e_lo * one_minus_r;
+              const double x_end = upper_exact ? -d / hi : d / lo;
+              const double l_ratio_x = -exp_mod_normal_log1p_over_x(x_end)
+                                       / (upper_exact ? hi : lo);
+              const double h_per_d = exp_mod_normal_erfcx_h_diff(lo, hi, 1.0)
+                                     / (1.0 + exp_mod_normal_erfcx_h(lo));
+              const double l_total
+                  = l_ratio_x
+                    + h_per_d * exp_mod_normal_log1p_over_x(d * h_per_d);
+              const double log_r = d * l_total;
+              const double em = log_r == 0.0 ? 1.0 : expm1(log_r) / log_r;
+              const double one_minus_r_over_d = -l_total * em;
+              *log_delta = log(e_lo) + log(d) + log(one_minus_r_over_d);
+              *ratio = exp(log_r) / one_minus_r_over_d;
+              return e_lo * (d * one_minus_r_over_d);
             }
             const double m = upper_exact ? hi - 0.5 * d : lo + 0.5 * d;
             double e_km1 = erfcx(m);
@@ -124,14 +167,14 @@ static constexpr const char* exp_mod_normal_lcdf_device_function
             }
             const double h = 0.5 * d;
             const double h2 = h * h;
-            const double delta
-                = -2.0 * h
-                  * (odd[0]
-                     + h2
-                           * (odd[1] / 6.0
-                              + h2 * (odd[2] / 120.0 + h2 * odd[3] / 5040.0)));
-            *log_delta = log(delta);
-            return delta;
+            const double neg_s
+                = -(odd[0]
+                    + h2
+                          * (odd[1] / 6.0
+                             + h2 * (odd[2] / 120.0 + h2 * odd[3] / 5040.0)));
+            *log_delta = log(d) + log(neg_s);
+            *ratio = e_hi / neg_s;
+            return d * neg_s;
           }
 
           /** \ingroup opencl_kernels
@@ -152,7 +195,8 @@ static constexpr const char* exp_mod_normal_lcdf_device_function
            */
           double exp_mod_normal_lcdf_from_delta(
               double u, double t, double v, double log_g, double e_t,
-              double delta, double log_delta, int upper, int which) {
+              double delta, double log_delta, double ratio, int upper,
+              int which) {
             double value;
             double scale;
             if (upper) {
@@ -162,10 +206,22 @@ static constexpr const char* exp_mod_normal_lcdf_device_function
               scale = -g / (1.0 - f);
             } else {
               value = log_g + log_delta;
-              scale = delta > 1e-300 ? 1.0 / delta : exp(-log_delta);
+              scale = 1.0 / delta;
             }
             if (which == 0) {
               return value;
+            }
+            if (!upper && exp_mod_normal_use_ratio(delta, t)) {
+              // the partials of log F from p = d E(t) / Delta and
+              // s = E'(t) / E(t)
+              const double s = exp_mod_normal_erfcx_log_slope(t, e_t);
+              if (which == 1) {
+                return M_SQRT2 * ratio;
+              }
+              if (which == 2) {
+                return -(s * ratio) / v;
+              }
+              return ratio * (2.0 * u - s);
             }
             const double de_t = erfcx_derivative(t, e_t);
             if (which == 1) {
@@ -232,12 +288,13 @@ static constexpr const char* exp_mod_normal_lcdf_device_function
             const double t = u + d;
             const double log_g = -M_LN2 - (0.5 * z) * z;
             double log_delta;
+            double ratio;
             if (z <= 0.0) {
               const double e_t = erfcx(t);
               const double delta = exp_mod_normal_erfcx_diff(
-                  u, t, d, erfcx(u), e_t, 0, &log_delta);
-              return exp_mod_normal_lcdf_from_delta(u, t, v, log_g, e_t, delta,
-                                                    log_delta, upper, which);
+                  u, t, d, erfcx(u), e_t, 0, &log_delta, &ratio);
+              return exp_mod_normal_lcdf_from_delta(
+                  u, t, v, log_g, e_t, delta, log_delta, ratio, upper, which);
             }
             const double log_b = d * (2.0 * u + d);
             if (t < -6.5 && log_b < -0.2877) {
@@ -270,9 +327,9 @@ static constexpr const char* exp_mod_normal_lcdf_device_function
             const int small_f = p > 0.75;
             if (small_f && t >= 0.0) {
               const double delta = exp_mod_normal_erfcx_diff(
-                  u, t, d, erfcx(u), e_t, 0, &log_delta);
-              return exp_mod_normal_lcdf_from_delta(u, t, v, log_g, e_t, delta,
-                                                    log_delta, upper, which);
+                  u, t, d, erfcx(u), e_t, 0, &log_delta, &ratio);
+              return exp_mod_normal_lcdf_from_delta(
+                  u, t, v, log_g, e_t, delta, log_delta, ratio, upper, which);
             }
             // the partial of F selected by which
             double f_x = 0.0;
@@ -290,7 +347,7 @@ static constexpr const char* exp_mod_normal_lcdf_device_function
             }
             if (small_f) {
               const double delta = exp_mod_normal_erfcx_diff(
-                  -t, -u, d, e_mt, e_mu, 1, &log_delta);
+                  -t, -u, d, e_mt, e_mu, 1, &log_delta, &ratio);
               const double f = -expm1(log_b) + g * delta;
               if (!upper) {
                 return which == 0 ? log(f) : f_x / f;

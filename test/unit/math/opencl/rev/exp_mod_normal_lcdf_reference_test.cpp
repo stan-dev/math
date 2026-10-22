@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 #include <test/unit/math/rev/prob/exp_mod_normal_lcdf_reference.hpp>
+#include <array>
 #include <cmath>
 #include <vector>
 
@@ -17,11 +18,11 @@ void expect_rel(double expected, double actual) {
 // each element of each adjoint is one partial of one row. Upper selects the
 // log ccdf.
 template <bool Upper>
-void expect_device_matches_reference() {
+void expect_device_matches_reference(
+    const std::vector<std::array<double, 14>>& rows) {
   using stan::math::matrix_cl;
   using stan::math::var;
   using stan::math::var_value;
-  const auto& rows = stan::test::exp_mod_normal_lcdf_reference;
   const int n = rows.size();
   Eigen::VectorXd args[4];
   for (auto& a : args) {
@@ -59,9 +60,10 @@ void expect_device_matches_reference() {
 
 // Each row alone, as double arguments on the device: the value only.
 template <bool Upper>
-void expect_device_values_match_reference() {
+void expect_device_values_match_reference(
+    const std::vector<std::array<double, 14>>& rows) {
   using stan::math::matrix_cl;
-  for (const auto& r : stan::test::exp_mod_normal_lcdf_reference) {
+  for (const auto& r : rows) {
     Eigen::VectorXd y(1);
     y << r[0];
     matrix_cl<double> y_cl(y);
@@ -73,13 +75,24 @@ void expect_device_values_match_reference() {
 }
 
 TEST(ProbDistributionsExpModNormalLcdf, opencl_matches_reference) {
-  expect_device_matches_reference<false>();
-  expect_device_values_match_reference<false>();
+  const auto& rows = stan::test::exp_mod_normal_lcdf_reference;
+  expect_device_matches_reference<false>(rows);
+  expect_device_values_match_reference<false>(rows);
 }
 
 TEST(ProbDistributionsExpModNormalLccdf, opencl_matches_reference) {
-  expect_device_matches_reference<true>();
-  expect_device_values_match_reference<true>();
+  const auto& rows = stan::test::exp_mod_normal_lcdf_reference;
+  expect_device_matches_reference<true>(rows);
+  expect_device_values_match_reference<true>(rows);
+}
+
+// Deep lower tail: Delta below 1e-300, or erfcx'(t) underflows.
+TEST(ProbDistributionsExpModNormalLcdf, opencl_matches_deep_tail_reference) {
+  const auto& rows = stan::test::exp_mod_normal_lcdf_deep_tail_reference;
+  expect_device_matches_reference<false>(rows);
+  expect_device_values_match_reference<false>(rows);
+  expect_device_matches_reference<true>(rows);
+  expect_device_values_match_reference<true>(rows);
 }
 
 }  // namespace exp_mod_normal_lcdf_reference_test

@@ -49,7 +49,9 @@ template <typename T>
 inline T exp_mod_normal_erfcx_h_diff(const T& x, const T& y, const T& delta) {
   const T w0 = inv(x * x);
   const T w1 = inv(y * y);
-  const T dw = -delta * (y + x) * w0 * w1;
+  // Grouped so that no factor overflows: delta * (y + x) overflows for
+  // x above about 1e154, where w0 and w1 are 0.
+  const T dw = -(delta * w0) * ((y + x) * w1);
   // Powers w1^j w0^(k-1-j) summed over j, for k = 1..6.
   T a0 = 0, q0 = 0, q1 = 0, dd_a = 0, dd_q = 0;
   T pw0 = 1, pw1 = 1, sum_k = 0;  // sum_k = sum_{j<k} w1^j w0^(k-1-j)
@@ -84,22 +86,49 @@ template <typename T>
 struct exp_mod_normal_erfcx_diff_result {
   T delta;
   T log_delta;
+  // d erfcx(hi) / delta from the close cases when need_ratio is set, else 0:
+  // finite where delta underflows and 1 / delta overflows.
+  T d_e_hi_over_delta;
 };
 
+/** log1p(x) / x, 1 at x == 0. */
+template <typename T>
+inline T exp_mod_normal_log1p_over_x(const T& x) {
+  return x == 0 ? T(1) : T(log1p(x) / x);
+}
+
 /** The cases with erfcx(hi) / erfcx(lo) >= 0.99; rare unless d is small. */
-template <bool upper_exact, bool need_log, typename T>
+template <bool upper_exact, bool need_log, bool need_ratio, typename T>
 STAN_COLD_PATH exp_mod_normal_erfcx_diff_result<T>
 exp_mod_normal_erfcx_diff_close(const T& lo, const T& hi, const T& d,
-                                const T& e_lo) {
+                                const T& e_lo, const T& e_hi) {
   if (lo >= 4) {
-    const T log_ratio_x = upper_exact ? log1p(-d / hi) : -log1p(d / lo);
-    const T log_r = log_ratio_x
-                    + log1p(exp_mod_normal_erfcx_h_diff(lo, hi, d)
-                            / (1 + exp_mod_normal_erfcx_h(lo)));
-    const T one_minus_r = -expm1(log_r);
-    // Two logs, as the product can underflow for a very small d.
-    return {e_lo * one_minus_r,
-            need_log ? T(log(e_lo) + log(one_minus_r)) : T(0)};
+    // log r = log(erfcx(hi) / erfcx(lo)) = d L, with L formed from
+    // log1p(x) / x factors so that it stays finite when d / lo underflows.
+    const T x_end = upper_exact ? T(-d / hi) : T(d / lo);
+    const T l_ratio_x = upper_exact
+                            ? T(-exp_mod_normal_log1p_over_x(x_end) / hi)
+                            : T(-exp_mod_normal_log1p_over_x(x_end) / lo);
+    const T h_per_d = exp_mod_normal_erfcx_h_diff(lo, hi, T(1.0))
+                      / (1 + exp_mod_normal_erfcx_h(lo));
+    // h_diff is linear in its delta argument.
+    const T h_term = d * h_per_d;
+    const T l_total = l_ratio_x + h_per_d * exp_mod_normal_log1p_over_x(h_term);
+    const T log_r = d * l_total;
+    // (1 - r) / d = -L expm1(log r) / log r
+    const T em = log_r == 0 ? T(1) : T(expm1(log_r) / log_r);
+    const T one_minus_r_over_d = -l_total * em;
+    const T one_minus_r = d * one_minus_r_over_d;
+    exp_mod_normal_erfcx_diff_result<T> res{e_lo * one_minus_r, 0, 0};
+    if constexpr (need_log) {
+      // Separate logs: the product can underflow for a very small d.
+      res.log_delta = log(e_lo) + log(d) + log(one_minus_r_over_d);
+    }
+    if constexpr (need_ratio) {
+      // d e_hi / (e_lo (1 - r)) = r / ((1 - r) / d)
+      res.d_e_hi_over_delta = exp(log_r) / one_minus_r_over_d;
+    }
+    return res;
   }
   const T m = upper_exact ? T(hi - 0.5 * d) : T(lo + 0.5 * d);
   T e_km1 = erfcx(m);
@@ -117,22 +146,53 @@ exp_mod_normal_erfcx_diff_close(const T& lo, const T& hi, const T& d,
   }
   const T h = 0.5 * d;
   const T h2 = h * h;
-  const T delta
-      = -2 * h
-        * (odd[0]
-           + h2 * (odd[1] / 6 + h2 * (odd[2] / 120 + h2 * odd[3] / 5040)));
-  return {delta, need_log ? T(log(delta)) : T(0)};
+  // delta = -d s with s > 0 for every d
+  const T neg_s = -(
+      odd[0] + h2 * (odd[1] / 6 + h2 * (odd[2] / 120 + h2 * odd[3] / 5040)));
+  exp_mod_normal_erfcx_diff_result<T> res{d * neg_s, 0, 0};
+  if constexpr (need_log) {
+    res.log_delta = log(d) + log(neg_s);
+  }
+  if constexpr (need_ratio) {
+    res.d_e_hi_over_delta = e_hi / neg_s;
+  }
+  return res;
 }
 
-template <bool upper_exact, bool need_log, typename T>
+/**
+ * Whether the partials of log F need the ratio d erfcx(hi) / delta: 1 / delta
+ * overflows below delta = 1e-300 (deep lower tail, or a tiny v), and
+ * erfcx'(hi) underflows above hi = 1e150.
+ */
+template <typename T>
+inline bool exp_mod_normal_use_ratio(const T& delta, const T& hi) {
+  return !(delta > 1e-300 && hi < 1e150);
+}
+
+/**
+ * erfcx'(t) / erfcx(t). Above t = 1e150, where erfcx' underflows, the ratio
+ * is -1 / t to working precision.
+ */
+template <typename T>
+inline T exp_mod_normal_erfcx_log_slope(const T& t, const T& e_t) {
+  return t > 1e150 ? T(-inv(t)) : T(erfcx_derivative(t, e_t) / e_t);
+}
+
+template <bool upper_exact, bool need_log, bool need_ratio = false, typename T>
 inline exp_mod_normal_erfcx_diff_result<T> exp_mod_normal_erfcx_diff(
     const T& lo, const T& hi, const T& d, const T& e_lo, const T& e_hi) {
   if (e_hi < 0.99 * e_lo) {
     const T delta = e_lo - e_hi;
-    return {delta, need_log ? T(log(delta)) : T(0)};
+    exp_mod_normal_erfcx_diff_result<T> res{delta, 0, 0};
+    if constexpr (need_log) {
+      res.log_delta = log(delta);
+    }
+    // d_e_hi_over_delta stays 0: here delta >= 0.01 erfcx(lo), and the
+    // partials form the ratio from delta where they need it.
+    return res;
   }
-  return exp_mod_normal_erfcx_diff_close<upper_exact, need_log>(lo, hi, d,
-                                                                e_lo);
+  return exp_mod_normal_erfcx_diff_close<upper_exact, need_log, need_ratio>(
+      lo, hi, d, e_lo, e_hi);
 }
 
 /**
@@ -163,30 +223,62 @@ struct exp_mod_normal_lcdf_terms {
  * v sqrt 2 (u E(t) - E'(t) / 2)). The log cdf divides them by F, the log ccdf
  * by -(1 - F). The log ccdf needs no log of Delta, and the cdf (log_value
  * unset) takes F = g Delta itself.
+ * Where 1 / Delta overflows or E'(t) underflows (exp_mod_normal_use_ratio),
+ * the partials of log F come from p = d E(t) / Delta and s = E'(t) / E(t)
+ * with d = v / sqrt 2: (sqrt 2 p, -s p / v, p (2 u - s)).
  */
+/**
+ * The partials of log F (value field unset) from p = d E(t) / Delta and
+ * s = E'(t) / E(t), for where exp_mod_normal_use_ratio holds.
+ */
+template <typename T>
+STAN_COLD_PATH exp_mod_normal_lcdf_terms<T>
+exp_mod_normal_lcdf_partials_from_ratio(
+    const T& u, const T& t, const T& v, const T& e_t,
+    const exp_mod_normal_erfcx_diff_result<T>& dl) {
+  // The direct difference leaves the ratio 0; there delta is not small
+  // against erfcx(u), so d e_t / delta has no overflow.
+  const T p = dl.d_e_hi_over_delta > 0 ? dl.d_e_hi_over_delta
+                                       : T(v * INV_SQRT_TWO * (e_t / dl.delta));
+  const T s = exp_mod_normal_erfcx_log_slope(t, e_t);
+  return {0, SQRT_TWO * p, -(s * p) / v, p * (2 * u - s)};
+}
+
 template <bool upper, bool calc_grad, bool log_value, typename T>
 inline exp_mod_normal_lcdf_terms<T> exp_mod_normal_lcdf_from_delta(
     const T& u, const T& t, const T& v, const T& log_g, const T& e_t,
     const exp_mod_normal_erfcx_diff_result<T>& dl) {
   exp_mod_normal_lcdf_terms<T> r{0, 0, 0, 0};
-  T scale;
   if constexpr (upper) {
     const T g = exp(log_g);
     const T f = g * dl.delta;
     r.value = exp_mod_normal_log1m(f);
-    scale = -g / (1 - f);
-  } else if constexpr (log_value) {
+    if constexpr (calc_grad) {
+      const T scale = -g / (1 - f);
+      const T de_t = erfcx_derivative(t, e_t);
+      r.d_z = scale * v * e_t;
+      r.d_v = -scale * de_t * INV_SQRT_TWO;
+      r.d_s = scale * v * SQRT_TWO * (u * e_t - 0.5 * de_t);
+    }
+    return r;
+  }
+  if constexpr (log_value) {
     r.value = log_g + dl.log_delta;
-    scale = dl.delta > 1e-300 ? T(inv(dl.delta)) : T(exp(-dl.log_delta));
   } else {
     r.value = exp(log_g) * dl.delta;
-    scale = inv(dl.delta);
   }
   if constexpr (calc_grad) {
+    const T scale = inv(dl.delta);
     const T de_t = erfcx_derivative(t, e_t);
     r.d_z = scale * v * e_t;
     r.d_v = -scale * de_t * INV_SQRT_TWO;
     r.d_s = scale * v * SQRT_TWO * (u * e_t - 0.5 * de_t);
+    if (unlikely(exp_mod_normal_use_ratio(dl.delta, t))) {
+      const auto q = exp_mod_normal_lcdf_partials_from_ratio(u, t, v, e_t, dl);
+      r.d_z = q.d_z;
+      r.d_v = q.d_v;
+      r.d_s = q.d_s;
+    }
   }
   return r;
 }
@@ -240,6 +332,7 @@ inline exp_mod_normal_lcdf_terms<T> exp_mod_normal_lcdf_kernel(const T& z,
                                                                const T& v) {
   static_assert(log_value || !upper, "the ccdf has no plain value kernel");
   constexpr bool need_log = !upper && log_value;
+  constexpr bool need_ratio = calc_grad && !upper;
   const T u = -z * INV_SQRT_TWO;
   const T d = v * INV_SQRT_TWO;
   const T t = u + d;
@@ -247,8 +340,8 @@ inline exp_mod_normal_lcdf_terms<T> exp_mod_normal_lcdf_kernel(const T& z,
   if (z <= 0) {
     // F <= Phi(z) <= 1/2.
     const T e_t = erfcx(t);
-    const auto dl
-        = exp_mod_normal_erfcx_diff<false, need_log>(u, t, d, T(erfcx(u)), e_t);
+    const auto dl = exp_mod_normal_erfcx_diff<false, need_log, need_ratio>(
+        u, t, d, T(erfcx(u)), e_t);
     return exp_mod_normal_lcdf_from_delta<upper, calc_grad, log_value>(
         u, t, v, log_g, e_t, dl);
   }
@@ -282,8 +375,8 @@ inline exp_mod_normal_lcdf_terms<T> exp_mod_normal_lcdf_kernel(const T& z,
   // F < 1/4: 1 - p would lose digits.
   const bool small_f = p > 0.75;
   if (small_f && t >= 0) {
-    const auto dl
-        = exp_mod_normal_erfcx_diff<false, need_log>(u, t, d, T(erfcx(u)), e_t);
+    const auto dl = exp_mod_normal_erfcx_diff<false, need_log, need_ratio>(
+        u, t, d, T(erfcx(u)), e_t);
     return exp_mod_normal_lcdf_from_delta<upper, calc_grad, log_value>(
         u, t, v, log_g, e_t, dl);
   }
@@ -411,6 +504,12 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
     }
   }
   if constexpr (!log_value) {
+    // A cdf that underflows to 0 has zero partials; the partials of log F
+    // can be infinite there.
+    if (unlikely(lp == 0)) {
+      return make_partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref)
+          .build(0.0);
+    }
     // The partials so far are those of log F; those of the cdf scale by it.
     if constexpr (is_autodiff_v<T_y>) {
       for (std::size_t n = 0; n < stan::math::size(y_ref); ++n) {

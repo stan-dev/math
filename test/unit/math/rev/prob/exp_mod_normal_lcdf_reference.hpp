@@ -76,6 +76,33 @@ inline const std::vector<std::array<double, 14>> exp_mod_normal_lcdf_reference{{
      0.2777281808527882, -0.00022783257749388368},
 }};
 
+// Deep lower tail, same columns, mpmath at 800 digits with E = erfcx from
+// its asymptotic series: F = exp(-z^2 / 2) (E(u) - E(t)) / 2. Delta =
+// E(u) - E(t) is below 1e-300 here, or erfcx'(t) underflows, while log F
+// and its partials are finite. The log ccdf and its partials round to 0.
+inline const std::vector<std::array<double, 14>>
+    exp_mod_normal_lcdf_deep_tail_reference{{
+        // z = -1e5, v = 1e-300
+        {-199999.5, 0.5, 2.0, 5e-301, -5000000714.720317, 50000.00001,
+         -50000.00001, 5000000001.5, 1.9999999999999998e+300, 0.0, 0.0, 0.0,
+         0.0, 0.0},
+        // z = -1e20, v = 1e-300
+        {-2e+20, 0.5, 2.0, 5e-301, -5e+39, 5e+19, -5e+19, 5e+39,
+         1.9999999999999998e+300, 0.0, 0.0, 0.0, 0.0, 0.0},
+        // z = -1e100, v = 1e-300
+        {-2e+100, 0.5, 2.0, 5e-301, -5e+199, 5e+99, -5e+99, 5e+199,
+         1.9999999999999998e+300, 0.0, 0.0, 0.0, 0.0, 0.0},
+        // z = -1e150, v = 1e-10
+        {-2e+150, 0.5, 2.0, 5e-11, -4.9999999999999995e+299, 5e+149, -5e+149,
+         4.9999999999999995e+299, 20000000000.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+        // z = -1e154, v = 0.1
+        {-2e+154, 0.5, 2.0, 0.05, -5e+307, 5e+153, -5e+153, 5e+307, 20.0, 0.0,
+         0.0, 0.0, 0.0, 0.0},
+        // z = -1e154, v = 1
+        {-2e+154, 0.5, 2.0, 0.5, -5e+307, 5e+153, -5e+153, 5e+307, 2.0, 0.0,
+         0.0, 0.0, 0.0, 0.0},
+    }};
+
 }  // namespace test
 }  // namespace stan
 
