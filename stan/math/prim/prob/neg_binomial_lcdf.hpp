@@ -87,10 +87,10 @@ inline return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
+    // An element with probability 1 (n = INT_MAX, which stands for an
+    // infinite count) contributes nothing
     if (n_vec.val(i) == std::numeric_limits<int>::max()) {
-      return ops_partials.build(0.0);
+      continue;
     }
 
     const T_partials_return n_dbl = n_vec.val(i);

@@ -69,25 +69,21 @@ inline return_type_t<T_prob> binomial_lccdf(const T_n& n, const T_N& N,
   scalar_seq_view<T_theta_ref> theta_vec(theta_ref);
   size_t max_size_seq_view = max_size(n, N, theta);
 
-  // Explicit return for extreme values
-  // The gradients are technically ill-defined,
-  // but treated as negative infinity
-  for (size_t i = 0; i < stan::math::size(n); i++) {
-    if (n_vec.val(i) < 0) {
-      return ops_partials.build(0.0);
+  // An element with probability 0 (n >= N) makes the result -inf; the
+  // gradients are treated as zero
+  for (size_t i = 0; i < max_size_seq_view; i++) {
+    if (n_vec.val(i) >= N_vec.val(i)) {
+      return ops_partials.build(NEGATIVE_INFTY);
     }
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
+    // An element with probability 1 (n < 0) contributes nothing
+    if (n_vec.val(i) < 0) {
+      continue;
+    }
     const T_partials_return n_dbl = n_vec.val(i);
     const T_partials_return N_dbl = N_vec.val(i);
-
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
-    if (n_dbl >= N_dbl) {
-      return ops_partials.build(NEGATIVE_INFTY);
-    }
-
     const T_partials_return theta_dbl = theta_vec.val(i);
     const T_partials_return Pi
         = 1.0 - inc_beta(N_dbl - n_dbl, n_dbl + 1, 1 - theta_dbl);
