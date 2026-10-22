@@ -13,7 +13,7 @@
 #include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/log1p_exp.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -26,6 +26,39 @@
 
 namespace stan {
 namespace math {
+namespace internal {
+
+/**
+ * Return f(y[n]) for every instance n, with f evaluated once per distinct
+ * count. The counts must be in [0, y_max].
+ *
+ * @tparam R return type of f
+ * @tparam T_y_arr type of the array of counts
+ * @tparam F type of the function
+ * @param y counts
+ * @param y_max largest count
+ * @param f function of a count
+ * @return array of f(y[n])
+ */
+template <typename R, typename T_y_arr, typename F>
+inline Eigen::Array<R, Eigen::Dynamic, 1> per_count_values(const T_y_arr& y,
+                                                           int y_max,
+                                                           const F& f) {
+  std::vector<R> table(y_max + 1);
+  std::vector<char> done(y_max + 1, 0);
+  Eigen::Array<R, Eigen::Dynamic, 1> out(y.size());
+  for (Eigen::Index n = 0; n < y.size(); ++n) {
+    const int k = y(n);
+    if (!done[k]) {
+      table[k] = f(k);
+      done[k] = 1;
+    }
+    out(n) = table[k];
+  }
+  return out;
+}
+
+}  // namespace internal
 
 /** \ingroup multivar_dists
  * Returns the log PMF of the Generalized Linear Model (GLM)
@@ -150,9 +183,14 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
   }
   check_finite(function, "Matrix of independent variables", theta);
   T_precision_val log_phi = log(phi_arr);
+  // With u = theta - log(phi) and e = exp(-|u|), log1p_exp(u) and
+  // log1p_exp(-u) share log1p(e), and e also gives the partials below.
+  Array<T_partials_return, Dynamic, 1> u = theta - log_phi;
+  Array<T_partials_return, Dynamic, 1> e = (u > 0).select(-u, u).exp();
+  Array<T_partials_return, Dynamic, 1> log1p_e = log1p(e);
   // log1p(mu / phi) with mu = exp(theta)
   Array<T_partials_return, Dynamic, 1> log1p_exp_theta_m_log_phi
-      = log1p_exp(theta - log_phi);
+      = (u > 0).select(u + log1p_e, log1p_e);
 
   T_sum_val y_plus_phi = y_arr + phi_arr;
 
@@ -164,21 +202,52 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
   // the form of neg_binomial_2_log_lpmf. Formed as phi log(phi) - lgamma(phi)
   // + lgamma(y + phi) - (y + phi) log(mu + phi) + y theta, the terms are of
   // the size of phi log(phi) and cancel for large phi.
-  T_partials_return logp = -sum(y_arr * log1p_exp(log_phi - theta)
+  T_partials_return logp = -sum(y_arr * (u > 0).select(log1p_e, log1p_e - u)
                                 + phi_arr * log1p_exp_theta_m_log_phi);
+  // With a scalar phi and a vector y, the lchoose, lgamma(y + 1) and digamma
+  // terms depend on y only. Counts repeat, so each is evaluated once per
+  // distinct count (internal::per_count_values), if the largest count stays
+  // proportional to the number of instances.
+  constexpr bool per_count
+      = is_vector<T_y>::value && !is_vector<T_precision>::value;
+  int y_max = -1;
+  if constexpr (per_count) {
+    if (N_instances > 0) {
+      const int y_max_all = y_arr.maxCoeff();
+      if (static_cast<size_t>(y_max_all) <= 4 * N_instances + 64) {
+        y_max = y_max_all;
+      }
+    }
+  }
+  const bool use_table = y_max >= 0;
   // lchoose(y + phi - 1, y) = -lbeta(phi, y + 1) - log(y + phi). The form
   // binomial_coefficient_log(y + phi - 1, y) rounds phi to the precision of
   // y in y + phi - 1, which loses phi where it is small compared to y.
   if constexpr (include_summand<propto, T_precision>::value) {
-    if constexpr (is_vector<T_y>::value || is_vector<T_precision>::value) {
-      scalar_seq_view<decltype(y_val_vec)> y_vec(y_val_vec);
-      scalar_seq_view<decltype(phi_val_vec)> phi_vec(phi_val_vec);
-      for (size_t n = 0; n < N_instances; ++n) {
-        logp -= lbeta(phi_vec[n], y_vec[n] + 1.0) + log(y_vec[n] + phi_vec[n]);
+    bool lchoose_done = false;
+    if constexpr (per_count) {
+      if (use_table) {
+        const auto lchoose_neg = internal::per_count_values<T_partials_return>(
+            y_arr, y_max,
+            [&](int k) { return lbeta(phi_val, k + 1.0) + log(k + phi_val); });
+        for (size_t n = 0; n < N_instances; ++n) {
+          logp -= lchoose_neg(n);
+        }
+        lchoose_done = true;
       }
-    } else {
-      logp
-          -= N_instances * (lbeta(phi_val, y_val + 1.0) + log(y_val + phi_val));
+    }
+    if (!lchoose_done) {
+      if constexpr (is_vector<T_y>::value || is_vector<T_precision>::value) {
+        scalar_seq_view<decltype(y_val_vec)> y_vec(y_val_vec);
+        scalar_seq_view<decltype(phi_val_vec)> phi_vec(phi_val_vec);
+        for (size_t n = 0; n < N_instances; ++n) {
+          logp
+              -= lbeta(phi_vec[n], y_vec[n] + 1.0) + log(y_vec[n] + phi_vec[n]);
+        }
+      } else {
+        logp -= N_instances
+                * (lbeta(phi_val, y_val + 1.0) + log(y_val + phi_val));
+      }
     }
   }
   // Under propto, remove -lgamma(y + 1) (in lchoose), phi log(phi) for data
@@ -186,7 +255,17 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
   if constexpr (!include_summand<propto>::value) {
     if constexpr (include_summand<propto, T_precision>::value) {
       if constexpr (is_vector<T_y>::value) {
-        logp += sum(lgamma(y_arr + 1.0));
+        bool lgamma_done = false;
+        if constexpr (per_count) {
+          if (use_table) {
+            logp += sum(internal::per_count_values<double>(
+                y_arr, y_max, [](int k) { return lgamma(k + 1.0); }));
+            lgamma_done = true;
+          }
+        }
+        if (!lgamma_done) {
+          logp += sum(lgamma(y_arr + 1.0));
+        }
       } else {
         logp += sum(lgamma(y_arr + 1.0)) * N_instances;
       }
@@ -210,8 +289,6 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
     // 1 / (1 + e) and e / (1 + e) with e = exp(-|u|), u = theta - log(phi),
     // in the order given by the sign of u. mu itself overflows from
     // theta = 709.8, and the derivative of 1 - mu / (mu + phi) cancels.
-    Array<T_partials_return, Dynamic, 1> u = theta - log_phi;
-    Array<T_partials_return, Dynamic, 1> e = (u > 0).select(-u, u).exp();
     Array<T_partials_return, Dynamic, 1> inv_1p_e = 1.0 / (1.0 + e);
     Array<T_partials_return, Dynamic, 1> e_over_1p_e = e * inv_1p_e;
     Array<T_partials_return, Dynamic, 1> mu_over_mu_p_phi
@@ -259,9 +336,22 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
             = mu_over_mu_p_phi - phi_over_mu_p_phi * y_arr / phi_arr
               - log1p_exp_theta_m_log_phi + digamma_diff(phi_arr, y_arr);
       } else {
-        partials<3>(ops_partials)[0]
-            = sum(mu_over_mu_p_phi - phi_over_mu_p_phi * y_arr / phi_arr
-                  - log1p_exp_theta_m_log_phi + digamma_diff(phi_arr, y_arr));
+        bool dd_done = false;
+        if constexpr (per_count) {
+          if (use_table) {
+            const auto dd = internal::per_count_values<T_partials_return>(
+                y_arr, y_max, [&](int k) { return digamma_diff(phi_val, k); });
+            partials<3>(ops_partials)[0]
+                = sum(mu_over_mu_p_phi - phi_over_mu_p_phi * y_arr / phi_arr
+                      - log1p_exp_theta_m_log_phi + dd);
+            dd_done = true;
+          }
+        }
+        if (!dd_done) {
+          partials<3>(ops_partials)[0]
+              = sum(mu_over_mu_p_phi - phi_over_mu_p_phi * y_arr / phi_arr
+                    - log1p_exp_theta_m_log_phi + digamma_diff(phi_arr, y_arr));
+        }
       }
     }
   }
