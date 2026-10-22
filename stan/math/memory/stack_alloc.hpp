@@ -270,6 +270,22 @@ class stack_alloc {
   }
 
   /**
+   * Return the approximate number of bytes handed out through calls to
+   * alloc(). Blocks before the current one are counted in full, so any
+   * space wasted at the end of a block when moving to the next one is
+   * included.
+   *
+   * @return approximate number of bytes used on this instance
+   */
+  inline size_t approx_bytes_used() const {
+    size_t sum = 0;
+    for (size_t i = 0; i < cur_block_; ++i) {
+      sum += sizes_[i];
+    }
+    return sum + static_cast<size_t>(next_loc_ - blocks_[cur_block_]);
+  }
+
+  /**
    * Indicates whether the memory in the pointer
    * is in the stack.
    *

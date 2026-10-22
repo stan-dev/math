@@ -25,7 +25,8 @@ namespace math {
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
 inline double square(const T x) {
-  return std::pow(x, 2);
+  double x_dbl = x;
+  return x_dbl * x_dbl;
 }
 
 /**

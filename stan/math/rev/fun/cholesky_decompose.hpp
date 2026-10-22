@@ -137,7 +137,7 @@ inline auto cholesky_decompose(EigMat&& A) {
   arena_t<EigMat> arena_A = std::forward<decltype(A_ref)>(A_ref);
   arena_t<promote_scalar_t<double, EigMat>> L_A(arena_A.val().eval());
 
-  check_symmetric("cholesky_decompose", "A", A);
+  check_symmetric("cholesky_decompose", "A", L_A);
   Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
   check_pos_definite("cholesky_decompose", "m", L_factor);
 

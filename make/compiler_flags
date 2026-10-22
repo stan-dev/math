@@ -288,17 +288,20 @@ else
   TBB_LIBRARIES ?= tbb
 endif
 
+# --disable-new-dtags only matters alongside -rpath, which Windows skips
+# below; MacOS ld does not support it
+ifneq ($(OS), Windows_NT)
+  ifneq ($(OS),Darwin)
+    LDFLAGS_TBB_DTAGS ?= -Wl,--disable-new-dtags
+  endif
+endif
+
 ifdef TBB_LIB
 
 ifdef TBB_INC
 CXXFLAGS_TBB ?= $(INC_DIR_OPT) $(TBB_INC)
 else
 CXXFLAGS_TBB ?= $(INC_DIR_OPT) $(TBB)/include
-endif
-
-# MacOS ld does not support --disable-new-dtags
-ifneq ($(OS),Darwin)
-  LDFLAGS_TBB_DTAGS ?= -Wl,--disable-new-dtags
 endif
 
 # Windows LLVM/Clang does not support -rpath, but is not needed on Windows anyway
@@ -329,7 +332,7 @@ LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" $(LDFLAGS_FLTO_FLTO) $(LDFLAGS_
 
 # Windows LLVM/Clang does not support -rpath, but is not needed on Windows anyway
 ifneq ($(OS), Windows_NT)
-  LDFLAGS_TBB += -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)"
+  LDFLAGS_TBB += $(LDFLAGS_TBB_DTAGS) -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)"
 endif
 LDLIBS_TBB ?= -ltbb
 

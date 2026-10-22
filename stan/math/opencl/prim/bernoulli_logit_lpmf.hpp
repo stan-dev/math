@@ -63,7 +63,7 @@ inline return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
       select(condition1_expr, -exp_m_ntheta_expr,
              select(condition2_expr, ntheta_expr, -log1p(exp_m_ntheta_expr))));
   auto deriv_expr = select(
-      condition1_expr, -exp_m_ntheta_expr,
+      condition1_expr, elt_multiply(signs_expr, exp_m_ntheta_expr),
       select(condition2_expr, signs_expr,
              elt_multiply(signs_expr, elt_divide(exp_m_ntheta_expr,
                                                  (exp_m_ntheta_expr + 1)))));

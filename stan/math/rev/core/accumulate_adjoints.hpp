@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_CORE_ACCUMULATE_ADJOINTS_HPP
 #define STAN_MATH_REV_CORE_ACCUMULATE_ADJOINTS_HPP
 
+#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
@@ -32,6 +33,9 @@ inline double* accumulate_adjoints(double* dest, EigT&& x, Pargs&&... args);
 template <typename Arith, require_st_arithmetic<Arith>* = nullptr,
           typename... Pargs>
 inline double* accumulate_adjoints(double* dest, Arith&& x, Pargs&&... args);
+
+template <typename Tuple, require_tuple_t<Tuple>* = nullptr, typename... Pargs>
+inline double* accumulate_adjoints(double* dest, Tuple&& x, Pargs&&... args);
 
 inline double* accumulate_adjoints(double* dest);
 
@@ -137,6 +141,27 @@ inline double* accumulate_adjoints(double* dest, EigT&& x, Pargs&&... args) {
  */
 template <typename Arith, require_st_arithmetic<Arith>*, typename... Pargs>
 inline double* accumulate_adjoints(double* dest, Arith&& x, Pargs&&... args) {
+  return accumulate_adjoints(dest, std::forward<Pargs>(args)...);
+}
+
+/**
+ * Accumulate adjoints from a tuple into storage pointed to by dest, then
+ * recursively accumulate adjoints from the remaining arguments.
+ *
+ * @tparam Tuple A tuple type
+ * @tparam Pargs Types of remaining arguments
+ * @param dest Pointer to where adjoints are to be accumulated
+ * @param x A tuple containing arguments whose adjoints are accumulated
+ * @param args Further args to accumulate over
+ * @return Final position of adjoint storage pointer
+ */
+template <typename Tuple, require_tuple_t<Tuple>*, typename... Pargs>
+inline double* accumulate_adjoints(double* dest, Tuple&& x, Pargs&&... args) {
+  dest = stan::math::apply(
+      [dest](auto&&... tuple_args) {
+        return accumulate_adjoints(dest, tuple_args...);
+      },
+      std::forward<Tuple>(x));
   return accumulate_adjoints(dest, std::forward<Pargs>(args)...);
 }
 

@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/poisson_distribution.hpp>
@@ -42,6 +43,9 @@ neg_binomial_2_rng(const T_loc& mu, const T_prec& phi, RNG& rng) {
   static constexpr const char* function = "neg_binomial_2_rng";
   check_consistent_sizes(function, "Location parameter", mu,
                          "Precision parameter", phi);
+  if (size_zero(mu, phi)) {
+    return {};
+  }
   T_mu_ref mu_ref = mu;
   T_phi_ref phi_ref = phi;
   check_positive_finite(function, "Location parameter", mu_ref);

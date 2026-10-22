@@ -83,6 +83,7 @@
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/prim/fun/erf.hpp>
 #include <stan/math/prim/fun/erfc.hpp>
+#include <stan/math/prim/fun/erfcx.hpp>
 #include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/exp2.hpp>
@@ -327,7 +328,9 @@
 #include <stan/math/prim/fun/to_matrix.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/to_row_vector.hpp>
+#include <stan/math/prim/fun/to_row_vector_array.hpp>
 #include <stan/math/prim/fun/to_vector.hpp>
+#include <stan/math/prim/fun/to_vector_array.hpp>
 #include <stan/math/prim/fun/trace.hpp>
 #include <stan/math/prim/fun/trace_dot.hpp>
 #include <stan/math/prim/fun/trace_gen_inv_quad_form_ldlt.hpp>
@@ -351,5 +354,6 @@
 #include <stan/math/prim/fun/zeros_int_array.hpp>
 #include <stan/math/prim/fun/zeros_row_vector.hpp>
 #include <stan/math/prim/fun/zeros_vector.hpp>
+#include <stan/math/prim/fun/zip_index.hpp>
 
 #endif

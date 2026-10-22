@@ -237,4 +237,29 @@ TEST(ProbDistributionsNegBinomial2LogGLM, opencl_matches_cpu_big) {
   stan::math::test::compare_cpu_opencl_prim_rev(
       neg_binomial_2_log_glm_lpmf_functor_propto, y, x, alpha, beta, phi);
 }
+
+TEST(ProbDistributionsNegBinomial2LogGLM,
+     opencl_matches_cpu_small_vector_phi_scalar_alpha) {
+  int N = 3;
+  int M = 2;
+
+  vector<int> y{0, 1, 5};
+  Matrix<double, Dynamic, Dynamic> x(N, M);
+  x << -12, 46, -42, 24, 25, 27;
+  Matrix<double, Dynamic, 1> beta(M, 1);
+  beta << 0.3, 2;
+  double alpha = 0.3;
+  Matrix<double, Dynamic, 1> phi(N, 1);
+  phi << 0.1, 0.5, 1.2;
+  Matrix<double, Dynamic, 1> alpha_vec(N, 1);
+  alpha_vec << 0.3, -0.8, 1.8;
+
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      neg_binomial_2_log_glm_lpmf_functor, y, x, alpha, beta, phi);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      neg_binomial_2_log_glm_lpmf_functor_propto, y, x, alpha, beta, phi);
+  // and vector alpha with scalar phi
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      neg_binomial_2_log_glm_lpmf_functor, y, x, alpha_vec, beta, 1.2);
+}
 #endif

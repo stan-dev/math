@@ -117,6 +117,13 @@ def processCLIArgs():
         help="Don't run tests, just try to make them.",
     )
     parser.add_argument(
+        "-t",
+        "--test-only",
+        dest="test_only",
+        action="store_true",
+        help="Don't make tests, just try to run them (must already be made).",
+    )
+    parser.add_argument(
         "--run-all",
         dest="run_all",
         action="store_true",
@@ -405,20 +412,21 @@ def main():
     if inputs.changed:
         tests = findChangedTests(inputs.debug)
     else:
-        # pass 0: generate all auto-generated tests
-        if any("test/prob" in arg for arg in inputs.tests):
-            generateTests(inputs.j)
+        if not inputs.test_only:
+            # pass 0: generate all auto-generated tests
+            if any("test/prob" in arg for arg in inputs.tests):
+                generateTests(inputs.j)
 
-        if inputs.do_jumbo:
-            jumboFiles = generateJumboTests(inputs.tests)
-        if inputs.e == -1:
-            if inputs.j == 1:
-                num_expr_test_files = 1
+            if inputs.do_jumbo:
+                jumboFiles = generateJumboTests(inputs.tests)
+            if inputs.e == -1:
+                if inputs.j == 1:
+                    num_expr_test_files = 1
+                else:
+                    num_expr_test_files = inputs.j * 4
             else:
-                num_expr_test_files = inputs.j * 4
-        else:
-            num_expr_test_files = inputs.e
-        handleExpressionTests(inputs.tests, inputs.only_functions, num_expr_test_files)
+                num_expr_test_files = inputs.e
+            handleExpressionTests(inputs.tests, inputs.only_functions, num_expr_test_files)
 
         tests = findTests(inputs.tests, inputs.f, inputs.do_jumbo)
 
@@ -431,10 +439,11 @@ def main():
 
     try:
         # pass 1: make test executables
-        for batch in batched(tests):
-            if inputs.debug:
-                print("Test batch: ", batch)
-            makeTest(" ".join(batch), inputs.j)
+        if not inputs.test_only:
+            for batch in batched(tests):
+                if inputs.debug:
+                    print("Test batch: ", batch)
+                makeTest(" ".join(batch), inputs.j)
         if not inputs.make_only:
             # pass 2: run test targets
             for t in tests:

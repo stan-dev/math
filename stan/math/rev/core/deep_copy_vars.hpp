@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_REV_CORE_DEEP_COPY_VARS_HPP
 #define STAN_MATH_REV_CORE_DEEP_COPY_VARS_HPP
 
+#include <stan/math/prim/functor/apply.hpp>
+#include <stan/math/prim/functor/make_holder_tuple.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
@@ -79,6 +81,23 @@ template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr>
 inline auto deep_copy_vars(EigT&& arg) {
   return arg.unaryExpr([](auto&& x) { return var(new vari(x.val(), false)); })
       .eval();
+}
+
+/**
+ * Copy the vars in a tuple but reallocate new varis for them.
+ *
+ * @tparam Tuple A tuple type
+ * @param arg A tuple containing arguments to copy
+ * @return A tuple containing copied arguments
+ */
+template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
+inline auto deep_copy_vars(Tuple&& arg) {
+  return stan::math::apply(
+      [](auto&&... tuple_args) {
+        return make_holder_tuple(
+            deep_copy_vars(std::forward<decltype(tuple_args)>(tuple_args))...);
+      },
+      std::forward<Tuple>(arg));
 }
 
 }  // namespace math

@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
@@ -45,6 +46,9 @@ skew_double_exponential_rng(const T_loc& mu, const T_scale& sigma,
   static constexpr const char* function = "skew_double_exponential_rng";
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
                          sigma, "Skewness Parameter", tau);
+  if (size_zero(mu, sigma, tau)) {
+    return {};
+  }
   T_mu_ref mu_ref = mu;
   T_sigma_ref sigma_ref = sigma;
   T_tau_ref tau_ref = tau;

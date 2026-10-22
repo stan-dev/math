@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -40,6 +41,9 @@ loglogistic_rng(const T_scale& alpha, const T_shape& beta, RNG& rng) {
   static constexpr const char* function = "loglogistic_rng";
   check_consistent_sizes(function, "Scale parameter", alpha, "Shape Parameter",
                          beta);
+  if (size_zero(alpha, beta)) {
+    return {};
+  }
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
   check_positive_finite(function, "Scale parameter", alpha_ref);

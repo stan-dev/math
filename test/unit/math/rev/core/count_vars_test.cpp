@@ -3,6 +3,7 @@
 #include <stan/math.hpp>
 #include <test/unit/math/rev/util.hpp>
 
+#include <tuple>
 #include <vector>
 
 using stan::math::var;
@@ -160,4 +161,19 @@ TEST_F(AgradRev, Rev_count_vars_sum) {
       1 + 5 + 3 + 4 + 15 + 2 * 5 + 2 * 3 + 2 * 4 + 30,
       count_vars(arg1, arg18, arg17, arg2, arg16, arg3, arg15, arg4, arg14,
                  arg5, arg13, arg12, arg6, arg11, arg7, arg10, arg8, arg9));
+}
+
+TEST_F(AgradRev, Rev_count_vars_tuple_args) {
+  const std::tuple<> empty;
+  const auto data = std::make_tuple(1, Eigen::VectorXd::Ones(2));
+  EXPECT_EQ(0, stan::math::count_vars(empty));
+  EXPECT_EQ(0, stan::math::count_vars(data));
+
+  Eigen::Matrix<var, Eigen::Dynamic, 1> vars(2);
+  auto nested = std::make_tuple(var(1.0), std::make_tuple(vars, 2.0), var(3.0));
+  var before = 4.0;
+
+  EXPECT_EQ(5, stan::math::count_vars(before, nested));
+  EXPECT_EQ(2, stan::math::count_vars(
+                   std::make_tuple(var(5.0), std::make_tuple(var(6.0)))));
 }

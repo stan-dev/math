@@ -72,4 +72,5 @@ if __name__ == "__main__":
                     )
                     add_tests_from_hpp(tests_to_run, test)
 
-    print("\n".join(set(tests_to_run)))
+    if tests_to_run:
+        print("\n".join(set(tests_to_run)))

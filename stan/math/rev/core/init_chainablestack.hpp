@@ -13,7 +13,9 @@
 
 #ifdef __APPLE__
 #include <pthread.h>
+#if defined(__arm64__) || defined(__aarch64__)
 #include <sys/qos.h>
+#endif
 #endif
 
 namespace stan {

@@ -29,7 +29,7 @@ static constexpr const char* std_normal_lcdf_device_function
               if (isnan(lcdf_n)) {
                 lcdf_n = 0;
               }
-            } else if (scaled_y > -20.0) {
+            } else if (scaled_y > -4.0) {
               // CDF(x) = 1/2 - 1/2 erf(-x) = 1/2 erfc(-x)
               lcdf_n = log(erfc(-scaled_y)) - M_LN2;
             } else if (10.0 * log(fabs(scaled_y)) < log(DBL_MAX)) {
@@ -76,10 +76,15 @@ static constexpr const char* std_normal_lcdf_device_function
               t = 1.0 / (1.0 + 0.3275911 * scaled_y);
               t2 = t * t;
               t4 = pow(t, 4);
-              dnlcdf = 0.5 * M_2_SQRTPI
-                       / (exp(x2) - 0.254829592 + 0.284496736 * t
-                          - 1.421413741 * t2 + 1.453152027 * t2 * t
-                          - 1.061405429 * t4);
+              // A&S 7.1.26 keeps exp(-x2) in the numerator, as R's pnorm
+              // does; refs in stan/math/prim/prob/std_normal_lcdf.hpp
+              const double exp_m_x2 = exp(-x2);
+              dnlcdf
+                  = 0.5 * M_2_SQRTPI * exp_m_x2
+                    / (1.0
+                       - exp_m_x2
+                             * (0.254829592 - 0.284496736 * t + 1.421413741 * t2
+                                - 1.453152027 * t2 * t + 1.061405429 * t4));
             } else if (scaled_y > 2.5) {
               t = scaled_y - 2.7;
               t2 = t * t;
@@ -116,6 +121,14 @@ static constexpr const char* std_normal_lcdf_device_function
               dnlcdf = 0.6245634904 - 0.9521866949 * t + 0.3986215682 * t2
                        + 0.04700850676 * t2 * t - 0.03478651979 * t4
                        - 0.01772675404 * t4 * t + 0.0006577254811 * pow(t, 6);
+            } else if (scaled_y < -29.0) {
+              // asymptotic Mills ratio, DLMF 7.12.1; grows linearly as
+              // -2*scaled_y, same 1/x^2 series shape as R's pnorm uses
+              const double inv_x2 = 1.0 / x2;
+              dnlcdf
+                  = -2.0 * scaled_y
+                    / (1.0
+                       + inv_x2 * (-0.5 + inv_x2 * (0.75 + inv_x2 * -1.875)));
             } else if (10.0 * log(fabs(scaled_y)) < log(DBL_MAX)) {
               t = 1.0 / (1.0 - 0.3275911 * scaled_y);
               t2 = t * t;
@@ -124,10 +137,7 @@ static constexpr const char* std_normal_lcdf_device_function
                   = M_2_SQRTPI
                     / (0.254829592 * t - 0.284496736 * t2 + 1.421413741 * t2 * t
                        - 1.453152027 * t4 + 1.061405429 * t4 * t);
-              if (scaled_y < -29.0) {
-                dnlcdf += 0.0015065154280332 * x2
-                          - 0.3993154819705530 * scaled_y - 4.2919418242931700;
-              } else if (scaled_y < -17.0) {
+              if (scaled_y < -17.0) {
                 dnlcdf += 0.0001263257217272 * x2 * scaled_y
                           + 0.0123586859488623 * x2
                           - 0.0860505264736028 * scaled_y - 1.252783383752970;

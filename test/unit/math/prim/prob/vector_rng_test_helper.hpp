@@ -421,6 +421,17 @@ struct check_quantiles {
 
       assert_matches_quantiles(samples_to_test, quantiles, 1e-6);
     }
+
+    // check size-0 behavior
+    if constexpr (stan::is_vector<T_param1>::value
+                  || stan::is_vector<T_param2>::value
+                  || stan::is_vector<T_param3>::value) {
+      resize_if_vector(p1, 0);
+      resize_if_vector(p2, 0);
+      resize_if_vector(p3, 0);
+      auto result = rig.generate_samples(p1, p2, p3, rng);
+      EXPECT_EQ(result.size(), 0);
+    }
   }
 };
 
@@ -625,6 +636,17 @@ struct check_counts {
       } else {
         assert_chi_squared(counts_trimmed, epmf_trimmed, 1e-6);
       }
+    }
+
+    // check size-0 behavior
+    if constexpr (stan::is_vector<T_param1>::value
+                  || stan::is_vector<T_param2>::value
+                  || stan::is_vector<T_param3>::value) {
+      resize_if_vector(p1, 0);
+      resize_if_vector(p2, 0);
+      resize_if_vector(p3, 0);
+      auto result = rig.generate_samples(p1, p2, p3, rng);
+      EXPECT_EQ(result.size(), 0);
     }
   }
 };
