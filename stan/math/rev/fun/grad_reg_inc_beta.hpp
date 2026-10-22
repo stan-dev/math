@@ -571,9 +571,10 @@ inc_beta_hvp(double a, double b, double z, double v_a, double v_b,
   // the symmetry relation swaps which shape is requested
   constexpr GRAD_RIB swapped_grads = swap_grad_rib(grads);
   const double mean = a / (a + b);
+  // the same branch rule as grad_reg_inc_beta
   const bool use_power_series
-      = (z < mean && b * z <= 1.0 && z <= 0.95)
-        || (z >= mean && a * (1.0 - z) <= 1.0 && z >= 0.05);
+      = (z < mean && b * z <= 1.0 && z <= 0.5)
+        || (z >= mean && a * (1.0 - z) <= 1.0 && z >= 0.5);
   if (use_power_series) {
     if (z >= mean) {
       const auto hv = inc_beta_hvp_power_series<swapped_grads>(
@@ -588,7 +589,8 @@ inc_beta_hvp(double a, double b, double z, double v_a, double v_b,
                                               digamma_b, digamma_ab);
     }
   } else {
-    if (z >= (a - 1.0) / (a + b - 2.0)) {
+    // the same threshold as grad_reg_inc_beta, so both take the same branch
+    if (z >= (a + 1.0) / (a + b + 2.0)) {
       const auto hv = inc_beta_hvp_continued_fraction<swapped_grads>(
           b, a, 1.0 - z, v_b, v_a, digamma_b, digamma_a, digamma_ab);
       if constexpr (grads != GRAD_RIB::BOTH) {

@@ -10,6 +10,8 @@ namespace {
 //   (20, 20, 0.3), (5, 30, 0.1): continued fraction
 //   (20, 20, 0.7), (5, 30, 0.3): continued fraction through the symmetry
 //     relation
+//   (10, 1, 0.7), (4, 4, 0.5): continued fraction, integer b, where the
+//     partial numerator d_{2b} is 0 but its b derivative is not
 template <typename F>
 void expect_ad_grad_reg_inc_beta(const F& f) {
   stan::test::expect_ad(f, 1.0, 1.0, 0.4);
@@ -21,6 +23,8 @@ void expect_ad_grad_reg_inc_beta(const F& f) {
   stan::test::expect_ad(f, 5.0, 30.0, 0.1);
   stan::test::expect_ad(f, 20.0, 20.0, 0.7);
   stan::test::expect_ad(f, 5.0, 30.0, 0.3);
+  stan::test::expect_ad(f, 10.0, 1.0, 0.7);
+  stan::test::expect_ad(f, 4.0, 4.0, 0.5);
 }
 
 }  // namespace

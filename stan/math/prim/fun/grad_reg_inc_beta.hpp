@@ -196,6 +196,12 @@ inline auto inc_beta_continued_fraction_kernel(const T1& a, const T2& b,
   using ret_t = return_type_t<T1, T2, T3, T4, T5, T6>;
   constexpr bool calc_a = grads_requested != GRAD_RIB::G2;
   constexpr bool calc_b = grads_requested != GRAD_RIB::G1;
+  // For integer b the partial numerator d_{2b} is 0, so the value and the a
+  // derivatives stop changing from that step on while the b derivative of
+  // d_{2b} is not 0. When b is an autodiff type its derivatives are carried
+  // through this loop, so the b derivative has to converge before stopping
+  // even when it is not requested, as track_b does in the power series.
+  constexpr bool track_b = calc_b || is_autodiff_v<T2>;
   constexpr int max_iterations = 300;
   const double tolerance = 3.0 * std::numeric_limits<double>::epsilon();
   const double small = std::sqrt(std::numeric_limits<double>::min());
@@ -229,7 +235,7 @@ inline auto inc_beta_continued_fraction_kernel(const T1& a, const T2& b,
     e_a = (x + d_1) / ap1 * D;
     r_a = e_a;
   }
-  if constexpr (calc_b) {
+  if constexpr (track_b) {
     // d d_1 / db = -x / (a + 1)
     e_b = x / ap1 * D;
     r_b = e_b;
@@ -282,7 +288,7 @@ inline auto inc_beta_continued_fraction_kernel(const T1& a, const T2& b,
       e_a = -(dd_a + d * e_a) * D_D_new;
       r_a += c_a + e_a;
     }
-    if constexpr (calc_b) {
+    if constexpr (track_b) {
       c_b = (dd_b - d * c_b) / C_C_new;
       e_b = -(dd_b + d * e_b) * D_D_new;
       r_b += c_b + e_b;
@@ -298,7 +304,7 @@ inline auto inc_beta_continued_fraction_kernel(const T1& a, const T2& b,
       if (fabs(value_of_rec(delta) - 1.0) < tolerance
           && (!calc_a
               || fabs(dh_a_now - dh_a_prev) <= tolerance * fabs(dh_a_now))
-          && (!calc_b
+          && (!track_b
               || fabs(dh_b_now - dh_b_prev) <= tolerance * fabs(dh_b_now))) {
         break;
       }
@@ -395,9 +401,13 @@ inline auto grad_reg_inc_beta(const T1& a, const T2& b, const T3& z,
   const double a_d = value_of_rec(a);
   const double b_d = value_of_rec(b);
   const double mean = a_d / (a_d + b_d);
+  // The series terms shrink by about z per step (1 - z for the flipped
+  // series), so it is limited to z <= 0.5 (z >= 0.5). For b < 1, b z <= 1
+  // alone does not bound z, and at z = 0.95 the series takes most of its 600
+  // terms where the continued fraction needs tens of steps.
   const bool use_power_series
-      = (z_d < mean && b_d * z_d <= 1.0 && z_d <= 0.95)
-        || (z_d >= mean && a_d * (1.0 - z_d) <= 1.0 && z_d >= 0.05);
+      = (z_d < mean && b_d * z_d <= 1.0 && z_d <= 0.5)
+        || (z_d >= mean && a_d * (1.0 - z_d) <= 1.0 && z_d >= 0.5);
   if (use_power_series) {
     // For z >= a / (a + b) the series is evaluated for I_{1-z}(b, a) through
     // the symmetry relation; its (d/da, d/db) are the negated (d/db, d/da)
@@ -410,11 +420,13 @@ inline auto grad_reg_inc_beta(const T1& a, const T2& b, const T3& z,
           a, b, z, digammaA, digammaB, digammaSum);
     }
   } else {
-    // The continued fraction converges rapidly for z < (a - 1) / (a + b - 2);
-    // otherwise it is evaluated for I_{1-z}(b, a) through the symmetry
-    // relation. IEEE division: (a - 1) / 0 is +-inf and the comparison is
-    // well defined.
-    if (z_d >= (a_d - 1.0) / (a_d + b_d - 2.0)) {
+    // The continued fraction converges rapidly for z < (a + 1) / (a + b + 2)
+    // (Numerical Recipes, 3rd ed., section 6.4); otherwise it is evaluated
+    // for I_{1-z}(b, a) through the symmetry relation, where 1 - z is below
+    // the matching (b + 1) / (a + b + 2). The mode (a - 1) / (a + b - 2) is
+    // not a usable threshold: it exceeds 1 for b < 1, so the fraction would
+    // run at z near 1, where it needs hundreds of steps.
+    if (z_d >= (a_d + 1.0) / (a_d + b_d + 2.0)) {
       return internal::inc_beta_continued_fraction_kernel<swapped_grads, true>(
           b, a, 1.0 - z, digammaB, digammaA, digammaSum);
     } else {
