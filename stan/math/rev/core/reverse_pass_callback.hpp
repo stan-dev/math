@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_FUNCTOR_REVERSE_PASS_CALLBACK_HPP
 
 #include <stan/math/rev/core/vari.hpp>
+#include <new>
 
 namespace stan {
 namespace math {
@@ -36,7 +37,13 @@ struct reverse_pass_callback_vari : public vari_base {
  */
 template <typename F>
 inline void reverse_pass_callback(F&& functor) {
-  new internal::reverse_pass_callback_vari<F>(std::forward<F>(functor));
+  // The callback can capture types that need more than the 8 byte alignment
+  // of `vari_base::operator new(size_t)`, e.g. fixed-size Eigen matrices.
+  // C++17 only calls the aligned operator new above
+  // __STDCPP_DEFAULT_NEW_ALIGNMENT__, so allocate with the type's alignment.
+  using vari_t = internal::reverse_pass_callback_vari<F>;
+  ::new (ChainableStack::instance_->memalloc_.alloc(
+      sizeof(vari_t), alignof(vari_t))) vari_t(std::forward<F>(functor));
 }
 
 }  // namespace math

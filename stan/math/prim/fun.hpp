@@ -223,8 +223,10 @@
 #include <stan/math/prim/fun/modified_bessel_second_kind.hpp>
 #include <stan/math/prim/fun/modulus.hpp>
 #include <stan/math/prim/fun/multiply.hpp>
+#include <stan/math/prim/fun/multiply_add.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/multiply_lower_tri_self_transpose.hpp>
+#include <stan/math/prim/fun/multiply_sub.hpp>
 #include <stan/math/prim/fun/norm.hpp>
 #include <stan/math/prim/fun/norm1.hpp>
 #include <stan/math/prim/fun/norm2.hpp>
@@ -281,6 +283,7 @@
 #include <stan/math/prim/fun/rows_dot_self.hpp>
 #include <stan/math/prim/fun/scalbn.hpp>
 #include <stan/math/prim/fun/scale_matrix_exp_multiply.hpp>
+#include <stan/math/prim/fun/scale_multiply.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/scaled_add.hpp>
 #include <stan/math/prim/fun/sd.hpp>

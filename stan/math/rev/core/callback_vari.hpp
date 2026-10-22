@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_CORE_CALLBACK_VARI_HPP
 
 #include <stan/math/rev/core/vari.hpp>
+#include <new>
 #include <utility>
 
 namespace stan {
@@ -40,8 +41,12 @@ struct callback_vari : public vari_value<T> {
 template <typename T, typename F>
 inline internal::callback_vari<plain_type_t<T>, F>* make_callback_vari(
     T&& value, F&& functor) {
-  return new internal::callback_vari<plain_type_t<T>, F>(
-      std::move(value), std::forward<F>(functor));
+  // The callback can capture types that need more than the 8 byte alignment
+  // of `vari_base::operator new(size_t)` (see `reverse_pass_callback`).
+  using vari_t = internal::callback_vari<plain_type_t<T>, F>;
+  return ::new (ChainableStack::instance_->memalloc_.alloc(sizeof(vari_t),
+                                                           alignof(vari_t)))
+      vari_t(std::move(value), std::forward<F>(functor));
 }
 
 /**

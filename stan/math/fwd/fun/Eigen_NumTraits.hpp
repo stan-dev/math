@@ -253,4 +253,5 @@ struct ternary_evaluator<
 }  // namespace internal
 
 }  // namespace Eigen
+
 #endif

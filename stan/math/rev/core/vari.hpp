@@ -6,6 +6,7 @@
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <new>
 #include <ostream>
 #include <type_traits>
 
@@ -49,6 +50,22 @@ class vari_base {
   }
 
   /**
+   * Allocate memory from the underlying memory pool for a type that needs
+   * more alignment than `operator new(size_t)` provides, e.g. a callback
+   * that captures fixed-size Eigen matrices. C++17 calls this overload for
+   * such types.
+   *
+   * @param nbytes Number of bytes to allocate.
+   * @param alignment Required alignment in bytes.
+   * @return Pointer to allocated bytes.
+   */
+  static inline void* operator new(size_t nbytes,
+                                   std::align_val_t alignment) noexcept {
+    return ChainableStack::instance_->memalloc_.alloc(
+        nbytes, static_cast<size_t>(alignment));
+  }
+
+  /**
    * Delete a pointer from the underlying memory pool.
    *
    * This no-op implementation enables a subclass to throw
@@ -61,6 +78,15 @@ class vari_base {
    */
   static inline void operator delete(
       void* /* ignore arg */) noexcept { /* no op */
+  }
+
+  /**
+   * Delete a pointer allocated with the aligned `operator new`. As for the
+   * unaligned version this is a no-op.
+   */
+  static inline void operator delete(
+      void* /* ignore arg */, std::align_val_t /* ignore arg */) noexcept {
+    /* no op */
   }
 };
 
