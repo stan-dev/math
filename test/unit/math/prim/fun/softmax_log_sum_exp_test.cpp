@@ -5,9 +5,9 @@
 #include <limits>
 
 TEST(MathFunctions, softmax_log_sum_exp_matches_separate_calls) {
-  using stan::math::internal::softmax_log_sum_exp;
   using stan::math::log_sum_exp;
   using stan::math::softmax;
+  using stan::math::internal::softmax_log_sum_exp;
 
   Eigen::VectorXd v(4);
   v << 629.7901581243797, 31.52411463, 608.19720553, 120.94829574;

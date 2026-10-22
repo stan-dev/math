@@ -6,8 +6,8 @@
 
 TEST(AgradFwd, log_softmax_large_dynamic_range) {
   using stan::math::fvar;
-  using stan::math::vector_fd;
   using stan::math::log_softmax;
+  using stan::math::vector_fd;
 
   Eigen::VectorXd val(3);
   val << 0, -100, -1000;

@@ -58,8 +58,8 @@ inline auto log_sum_exp(T&& x) {
         using mat_type = Eigen::Matrix<T_fvar_inner, -1, -1>;
         mat_type vals = v.val();
         const auto softmax_lse = internal::softmax_log_sum_exp(vals);
-        return fvar<T_fvar_inner>(
-            softmax_lse.second, v.d().cwiseProduct(softmax_lse.first).sum());
+        return fvar<T_fvar_inner>(softmax_lse.second,
+                                  v.d().cwiseProduct(softmax_lse.first).sum());
       });
 }
 
