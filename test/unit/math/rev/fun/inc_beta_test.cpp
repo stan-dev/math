@@ -41,3 +41,18 @@ TEST_F(AgradRev, inc_beta_shape_gradients) {
   expect_inc_beta_grads(10, 1, 0.5, -0.00067690154351557159,
                         0.00226574342615196, 1e-12);
 }
+
+TEST_F(AgradRev, inc_beta_upper_bound_infinite_density) {
+  // At z = 1, I is 1 for all shapes, so the shape gradients are 0; with
+  // b < 1 the density, the z gradient, is infinite.
+  using stan::math::var;
+  var a = 1.05;
+  var b = 0.35;
+  var z = 1.0;
+  var f = stan::math::inc_beta(a, b, z);
+  EXPECT_NO_THROW(f.grad());
+  EXPECT_EQ(1.0, f.val());
+  EXPECT_EQ(0.0, a.adj());
+  EXPECT_EQ(0.0, b.adj());
+  EXPECT_TRUE(std::isinf(z.adj()) && z.adj() > 0);
+}
