@@ -5,6 +5,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
+#include <array>
 
 /**
  * Shared checks for the tails of normal_lcdf, std_normal_lcdf and their
@@ -18,10 +19,49 @@
  *
  * References were evaluated at 60 significant digits from
  * `Phi(y) = erfc(-y/sqrt(2))/2` and `phi(y) = exp(-y^2/2)/sqrt(2 pi)`, then
- * rounded to double. The cutoff tables they enforce are documented on
- * stan::math::normal_lcdf in prim/prob/normal_lcdf.hpp.
+ * rounded to double. The historical approximation cutoffs are retained as
+ * regression inputs; the shared kernel now uses erfc and a Cody tail instead
+ * of the former Taylor expansions and residual fits.
  */
 namespace normal_lcdf_tail_test {
+
+template <typename F>
+void check_tail_derivatives(const F& f, double z,
+                            const std::array<double, 3>& expected) {
+  using namespace stan::math;
+  const auto check = [&](double actual, size_t order) {
+    EXPECT_NEAR(expected[order], actual, 1e-12 * std::abs(expected[order]));
+  };
+  {
+    nested_rev_autodiff nested;
+    fvar<fvar<var>> x;
+    x.val_.val_ = z;
+    x.val_.d_ = 1;
+    x.d_.val_ = 1;
+    auto y = f(x);
+    y.d_.d_.grad();
+    check(y.d_.val_.val(), 0);
+    check(y.d_.d_.val(), 1);
+    check(x.val_.val_.adj(), 2);
+  }
+  {
+    nested_rev_autodiff nested;
+    fvar<var> x(z, 1);
+    auto y = f(x);
+    y.d_.grad();
+    check(y.d_.val(), 0);
+    check(x.val_.adj(), 1);
+  }
+  fvar<fvar<fvar<double>>> x;
+  x.val_.val_.val_ = z;
+  x.val_.val_.d_ = 1;
+  x.val_.d_.val_ = 1;
+  x.d_.val_.val_ = 1;
+  const auto y = f(x);
+  check(y.d_.val_.val_, 0);
+  check(y.d_.d_.val_, 1);
+  check(y.d_.d_.d_, 2);
+}
 
 /** Sign relating the function under test to normal_lcdf. */
 struct orientation {
@@ -69,7 +109,7 @@ void value_and_grad(const F& f, double y, double* value, double* grad) {
 
 /**
  * Five-term DLMF 7.12.1 asymptotic for d/dy log Phi(y), valid in the far lower
- * tail. Independent of the four-term form the implementation uses.
+ * tail. Independent of the Cody rational approximation used by the kernel.
  */
 inline double mills_dlogphi_dy(double y) {
   const double s = y / std::sqrt(2.0);
@@ -80,18 +120,14 @@ inline double mills_dlogphi_dy(double y) {
 }
 
 /**
- * expect_ad on both sides of every interior cutoff of the piecewise value and
- * derivative, given in scaled units so they line up with the table in
- * prim/prob/normal_lcdf.hpp.
+ * expect_ad on both sides of the historical value and derivative cutoffs,
+ * including the current Cody crossover at scaled input -4.
  *
  * The 0.01 offset keeps clear of `finite_diff_grad_hessian_auto`'s stencil,
  * which spans about `1.2e-5 * max(1, |y|)`, so neither side straddles a seam.
  *
- * This pins that every branch is executed and is accurate where used. It
- * cannot pin the cutoff location: adjacent branches agree to well within 1e-4
- * for about 0.1 either side of a seam, by construction. Mutation-checked --
- * re-centring the 1.85 series on 1.80 fails, shifting the 2.5 boundary to 2.4
- * does not, 2.75 does.
+ * Keep the former cutoffs as regression inputs even though the Taylor and
+ * residual-fit branches have been replaced by the shared normal kernel.
  */
 template <typename F>
 void expect_ad_across_cutoffs(const F& f, double dir) {
@@ -118,45 +154,42 @@ void expect_ad_at_defect_inputs(const F& f, double dir) {
 }
 
 /**
- * Per-branch derivative accuracy, each row at that branch's own measured worst
- * in-range error plus a small margin. Per-branch rather than blanket because
- * expect_ad's 1e-4 `gradient_grad_` leaves the (0.8, 1.5] branch only 1.6x.
+ * Derivative references at inputs covered by the former Taylor branches.
+ * The shared kernel should agree with these references to 12 digits.
  */
 template <typename F>
 void expect_branch_accuracy(const F& f, double dir) {
   struct branch_ref {
     double y;
     double d1;
-    double tol;
   };
-  const branch_ref cases[]
-      = {// (2.5, 2.9], Taylor centre 2.7, measured worst 3.27e-05
-         {3.5496760415564683, 0.0007326476540693806, 5e-5},
-         {3.818376618407357, 0.00027222779390121885, 5e-5},
-         {4.1012193308819755, 8.881828792625139e-05, 5e-5},
-         // (2.1, 2.5], Taylor centre 2.3, measured worst 2.80e-05
-         {2.9839906166072305, 0.004655923761682003, 4e-5},
-         {3.2526911934581184, 0.00201252166907532, 4e-5},
-         {3.5355339059327378, 0.0007702965121768906, 4e-5},
-         // (1.5, 2.1], Taylor centre 1.85, measured worst 2.30e-05
-         {2.135462479183374, 0.04148009614764338, 3e-5},
-         {2.5455844122715714, 0.015709826784999336, 3e-5},
-         {2.9698484809835, 0.004856449376114489, 3e-5},
-         // (0.8, 1.5], Taylor centre 1.15, measured worst 6.09e-05
-         {1.145512985522207, 0.236841175835376, 9e-5},
-         {1.6263455967290592, 0.1121292480767062, 9e-5},
-         {2.121320343559643, 0.042773100995777136, 9e-5},
-         // (0.1, 0.8], Taylor centre 0.45, measured worst 7.61e-06
-         {0.15556349186104046, 0.7015595130271106, 1e-5},
-         {0.6363961030678928, 0.4416330793820557, 1e-5},
-         {1.1313708498984762, 0.24150063210766093, 1e-5}};
+  const branch_ref cases[] = {// (2.5, 2.9], Taylor centre 2.7
+                              {3.5496760415564683, 0.0007326476540693806},
+                              {3.818376618407357, 0.00027222779390121885},
+                              {4.1012193308819755, 8.881828792625139e-05},
+                              // (2.1, 2.5], Taylor centre 2.3
+                              {2.9839906166072305, 0.004655923761682003},
+                              {3.2526911934581184, 0.00201252166907532},
+                              {3.5355339059327378, 0.0007702965121768906},
+                              // (1.5, 2.1], Taylor centre 1.85
+                              {2.135462479183374, 0.04148009614764338},
+                              {2.5455844122715714, 0.015709826784999336},
+                              {2.9698484809835, 0.004856449376114489},
+                              // (0.8, 1.5], Taylor centre 1.15
+                              {1.145512985522207, 0.236841175835376},
+                              {1.6263455967290592, 0.1121292480767062},
+                              {2.121320343559643, 0.042773100995777136},
+                              // (0.1, 0.8], Taylor centre 0.45
+                              {0.15556349186104046, 0.7015595130271106},
+                              {0.6363961030678928, 0.4416330793820557},
+                              {1.1313708498984762, 0.24150063210766093}};
 
   for (const branch_ref& c : cases) {
     const double y = dir * c.y;
     double value = 0;
     double grad = 0;
     value_and_grad(f, y, &value, &grad);
-    EXPECT_LT(std::fabs(grad / (dir * c.d1) - 1.0), c.tol)
+    EXPECT_LT(std::fabs(grad / (dir * c.d1) - 1.0), 1e-12)
         << "derivative branch drifted at y = " << y;
   }
 }
@@ -222,7 +255,7 @@ void expect_derivatives_finite(const F& f) {
 /**
  * Far-tail value and gradient against 60-digit references, then a sweep
  * against the five-term Mills asymptotic over the region the implementation
- * handles with its own four-term form.
+ * evaluates with its Cody rational approximation.
  */
 template <typename F>
 void expect_far_tail_gradient(const F& f, double dir) {
