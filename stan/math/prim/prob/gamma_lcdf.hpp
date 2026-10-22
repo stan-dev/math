@@ -4,39 +4,49 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/gamma_p.hpp>
-#include <stan/math/prim/fun/grad_reg_lower_inc_gamma.hpp>
-#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log_gamma_q_dgamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
-#include <stan/math/prim/fun/tgamma.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
 
+/** \ingroup prob_dists
+ * The log cumulative distribution function of the gamma distribution.
+ * It is computed from the log of the regularized lower
+ * incomplete gamma function, so it stays finite where the probability
+ * underflows.
+ *
+ * @tparam T_y type of y
+ * @tparam T_shape type of alpha
+ * @tparam T_inv_scale type of beta
+ * @param y random variable
+ * @param alpha shape parameter
+ * @param beta inverse scale parameter
+ * @return log probability, or sum of log probabilities for containers
+ * @throw std::domain_error if a parameter is out of its support
+ * @throw std::invalid_argument if container sizes mismatch
+ */
 template <typename T_y, typename T_shape, typename T_inv_scale>
 inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(
     const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_inv_scale>;
-  using std::exp;
-  using std::log;
-  using std::pow;
   using T_y_ref = ref_type_t<T_y>;
-  using T_alpha_ref = ref_type_t<T_shape>;
-  using T_beta_ref = ref_type_t<T_inv_scale>;
+  using T_shape_ref = ref_type_t<T_shape>;
+  using T_inv_scale_ref = ref_type_t<T_inv_scale>;
   static constexpr const char* function = "gamma_lcdf";
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Inverse scale parameter", beta);
   T_y_ref y_ref = y;
-  T_alpha_ref alpha_ref = alpha;
-  T_beta_ref beta_ref = beta;
+  T_shape_ref alpha_ref = alpha;
+  T_inv_scale_ref beta_ref = beta;
   check_positive_finite(function, "Shape parameter", alpha_ref);
   check_positive_finite(function, "Inverse scale parameter", beta_ref);
   check_nonnegative(function, "Random variable", y_ref);
@@ -45,60 +55,50 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(
     return 0;
   }
 
-  T_partials_return P(0.0);
+  T_partials_return log_P(0.0);
   auto ops_partials = make_partials_propagator(y_ref, alpha_ref, beta_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
-  scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
-  scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
-  size_t N = max_size(y, alpha, beta);
+  scalar_seq_view<T_shape_ref> alpha_vec(alpha_ref);
+  scalar_seq_view<T_inv_scale_ref> beta_vec(beta_ref);
+  const size_t N = max_size(y, alpha, beta);
 
-  // Explicit return for extreme values
-  // The gradients are technically ill-defined
-  for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (y_vec.val(i) == 0) {
+  // An element with probability 0 (z = 0) makes the
+  // result -inf; the gradients are treated as zero
+  for (size_t n = 0; n < N; n++) {
+    const double y_rec = value_of_rec(y_vec.val(n));
+    const double beta_rec = value_of_rec(beta_vec.val(n));
+    if (beta_rec * y_rec == 0) {
       return ops_partials.build(negative_infinity());
     }
   }
 
+  constexpr bool need_d_a = is_autodiff_v<T_shape>;
+  constexpr bool need_d_z = is_any_autodiff_v<T_y, T_inv_scale>;
   for (size_t n = 0; n < N; n++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
-    if (y_vec.val(n) == INFTY) {
-      return ops_partials.build(0.0);
+    const T_partials_return y_val = y_vec.val(n);
+    const T_partials_return alpha_val = alpha_vec.val(n);
+    const T_partials_return beta_val = beta_vec.val(n);
+    const T_partials_return z = beta_val * y_val;
+    const double z_rec = value_of_rec(z);
+    // An element with probability 1 contributes nothing
+    if (z_rec == INFTY) {
+      continue;
     }
-
-    const T_partials_return y_dbl = y_vec.val(n);
-    const T_partials_return alpha_dbl = alpha_vec.val(n);
-    const T_partials_return beta_dbl = beta_vec.val(n);
-    const T_partials_return log_beta_dbl = log(beta_dbl);
-    const T_partials_return beta_y_dbl = beta_dbl * y_dbl;
-
-    const T_partials_return Pn = gamma_p(alpha_dbl, beta_y_dbl);
-    const T_partials_return log_Pn = log(Pn);
-
-    P += log_Pn;
-
-    if constexpr (is_any_autodiff_v<T_y, T_inv_scale>) {
-      const T_partials_return log_y_dbl = log(y_dbl);
-      const T_partials_return d_num
-          = (-beta_y_dbl) + (alpha_dbl - 1) * (log_beta_dbl + log_y_dbl);
-      const T_partials_return d_den = lgamma(alpha_dbl) + log_Pn;
-      const T_partials_return d = exp(d_num - d_den);
-
-      if constexpr (is_autodiff_v<T_y>) {
-        partials<0>(ops_partials)[n] += beta_dbl * d;
-      }
-      if constexpr (is_autodiff_v<T_inv_scale>) {
-        partials<2>(ops_partials)[n] += y_dbl * d;
-      }
+    const auto tail
+        = internal::log_gamma_tail<false, need_d_a, need_d_z>(alpha_val, z);
+    log_P += tail.log_prob;
+    if constexpr (is_autodiff_v<T_y>) {
+      partials<0>(ops_partials)[n] += beta_val * tail.d_z;
     }
     if constexpr (is_autodiff_v<T_shape>) {
-      partials<1>(ops_partials)[n]
-          += grad_reg_lower_inc_gamma(alpha_dbl, beta_y_dbl) / Pn;
+      partials<1>(ops_partials)[n] += tail.d_a;
+    }
+    if constexpr (is_autodiff_v<T_inv_scale>) {
+      partials<2>(ops_partials)[n] += y_val * tail.d_z;
     }
   }
-  return ops_partials.build(P);
+  return ops_partials.build(log_P);
 }
 
 }  // namespace math

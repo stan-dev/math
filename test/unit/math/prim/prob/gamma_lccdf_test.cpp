@@ -91,24 +91,24 @@ TEST(ProbGamma, lccdf_alpha_gt_30_small_y_old_code_rounds_to_zero) {
   EXPECT_DOUBLE_EQ(new_val, expected);
 }
 
-TEST(ProbGamma, lccdf_log1m_exp_lcdf_rounds_to_inf) {
+TEST(ProbGamma, lccdf_far_tail_matches_log1m_exp_lcdf) {
   using stan::math::gamma_lccdf;
   using stan::math::gamma_lcdf;
   using stan::math::log1m_exp;
-  using stan::math::negative_infinity;
 
   double y = 20000.0;
   double alpha = 800.0;
   double beta = 0.1;
 
+  // lcdf is about -1e-204, so it does not round to 0, and
+  // log1m_exp(lcdf) recovers lccdf
   double lcdf = gamma_lcdf(y, alpha, beta);
-  double log1m_lcdf = log1m_exp(lcdf);
   double lccdf = gamma_lccdf(y, alpha, beta);
 
-  EXPECT_EQ(lcdf, 0.0);
-  EXPECT_EQ(log1m_lcdf, negative_infinity());
+  EXPECT_LT(lcdf, 0.0);
   EXPECT_TRUE(std::isfinite(lccdf));
   EXPECT_LT(lccdf, 0.0);
+  EXPECT_NEAR(log1m_exp(lcdf), lccdf, 1e-12 * std::fabs(lccdf));
 }
 
 TEST(ProbGamma, lccdf_large_alpha_large_y) {

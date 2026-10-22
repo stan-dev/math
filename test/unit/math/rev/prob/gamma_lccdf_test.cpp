@@ -1,5 +1,6 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <test/unit/math/rev/prob/gamma_lccdf_tail_reference.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <limits>
@@ -274,27 +275,28 @@ TEST_F(
   EXPECT_LE(grads[0], 0.0);
 }
 
-TEST_F(AgradRev, ProbDistributionsGammalccdf_log1m_exp_lcdf_rounds_to_inf) {
+TEST_F(AgradRev, ProbDistributionsGammalccdf_far_tail_matches_log1m_exp_lcdf) {
   using stan::math::gamma_lccdf;
   using stan::math::gamma_lcdf;
   using stan::math::log1m_exp;
-  using stan::math::negative_infinity;
   using stan::math::var;
 
   double y_d = 20000.0;
   double alpha_d = 800.0;
   double beta_d = 0.1;
 
+  // lcdf is about -1e-204, so it does not round to 0, and
+  // log1m_exp(lcdf) recovers lccdf
   double lcdf = gamma_lcdf(y_d, alpha_d, beta_d);
-  double log1m_lcdf = log1m_exp(lcdf);
 
   var y_v = y_d;
   var alpha_v = alpha_d;
   var beta_v = beta_d;
   var lccdf_var = gamma_lccdf(y_v, alpha_v, beta_v);
 
-  EXPECT_EQ(lcdf, 0.0);
-  EXPECT_EQ(log1m_lcdf, negative_infinity());
+  EXPECT_LT(lcdf, 0.0);
+  EXPECT_NEAR(log1m_exp(lcdf), lccdf_var.val(),
+              1e-12 * std::fabs(lccdf_var.val()));
   EXPECT_TRUE(std::isfinite(lccdf_var.val()));
   EXPECT_LT(lccdf_var.val(), 0.0);
 }
@@ -478,5 +480,27 @@ TEST_F(AgradRev,
           << "NaN gradient " << i << " for y=" << y_d << ", alpha=" << alpha_d
           << ", beta=" << beta_d;
     }
+  }
+}
+
+TEST_F(AgradRev, ProbDistributionsGamma_lccdf_upper_tail_reference) {
+  using stan::math::gamma_lccdf;
+  using stan::math::var;
+  namespace ref = stan::test::gamma_lccdf_tail;
+
+  for (const auto& r : ref::rows()) {
+    const std::string at = ref::label(r);
+    var y = r.y;
+    var alpha = r.alpha;
+    var beta = r.beta;
+    var lp = gamma_lccdf(y, alpha, beta);
+    lp.grad();
+    // The value is limited by the cancellation in
+    // alpha log(z) - z - lgamma(alpha) at large alpha.
+    ref::expect_rel(r.value, lp.val(), 1e-10, "value " + at);
+    ref::expect_rel(r.d_alpha, alpha.adj(), 1e-11, "d/dalpha " + at);
+    ref::expect_rel(r.d_y, y.adj(), 1e-8, "d/dy " + at);
+    ref::expect_rel(r.d_y * r.y / r.beta, beta.adj(), 1e-8, "d/dbeta " + at);
+    stan::math::recover_memory();
   }
 }

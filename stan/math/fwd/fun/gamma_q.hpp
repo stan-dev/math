@@ -5,38 +5,30 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/digamma.hpp>
 #include <stan/math/fwd/fun/exp.hpp>
-#include <stan/math/fwd/fun/fabs.hpp>
+#include <stan/math/fwd/fun/lgamma.hpp>
 #include <stan/math/fwd/fun/log.hpp>
-#include <stan/math/fwd/fun/pow.hpp>
 #include <stan/math/fwd/fun/tgamma.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
+#include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
 
+/*
+ * The derivative with respect to the first argument is grad_reg_inc_gamma.
+ * The derivative with respect to the second argument is minus the gamma
+ * density, evaluated in log space so that neither pow nor tgamma can
+ * overflow; this is the same form that gamma_p uses.
+ */
+
 template <typename T>
 inline fvar<T> gamma_q(const fvar<T>& x1, const fvar<T>& x2) {
   T u = gamma_q(x1.val_, x2.val_);
 
-  T S = 0;
-  T s = 1;
-  T l = log(x2.val_);
-  T g = tgamma(x1.val_);
-  T dig = digamma(x1.val_);
-
-  int k = 0;
-  T delta = s / (x1.val_ * x1.val_);
-
-  while (fabs(delta) > 1e-6) {
-    S += delta;
-    ++k;
-    s *= -x2.val_ / k;
-    delta = s / ((k + x1.val_) * (k + x1.val_));
-  }
-
-  T der1 = (1.0 - u) * (dig - l) + exp(x1.val_ * l) * S / g;
-  T der2 = -exp(-x2.val_) * pow(x2.val_, x1.val_ - 1.0) / g;
+  T der1
+      = grad_reg_inc_gamma(x1.val_, x2.val_, tgamma(x1.val_), digamma(x1.val_));
+  T der2 = -exp(-x2.val_ + (x1.val_ - 1.0) * log(x2.val_) - lgamma(x1.val_));
 
   return fvar<T>(u, x1.d_ * der1 + x2.d_ * der2);
 }
@@ -44,23 +36,8 @@ inline fvar<T> gamma_q(const fvar<T>& x1, const fvar<T>& x2) {
 template <typename T>
 inline fvar<T> gamma_q(const fvar<T>& x1, double x2) {
   T u = gamma_q(x1.val_, x2);
-  T S = 0;
-  double s = 1;
-  double l = log(x2);
-  T g = tgamma(x1.val_);
-  T dig = digamma(x1.val_);
 
-  int k = 0;
-  T delta = s / (x1.val_ * x1.val_);
-
-  while (fabs(delta) > 1e-6) {
-    S += delta;
-    ++k;
-    s *= -x2 / k;
-    delta = s / ((k + x1.val_) * (k + x1.val_));
-  }
-
-  T der1 = (1.0 - u) * (dig - l) + exp(x1.val_ * l) * S / g;
+  T der1 = grad_reg_inc_gamma(x1.val_, x2, tgamma(x1.val_), digamma(x1.val_));
 
   return fvar<T>(u, x1.d_ * der1);
 }
@@ -68,8 +45,9 @@ inline fvar<T> gamma_q(const fvar<T>& x1, double x2) {
 template <typename T>
 inline fvar<T> gamma_q(double x1, const fvar<T>& x2) {
   T u = gamma_q(x1, x2.val_);
-  double g = tgamma(x1);
-  T der2 = -exp(-x2.val_) * pow(x2.val_, x1 - 1.0) / g;
+
+  T der2 = -exp(-x2.val_ + (x1 - 1.0) * log(x2.val_) - lgamma(x1));
+
   return fvar<T>(u, x2.d_ * der2);
 }
 }  // namespace math
