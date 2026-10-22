@@ -5,6 +5,7 @@
 #include <test/unit/math/rev/functor/test_fixture_ode.hpp>
 #include <test/unit/math/rev/functor/test_fixture_ode_cos_scalar.hpp>
 #include <test/unit/math/rev/functor/ode_test_functors.hpp>
+#include <cmath>
 
 /**
  *
@@ -96,3 +97,31 @@ REGISTER_TYPED_TEST_SUITE_P(cos_arg_test, y0_error, t0_error, ts_error,
                             one_arg_error, two_arg_error, rhs_wrong_size_error,
                             error_name, tol_error, value, grad, tol_grad);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, cos_arg_test, cos_arg_test_types);
+
+TEST(StanOdeAdjoint, quadrature_buffer_reuse) {
+  // Repeated solves and reverse passes reuse CVODES' quadrature work buffers.
+  // Every parameter has the same analytic derivative through their sum.
+  const std::vector<double> times{0.45, 1.1};
+  constexpr double rate = 1.5;
+  for (int iteration = 0; iteration < 10; ++iteration) {
+    SCOPED_TRACE(iteration);
+    stan::math::nested_rev_autodiff nested;
+    const Eigen::VectorXd initial = Eigen::VectorXd::Zero(1);
+    std::vector<stan::math::var> parameters{0.25, 0.5, 0.75};
+    ode_adjoint_functor solver;
+    auto output = solver(stan::test::CosArg1(), initial, 0.0, times, nullptr,
+                         parameters);
+    for (int index : {0, 1, 0, 1}) {
+      SCOPED_TRACE(index);
+      nested.set_zero_all_adjoints();
+      ASSERT_NO_THROW(output[index](0).grad());
+      const double phase = rate * times[index];
+      const double expected
+          = (phase * std::cos(phase) - std::sin(phase)) / (rate * rate);
+      EXPECT_NEAR(output[index](0).val(), std::sin(phase) / rate, 1e-8);
+      for (const auto& parameter : parameters) {
+        EXPECT_NEAR(parameter.adj(), expected, 1e-8);
+      }
+    }
+  }
+}

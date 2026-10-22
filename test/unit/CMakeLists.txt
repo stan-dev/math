@@ -5,6 +5,11 @@ foreach(layer prim fwd rev mix)
 endforeach()
 stan_add_pch(unit_ad_pch <test/unit/math/test_ad.hpp>)
 add_gtest_grouped_test("${CMAKE_CURRENT_SOURCE_DIR}/math" unit_math unit_mix_pch)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  # Nonzero glibc allocations expose uninitialized CVODES quadrature buffers.
+  set_tests_properties(test_unit_math_rev_functor_cos_ode_typed_test PROPERTIES
+    ENVIRONMENT "MALLOC_PERTURB_=170")
+endif()
 
 # Umbrella and multiple-translation-unit checks must compile without a PCH.
 foreach(source math_c11_test.cpp math_include_test.cpp multiple_translation_units_test.cpp)
