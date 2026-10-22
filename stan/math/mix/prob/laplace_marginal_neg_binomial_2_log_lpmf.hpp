@@ -2,6 +2,9 @@
 #define STAN_MATH_MIX_PROB_LAPLACE_MARGINAL_NEG_BINOMIAL_2_LOG_LPMF_HPP
 
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
+#include <stan/math/prim/fun/inv_logit.hpp>
+#include <cmath>
+#include <type_traits>
 #include <stan/math/mix/functor/laplace_marginal_density.hpp>
 
 #include <stan/math/rev/core/operator_addition.hpp>
@@ -192,6 +195,157 @@ struct neg_binomial_2_log_likelihood_summary {
                             subtract(log_eta, lse))));
   }
 };
+
+namespace laplace_likelihood {
+/**
+ * Closed-form derivatives of `neg_binomial_2_log_likelihood` with respect
+ * to `theta` (see `analytic_derivatives`).  With the dispersion `eta_g` of
+ * group `g` (a scalar `eta` or one entry per group),
+ * `s_g = counts_g + eta_g n_g`, `p_g = inv_logit(theta_g + mean_g -
+ * log(eta_g))` and `q_g = 1 - p_g` (computed without cancellation), the
+ * gradient is `counts_g - s_g p_g`, the negative Hessian is `s_g p_g q_g`,
+ * and the third derivative is `-s_g p_g q_g (q_g - p_g)`.
+ */
+template <>
+struct analytic_derivatives<neg_binomial_2_log_likelihood> : std::true_type {
+  // gradient, negative Hessian and third derivative from the sums of the
+  // counts `counts`, `s = counts + eta n`, and x = theta + mean - log(eta)
+  static Eigen::VectorXd grad(const Eigen::VectorXd& counts,
+                              const Eigen::VectorXd& s,
+                              const Eigen::VectorXd& x) {
+    return counts - s.cwiseProduct(inv_logit(x));
+  }
+  static Eigen::VectorXd neg_hess(const Eigen::VectorXd& s,
+                                  const Eigen::VectorXd& x) {
+    return s.cwiseProduct(inv_logit(x)).cwiseProduct(inv_logit(-x));
+  }
+  static Eigen::VectorXd third(const Eigen::VectorXd& s,
+                               const Eigen::VectorXd& x) {
+    const Eigen::VectorXd p = inv_logit(x);
+    const Eigen::VectorXd q = inv_logit(-x);
+    return -s.cwiseProduct(p).cwiseProduct(q).cwiseProduct(q - p);
+  }
+
+  template <typename Theta, typename Eta, typename Mean>
+  static void parts(const Theta& theta, const Eta& eta,
+                    const std::vector<int>& y, const std::vector<int>& y_index,
+                    const Mean& mean, Eigen::VectorXd& counts,
+                    Eigen::VectorXd& s, Eigen::VectorXd& x) {
+    const Eigen::Index theta_size = theta.size();
+    counts = Eigen::VectorXd::Zero(theta_size);
+    Eigen::VectorXd n = Eigen::VectorXd::Zero(theta_size);
+    for (size_t i = 0; i < y.size(); i++) {
+      counts(y_index[i] - 1) += y[i];
+      n(y_index[i] - 1) += 1;
+    }
+    Eigen::VectorXd eta_g(theta_size);
+    if constexpr (is_stan_scalar<Eta>::value) {
+      eta_g.setConstant(eta);
+    } else {
+      check_size_match("neg_binomial_2_log_likelihood", "eta", eta.size(),
+                       "theta", theta_size);
+      for (Eigen::Index g = 0; g < theta_size; ++g) {
+        eta_g(g) = eta[g];
+      }
+    }
+    s = counts + eta_g.cwiseProduct(n);
+    x = add(theta, mean) - eta_g.array().log().matrix();
+  }
+
+  template <typename Theta, typename Eta, typename Mean>
+  static Eigen::VectorXd theta_grad(const Theta& theta, const Eta& eta,
+                                    const std::vector<int>& y,
+                                    const std::vector<int>& y_index,
+                                    const Mean& mean) {
+    Eigen::VectorXd counts, s, x;
+    parts(theta, eta, y, y_index, mean, counts, s, x);
+    return grad(counts, s, x);
+  }
+
+  template <typename Theta, typename Eta, typename Mean>
+  static Eigen::VectorXd neg_hessian_diag(const Theta& theta, const Eta& eta,
+                                          const std::vector<int>& y,
+                                          const std::vector<int>& y_index,
+                                          const Mean& mean) {
+    Eigen::VectorXd counts, s, x;
+    parts(theta, eta, y, y_index, mean, counts, s, x);
+    return neg_hess(s, x);
+  }
+
+  template <typename Theta, typename Eta, typename Mean>
+  static Eigen::VectorXd third_diff(const Theta& theta, const Eta& eta,
+                                    const std::vector<int>& y,
+                                    const std::vector<int>& y_index,
+                                    const Mean& mean) {
+    Eigen::VectorXd counts, s, x;
+    parts(theta, eta, y, y_index, mean, counts, s, x);
+    return third(s, x);
+  }
+};
+
+/**
+ * Closed-form derivatives of `neg_binomial_2_log_likelihood_summary` with
+ * respect to `theta`; the same formulas as for
+ * `neg_binomial_2_log_likelihood`, with a scalar `eta`.
+ */
+template <>
+struct analytic_derivatives<neg_binomial_2_log_likelihood_summary>
+    : std::true_type {
+  template <typename Theta, typename Eta, typename Mean>
+  static void parts(const Theta& theta, const Eta& eta,
+                    const std::vector<int>& n_per_group,
+                    const std::vector<int>& counts_per_group, const Mean& mean,
+                    Eigen::VectorXd& counts, Eigen::VectorXd& s,
+                    Eigen::VectorXd& x) {
+    const Eigen::Index theta_size = theta.size();
+    counts = Eigen::Map<const Eigen::VectorXi>(counts_per_group.data(),
+                                               counts_per_group.size())
+                 .cast<double>();
+    const Eigen::VectorXd n = Eigen::Map<const Eigen::VectorXi>(
+                                  n_per_group.data(), n_per_group.size())
+                                  .cast<double>();
+    check_size_match("neg_binomial_2_log_likelihood_summary",
+                     "counts_per_group", counts.size(), "theta", theta_size);
+    check_size_match("neg_binomial_2_log_likelihood_summary", "n_per_group",
+                     n.size(), "theta", theta_size);
+    s = counts + eta * n;
+    x = add(theta, mean) - Eigen::VectorXd::Constant(theta_size, std::log(eta));
+  }
+
+  template <typename Theta, typename Eta, typename Mean>
+  static Eigen::VectorXd theta_grad(const Theta& theta, const Eta& eta,
+                                    const std::vector<int>& y,
+                                    const std::vector<int>& n_per_group,
+                                    const std::vector<int>& counts_per_group,
+                                    const Mean& mean) {
+    Eigen::VectorXd counts, s, x;
+    parts(theta, eta, n_per_group, counts_per_group, mean, counts, s, x);
+    return analytic_derivatives<neg_binomial_2_log_likelihood>::grad(counts, s,
+                                                                     x);
+  }
+
+  template <typename Theta, typename Eta, typename Mean>
+  static Eigen::VectorXd neg_hessian_diag(
+      const Theta& theta, const Eta& eta, const std::vector<int>& y,
+      const std::vector<int>& n_per_group,
+      const std::vector<int>& counts_per_group, const Mean& mean) {
+    Eigen::VectorXd counts, s, x;
+    parts(theta, eta, n_per_group, counts_per_group, mean, counts, s, x);
+    return analytic_derivatives<neg_binomial_2_log_likelihood>::neg_hess(s, x);
+  }
+
+  template <typename Theta, typename Eta, typename Mean>
+  static Eigen::VectorXd third_diff(const Theta& theta, const Eta& eta,
+                                    const std::vector<int>& y,
+                                    const std::vector<int>& n_per_group,
+                                    const std::vector<int>& counts_per_group,
+                                    const Mean& mean) {
+    Eigen::VectorXd counts, s, x;
+    parts(theta, eta, n_per_group, counts_per_group, mean, counts, s, x);
+    return analytic_derivatives<neg_binomial_2_log_likelihood>::third(s, x);
+  }
+};
+}  // namespace laplace_likelihood
 
 /**
  * Wrapper function around the laplace_marginal function for

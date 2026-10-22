@@ -10,6 +10,7 @@
 #include <stan/math/mix/functor/hessian_times_vector.hpp>
 
 #include <tuple>
+#include <type_traits>
 #include <utility>
 
 namespace stan {
@@ -21,7 +22,46 @@ namespace math {
  */
 namespace laplace_likelihood {
 
+/**
+ * Specialize this trait with `value = true` for a likelihood functor `F` if
+ * the Hessian of its log likelihood with respect to `theta` is diagonal and
+ * its derivatives with respect to `theta` are known in closed form.  The
+ * specialization must have three static member functions, which take
+ * `theta` and the arguments of `F::operator()` without the message stream,
+ * all with arithmetic scalar types, and return an `Eigen::VectorXd`:
+ *  - `theta_grad(theta, args...)`: the gradient;
+ *  - `neg_hessian_diag(theta, args...)`: the diagonal of the negative
+ *    Hessian;
+ *  - `third_diff(theta, args...)`: the diagonal of the third derivative.
+ * When all arguments are arithmetic, `theta_grad()`, `diagonal_hessian()`,
+ * `block_hessian()` and `third_diff()` below then use these functions
+ * instead of nested autodiff.
+ * @tparam F Type of the likelihood functor
+ */
+template <typename F>
+struct analytic_derivatives : std::false_type {};
+
 namespace internal {
+
+/**
+ * True if the closed-form derivatives of `F` (see `analytic_derivatives`)
+ * are used for these argument types: `F` has them, and `theta` and all
+ * arguments have arithmetic scalar types.
+ */
+template <typename F, typename Theta, typename... Args>
+inline constexpr bool use_analytic_derivatives_v
+    = analytic_derivatives<std::decay_t<F>>::value&&
+        std::is_arithmetic<scalar_type_t<std::decay_t<Theta>>>::value&&
+            std::conjunction_v<
+                std::is_arithmetic<scalar_type_t<std::decay_t<Args>>>...>;
+
+template <typename F, typename Theta, typename... Args>
+using require_analytic_derivatives_t = require_t<
+    std::bool_constant<use_analytic_derivatives_v<F, Theta, Args...>>>;
+
+template <typename F, typename Theta, typename... Args>
+using require_not_analytic_derivatives_t = require_t<
+    std::bool_constant<!use_analytic_derivatives_v<F, Theta, Args...>>>;
 /**
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
  * @tparam Theta A class assignable to an Eigen vector type
@@ -53,7 +93,8 @@ inline auto log_likelihood(F&& f, Theta&& theta, Stream* msgs, Args&&... args) {
  * @param args Variadic arguments for the likelihood function.
  */
 template <typename F, typename Theta, typename Stream, typename... Args,
-          require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr>
+          require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr,
+          require_not_analytic_derivatives_t<F, Theta, Args...>* = nullptr>
 inline auto theta_grad(F&& f, Theta&& theta, Stream* msgs, Args&&... args) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -104,7 +145,8 @@ inline void ll_arg_grad(F&& f, Theta&& theta, Stream* msgs, Args&&... args) {
  * @param args Variadic arguments for the likelihood function.
  */
 template <typename F, typename Theta, typename Stream, typename... Args,
-          require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr>
+          require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr,
+          require_not_analytic_derivatives_t<F, Theta, Args...>* = nullptr>
 inline auto diagonal_hessian(F&& f, Theta&& theta, Stream* msgs,
                              Args&&... args) {
   using Eigen::Dynamic;
@@ -134,7 +176,8 @@ inline auto diagonal_hessian(F&& f, Theta&& theta, Stream* msgs,
  * @param args Variadic arguments for the likelihood function.
  */
 template <typename F, typename Theta, typename Stream, typename... Args,
-          require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr>
+          require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr,
+          require_not_analytic_derivatives_t<F, Theta, Args...>* = nullptr>
 inline auto block_hessian(F&& f, Theta&& theta,
                           const Eigen::Index hessian_block_size, Stream* msgs,
                           Args&&... args) {
@@ -224,7 +267,8 @@ inline auto diff(F&& f, Theta&& theta, const Eigen::Index hessian_block_size,
  * @param args Variadic arguments for likelihood function.
  */
 template <typename F, typename Theta, typename Stream, typename... Args,
-          require_eigen_vector_t<Theta>* = nullptr>
+          require_eigen_vector_t<Theta>* = nullptr,
+          require_not_analytic_derivatives_t<F, Theta, Args...>* = nullptr>
 inline Eigen::VectorXd third_diff(F&& f, Theta&& theta, Stream&& msgs,
                                   Args&&... args) {
   nested_rev_autodiff nested;
@@ -353,6 +397,76 @@ inline auto diff_eta_implicit(F&& f, V_t&& v, Theta&& theta, Stream* msgs,
       },
       shallow_copy_args, f, theta_fvar, msgs);
   grad(f_sum.d_.vi_);
+}
+
+/**
+ * Gradient of `f` with respect to `theta`, from the closed-form derivatives
+ * of `F` (see `analytic_derivatives`).
+ */
+template <typename F, typename Theta, typename Stream, typename... Args,
+          require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr,
+          require_analytic_derivatives_t<F, Theta, Args...>* = nullptr>
+inline Eigen::VectorXd theta_grad(F&& f, Theta&& theta, Stream* msgs,
+                                  Args&&... args) {
+  return analytic_derivatives<std::decay_t<F>>::theta_grad(theta, args...);
+}
+
+/**
+ * Diagonal of the negative Hessian of `f` with respect to `theta`, from the
+ * closed-form derivatives of `F` (see `analytic_derivatives`).
+ */
+template <typename F, typename Theta, typename Stream, typename... Args,
+          require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr,
+          require_analytic_derivatives_t<F, Theta, Args...>* = nullptr>
+inline Eigen::VectorXd diagonal_hessian(F&& f, Theta&& theta, Stream* msgs,
+                                        Args&&... args) {
+  return analytic_derivatives<std::decay_t<F>>::neg_hessian_diag(theta,
+                                                                 args...);
+}
+
+/**
+ * Negative Hessian of `f` with respect to `theta` as a sparse block-diagonal
+ * matrix, from the closed-form derivatives of `F` (see
+ * `analytic_derivatives`).  The Hessian of such an `F` is diagonal; the
+ * matrix has the sparsity pattern of the autodiff version
+ * (`hessian_block_diag()`): full blocks of size `hessian_block_size`, with
+ * zero off-diagonal entries.
+ */
+template <typename F, typename Theta, typename Stream, typename... Args,
+          require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr,
+          require_analytic_derivatives_t<F, Theta, Args...>* = nullptr>
+inline Eigen::SparseMatrix<double> block_hessian(
+    F&& f, Theta&& theta, const Eigen::Index hessian_block_size, Stream* msgs,
+    Args&&... args) {
+  const Eigen::VectorXd neg_hessian_diag
+      = analytic_derivatives<std::decay_t<F>>::neg_hessian_diag(theta, args...);
+  const Eigen::Index theta_size = theta.size();
+  Eigen::SparseMatrix<double> neg_hessian(theta_size, theta_size);
+  neg_hessian.reserve(
+      Eigen::VectorXi::Constant(theta_size, hessian_block_size));
+  const Eigen::Index n_blocks = theta_size / hessian_block_size;
+  for (Eigen::Index j = 0; j < n_blocks; ++j) {
+    const Eigen::Index start = j * hessian_block_size;
+    for (Eigen::Index c = start; c < start + hessian_block_size; ++c) {
+      for (Eigen::Index r = start; r < start + hessian_block_size; ++r) {
+        neg_hessian.insert(r, c) = r == c ? neg_hessian_diag(r) : 0.0;
+      }
+    }
+  }
+  neg_hessian.makeCompressed();
+  return neg_hessian;
+}
+
+/**
+ * Diagonal of the third derivative of `f` with respect to `theta`, from the
+ * closed-form derivatives of `F` (see `analytic_derivatives`).
+ */
+template <typename F, typename Theta, typename Stream, typename... Args,
+          require_eigen_vector_t<Theta>* = nullptr,
+          require_analytic_derivatives_t<F, Theta, Args...>* = nullptr>
+inline Eigen::VectorXd third_diff(F&& f, Theta&& theta, Stream&& msgs,
+                                  Args&&... args) {
+  return analytic_derivatives<std::decay_t<F>>::third_diff(theta, args...);
 }
 
 }  // namespace internal

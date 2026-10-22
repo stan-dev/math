@@ -2,6 +2,7 @@
 #define STAN_MATH_MIX_PROB_LAPLACE_MARGINAL_POISSON_LOG_LPMF_HPP
 
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
+#include <type_traits>
 #include <stan/math/mix/functor/laplace_marginal_density.hpp>
 #include <stan/math/mix/meta.hpp>
 #include <stan/math/rev/fun/dot_product.hpp>
@@ -52,6 +53,68 @@ struct poisson_log_likelihood {
            - dot_product(n_per_group, exp(theta_offset));
   }
 };
+
+namespace laplace_likelihood {
+/**
+ * Closed-form derivatives of `poisson_log_likelihood` with respect to
+ * `theta` (see `analytic_derivatives`).  With `m_g = n_g exp(theta_g +
+ * mean_g)`, where `n_g` is the number of observations of group `g`, the
+ * gradient is `counts_g - m_g`, the negative Hessian is `m_g`, and the third
+ * derivative is `-m_g`.
+ */
+template <>
+struct analytic_derivatives<poisson_log_likelihood> : std::true_type {
+  // sum of the counts and number of observations of each group
+  template <typename YVec>
+  static void group_sums(Eigen::Index theta_size, const YVec& y,
+                         const std::vector<int>& y_index,
+                         Eigen::VectorXd& counts, Eigen::VectorXd& n) {
+    counts = Eigen::VectorXd::Zero(theta_size);
+    n = Eigen::VectorXd::Zero(theta_size);
+    for (size_t i = 0; i < y_index.size(); i++) {
+      counts(y_index[i] - 1) += y[i];
+      n(y_index[i] - 1) += 1;
+    }
+  }
+
+  template <typename Theta, typename YVec, typename Mean>
+  static void rates(const Theta& theta, const YVec& y,
+                    const std::vector<int>& y_index, const Mean& mean,
+                    Eigen::VectorXd& counts, Eigen::VectorXd& m) {
+    Eigen::VectorXd n;
+    group_sums(theta.size(), y, y_index, counts, n);
+    Eigen::VectorXd theta_offset = add(theta, mean);
+    m = n.cwiseProduct(theta_offset.array().exp().matrix());
+  }
+
+  template <typename Theta, typename YVec, typename Mean>
+  static Eigen::VectorXd theta_grad(const Theta& theta, const YVec& y,
+                                    const std::vector<int>& y_index,
+                                    const Mean& mean) {
+    Eigen::VectorXd counts, m;
+    rates(theta, y, y_index, mean, counts, m);
+    return counts - m;
+  }
+
+  template <typename Theta, typename YVec, typename Mean>
+  static Eigen::VectorXd neg_hessian_diag(const Theta& theta, const YVec& y,
+                                          const std::vector<int>& y_index,
+                                          const Mean& mean) {
+    Eigen::VectorXd counts, m;
+    rates(theta, y, y_index, mean, counts, m);
+    return m;
+  }
+
+  template <typename Theta, typename YVec, typename Mean>
+  static Eigen::VectorXd third_diff(const Theta& theta, const YVec& y,
+                                    const std::vector<int>& y_index,
+                                    const Mean& mean) {
+    Eigen::VectorXd counts, m;
+    rates(theta, y, y_index, mean, counts, m);
+    return -m;
+  }
+};
+}  // namespace laplace_likelihood
 
 /**
  * Wrapper function around the laplace_marginal function for
