@@ -33,6 +33,8 @@ TEST(mathMixScalFun, inc_beta_upper_bound_infinite_density) {
   // sweeps of fvar<var> must not throw there.
   using stan::math::fvar;
   using stan::math::var;
+  // grad() runs every node on the stack; start from an empty one
+  stan::math::recover_memory();
   var a_v = 1.05;
   var b_v = 0.35;
   fvar<var> a(a_v, 1.0);
