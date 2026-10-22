@@ -98,7 +98,7 @@ REGISTER_TYPED_TEST_SUITE_P(cos_arg_test, y0_error, t0_error, ts_error,
                             error_name, tol_error, value, grad, tol_grad);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, cos_arg_test, cos_arg_test_types);
 
-TEST(StanOdeAdjoint, quadrature_buffer_reuse) {
+TEST_F(AgradRev, quadrature_buffer_reuse) {
   // Repeated solves and reverse passes reuse CVODES' quadrature work buffers.
   // Every parameter has the same analytic derivative through their sum.
   const std::vector<double> times{0.45, 1.1};
