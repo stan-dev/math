@@ -12,6 +12,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/select.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
@@ -59,7 +60,9 @@ inline return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   decltype(auto) phi_val = value_of(phi_vec);
   auto log_phi = log(phi_val);
   auto mu_plus_phi = mu_val + phi_val;
-  auto log_mu_plus_phi = log(mu_plus_phi);
+  // Read by the value and by the phi partial: evaluated once when both run.
+  auto log_mu_plus_phi
+      = to_ref_if<is_autodiff_v<T_precision>>(log(mu_plus_phi));
   auto n_plus_phi = value_of(n_vec) + phi_val;
   constexpr bool include_precision
       = include_summand<propto, T_precision>::value;
