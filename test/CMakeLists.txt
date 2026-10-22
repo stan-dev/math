@@ -138,6 +138,11 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
     set_tests_properties(${name} PROPERTIES
       WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
       LABELS "${folder_test_name};${labels};${repo_relative}")
+    if(repo_relative MATCHES "^test/unit/math/laplace/")
+      # The timeout covers every parameterized case in the executable. Some
+      # Laplace suites exceed CTest's default 1500 seconds even with -O3.
+      set_tests_properties(${name} PROPERTIES TIMEOUT 3600)
+    endif()
 
     if(NOT matches_name_filters)
       continue()
