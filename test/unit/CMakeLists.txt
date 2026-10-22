@@ -1,0 +1,57 @@
+# Keep each autodiff layer's PCH small. The AD helper header includes mix.hpp
+# and test_ad_matvar.hpp, so those need no separate entries in its PCH.
+foreach(layer prim fwd rev mix)
+  stan_add_pch(unit_${layer}_pch <gtest/gtest.h> <stan/math/${layer}.hpp>)
+endforeach()
+stan_add_pch(unit_ad_pch <test/unit/math/test_ad.hpp>)
+add_gtest_grouped_test("${CMAKE_CURRENT_SOURCE_DIR}/math" unit_math unit_mix_pch)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  # Nonzero glibc allocations expose uninitialized CVODES quadrature buffers.
+  set_tests_properties(test_unit_math_rev_functor_cos_ode_typed_test PROPERTIES
+    ENVIRONMENT "MALLOC_PERTURB_=170")
+endif()
+
+# Umbrella and multiple-translation-unit checks must compile without a PCH.
+foreach(source math_c11_test.cpp math_include_test.cpp multiple_translation_units_test.cpp)
+  set(matches_name_filters TRUE)
+  foreach(filter IN LISTS STAN_TEST_NAME_FILTERS)
+    string(FIND "test/unit/${source}" "${filter}" match_index)
+    if(match_index EQUAL -1)
+      set(matches_name_filters FALSE)
+    endif()
+  endforeach()
+  set_source_files_properties("${source}" PROPERTIES STAN_INCLUDE_IN_GROUP ${matches_name_filters})
+  get_filename_component(name "${source}" NAME_WE)
+  set_source_files_properties("${source}" PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
+  stan_add_test_object(test_unit_${name}_objects "${source}" "")
+  stan_add_test_binary(test_unit_${name} "$<TARGET_OBJECTS:test_unit_${name}_objects>")
+  add_test(NAME test_unit_${name} COMMAND test_unit_${name})
+  set_tests_properties(test_unit_${name} PROPERTIES LABELS "unit;test/unit/${source}"
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
+endforeach()
+if(TARGET test_unit_multiple_translation_units_test)
+  add_library(stan_multiple_translation_units SHARED
+    multiple_translation_units1.cpp multiple_translation_units2.cpp)
+  target_link_libraries(stan_multiple_translation_units PRIVATE stanmath)
+  target_link_libraries(test_unit_multiple_translation_units_test PRIVATE stan_multiple_translation_units)
+endif()
+
+# The public runner also accepts test/unit, including the umbrella checks.
+set(unit_objects "")
+if(TARGET unit_math_all_tests)
+  get_target_property(unit_objects unit_math_all_tests STAN_TEST_OBJECTS)
+endif()
+foreach(source math_c11_test.cpp math_include_test.cpp multiple_translation_units_test.cpp)
+  get_filename_component(name "${source}" NAME_WE)
+  get_source_file_property(include_in_group "${source}" STAN_INCLUDE_IN_GROUP)
+  if(TARGET test_unit_${name} AND include_in_group)
+    list(APPEND unit_objects "$<TARGET_OBJECTS:test_unit_${name}_objects>")
+  endif()
+endforeach()
+if(unit_objects)
+  stan_add_test_binary(unit_all_tests ${unit_objects})
+  set_target_properties(unit_all_tests PROPERTIES EXCLUDE_FROM_ALL TRUE)
+  if(TARGET stan_multiple_translation_units)
+    target_link_libraries(unit_all_tests PRIVATE stan_multiple_translation_units)
+  endif()
+endif()

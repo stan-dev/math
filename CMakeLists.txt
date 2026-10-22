@@ -1,0 +1,153 @@
+cmake_minimum_required(VERSION 3.16.3)
+include(cmake/MakeLocal.cmake)
+project(stanmath LANGUAGES C CXX)
+stan_apply_make_local_flags()
+
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+  message(FATAL_ERROR "Use an out-of-source build: cmake -S . -B build")
+endif()
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED YES)
+set(CMAKE_CXX_EXTENSIONS NO)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+option(STAN_BUILD_DOCS "Build the Stan Math library documentation" OFF)
+option(STAN_TEST_HEADERS "Create targets that check standalone headers" ON)
+option(STAN_TEST_PCH "Reuse precompiled headers when building tests" ON)
+set(STAN_EFFECTIVE_TEST_PCH ${STAN_TEST_PCH})
+set(stan_pch_reason "")
+if(STAN_TEST_PCH AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang"
+    AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "9"
+    AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "11")
+  # Clang 9/10 cannot deserialize Eigen's __builtin_bit_cast expressions.
+  # Fixed in LLVM 95d7ccb70b9cbd53f1f137c0b2411852c42c122b (Clang 11).
+  set(STAN_EFFECTIVE_TEST_PCH OFF)
+  set(stan_pch_reason " (Clang 9/10 PCH bit_cast defect; fixed in Clang 11)")
+endif()
+option(STAN_BUILD_PROB_TESTS "Generate and build distribution tests" ON)
+option(STAN_BUILD_EXPRESSION_TESTS "Build pre-generated expression tests" OFF)
+option(STAN_TEST_ROW_VECTORS "Include row vectors in distribution tests" OFF)
+option(STAN_PROB_TEST_ALL "Test all distribution autodiff modes" OFF)
+option(STAN_NO_RANGE_CHECKS "Disable range checks within the Stan library" OFF)
+option(STAN_MPI "Enable MPI support" OFF)
+option(STAN_OPENCL "Enable OpenCL support" OFF)
+option(STAN_THREADS "Enable multi-threading support" OFF)
+stan_cache_default(STAN_OPENCL_DEVICE_ID "0" STRING "OpenCL device ID")
+stan_cache_default(STAN_OPENCL_PLATFORM_ID "0" STRING "OpenCL platform ID")
+stan_cache_default(STAN_INTEGRATED_OPENCL "0" STRING "Enable integrated OpenCL features")
+set(STAN_TEST_NAME_FILTERS "" CACHE STRING "Required substrings in selected test source paths")
+include(CTest)
+stan_cache_default(STAN_TEST_OPTIMIZATION "1" STRING "Optimization level for tests and solver libraries")
+if(DEFINED CACHE{STAN_TEST_OPTIMIZATION})
+  set_property(CACHE STAN_TEST_OPTIMIZATION PROPERTY STRINGS 0 1 2 3)
+endif()
+if(NOT STAN_TEST_OPTIMIZATION MATCHES "^[0-3]$")
+  message(FATAL_ERROR "STAN_TEST_OPTIMIZATION must be 0, 1, 2, or 3")
+endif()
+# Keep solver libraries at the same optimization level as the C++ tests.
+if(MSVC)
+  if(STAN_TEST_OPTIMIZATION STREQUAL "0")
+    set(STAN_TEST_OPTIMIZATION_FLAGS /Od)
+  elseif(STAN_TEST_OPTIMIZATION STREQUAL "1")
+    set(STAN_TEST_OPTIMIZATION_FLAGS /O1)
+  else()
+    set(STAN_TEST_OPTIMIZATION_FLAGS /O2)
+  endif()
+else()
+  set(STAN_TEST_OPTIMIZATION_FLAGS -O${STAN_TEST_OPTIMIZATION})
+endif()
+
+add_library(stanmath INTERFACE)
+add_library(stanmath::stanmath ALIAS stanmath)
+target_compile_features(stanmath INTERFACE cxx_std_17)
+target_include_directories(stanmath INTERFACE "${PROJECT_SOURCE_DIR}")
+target_compile_definitions(stanmath INTERFACE BOOST_DISABLE_ASSERTS TBB_INTERFACE_NEW _REENTRANT)
+foreach(feature STAN_NO_RANGE_CHECKS STAN_THREADS STAN_MPI)
+  if(${feature})
+    target_compile_definitions(stanmath INTERFACE ${feature})
+  endif()
+endforeach()
+add_subdirectory(cmake)
+
+if(STAN_OPENCL)
+  # Configuration and object-only header checks need headers, not a loader.
+  # Respect explicit FindOpenCL overrides while defaulting to vendored headers.
+  if(NOT DEFINED OpenCL_INCLUDE_DIR)
+    set(OpenCL_INCLUDE_DIR "${STAN_OPENCL_ROOT}")
+  endif()
+  find_package(OpenCL QUIET)
+  target_include_directories(stanmath SYSTEM INTERFACE "${OpenCL_INCLUDE_DIR}")
+  if(TARGET OpenCL::OpenCL)
+    target_link_libraries(stanmath INTERFACE OpenCL::OpenCL)
+  elseif(APPLE)
+    target_link_libraries(stanmath INTERFACE "-framework OpenCL")
+  else()
+    # Keep the ordinary platform link requirement even without a found loader.
+    target_link_libraries(stanmath INTERFACE OpenCL)
+  endif()
+  target_compile_definitions(stanmath INTERFACE
+    STAN_OPENCL OPENCL_DEVICE_ID=${STAN_OPENCL_DEVICE_ID}
+    OPENCL_PLATFORM_ID=${STAN_OPENCL_PLATFORM_ID}
+    CL_HPP_TARGET_OPENCL_VERSION=120 CL_HPP_MINIMUM_OPENCL_VERSION=120
+    CL_HPP_ENABLE_EXCEPTIONS INTEGRATED_OPENCL=${STAN_INTEGRATED_OPENCL})
+endif()
+if(STAN_MPI)
+  find_package(MPI REQUIRED COMPONENTS CXX)
+  if(STAN_USE_SYSTEM_BOOST)
+    find_package(Boost REQUIRED COMPONENTS mpi serialization)
+  else()
+    # Build the MPI libraries against the same headers used by Stan; mixing
+    # vendored headers with an older system Boost can change serialization ABI.
+    file(GLOB serialization_sources CONFIGURE_DEPENDS
+      "${STAN_BOOST_ROOT}/libs/serialization/src/*.cpp")
+    add_library(stan_boost_serialization STATIC ${serialization_sources})
+    add_library(Boost::serialization ALIAS stan_boost_serialization)
+    target_include_directories(stan_boost_serialization SYSTEM PUBLIC "${STAN_BOOST_ROOT}")
+    file(GLOB mpi_sources CONFIGURE_DEPENDS "${STAN_BOOST_ROOT}/libs/mpi/src/*.cpp")
+    add_library(stan_boost_mpi STATIC ${mpi_sources})
+    add_library(Boost::mpi ALIAS stan_boost_mpi)
+    target_compile_definitions(stan_boost_mpi PRIVATE BOOST_MPI_SOURCE=1)
+    target_compile_definitions(stan_boost_mpi INTERFACE BOOST_MPI_NO_LIB=1)
+    target_link_libraries(stan_boost_mpi PUBLIC Boost::serialization MPI::MPI_CXX)
+  endif()
+  target_link_libraries(stanmath INTERFACE Boost::mpi Boost::serialization MPI::MPI_CXX)
+  add_library(stan_mpi OBJECT stan/math/prim/functor/mpi_cluster_inst.cpp)
+  target_link_libraries(stan_mpi PRIVATE stanmath)
+endif()
+
+message(STATUS "Stan Math: threads=${STAN_THREADS}, OpenCL=${STAN_OPENCL}, MPI=${STAN_MPI}")
+set(STAN_EFFECTIVE_MPI "${STAN_MPI}" CACHE INTERNAL "MPI setting used by test executables" FORCE)
+message(STATUS "Test PCH: requested=${STAN_TEST_PCH}, effective=${STAN_EFFECTIVE_TEST_PCH}${stan_pch_reason}")
+if(BUILD_TESTING)
+  add_subdirectory(test)
+endif()
+if(STAN_BUILD_DOCS)
+  find_package(Doxygen REQUIRED)
+  add_custom_target(doxygen
+    COMMAND ${CMAKE_COMMAND} -E make_directory doc/api
+    COMMAND ${DOXYGEN_EXECUTABLE} doxygen/doxygen.cfg
+    COMMAND ${CMAKE_COMMAND} -E copy doxygen/pretty_stuff/eigen_navtree_hacks.js
+      doc/api/html/eigen_navtree_hacks.js
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    COMMENT "Generating API documentation with Doxygen"
+    VERBATIM)
+endif()
+
+set(STAN_COMPILE_TEST_SOURCE "" CACHE FILEPATH "Source file for compile-only compatibility checks")
+if(STAN_COMPILE_TEST_SOURCE)
+  add_library(stan_compile_test OBJECT EXCLUDE_FROM_ALL "${STAN_COMPILE_TEST_SOURCE}")
+  set(compile_test_targets stan_compile_test)
+  if(STAN_EFFECTIVE_TEST_PCH)
+    add_library(stan_compile_test_pch OBJECT EXCLUDE_FROM_ALL cmake/empty.cpp)
+    list(APPEND compile_test_targets stan_compile_test_pch)
+    target_precompile_headers(stan_compile_test_pch PRIVATE <stan/math/mix.hpp> <gtest/gtest.h>)
+    target_precompile_headers(stan_compile_test REUSE_FROM stan_compile_test_pch)
+  endif()
+  foreach(target IN LISTS compile_test_targets)
+    target_link_libraries(${target} PRIVATE stanmath)
+    target_include_directories(${target} SYSTEM PRIVATE
+      "${STAN_BENCHMARK_ROOT}/googletest/googletest/include")
+    target_compile_options(${target} PRIVATE ${STAN_TEST_OPTIMIZATION_FLAGS})
+    set_target_properties(${target} PROPERTIES POSITION_INDEPENDENT_CODE FALSE)
+  endforeach()
+endif()

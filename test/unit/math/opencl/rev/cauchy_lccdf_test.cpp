@@ -64,7 +64,6 @@ auto cauchy_lccdf_functor
 
 TEST(ProbDistributionsCauchyLccdf, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << 0.3, -0.6, 1.0;

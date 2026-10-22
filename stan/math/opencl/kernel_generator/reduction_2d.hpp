@@ -231,7 +231,6 @@ class sum_2d_ : public reduction_2d<sum_2d_<T>, T, sum_op> {
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 inline auto sum_2d(T&& a) {
-  auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
   return sum_2d_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a)));
 }
 
@@ -274,7 +273,6 @@ class prod_2d_ : public reduction_2d<prod_2d_<T>, T, prod_op> {
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 inline auto prod_2d(T&& a) {
-  auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
   return prod_2d_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a)));
 }
 
@@ -321,7 +319,6 @@ class max_2d_
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 inline auto max_2d(T&& a) {
-  auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
   return max_2d_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a)));
 }
 

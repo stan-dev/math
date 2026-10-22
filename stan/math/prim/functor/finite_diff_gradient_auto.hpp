@@ -51,8 +51,8 @@ template <typename F, typename VectorT, typename GradVectorT,
 inline void finite_diff_gradient_auto(const F& f, VectorT&& x, ScalarT& fx,
                                       GradVectorT& grad_fx) {
   using EigT = Eigen::Matrix<ScalarT, -1, 1>;
-  static constexpr int h_scale[6] = {3, 2, 1, -3, -2, -1};
-  static constexpr int mults[6] = {1, -9, 45, -1, 9, -45};
+  static constexpr int h_scale[3] = {3, 2, 1};
+  static constexpr int mults[3] = {1, -9, 45};
 
   fx = f(x);
   grad_fx.resize(x.size());
@@ -61,12 +61,17 @@ inline void finite_diff_gradient_auto(const F& f, VectorT&& x, ScalarT& fx,
   grad_map = EigT::NullaryExpr(x.size(), [&f, &x](Eigen::Index i) {
     double h = finite_diff_stepsize(value_of_rec(x[i]));
     ScalarT delta_f = 0;
-    for (int j = 0; j < 6; ++j) {
-      auto x_temp
+    for (int j = 0; j < 3; ++j) {
+      auto x_plus
           = EigT::NullaryExpr(x.size(), [&x, &i, &h, &j](Eigen::Index k) {
               return k == i ? x[i] + h * h_scale[j] : x[k];
             });
-      delta_f += f(std::move(x_temp)) * mults[j];
+      auto x_minus
+          = EigT::NullaryExpr(x.size(), [&x, &i, &h, &j](Eigen::Index k) {
+              return k == i ? x[i] - h * h_scale[j] : x[k];
+            });
+      // Cancel constant terms before weighting the symmetric differences.
+      delta_f += (f(std::move(x_plus)) - f(std::move(x_minus))) * mults[j];
     }
     return delta_f / (60 * h);
   });

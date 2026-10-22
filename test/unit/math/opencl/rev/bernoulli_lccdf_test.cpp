@@ -45,7 +45,6 @@ auto bernoulli_lccdf_functor = [](const auto& n, const auto& theta) {
 
 TEST(ProbDistributionsBernoulliLccdf, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   std::vector<int> n{0, 0, 0};
   Eigen::VectorXd theta(N);
@@ -59,7 +58,6 @@ TEST(ProbDistributionsBernoulliLccdf, opencl_matches_cpu_small) {
 
 TEST(ProbDistributionsBernoulliLccdf, opencl_matches_cpu_small_n_negative) {
   int N = 3;
-  int M = 2;
 
   std::vector<int> n{0, 0, -5};
   Eigen::VectorXd theta(N);
@@ -73,7 +71,6 @@ TEST(ProbDistributionsBernoulliLccdf, opencl_matches_cpu_small_n_negative) {
 
 TEST(ProbDistributionsBernoulliLccdf, opencl_matches_cpu_small_n_over_one) {
   int N = 3;
-  int M = 2;
 
   std::vector<int> n{0, 1, 5};
   Eigen::VectorXd theta(N);
@@ -97,8 +94,6 @@ TEST(ProbDistributionsBernoulliLccdf, opencl_broadcast_n) {
 }
 
 TEST(ProbDistributionsBernoulliLccdf, opencl_broadcast_theta) {
-  int N = 3;
-
   std::vector<int> n{0, 0, 0};
   double theta_scal = 0.4;
 

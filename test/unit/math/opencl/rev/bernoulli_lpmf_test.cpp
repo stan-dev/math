@@ -47,7 +47,6 @@ auto bernoulli_lpmf_functor_propto = [](const auto& n, const auto& theta) {
 
 TEST(ProbDistributionsBernoulli, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   std::vector<int> n{0, 1, 0};
   Eigen::VectorXd theta(N);
@@ -77,8 +76,6 @@ TEST(ProbDistributionsBernoulli, opencl_broadcast_n) {
 }
 
 TEST(ProbDistributionsBernoulli, opencl_broadcast_theta) {
-  int N = 3;
-
   std::vector<int> n{0, 1, 0};
   double theta_scal = 0.4;
 
