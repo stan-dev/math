@@ -57,7 +57,11 @@ struct laplace_options_base {
    */
   double tolerance{internal::laplace_default_tolerance};  // 2
   /* Maximum number of steps*/
-  int max_num_steps{internal::laplace_default_max_num_steps};          // 3
+  int max_num_steps{internal::laplace_default_max_num_steps};  // 3
+  /**
+   * If true, a failure of the requested solver falls through to the next
+   * one (1 to 2 to 3). The requested solver always runs first.
+   */
   int allow_fallthrough{internal::laplace_default_allow_fallthrough};  // 4
   laplace_line_search_options line_search{
       internal::laplace_default_max_steps_line_search};  // 5
@@ -888,6 +892,17 @@ struct LUSolver {
     // 2. Factorize B = I + Sigma * W
     lu.compute(Eigen::MatrixXd::Identity(theta_size, theta_size)
                + covariance * W_full);
+    // det(B) >= 1 for a positive definite Sigma. A zero pivot means that B
+    // is singular in floating point (Sigma * W swamps the identity when
+    // Sigma is numerically rank deficient), so that neither the Newton step
+    // nor the log determinant can be computed. Solvers 1 and 2 throw in the
+    // same situation when their Cholesky factorization fails.
+    if ((lu.matrixLU().diagonal().array() == 0.0).any()) {
+      throw std::domain_error(
+          "laplace_marginal_density: det(I + Sigma * W) is zero at the "
+          "current iterate, so the Laplace approximation is not defined "
+          "there");
+    }
 
     // 3. Solve for the raw Newton proposal in a-space.
     state.b.noalias()
@@ -932,6 +947,71 @@ struct LUSolver {
 };
 
 /**
+ * @brief Search for a step along `state.wolfe_info.p_` from `state.prev()`
+ * and accept it into `state.curr()`.
+ *
+ * Evaluates the full step first. If it is finite, runs the Wolfe line
+ * search from the Barzilai-Borwein step size, or accepts the full step
+ * without a search when `options.line_search.max_iterations == 0`. When the
+ * search fails but the full step satisfies the Armijo condition, the full
+ * step is accepted. `state.wolfe_status` records the outcome.
+ *
+ * @tparam NewtonStateT Type holding state with solver
+ * @tparam OptionsT struct of options for laplace
+ * @tparam CovarMatT Type of the covariance matrix
+ * @tparam UpdateFun Callable to update proposal state in line search
+ * @param[in,out] state Shared Newton optimization state
+ * @param[in] options Solver options
+ * @param[in] covariance Prior covariance matrix Sigma
+ * @param[in] update_fun Callable to update proposal state in line search
+ * @param[in,out] msgs Output stream for diagnostic messages (may be nullptr)
+ * @return true if no step was accepted
+ */
+template <typename NewtonStateT, typename OptionsT, typename CovarMatT,
+          typename UpdateFun>
+inline bool line_search_fails(NewtonStateT& state, const OptionsT& options,
+                              const CovarMatT& covariance,
+                              UpdateFun&& update_fun, std::ostream* msgs) {
+  auto&& proposal = state.proposal_step();
+  proposal.eval_.alpha() = 1.0;
+  const bool proposal_valid = update_fun(proposal, state.curr(), state.prev(),
+                                         proposal.eval_, state.wolfe_info.p_);
+  const bool cached_proposal_ok
+      = proposal_valid && std::isfinite(proposal.obj())
+        && std::isfinite(proposal.dir())
+        && proposal.alpha() > options.line_search.min_alpha;
+  if (!cached_proposal_ok) {
+    state.wolfe_status = WolfeStatus{WolfeReturn::StepTooSmall, 1, 0, false};
+  } else if (options.line_search.max_iterations == 0) {
+    state.curr().update(proposal);
+    state.wolfe_status = WolfeStatus{WolfeReturn::Continue, 1, 0, true};
+  } else {
+    Eigen::VectorXd s = proposal.a() - state.prev().a();
+    auto full_step_grad
+        = (-covariance * proposal.a() + covariance * proposal.theta_grad())
+              .eval();
+    state.curr().alpha() = barzilai_borwein_step_size(
+        s, full_step_grad, state.prev_g, state.prev().alpha(),
+        state.wolfe_status.num_backtracks_, options.line_search.min_alpha,
+        options.line_search.max_alpha);
+    state.wolfe_status = internal::wolfe_line_search(
+        state.wolfe_info, update_fun, options.line_search, msgs);
+  }
+  const bool proposal_armijo_ok
+      = cached_proposal_ok
+        && internal::check_armijo(proposal.obj(), state.prev().obj(),
+                                  proposal.alpha(), state.wolfe_info.init_dir_,
+                                  options.line_search);
+  if (!state.wolfe_status.accept_ && proposal_armijo_ok) {
+    state.curr().update(proposal);
+    state.wolfe_status
+        = WolfeStatus{WolfeReturn::Armijo, state.wolfe_status.num_evals_,
+                      state.wolfe_status.num_backtracks_, true};
+  }
+  return !state.wolfe_status.accept_;
+}
+
+/**
  * @brief Run a Newton loop with a solver policy, updating the shared state.
  *
  * This helper centralizes the iteration/line-search logic shared across
@@ -973,45 +1053,27 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
       state.wolfe_info.init_dir_ = state.prev_g.dot(state.wolfe_info.p_);
       // Flip direction if not ascending
       state.wolfe_info.flip_direction();
-      auto&& scratch = state.wolfe_info.scratch_;
-      proposal.eval_.alpha() = 1.0;
-      const bool proposal_valid
-          = update_fun(proposal, state.curr(), state.prev(), proposal.eval_,
-                       state.wolfe_info.p_);
-      const bool cached_proposal_ok
-          = proposal_valid && std::isfinite(proposal.obj())
-            && std::isfinite(proposal.dir())
-            && proposal.alpha() > options.line_search.min_alpha;
-      if (!cached_proposal_ok) {
-        state.wolfe_status
-            = WolfeStatus{WolfeReturn::StepTooSmall, 1, 0, false};
-      } else if (options.line_search.max_iterations == 0) {
-        state.curr().update(proposal);
-        state.wolfe_status = WolfeStatus{WolfeReturn::Continue, 1, 0, true};
-      } else {
-        Eigen::VectorXd s = proposal.a() - state.prev().a();
-        auto full_step_grad
-            = (-covariance * proposal.a() + covariance * proposal.theta_grad())
-                  .eval();
-        state.curr().alpha() = barzilai_borwein_step_size(
-            s, full_step_grad, state.prev_g, state.prev().alpha(),
-            state.wolfe_status.num_backtracks_, options.line_search.min_alpha,
-            options.line_search.max_alpha);
-        state.wolfe_status = internal::wolfe_line_search(
-            state.wolfe_info, update_fun, options.line_search, msgs);
-      }
-      bool search_failed = !state.wolfe_status.accept_;
-      const bool proposal_armijo_ok
-          = cached_proposal_ok
-            && internal::check_armijo(
-                proposal.obj(), state.prev().obj(), proposal.alpha(),
-                state.wolfe_info.init_dir_, options.line_search);
-      if (search_failed && proposal_armijo_ok) {
-        state.curr().update(proposal);
-        state.wolfe_status
-            = WolfeStatus{WolfeReturn::Armijo, state.wolfe_status.num_evals_,
-                          state.wolfe_status.num_backtracks_, true};
-        search_failed = false;
+      bool search_failed
+          = line_search_fails(state, options, covariance, update_fun, msgs);
+      // The Newton step can overshoot the mode by more than 1 / min_alpha
+      // (where W is far smaller than at the mode), so that no step the
+      // line search tried improves the objective. Steps shorter than
+      // min_alpha * p gain at most min_alpha * init_dir when the objective
+      // is concave: search them unless that is below the tolerance or the
+      // rounding error of the objective.
+      while (search_failed && options.line_search.min_alpha < 1) {
+        const double shorter_gain
+            = options.line_search.min_alpha * state.wolfe_info.init_dir_;
+        if (!std::isfinite(shorter_gain)
+            || shorter_gain <= std::max(options.tolerance,
+                                        std::numeric_limits<double>::epsilon()
+                                            * std::abs(state.prev().obj()))) {
+          break;
+        }
+        state.wolfe_info.p_ *= options.line_search.min_alpha;
+        state.wolfe_info.init_dir_ = shorter_gain;
+        search_failed
+            = line_search_fails(state, options, covariance, update_fun, msgs);
       }
       bool objective_converged
           = state.wolfe_status.accept_
@@ -1200,6 +1262,9 @@ static STAN_THREADS_DEF std::once_flag fallback_warning_2_3;
  * 8. `K_root`: Cholesky factor of the covariance (solver 2 only)
  * 9. `solver_used`: the solver policy that produced the result
  *
+ * @throw std::domain_error if the log marginal density at the final
+ * iterate is not finite, for example when the factorization of
+ * `I + Sigma * W` is singular in floating point
  */
 template <typename LLFun, typename LLTupleArgs, typename CovarMat,
           bool InitTheta,
@@ -1232,61 +1297,75 @@ inline auto laplace_marginal_density_est(
   auto update_fun = create_update_fun(
       std::move(obj_fun), std::move(theta_grad_f), covariance, options);
   Eigen::Index step_iter = 0;
-  try {
-    if (options.solver == 1) {
-      if (options.hessian_block_size == 1) {
-        CholeskyWSolverDiag solver(state, covariance);
-        return run_newton_loop(solver, state, options, step_iter, ll_fun,
-                               ll_args, covariance, update_fun, msgs);
-      } else {
-        CholeskyWSolverBlock solver(state, options.hessian_block_size);
+  auto est = [&]() {
+    try {
+      if (options.solver == 1) {
+        if (options.hessian_block_size == 1) {
+          CholeskyWSolverDiag solver(state, covariance);
+          return run_newton_loop(solver, state, options, step_iter, ll_fun,
+                                 ll_args, covariance, update_fun, msgs);
+        } else {
+          CholeskyWSolverBlock solver(state, options.hessian_block_size);
+          return run_newton_loop(solver, state, options, step_iter, ll_fun,
+                                 ll_args, covariance, update_fun, msgs);
+        }
+      }
+    } catch (const std::exception& e) {
+      const std::string solver_type
+          = (options.hessian_block_size == 1) ? "Diagonal" : "Block";
+      std::string failed
+          = "solver 1 (" + solver_type + " Hessian-root Cholesky)";
+      if (!options.allow_fallthrough) {
+        throw_solver_failure("laplace_marginal_density", step_iter, failed, e);
+      }
+      std::call_once(
+          fallback_warning_1_2,
+          [](auto&&... args) STAN_COLD_PATH {
+            log_solver_fallback(std::forward<decltype(args)>(args)...);
+          },
+          msgs, "laplace_marginal_density", step_iter, std::move(failed),
+          "solver 2 (Covariance-root Cholesky)", e);
+    }
+    try {
+      if (options.solver == 2
+          || (options.allow_fallthrough && options.solver == 1)) {
+        CholeskyKSolver solver(state, covariance);
         return run_newton_loop(solver, state, options, step_iter, ll_fun,
                                ll_args, covariance, update_fun, msgs);
       }
+    } catch (const std::exception& e) {
+      if (!options.allow_fallthrough) {
+        throw_solver_failure("laplace_marginal_density", step_iter,
+                             "solver 2 (Covariance-root Cholesky)", e);
+      }
+      std::call_once(
+          fallback_warning_2_3,
+          [](auto&&... args) STAN_COLD_PATH {
+            log_solver_fallback(std::forward<decltype(args)>(args)...);
+          },
+          msgs, "laplace_marginal_density", step_iter,
+          "solver 2 (Covariance-root Cholesky)", "solver 3 (General LU solver)",
+          e);
     }
-  } catch (const std::exception& e) {
-    const std::string solver_type
-        = (options.hessian_block_size == 1) ? "Diagonal" : "Block";
-    std::string failed = "solver 1 (" + solver_type + " Hessian-root Cholesky)";
-    if (!options.allow_fallthrough) {
-      throw_solver_failure("laplace_marginal_density", step_iter, failed, e);
-    }
-    std::call_once(
-        fallback_warning_1_2,
-        [](auto&&... args) STAN_COLD_PATH {
-          log_solver_fallback(std::forward<decltype(args)>(args)...);
-        },
-        msgs, "laplace_marginal_density", step_iter, std::move(failed),
-        "solver 2 (Covariance-root Cholesky)", e);
-  }
-  try {
-    if (options.solver == 2 || options.allow_fallthrough) {
-      CholeskyKSolver solver(state, covariance);
+    if (options.solver == 3 || options.allow_fallthrough) {
+      LUSolver solver;
       return run_newton_loop(solver, state, options, step_iter, ll_fun, ll_args,
                              covariance, update_fun, msgs);
     }
-  } catch (const std::exception& e) {
-    if (!options.allow_fallthrough) {
-      throw_solver_failure("laplace_marginal_density", step_iter,
-                           "solver 2 (Covariance-root Cholesky)", e);
-    }
-    std::call_once(
-        fallback_warning_2_3,
-        [](auto&&... args) STAN_COLD_PATH {
-          log_solver_fallback(std::forward<decltype(args)>(args)...);
-        },
-        msgs, "laplace_marginal_density", step_iter,
-        "solver 2 (Covariance-root Cholesky)", "solver 3 (General LU solver)",
-        e);
+    throw std::domain_error(
+        std::string("You chose a solver (") + std::to_string(options.solver)
+        + ") that is not valid. Please choose either 1, 2, or 3.");
+  }();
+  // det(I + Sigma * W) is positive at a mode, so the log marginal density is
+  // finite there; a non-finite value, for example from a factorization of an
+  // I + Sigma * W that is singular in floating point, is not a valid estimate.
+  if (!std::isfinite(est.lmd)) {
+    throw std::domain_error(
+        "laplace_marginal_density: the log marginal density is not finite at "
+        "the final iterate: log(det(I + Sigma * W)) or the log likelihood is "
+        "not finite there");
   }
-  if (options.solver == 3 || options.allow_fallthrough) {
-    LUSolver solver;
-    return run_newton_loop(solver, state, options, step_iter, ll_fun, ll_args,
-                           covariance, update_fun, msgs);
-  }
-  throw std::domain_error(
-      std::string("You chose a solver (") + std::to_string(options.solver)
-      + ") that is not valid. Please choose either 1, 2, or 3.");
+  return est;
 }
 }  // namespace internal
 }  // namespace math
