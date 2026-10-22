@@ -52,11 +52,24 @@ template <bool calc_grad, typename T, require_stan_scalar_t<T>* = nullptr>
 inline auto std_normal_lcdf_value_grad(const T& z_in) {
   using T_return = return_type_t<T>;
   const auto z = z_in;
-  if (z > 40) {
+  if (z > 8.5) {
+    if (z > 40) {
+      if constexpr (calc_grad) {
+        return std::pair<T_return, T_return>{0, 0};
+      } else {
+        return T_return(0);
+      }
+    }
+    // Past z = 8.3, tail < 2^-54, so log1p(-tail) == -tail and 1 - tail == 1
+    // exactly; 8.5 leaves a margin. Nesting the z > 40 check here keeps
+    // smaller z to one comparison.
+    const auto pq = erfcx_cody_tail_fraction(z * INV_SQRT_TWO);
+    const auto density = exp(-(0.5 * z) * z);
+    const auto tail = 0.5 * density * (pq.first / pq.second);
     if constexpr (calc_grad) {
-      return std::pair<T_return, T_return>{0, 0};
+      return std::pair<T_return, T_return>{-tail, INV_SQRT_TWO_PI * density};
     } else {
-      return T_return(0);
+      return T_return(-tail);
     }
   }
   if constexpr (!std::is_arithmetic_v<T>) {
@@ -191,13 +204,68 @@ inline auto std_normal_cdf_value_ratio(const T& z) {
   }
 }
 
-/** Elementwise Phi and ratios; only Phi when the gradient is off. */
+/** Elementwise Phi and ratios; only Phi when the gradient is off.
+ * For doubles g = exp(-z^2 / 2) / 2 comes from one vectorized exp over the
+ * array before the loop, which is cheaper than a libm call per element.
+ * Above |z| = 37.5 that exp loses relative accuracy as Phi or g goes
+ * subnormal, so those elements take the libm exp. Elsewhere the values can
+ * differ from Phi(double) in the last bit.
+ */
 template <bool calc_grad, typename T, require_eigen_t<T>* = nullptr>
 inline auto std_normal_cdf_value_ratio(T&& z) {
   using T_return = return_type_t<scalar_type_t<T>>;
   using Array = Eigen::Array<T_return, Eigen::Dynamic, 1>;
   Array values(std::forward<T>(z));
-  if constexpr (calc_grad) {
+  if constexpr (std::is_arithmetic_v<T_return>) {
+    const Eigen::Index N = values.size();
+    // Skipped when every |u| < 0.46875; the test matches the loop's.
+    Array gs;
+    if (!((INV_SQRT_TWO * values).abs() < 0.46875).all()) {
+      gs = 0.5 * exp(-0.5 * values.square());
+    }
+    Array ratios(calc_grad ? N : 0);
+    // coeff and coeffRef: i is in range, and operator[]'s range assert costs
+    // about 20 instructions per element.
+    for (Eigen::Index i = 0; i < N; ++i) {
+      const double z_i = values.coeff(i);
+      const double u = INV_SQRT_TWO * z_i;
+      const double a = std::fabs(u);
+      if (a < 0.46875) {
+        values.coeffRef(i) = 0.5 + 0.5 * erf_cody_small(u);
+        if constexpr (calc_grad) {
+          ratios.coeffRef(i) = SQRT_TWO_OVER_SQRT_PI / erfcx_small(-u);
+        }
+        continue;
+      }
+      // |u| > 26.5 is |z| > 37.5.
+      const double g = a > 26.5 ? 0.5 * exp(-(0.5 * z_i) * z_i) : gs.coeff(i);
+      // The ratios divide by the numerator p or by q - g p rather than by
+      // c = p / q, so their division does not wait on the one forming c.
+      const auto pq = a >= 4 ? erfcx_cody_tail_fraction(a)
+                             : erfcx_cody_middle_fraction(a);
+      const double c = pq.first / pq.second;
+      if (z_i < 0) {
+        values.coeffRef(i) = g * c;
+        if constexpr (calc_grad) {
+          ratios.coeffRef(i)
+              = c > 0 ? SQRT_TWO_OVER_SQRT_PI * pq.second / pq.first : 0.0;
+        }
+      } else {
+        values.coeffRef(i) = 1.0 - g * c;
+        if constexpr (calc_grad) {
+          // Above z = 38.6 g is 0 and so is the ratio; at infinity q is too.
+          ratios.coeffRef(i) = g > 0 ? SQRT_TWO_OVER_SQRT_PI * g * pq.second
+                                           / (pq.second - g * pq.first)
+                                     : 0.0;
+        }
+      }
+    }
+    if constexpr (calc_grad) {
+      return std::make_pair(std::move(values), std::move(ratios));
+    } else {
+      return values;
+    }
+  } else if constexpr (calc_grad) {
     Array ratios(values.size());
     for (Eigen::Index i = 0; i < values.size(); ++i) {
       auto [value, ratio] = std_normal_cdf_value_ratio<true>(values[i]);
