@@ -19,6 +19,16 @@
 #define STAN_COLD_PATH __attribute__((noinline, cold))
 #endif
 #endif
+#if __has_attribute(always_inline)
+#ifndef STAN_STRONG_INLINE
+/**
+ * Functions tagged with this attribute are always inlined. Use it on small
+ *  hot path functions where the compiler's own inlining heuristics are not
+ *  reliable, such as the arena allocator's fast path.
+ */
+#define STAN_STRONG_INLINE __attribute__((always_inline))
+#endif
+#endif
 #endif
 #ifndef STAN_DEPRECATED
 #if __has_attribute(deprecated)
@@ -32,6 +42,9 @@
 
 #ifndef STAN_COLD_PATH
 #define STAN_COLD_PATH
+#endif
+#ifndef STAN_STRONG_INLINE
+#define STAN_STRONG_INLINE
 #endif
 #ifndef likely
 #define likely(x) x

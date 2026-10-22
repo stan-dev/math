@@ -110,6 +110,44 @@ struct AutodiffStackSingleton {
     std::vector<size_t> nested_var_stack_sizes_;
     std::vector<size_t> nested_var_nochain_stack_sizes_;
     std::vector<size_t> nested_var_alloc_stack_starts_;
+
+    /**
+     * Push a vari onto `var_stack_`.
+     *
+     * The stacks are reused across gradient evaluations, so they almost
+     * never need to grow. Growing is kept out of line so the inlined push
+     * is only a compare, a store and an increment.
+     *
+     * @param vi vari to push.
+     */
+    STAN_STRONG_INLINE inline void push_var_stack(ChainableT *vi) {
+      push_back_reused(var_stack_, vi);
+    }
+
+    /**
+     * Push a vari onto `var_nochain_stack_`. As for `push_var_stack()`,
+     * growing the stack is kept out of line.
+     *
+     * @param vi vari to push.
+     */
+    STAN_STRONG_INLINE inline void push_var_nochain_stack(ChainableT *vi) {
+      push_back_reused(var_nochain_stack_, vi);
+    }
+
+   private:
+    STAN_STRONG_INLINE static inline void push_back_reused(
+        std::vector<ChainableT *> &stack, ChainableT *vi) {
+      if (likely(stack.size() != stack.capacity())) {
+        stack.push_back(vi);
+      } else {
+        grow_and_push_back(stack, vi);
+      }
+    }
+
+    STAN_COLD_PATH static void grow_and_push_back(
+        std::vector<ChainableT *> &stack, ChainableT *vi) {
+      stack.push_back(vi);
+    }
   };
 
   explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
