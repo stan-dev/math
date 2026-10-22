@@ -242,3 +242,70 @@ TEST(laplace_latent_tol_rng, solver_2_draw_uses_laplace_covariance) {
   Eigen::VectorXd draw_ref = stan::math::multi_normal_rng(mean, Sigma, rng_ref);
   EXPECT_MATRIX_NEAR(draw_ref, draw, 1e-8);
 }
+
+namespace {
+// Longitudinal part of a nonlinear joint model for tumor size:
+// y ~ normal(m, sigma * m) with
+//   m(t) = bsld * (phi * exp(-d * t) + (1 - phi) * exp(g * t)),
+// and 4 latent variables on the log or logit scale of (bsld, d, g, phi).
+// The log likelihood is not concave in theta.
+struct tumor_size_likelihood {
+  template <typename Theta>
+  auto operator()(const Theta& theta, const Eigen::VectorXd& y,
+                  const Eigen::VectorXd& t, const Eigen::VectorXd& mu,
+                  double sigma, std::ostream* pstream) const {
+    using stan::math::exp;
+    using T = stan::value_type_t<Theta>;
+    const T bsld = mu(0) * exp(theta(0));
+    const T d = mu(1) * exp(theta(1));
+    const T g = mu(2) * exp(theta(2));
+    const T phi = stan::math::inv_logit(stan::math::logit(mu(3)) + theta(3));
+    Eigen::Matrix<T, Eigen::Dynamic, 1> m(y.size());
+    for (Eigen::Index i = 0; i < y.size(); ++i) {
+      m(i) = bsld * (phi * exp(-d * t(i)) + (1 - phi) * exp(g * t(i)));
+    }
+    return stan::math::normal_lpdf(y, m, stan::math::multiply(sigma, m));
+  }
+};
+
+struct diagonal_covariance {
+  Eigen::MatrixXd operator()(const Eigen::VectorXd& sd,
+                             std::ostream* pstream) const {
+    return sd.array().square().matrix().asDiagonal();
+  }
+};
+
+auto tumor_size_solve(double tolerance) {
+  Eigen::VectorXd y(12);
+  y << 201.04, 78.30, 48.01, 44.39, 52.91, 50.49, 48.63, 67.29, 52.21, 72.43,
+      102.43, 105.06;
+  Eigen::VectorXd t = Eigen::VectorXd::LinSpaced(12, 0.0, 693.0);
+  Eigen::VectorXd mu(4);
+  mu << 117.4, 9.121e-3, 1.913e-3, 0.3781;
+  Eigen::VectorXd sd(4);
+  sd << 0.4925, 0.9217, 1.120, 1.299;
+  const double sigma = 0.09826;
+  Eigen::VectorXd theta_0(4);
+  theta_0 << 0.3636, -0.3385, 1.9794, -1.9322;
+  return stan::math::laplace_latent_solve_tol(
+      tumor_size_likelihood{}, std::forward_as_tuple(y, t, mu, sigma), 4,
+      diagonal_covariance{}, std::make_tuple(sd),
+      std::make_tuple(theta_0, tolerance, 100, 3, 100, false), nullptr);
+}
+}  // namespace
+
+// The returned mean is the final Newton iterate.  It used to be
+// K * grad log p(y | theta), which differs from the iterate by
+// K * grad log p(theta | y) before exact convergence.  Here the posterior is
+// much narrower than the prior, and with tolerance 1e-6 the old value was
+// 0.53 posterior sd from the mode, while the final iterate is 0.0012 sd from
+// it.
+TEST(laplace_latent_solve, mean_is_final_iterate_tumor_size) {
+  auto [mean_ref, chol_ref] = tumor_size_solve(1e-14);
+  const Eigen::VectorXd post_sd
+      = (chol_ref * chol_ref.transpose()).diagonal().array().sqrt();
+  auto [mean_est, chol_est] = tumor_size_solve(1e-6);
+  const double max_dist
+      = ((mean_est - mean_ref).array().abs() / post_sd.array()).maxCoeff();
+  EXPECT_LT(max_dist, 0.01);
+}
