@@ -21,6 +21,7 @@
 #include <stan/math/opencl/kernels/device_functions/log1m_exp.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1m_inv_logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1p_exp.hpp>
+#include <stan/math/opencl/kernels/device_functions/logistic_tail_deriv.hpp>
 #include <stan/math/opencl/kernels/device_functions/logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/multiply_log.hpp>
 #include <stan/math/opencl/kernels/device_functions/Phi.hpp>
@@ -344,6 +345,11 @@ ADD_CLASSIFICATION_FUNCTION(isinf,
 ADD_CLASSIFICATION_FUNCTION(isnan,
                             this->template get_arg<0>().extreme_diagonals())
 
+ADD_BINARY_FUNCTION_WITH_INCLUDES(
+    logistic_tail_deriv, opencl_kernels::log1p_exp_device_function,
+    opencl_kernels::log1m_inv_logit_device_function,
+    opencl_kernels::inv_logit_device_function,
+    opencl_kernels::logistic_tail_deriv_device_function)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(fdim)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(fmax)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(fmin)

@@ -100,6 +100,20 @@ TEST(ProbDistributionsLogistic, opencl_matches_cpu_small) {
       sigma.transpose().eval());
 }
 
+TEST(ProbDistributionsLogistic, opencl_matches_cpu_large_location) {
+  Eigen::VectorXd y(3);
+  y << 711, 712, 1e-14;
+  Eigen::VectorXd mu(3);
+  mu << 710, 710, 0;
+  Eigen::VectorXd sigma(3);
+  sigma << 1, 2, 1;
+
+  stan::math::test::compare_cpu_opencl_prim_rev(logistic_lpdf_functor, y, mu,
+                                                sigma);
+  stan::math::test::compare_cpu_opencl_prim_rev(logistic_lpdf_functor_propto, y,
+                                                mu, sigma);
+}
+
 TEST(ProbDistributionsLogistic, opencl_broadcast_y) {
   int N = 3;
 
@@ -192,6 +206,34 @@ TEST(ProbDistributionsLogistic, opencl_sigma_mu_scalar) {
                                                 sigma);
   stan::math::test::compare_cpu_opencl_prim_rev(logistic_lpdf_functor_propto, y,
                                                 mu, sigma);
+}
+
+// y - mu overflows to NEGATIVE_INFTY with finite arguments; the value is
+// NEGATIVE_INFTY, not inf - inf = NaN. The second row checks a finite value
+// on both sides of the location against mpmath (z = -20.25 and z = 1.25,
+// sigma = 2), because a comparison with the CPU passes when both are wrong in
+// the same way.
+TEST(ProbDistributionsLogistic, opencl_value_reference) {
+  Eigen::VectorXd y(2);
+  y << -1e308, 3.0;
+  Eigen::VectorXd mu(2);
+  mu << 1e308, 0.5;
+  Eigen::VectorXd sigma(2);
+  sigma << 1.0, 2.0;
+  stan::math::matrix_cl<double> y_cl(y);
+  stan::math::matrix_cl<double> mu_cl(mu);
+  stan::math::matrix_cl<double> sigma_cl(sigma);
+  EXPECT_EQ(stan::math::NEGATIVE_INFTY,
+            stan::math::logistic_lpdf(y_cl, mu_cl, sigma_cl));
+
+  y << -40.0, 3.0;
+  mu << 0.5, 0.5;
+  sigma << 2.0, 2.0;
+  stan::math::matrix_cl<double> y2_cl(y);
+  stan::math::matrix_cl<double> mu2_cl(mu);
+  stan::math::matrix_cl<double> sigma2_cl(sigma);
+  EXPECT_NEAR(-23.390152527021093,
+              stan::math::logistic_lpdf(y2_cl, mu2_cl, sigma2_cl), 1e-14);
 }
 
 #endif
