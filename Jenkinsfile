@@ -52,15 +52,27 @@ def runCmakeTests(Map config) {
     sh "cmake -E rm -rf ${shellQuote(buildDir + '/test-results')} " +
        "${shellQuote(buildDir + '/ctest-results.xml')} ${shellQuote(buildDir + '/Testing')} " +
        shellQuote(reportDir)
-    configureCmake(flags)
-    sh "python3 runTests.py build-tests ${shellQuote(buildDir)} " +
-       "--source-regex ${shellQuote(config.filter)} --jobs ${jobs}"
-    sh "cmake -E make_directory ${shellQuote(buildDir + '/test-results')}"
-    withEnv(["GTEST_OUTPUT=xml:${pwd()}/${buildDir}/test-results/"]) {
-      sh "ctest --test-dir ${shellQuote(buildDir)} -L ${shellQuote(config.filter)} " +
-         "--parallel ${config.testJobs ?: jobs} " +
-         "--no-tests=error --output-on-failure " +
-         "--output-junit ${shellQuote(pwd() + '/' + buildDir + '/ctest-results.xml')}"
+    if (config.paths) {
+      // Directory selections build and run one executable per directory.
+      def arguments = ['--build-dir', buildDir, '-j', jobs.toString(), '--run-all']
+      if (fileExists(buildDir + '/CMakeCache.txt')) {
+        arguments += ['--fresh']
+      }
+      arguments += flags.collect { "--cmake-arg=${it}" }
+      sh 'python3 runTests.py ' + (arguments + config.paths).collect {
+        shellQuote(it.toString())
+      }.join(' ')
+    } else {
+      configureCmake(flags)
+      sh "python3 runTests.py build-tests ${shellQuote(buildDir)} " +
+         "--source-regex ${shellQuote(config.filter)} --jobs ${jobs}"
+      sh "cmake -E make_directory ${shellQuote(buildDir + '/test-results')}"
+      withEnv(["GTEST_OUTPUT=xml:${pwd()}/${buildDir}/test-results/"]) {
+        sh "ctest --test-dir ${shellQuote(buildDir)} -L ${shellQuote(config.filter)} " +
+           "--parallel ${config.testJobs ?: jobs} " +
+           "--no-tests=error --output-on-failure " +
+           "--output-junit ${shellQuote(pwd() + '/' + buildDir + '/ctest-results.xml')}"
+      }
     }
   } finally {
     junit(testResults: "${buildDir}/test-results/*.xml", allowEmptyResults: true)
@@ -189,7 +201,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
           revfwd: {
             runPod(image: image) {
               stage('Rev/Fwd Unit Tests') {
-                runCmakeTests(name: 'revfwd', filter: '^test/unit/math/(rev|fwd)/',
+                runCmakeTests(name: 'revfwd', paths: ['test/unit/math/rev', 'test/unit/math/fwd'],
                   optimization: noOptimize ? '0' : '3',
                   flags: ['-DCMAKE_CXX_FLAGS=-fsanitize=address', '-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address',
                           '-DCMAKE_SHARED_LINKER_FLAGS=-fsanitize=address'])
@@ -199,7 +211,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
           mix: {
             runPod(image: image, cpus: 6, memory: '192Gi') {
               stage('Mix Unit Tests') {
-                runCmakeTests(name: 'mix', filter: '^test/unit/math/mix/',
+                runCmakeTests(name: 'mix', paths: ['test/unit/math/mix'],
                   optimization: noOptimize ? '1' : '3',
                   flags: ['-DCMAKE_CXX_FLAGS=-fsanitize=address', '-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address',
                           '-DCMAKE_SHARED_LINKER_FLAGS=-fsanitize=address'])
@@ -210,7 +222,8 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
             runPod(image: image) {
               stage('Prim Unit Tests') {
                 runCmakeTests(name: 'prim',
-                  filter: '^test/unit/([^/]+_test[.]cpp$|math/([^/]+_test[.]cpp$|prim/|memory/))',
+                  paths: ['test/unit/math/prim', 'test/unit/math/memory',
+                          'test/unit/*_test.cpp', 'test/unit/math/*_test.cpp'],
                   optimization: noOptimize ? '0' : '3',
                   flags: ['-DCMAKE_CXX_FLAGS=-fsanitize=address', '-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address',
                           '-DCMAKE_SHARED_LINKER_FLAGS=-fsanitize=address'])
@@ -220,7 +233,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
           laplace: {
             runPod(image: image, memory: '32Gi') {
               stage('Laplace Unit Tests') {
-                runCmakeTests(name: 'laplace', filter: '^test/unit/math/laplace/',
+                runCmakeTests(name: 'laplace', paths: ['test/unit/math/laplace'],
                   optimization: '3', flags: ['-DCMAKE_CXX_FLAGS=-march=native -mtune=native'])
                 if (mainBranch) {
                   runCmakeTests(name: 'laplace-asan', optimization: '3',
@@ -235,7 +248,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
             runPod(image: image, memory: '32Gi', gpus: 1) {
               stage('OpenCL GPU tests') {
                 runCmakeTests(name: 'opencl',
-                  filter: '^test/unit/(math/opencl/|multiple_translation_units_test[.]cpp$)',
+                  paths: ['test/unit/math/opencl', 'test/unit/multiple_translation_units_test.cpp'],
                   optimization: noOptimize ? '1' : '3',
                   flags: ["-DCMAKE_C_COMPILER=${CLANG_CC}", "-DCMAKE_CXX_COMPILER=${CLANG_CXX}",
                           '-DCMAKE_CXX_FLAGS=-Werror', '-DSTAN_OPENCL=ON',
@@ -248,7 +261,7 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
             runPod(image: image) {
               stage('MPI Tests') {
                 runCmakeTests(name: 'mpi',
-                  filter: '^test/unit/math/(prim|rev)/functor/', testJobs: 1,
+                  paths: ['test/unit/math/prim/functor', 'test/unit/math/rev/functor'],
                   flags: ["-DCMAKE_CXX_COMPILER=${MPICXX}", '-DSTAN_MPI=ON'])
               }
             }
