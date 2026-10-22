@@ -58,20 +58,20 @@ TYPED_TEST_P(cos_arg_test, tol_error) {
 }
 TYPED_TEST_P(cos_arg_test, value) { this->test_value(); }
 TYPED_TEST_P(cos_arg_test, grad) {
-  this->test_grad_t0();
-  this->test_grad_ts();
-  this->test_grad_ts_repeat();
-  this->test_scalar_arg();
-  this->test_std_vector_arg();
-  this->test_vector_arg();
-  this->test_row_vector_arg();
-  this->test_matrix_arg();
-  this->test_scalar_std_vector_args();
-  this->test_std_vector_std_vector_args();
-  this->test_std_vector_vector_args();
-  this->test_std_vector_row_vector_args();
-  this->test_std_vector_matrix_args();
-  this->test_arg_combos_test();
+  EXPECT_NO_THROW(this->test_grad_t0());
+  EXPECT_NO_THROW(this->test_grad_ts());
+  EXPECT_NO_THROW(this->test_grad_ts_repeat());
+  EXPECT_NO_THROW(this->test_scalar_arg());
+  EXPECT_NO_THROW(this->test_std_vector_arg());
+  EXPECT_NO_THROW(this->test_vector_arg());
+  EXPECT_NO_THROW(this->test_row_vector_arg());
+  EXPECT_NO_THROW(this->test_matrix_arg());
+  EXPECT_NO_THROW(this->test_scalar_std_vector_args());
+  EXPECT_NO_THROW(this->test_std_vector_std_vector_args());
+  EXPECT_NO_THROW(this->test_std_vector_vector_args());
+  EXPECT_NO_THROW(this->test_std_vector_row_vector_args());
+  EXPECT_NO_THROW(this->test_std_vector_matrix_args());
+  EXPECT_NO_THROW(this->test_arg_combos_test());
 }
 TYPED_TEST_P(cos_arg_test, tol_grad) {
   this->test_tol_int_t0();
