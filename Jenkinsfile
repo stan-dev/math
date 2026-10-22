@@ -261,7 +261,8 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
                 sh 'python3 test/statement_types_test.py'
                 sh 'python3 test/varmat_compatibility_summary_test.py'
                 runFrameworkTests(CLANG_CXX)
-                sh 'python3 runTests.py generate-expressions build'
+                // Bound Clang 10's memory use within the 64 GiB pod.
+                sh 'python3 runTests.py generate-expressions build --batches 24'
                 runCmakeTests(name: 'expressions', filter: '^test/expressions/', optimization: '0',
                   flags: ["-DCMAKE_C_COMPILER=${CLANG_CC}", "-DCMAKE_CXX_COMPILER=${CLANG_CXX}",
                           '-DCMAKE_CXX_FLAGS=-Werror', '-DSTAN_BUILD_EXPRESSION_TESTS=ON'])

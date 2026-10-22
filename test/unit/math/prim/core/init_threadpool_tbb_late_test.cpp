@@ -15,8 +15,8 @@ TEST(intel_tbb_new_late_init, check_status) {
     auto state = stan::math::internal::make_threadpool_tbb(num_threads - 1);
     EXPECT_TRUE(state.arena.is_active());
     EXPECT_EQ(num_threads - 1, state.arena.max_concurrency());
-    state.arena.execute([]() {
-      EXPECT_EQ(num_threads - 1, tbb::this_task_arena::max_concurrency());
+    state.arena.execute([nested_threads = num_threads - 1]() {
+      EXPECT_EQ(nested_threads, tbb::this_task_arena::max_concurrency());
     });
     EXPECT_EQ(num_threads, tbb::this_task_arena::max_concurrency());
   });

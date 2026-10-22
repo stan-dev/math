@@ -229,13 +229,27 @@ def source_filter(paths):
 def build_tests(inventory, source_pattern, build_dir, jobs, batch_size):
     """Plan builds using the source labels registered by CMake."""
     pattern = re.compile(source_pattern)
-    selected = [test["name"] for test in inventory["tests"]
-                if any(pattern.search(label) for entry in test.get("properties", [])
-                       if entry["name"] == "LABELS" for label in entry["value"])]
+    selected, groups = [], {}
+    for test in inventory["tests"]:
+        labels = [label for entry in test.get("properties", [])
+                  if entry["name"] == "LABELS" for label in entry["value"]]
+        if any(pattern.search(label) for label in labels if not label.startswith("stan_build:")):
+            selected.append(test["name"])
+        for label in labels:
+            if label.startswith("stan_build:"):
+                groups.setdefault(label[len("stan_build:"):], set()).add(test["name"])
     if not selected:
         raise ValueError("No registered tests match: " + source_pattern)
+    # Makefile generators serialize separate top-level targets. An existing
+    # aggregate shares one dependency graph and honors the requested job count.
+    remaining, targets = set(selected), []
+    for target, members in sorted(groups.items(), key=lambda item: (-len(item[1]), item[0])):
+        if len(members) > 1 and members <= remaining:
+            targets.append(target)
+            remaining.difference_update(members)
+    targets.extend(name for name in selected if name in remaining)
     return [["cmake", "--build", str(build_dir), "--parallel", str(jobs), "--target"]
-            + selected[offset:offset + batch_size] for offset in range(0, len(selected), batch_size)]
+            + targets[offset:offset + batch_size] for offset in range(0, len(targets), batch_size)]
 
 
 def changed_distributions(files, run_all=False):

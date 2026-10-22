@@ -85,6 +85,15 @@ class CMakeTest(unittest.TestCase):
             self.assertRegex(f"test/prob/bernoulli/bernoulli_00000_generated_{mode}_test.cpp", selected)
         self.assertIsNone(re.search(selected, "test/prob/bernoulli/bernoulli_cdf_00000_generated_v_test.cpp"))
 
+    def test_ci_build_aggregates_only_complete_selected_groups(self):
+        inventory = {"tests": [{"name": name, "properties": [{"name": "LABELS", "value":
+                     ["test/unit/" + name + ".cpp", "stan_build:all"]
+                     + (["stan_build:pair"] if name != "three" else [])}]} for name in ("one", "two", "three")]}
+        command = ["cmake", "--build", "build", "--parallel", "4", "--target"]
+        self.assertEqual(runner.build_tests(inventory, "^test/unit/", "build", 4, 500), [command + ["all"]])
+        self.assertEqual(runner.build_tests(inventory, "^test/unit/(one|two)", "build", 4, 500), [command + ["pair"]])
+        self.assertEqual(runner.build_tests(inventory, "one", "build", 4, 500), [command + ["one"]])
+
 
 if __name__ == "__main__":
     unittest.main()

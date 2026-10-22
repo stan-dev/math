@@ -21,6 +21,13 @@ option(STAN_USE_SYSTEM_SUNDIALS "Use installed SUNDIALS libraries" OFF)
 find_package(Threads REQUIRED)
 target_link_libraries(stanmath INTERFACE Threads::Threads)
 
+# Match make/compiler_flags for ARM64, including the solver C sources.
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(ARM64|arm64|aarch64)$"
+    AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang" AND NOT MSVC)
+  set(stan_arm64_fp_options -ffp-contract=off)
+  target_compile_options(stanmath INTERFACE ${stan_arm64_fp_options})
+endif()
+
 if(STAN_USE_SYSTEM_EIGEN)
   find_package(Eigen3 REQUIRED)
   target_link_libraries(stanmath INTERFACE Eigen3::Eigen)
@@ -136,6 +143,7 @@ else()
     "${STAN_SUNDIALS_ROOT}/src/nvector/serial/nvector_serial.c")
   list(FILTER sundials_sources EXCLUDE REGEX "/f[^/]*\\.c$|/sundials_profiler\\.c$")
   add_library(stan_sundials STATIC ${sundials_sources})
+  target_compile_options(stan_sundials PRIVATE ${stan_arm64_fp_options})
   if(BUILD_TESTING)
     target_compile_options(stan_sundials PRIVATE ${STAN_TEST_OPTIMIZATION_FLAGS})
   endif()
