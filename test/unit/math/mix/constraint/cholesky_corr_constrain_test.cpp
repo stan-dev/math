@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <cmath>
 
 namespace cholesky_corr_constrain_test {
 // easier than fiddling the quadratic equation
@@ -113,4 +114,183 @@ TEST(mathMixMatFun, cholesky_corr_constrain_lp) {
 
   stan::test::expect_ad_matvar(f2(4), x1);
   stan::test::expect_ad_matvar(f2(3), x2);
+}
+
+namespace cholesky_corr_constrain_test {
+// the strictly lower triangular elements of the Cholesky factor
+struct strict_lower_of_constrained {
+  int K;
+  template <typename T>
+  Eigen::Matrix<T, Eigen::Dynamic, 1> operator()(
+      const Eigen::Matrix<T, Eigen::Dynamic, 1>& y) const {
+    auto L = stan::math::cholesky_corr_constrain(y, K);
+    Eigen::Matrix<T, Eigen::Dynamic, 1> v((K * (K - 1)) / 2);
+    int k = 0;
+    for (int j = 0; j < K; ++j) {
+      for (int i = j + 1; i < K; ++i) {
+        v(k++) = L(i, j);
+      }
+    }
+    return v;
+  }
+};
+}  // namespace cholesky_corr_constrain_test
+
+// lp is log |det J| of the map from y to the strictly lower triangular
+// elements of the Cholesky factor.
+TEST(mathMixMatFun, cholesky_corr_constrain_lp_is_log_det_jacobian) {
+  Eigen::VectorXd y(6);
+  y << 0.3, -1.2, 0.8, 2.1, -0.4, 1.5;
+  Eigen::VectorXd fx;
+  Eigen::MatrixXd J;
+  stan::math::jacobian(
+      cholesky_corr_constrain_test::strict_lower_of_constrained{4}, y, fx, J);
+  double lp = 0;
+  stan::math::cholesky_corr_constrain(y, 4, lp);
+  EXPECT_NEAR(std::log(std::fabs(J.determinant())), lp, 1e-12);
+}
+
+// lp = sum_n w_n log(1 - tanh(y_n)^2) with weights (1, 1.5, 1) for K = 3,
+// and its gradient, at large y against mpmath. Forming 1 - tanh(y)^2 and
+// 1 - sum of squares loses digits from |y| = 8.
+TEST(mathMixMatFun, cholesky_corr_constrain_lp_large_argument) {
+  using stan::math::fvar;
+  using stan::math::var;
+  Eigen::VectorXd y(3);
+  y << 15.0, 12.0, -0.5;
+  const double lp_ref = -62.77449311123027;
+  Eigen::VectorXd grad_ref(3);
+  grad_ref << -1.9999999999996257, -2.9999999997734919, 0.92423431452001952;
+
+  double lp_d = 0;
+  stan::math::cholesky_corr_constrain(y, 3, lp_d);
+  EXPECT_NEAR(lp_ref, lp_d, 1e-13);
+
+  Eigen::Matrix<var, Eigen::Dynamic, 1> y_v = stan::math::to_var(y);
+  var lp_v = 0;
+  stan::math::cholesky_corr_constrain(y_v, 3, lp_v);
+  lp_v.grad();
+  EXPECT_NEAR(lp_ref, lp_v.val(), 1e-13);
+  for (int i = 0; i < 3; ++i) {
+    EXPECT_NEAR(grad_ref(i), y_v(i).adj(), 1e-14);
+  }
+  stan::math::recover_memory();
+
+  stan::math::var_value<Eigen::VectorXd> y_m(y);
+  var lp_m = 0;
+  stan::math::cholesky_corr_constrain(y_m, 3, lp_m);
+  lp_m.grad();
+  EXPECT_NEAR(lp_ref, lp_m.val(), 1e-13);
+  for (int i = 0; i < 3; ++i) {
+    EXPECT_NEAR(grad_ref(i), y_m.adj()(i), 1e-14);
+  }
+  stan::math::recover_memory();
+
+  for (int n = 0; n < 3; ++n) {
+    Eigen::Matrix<fvar<double>, Eigen::Dynamic, 1> y_f(3);
+    for (int i = 0; i < 3; ++i) {
+      y_f(i) = fvar<double>(y(i), i == n ? 1.0 : 0.0);
+    }
+    fvar<double> lp_f = 0;
+    stan::math::cholesky_corr_constrain(y_f, 3, lp_f);
+    EXPECT_NEAR(lp_ref, lp_f.val_, 1e-13);
+    EXPECT_NEAR(grad_ref(n), lp_f.d_, 1e-14);
+  }
+}
+
+namespace cholesky_corr_constrain_test {
+// lower triangle (diagonal included), row by row
+template <typename M>
+Eigen::VectorXd lower_triangle(const M& L) {
+  const int K = L.rows();
+  Eigen::VectorXd v((K * (K + 1)) / 2);
+  int k = 0;
+  for (int i = 0; i < K; ++i) {
+    for (int j = 0; j <= i; ++j) {
+      v(k++) = stan::math::value_of_rec(L(i, j));
+    }
+  }
+  return v;
+}
+}  // namespace cholesky_corr_constrain_test
+
+// Values of L at large |y| against mpmath. sqrt(1 - sum of squares) had a
+// relative error of 3.8e-4 in L(1, 1) at y = 15.
+TEST(mathMixMatFun, cholesky_corr_constrain_values_large_argument) {
+  using cholesky_corr_constrain_test::lower_triangle;
+  using stan::math::fvar;
+  using stan::math::var;
+  Eigen::VectorXd y(6);
+  y << 15.0, 12.0, -0.5, 9.0, 2.0, -14.0;
+  Eigen::VectorXd ref(10);
+  ref << 1.0, 0.99999999999981285, 6.1180464100359433e-7, 0.99999999992449731,
+      -5.6786918924293556e-6, 1.0897607083695929e-5, 0.99999996954004097,
+      0.00023794090595878951, -6.5605200973176475e-5, 1.091052174635906e-10;
+  auto expect_ref = [&ref](const Eigen::VectorXd& v, const char* mode) {
+    for (int i = 0; i < ref.size(); ++i) {
+      EXPECT_NEAR(ref(i), v(i), 4e-15 * std::fabs(ref(i)))
+          << mode << ", element " << i;
+    }
+  };
+  expect_ref(lower_triangle(stan::math::cholesky_corr_constrain(y, 4)),
+             "double");
+  Eigen::Matrix<var, Eigen::Dynamic, 1> y_v = stan::math::to_var(y);
+  expect_ref(lower_triangle(stan::math::cholesky_corr_constrain(y_v, 4)),
+             "var");
+  stan::math::var_value<Eigen::VectorXd> y_m(y);
+  expect_ref(
+      lower_triangle(stan::math::cholesky_corr_constrain(y_m, 4).val().eval()),
+      "var_value");
+  Eigen::Matrix<fvar<double>, Eigen::Dynamic, 1> y_f(6);
+  for (int i = 0; i < 6; ++i) {
+    y_f(i) = fvar<double>(y(i), 1.0);
+  }
+  expect_ref(lower_triangle(stan::math::cholesky_corr_constrain(y_f, 4)),
+             "fvar");
+  stan::math::recover_memory();
+}
+
+// K = 40 with unconstrained values in [-1.9, 1.9], as default inits: a row
+// of 39 moderate values makes 1 - sum of squares about 1e-20, which
+// sqrt(1 - sum) rounded to 0. The diagonal must stay positive, the rows
+// must have unit norm, lp and the LKJ density must be finite, and the
+// var_value gradient must equal the Eigen<var> gradient.
+TEST(mathMixMatFun, cholesky_corr_constrain_long_rows) {
+  using stan::math::var;
+  const int K = 40;
+  Eigen::VectorXd y((K * (K - 1)) / 2);
+  for (int i = 0; i < y.size(); ++i) {
+    y(i) = 1.9 * std::sin(1.3 * i + 0.7);
+  }
+  double lp = 0;
+  Eigen::MatrixXd L = stan::math::cholesky_corr_constrain(y, K, lp);
+  EXPECT_GT(L.diagonal().minCoeff(), 0.0);
+  EXPECT_LT((L.rowwise().squaredNorm().array() - 1).abs().maxCoeff(), 1e-14);
+  EXPECT_TRUE(std::isfinite(lp));
+  EXPECT_TRUE(std::isfinite(stan::math::lkj_corr_cholesky_lpdf(L, 1.0)));
+
+  // gradient of 2 sum(log(diag(L))) + lp: Eigen<var> through the prim code,
+  // var_value through the hand-written reverse pass
+  Eigen::Matrix<var, Eigen::Dynamic, 1> y_v = stan::math::to_var(y);
+  var lp_v = 0;
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> L_v
+      = stan::math::cholesky_corr_constrain(y_v, K, lp_v);
+  var f_v = 2.0 * stan::math::sum(stan::math::log(L_v.diagonal())) + lp_v;
+  f_v.grad();
+  Eigen::VectorXd g_v = stan::math::value_of(y_v.adj());
+  stan::math::recover_memory();
+
+  stan::math::var_value<Eigen::VectorXd> y_m(y);
+  var lp_m = 0;
+  stan::math::var_value<Eigen::MatrixXd> L_m
+      = stan::math::cholesky_corr_constrain(y_m, K, lp_m);
+  var f_m = 2.0 * stan::math::sum(stan::math::log(L_m.diagonal())) + lp_m;
+  f_m.grad();
+  Eigen::VectorXd g_m = y_m.adj();
+  stan::math::recover_memory();
+
+  EXPECT_TRUE(g_v.allFinite());
+  EXPECT_TRUE(g_m.allFinite());
+  EXPECT_LT((g_v - g_m).cwiseAbs().maxCoeff(),
+            1e-12 * g_v.cwiseAbs().maxCoeff());
 }
