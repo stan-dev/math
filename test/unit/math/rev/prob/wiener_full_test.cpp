@@ -284,6 +284,10 @@ TEST_F(AgradRev, mathRevCorrectValues_wiener_lccdf_unnorm) {
    * ccdf = cdf(big_value) - cdf
    * lccdf = log(cdf(big_value) - cdf)
    * lccdf' = ccdf'/ccdf = (cdf(big_value)'-cdf')/ccdf
+   * Except the third point: there the ccdf is 1.6e-14 of P and the
+   * difference above loses digits (WienR value -33.8123, gradient w
+   * 1.9329). The values for it are from the large-time series of P - F
+   * (199 terms, 50 digits, mpmath), gradients by mpmath.diff.
    */
   std::vector<double> y_vec
       = {.2, .3, 2.2, .1, 2, 1.7, 3, 2.5, 3.7, 1.8, .9, 1.5, 2};
@@ -301,36 +305,37 @@ TEST_F(AgradRev, mathRevCorrectValues_wiener_lccdf_unnorm) {
       = {0, 0, 0, 0, 0, 0, 0.1, 0, 0.1, 0.1, .2, .3, .25};
 
   std::vector<double> true_lccdf
-      = {-1.92033254902358,   -13.5626831740558, -33.8122958054115,
+      = {-1.92033254902358,   -13.5626831740558, -33.795600277824003,
          -0.0207304574971297, -7.08470781580343, -3.44486241813253,
          -4.18311596420185,   -4.95366166391584, -7.23109216780916,
          -0.125273337362733,  -3.79815495569855, -2.96111699037856,
          -4.14929265642466};
   std::vector<double> true_grad_y
-      = {-1.33001519743633,  -31.1083518155787, -12.9346392526053,
+      = {-1.33001519743633,  -31.1083518155787, -12.889970183576842,
          -0.169566706752058, -3.7986585460178,  -2.31784674820993,
          -0.536530793068282, -2.48164917576694, -1.89222689054599,
          -0.484444809563098, -5.31460285637481, -0.975151391419348,
          -1.57127046017878};
   std::vector<double> true_grad_a
-      = {-0.432928212420575, -0.0286062052702194, 0.308724832214765,
+      = {-0.432928212420575, -0.0286062052702194, 0.35604435682103767,
          0.05132866977503,   10.5080654585197,    4.37077488076664,
          -0.193420148034756, 5.36345669388884,    5.14057131554871,
          0.11692460737807,   7.07166462218294,    0.365404340761721,
          1.53902298927608};
-  std::vector<double> true_grad_t0 = {
-      1.33001519743633, 31.1083518155787,  12.9346392526053,  0.169566706752058,
-      3.7986585460178,  2.31784674820993,  0.536530793068282, 2.48164917576694,
-      1.89222689054599, 0.484444809563098, 5.31460285637481,  0.975151391419348,
-      1.57127046017878};
+  std::vector<double> true_grad_t0
+      = {1.33001519743633,  31.1083518155787, 12.889970183576842,
+         0.169566706752058, 3.7986585460178,  2.31784674820993,
+         0.536530793068282, 2.48164917576694, 1.89222689054599,
+         0.484444809563098, 5.31460285637481, 0.975151391419348,
+         1.57127046017878};
   std::vector<double> true_grad_w
-      = {4.61303457108487,  0.611152450869066,  1.93288590604027,
+      = {4.61303457108487,  0.611152450869066,  2.1023852348638125,
          0.139815038667115, -0.911757809733564, 1.54221437873658,
          3.63420918438666,  -1.85952752467816,  -3.65499582974638,
          -1.12442042700282, 0.262989430764412,  1.3830938669116,
          0.518345884055846};
   std::vector<double> true_grad_v
-      = {1.83079071623625,   2.56351255240926,    11.4026845637584,
+      = {1.83079071623625,   2.56351255240926,    11.40027803089135,
          0.0274975992798594, -0.960807197217193,  0.132382852324283,
          5.47350811619098,   -0.652456751242452,  1.57258003231325,
          -0.207055671666776, -0.0823432112415456, 2.18370562291933,
@@ -399,4 +404,198 @@ TEST_F(AgradRev, mathRevCorrectValues_wiener_lccdf_unnorm) {
     EXPECT_NEAR(sw.adj(), true_grad_sw[i], err_tol);
     EXPECT_NEAR(st0.adj(), true_grad_st0[i], err_tol);
   }
+}
+
+TEST_F(AgradRev, ProbWienerFull_density_below_smallest_double) {
+  /* Densities far below the smallest normal double (issue #3329). With
+   * st0 > y - t0 and sw -> 0, the density is F5(y - t0) / st0, where F5 is
+   * the distribution function of the 5-parameter model. Hence
+   * d/dst0 = -1 / st0 and d/dy = -d/dt0 = p5(y - t0) / F5(y - t0). The
+   * references for log(F5 / st0) and p5 / F5 are from Boost Gauss-Kronrod
+   * quadrature of the 5-parameter density, scaled by its largest value.
+   * d/dsw (sw = 1e-8) is O(sw) as sw -> 0. Its reference is
+   * int (w' - w) / sw dp5/dw' / int p5 over the box, by adaptive
+   * Gauss-Kronrod quadrature (differentiation under the integral). Before
+   * the fix of the sw integration limits d/dsw was -1/sw = -1e8; with the
+   * end-point form (integral) / density - 1 / sw its error was up to 0.5.
+   */
+  using stan::math::var;
+  const double a = 0.1, t0 = 0.0, w = 1e-4, v = -10.0, sv = 0.1, st0 = 1e-3;
+  // y, log(F5(y) / st0), p5(y) / F5(y), d/dsw at sw = 1e-8
+  const std::vector<std::vector<double>> refs = {
+      {1e-6, -4998.0685384088774, 4999186937.1439915, 0.083341666361125277},
+      {3e-6, -1665.4275870208894, 555376585.70015228, 0.0092735554080942972},
+      {5.5435493922668729e-06, -901.03029980710346, 162610279.12970507,
+       0.0027270180916692255},
+      {7.5356592945287405e-06, -662.74912830365952, 87982443.012321636,
+       0.0014831386423082942},
+      {3e-05, -166.59848075414246, 5538827.1596829286, 0.00010898610669626657}};
+  for (const auto& ref : refs) {
+    for (double sw_value : {0.0, 1e-8}) {
+      for (double precision : {1e-4, 1e-8}) {
+        var y = ref[0];
+        var t0_v = t0;
+        var sw = sw_value;
+        var st0_v = st0;
+        var lp = stan::math::wiener_lpdf(y, a, t0_v, w, v, sv, sw, st0_v,
+                                         precision);
+        lp.grad();
+        const double tol = precision < 1e-6 ? 1e-9 : 1e-5;
+        EXPECT_NEAR(lp.val(), ref[1], tol * 10);
+        EXPECT_NEAR(y.adj(), ref[2], tol * ref[2]);
+        EXPECT_NEAR(t0_v.adj(), -ref[2], tol * ref[2]);
+        EXPECT_FLOAT_EQ(st0_v.adj(), -1 / st0);
+        if (sw_value == 0) {
+          EXPECT_EQ(sw.adj(), 0);
+        } else {
+          EXPECT_NEAR(sw.adj(), ref[3], precision < 1e-6 ? 1e-8 : 1e-6);
+        }
+        stan::math::recover_memory();
+      }
+    }
+  }
+}
+
+TEST_F(AgradRev, ProbWienerFull_sw_gradient_st0_beyond_y) {
+  /* d/dsw when st0 > y - t0. The integral over the st0 variable must use the
+   * limits of that variable, [0, (y - t0) / st0], not [0, 1]: with [0, 1]
+   * the quadrature nodes miss the support if (y - t0) / st0 < 0.004, and
+   * d/dsw = -1 / sw. The references are the 5-parameter density averaged
+   * over the box by adaptive Gauss-Kronrod quadrature, and the gradients
+   * from the weighted 5-parameter gradients and the end-point formulas
+   * d/dsw = -1/sw + (G(w + sw/2) + G(w - sw/2)) / (2 J) and
+   * d/dst0 = -1/st0 (st0 > y - t0).
+   */
+  using stan::math::var;
+  // y, a, t0, w, v, sv, sw, st0
+  const std::vector<std::vector<double>> points
+      = {{0.501, 0.5, 0.5, 0.5, 1.0, 0.5, 0.2, 0.3},
+         {0.501, 0.5, 0.5, 0.3, -1.0, 0.5, 0.1, 0.3}};
+  // value, then d/dy, d/da, d/dt0, d/dw, d/dv, d/dsv, d/dsw, d/dst0
+  const std::vector<std::vector<double>> refs
+      = {{-23.72203172192728, 21439.651877785887, -85.330940582416858,
+          -21439.651877785887, 104.16367572856434, 0.20369451548936232,
+          0.020277897748002094, 47.08183786536835, -3.3333333333333335},
+         {-57.294953191342536, 54282.626135080958, -217.73468386330191,
+          -54282.626135080958, 165.94975734995256, 0.32888822649013677,
+          0.053597130002326632, 72.974882133158005, -3.3333333333333335}};
+  for (size_t i = 0; i < points.size(); ++i) {
+    std::vector<var> x(points[i].begin(), points[i].end());
+    var lp = stan::math::wiener_lpdf(x[0], x[1], x[2], x[3], x[4], x[5], x[6],
+                                     x[7]);
+    lp.grad();
+    EXPECT_NEAR(lp.val(), refs[i][0], 1e-6);
+    for (size_t k = 0; k < x.size(); ++k) {
+      EXPECT_NEAR(x[k].adj(), refs[i][k + 1],
+                  1e-6 * std::fmax(1.0, std::fabs(refs[i][k + 1])))
+          << "point " << i << ", argument " << k;
+    }
+    stan::math::recover_memory();
+  }
+  // A density near the smallest normal double, sharply peaked in the st0
+  // direction: the 2-D integration error is 6.4e-4 here (same before the
+  // change), so the tolerance is looser.
+  var y = 0.200001;
+  var sw = 0.25;
+  var lp = stan::math::wiener_lpdf(y, 0.1, 0.2, 0.5, -30.0, 0.1, sw, 1e-3);
+  lp.grad();
+  EXPECT_NEAR(lp.val(), -708.03896211156052, 2e-3);
+  EXPECT_NEAR(sw.adj(), 1875.1599297689354, 2e-3 * 1875.16);
+  EXPECT_NEAR(y.adj(), 704621632.51963747, 2e-3 * 704621632.5);
+}
+
+TEST_F(AgradRev, ProbWienerFullLccdf_late_start_and_small_ccdf) {
+  /* Points 0 and 1: st0 > y - t0. A trial whose non-decision time ends
+   * after y has not responded at y, so it contributes P (the probability
+   * of the upper boundary) to the ccdf. Points 2 and 3: small ccdf, where
+   * P - F loses digits (point 2 gave -inf).
+   * References: with d = y - t0, the 5-parameter density p5 (drift
+   * variability in closed form) integrated by adaptive Gauss-Kronrod
+   * quadrature,
+   *   ccdf = 1/(sw st0) int dw' int_{d - st0}^inf p5(s | w')
+   *          clamp(s - d + st0, 0, st0) ds,
+   * which has no cancellation; gradients by central finite differences of
+   * this reference (step 1e-5 max(|x|, 0.05)). The s integral is split at
+   * the kink of the weight, s = d.
+   */
+  using stan::math::var;
+  // y, a, t0, w, v, sv, sw, st0
+  const std::vector<std::vector<double>> points
+      = {{0.6, 1.0, 0.5, 0.5, 1.0, 0.0, 0.0, 0.3},
+         {0.6, 1.5, 0.5, 0.4, -1.0, 0.8, 0.2, 0.25},
+         {3.0, 0.6, 0.1, 0.6, 5.0, 0.4, 0.0, 0.0},
+         {2.5, 0.8, 0.2, 0.65, -3.0, 0.5, 0.1, 0.1}};
+  // value, then d/dy, d/da, d/dt0, d/dw, d/dv, d/dsv, d/dsw, d/dst0
+  const std::vector<std::vector<double>> refs
+      = {{-0.34070836357439016, -0.850496615431, 0.3784844401, 0.850496615445,
+          0.992216360718, 0.264038728681, 0, 0, 0.0927560195689},
+         {-1.739587600152078, -0.071706798351, -0.379766643732, 0.0717067982769,
+          3.13857732603, 1.04914003454, 0.584703035322, 0.0865195797228,
+          0.00522743821563},
+         {-64.741572165806787, -19.6190832883, 132.880948289, 19.6190832895,
+          -3.07426977741, -9.85932868275, 38.0863232508, 0, 0},
+         {-25.325740009943843, -9.49511893744, 42.1178255789, 9.49511893822,
+          -0.138690615232, 4.61306469729, 9.90862435266, -0.103076095215,
+          5.49202370514}};
+  for (size_t i = 0; i < points.size(); ++i) {
+    std::vector<var> x(points[i].begin(), points[i].end());
+    var lp = stan::math::wiener_lccdf_unnorm(x[0], x[1], x[2], x[3], x[4], x[5],
+                                             x[6], x[7]);
+    lp.grad();
+    EXPECT_NEAR(lp.val(), refs[i][0], 1e-6) << "point " << i;
+    for (size_t k = 0; k < x.size(); ++k) {
+      EXPECT_NEAR(x[k].adj(), refs[i][k + 1],
+                  2e-5 * std::fmax(1.0, std::fabs(refs[i][k + 1])))
+          << "point " << i << ", argument " << k;
+    }
+    stan::math::recover_memory();
+  }
+}
+
+TEST_F(AgradRev, ProbWienerFull_lcdf_lccdf_small_values) {
+  /* 7-parameter lccdf with drift variability only, where the ccdf is far
+   * below 1e-16 times the probability P of the upper boundary: the form
+   * P - F gave -inf. References: the 5-parameter density (drift variability
+   * in closed form) integrated by adaptive Gauss-Kronrod quadrature from
+   * y - t0 to infinity; gradients by central finite differences of this
+   * reference (step 1e-5 max(|x|, 0.05)).
+   * Then a ccdf and a cdf below the smallest double: the value is -inf, and
+   * the gradient integrals, whose tolerances are relative to the value, are
+   * skipped (before, the call did not return).
+   */
+  using stan::math::var;
+  // y, a, t0, w, v, sv
+  const std::vector<std::vector<double>> points
+      = {{9.0, 2.0, 0.1, 0.5, 5.0, 0.01}, {22.1, 2.0, 0.1, 0.5, 5.0, 0.01}};
+  // value, then d/dy, d/da, d/dt0, d/dw, d/dv, d/dsv
+  const std::vector<std::vector<double>> refs
+      = {{-119.99567604004699, -13.7118474462, 12.5677181533, 13.7118474512,
+          -9.99123493273, -43.8253261844, 19.1182682983},
+         {-299.40720932606365, -13.679247658, 28.7261448207, 13.6792476439,
+          -9.97817507482, -109.124647395, 118.86296619}};
+  for (size_t i = 0; i < points.size(); ++i) {
+    std::vector<var> x(points[i].begin(), points[i].end());
+    var lp = stan::math::wiener_lccdf_unnorm(x[0], x[1], x[2], x[3], x[4], x[5],
+                                             0.0, 0.0);
+    lp.grad();
+    EXPECT_NEAR(lp.val(), refs[i][0], 1e-8) << "point " << i;
+    for (size_t k = 0; k < x.size(); ++k) {
+      EXPECT_NEAR(x[k].adj(), refs[i][k + 1],
+                  1e-6 * std::fmax(1.0, std::fabs(refs[i][k + 1])))
+          << "point " << i << ", argument " << k;
+    }
+    stan::math::recover_memory();
+  }
+
+  var y = 60.0;
+  var lccdf
+      = stan::math::wiener_lccdf_unnorm(y, 2.0, 0.1, 0.5, 5.0, 0.01, 0.0, 0.0);
+  EXPECT_EQ(lccdf.val(), stan::math::NEGATIVE_INFTY);
+  stan::math::recover_memory();
+
+  var y_small = 1e-6;
+  var lcdf = stan::math::wiener_lcdf_unnorm(y_small, 0.1, 0.0, 1e-4, -10.0, 0.1,
+                                            0.0, 0.0);
+  EXPECT_EQ(lcdf.val(), stan::math::NEGATIVE_INFTY);
+  stan::math::recover_memory();
 }
