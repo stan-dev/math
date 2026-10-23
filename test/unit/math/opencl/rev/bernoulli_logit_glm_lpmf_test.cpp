@@ -3,6 +3,7 @@
 #include <stan/math/opencl/rev.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
+#include <test/unit/math/opencl/rev/bernoulli_logit_tail_refs.hpp>
 #include <vector>
 
 using Eigen::Array;
@@ -213,6 +214,35 @@ TEST(ProbDistributionsBernoulliLogitGLM, opencl_matches_cpu_big) {
       bernoulli_logit_glm_lpmf_functor, y, x, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       bernoulli_logit_glm_lpmf_functor_propto, y, x, alpha, beta);
+}
+
+TEST(ProbDistributionsBernoulliLogitGLM, opencl_rev_tails_against_references) {
+  using bernoulli_logit_tail_refs::expect_rel;
+  using stan::math::var_value;
+  // theta = alpha + x beta with x = 1, alpha = 0.5 and beta = theta - 0.5,
+  // both exact for these theta, so d/dalpha = d/dbeta = d/dtheta
+  for (const auto& r : bernoulli_logit_tail_refs::refs()) {
+    vector<int> y{r.y};
+    Matrix<double, Dynamic, Dynamic> x(1, 1);
+    x << 1.0;
+    Matrix<double, Dynamic, 1> alpha(1);
+    alpha << 0.5;
+    Matrix<double, Dynamic, 1> beta(1);
+    beta << r.theta - 0.5;
+    matrix_cl<int> y_cl(y);
+    matrix_cl<double> x_cl(x);
+    var_value<matrix_cl<double>> alpha_cl = stan::math::to_matrix_cl(alpha);
+    var_value<matrix_cl<double>> beta_cl = stan::math::to_matrix_cl(beta);
+    var lp
+        = stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha_cl, beta_cl);
+    lp.grad();
+    Eigen::VectorXd d_alpha = stan::math::from_matrix_cl(alpha_cl.adj());
+    Eigen::VectorXd d_beta = stan::math::from_matrix_cl(beta_cl.adj());
+    expect_rel(r.val, lp.val(), "value", r);
+    expect_rel(r.d_theta, d_alpha(0), "d/dalpha", r);
+    expect_rel(r.d_theta, d_beta(0), "d/dbeta", r);
+    stan::math::recover_memory();
+  }
 }
 
 #endif
