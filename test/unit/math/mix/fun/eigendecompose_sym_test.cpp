@@ -104,3 +104,30 @@ TEST(MathMixMatFun, eigendecomposeSym_varmat) {
   vec_tols.hessian_hessian_ = 1e-2;
   stan::test::expect_ad_matvar(vec_tols, g, a33);
 }
+
+TEST(MathMixMatFun, eigendecomposeSymComplex) {
+  // complex input with real entries, the only case where symmetric and
+  // Hermitian coincide; the imaginary parts are constant
+  auto g = [](const auto& y) {
+    auto a = ((y + y.transpose()) * 0.5).eval();
+    return std::get<0>(
+        stan::math::eigendecompose_sym(stan::math::to_complex(a, 0)));
+  };
+  auto f = [](const auto& y) {
+    auto a = ((y + y.transpose()) * 0.5).eval();
+    return std::get<1>(
+        stan::math::eigendecompose_sym(stan::math::to_complex(a, 0)));
+  };
+
+  stan::test::ad_tolerances values_tols;
+  values_tols.hessian_hessian_ = 5e-2;
+  values_tols.hessian_fvar_hessian_ = 5e-2;
+  stan::test::ad_tolerances vec_tols;
+  vec_tols.hessian_fvar_hessian_ = 1e-2;
+  vec_tols.hessian_hessian_ = 1e-2;
+
+  Eigen::MatrixXd a33(3, 3);
+  a33 << 1, 2, 3, 2, 5, 7.9, 3, 7.9, 1.08;
+  stan::test::expect_ad(values_tols, f, a33);
+  stan::test::expect_ad(vec_tols, g, a33);
+}

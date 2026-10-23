@@ -69,3 +69,20 @@ TEST(MathMixMatFun, eigenvaluesSym_varmat) {
   stan::test::expect_ad(tols, f, a22);
   stan::test::expect_ad_matvar(tols, f, a22);
 }
+
+TEST(MathMixMatFun, eigenvaluesSymComplex) {
+  // complex input with real entries, the only case where symmetric and
+  // Hermitian coincide; the imaginary parts are constant
+  auto f = [](const auto& y) {
+    auto a = ((y + y.transpose()) * 0.5).eval();
+    return stan::math::eigenvalues_sym(stan::math::to_complex(a, 0));
+  };
+
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 5e-2;
+  tols.hessian_fvar_hessian_ = 5e-2;
+
+  Eigen::MatrixXd a33(3, 3);
+  a33 << 1, 2, 3, 2, 5, 7.9, 3, 7.9, 1.08;
+  stan::test::expect_ad(tols, f, a33);
+}

@@ -7,7 +7,7 @@
 #include <stan/math/prim/err/constraint_tolerance.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/abs.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <sstream>
 #include <string>
@@ -32,9 +32,6 @@ template <typename EigMat, require_matrix_t<EigMat>* = nullptr>
 inline void check_symmetric(const char* function, const char* name,
                             const EigMat& y) {
   check_square(function, name, y);
-  using stan::math::fabs;
-  using std::fabs;
-
   Eigen::Index k = y.rows();
   if (k <= 1) {
     return;
@@ -42,7 +39,8 @@ inline void check_symmetric(const char* function, const char* name,
   const auto& y_ref = to_ref(y);
   for (Eigen::Index m = 0; m < k; ++m) {
     for (Eigen::Index n = m + 1; n < k; ++n) {
-      if (!(fabs(value_of(y_ref(m, n)) - value_of(y_ref(n, m)))
+      if (!(stan::math::abs(value_of_rec(y_ref(m, n))
+                            - value_of_rec(y_ref(n, m)))
             <= CONSTRAINT_TOLERANCE)) {
         [&]() STAN_COLD_PATH {
           std::ostringstream msg1;

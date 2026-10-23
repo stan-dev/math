@@ -17,7 +17,7 @@ eigenvectors_sym(EigMat&& m) {
   }
   using PlainMat = plain_type_t<EigMat>;
   decltype(auto) m_ref = to_ref(std::forward<EigMat>(m));
-  check_symmetric("eigenvalues_sym", "m", m_ref);
+  check_symmetric("eigenvectors_sym", "m", m_ref);
 
   Eigen::SelfAdjointEigenSolver<PlainMat> solver(
       std::forward<decltype(m_ref)>(m_ref));

@@ -10,7 +10,7 @@ namespace math {
 
 inline matrix_cl<double> eigenvectors_sym(const matrix_cl<double>& m) {
   check_nonzero_size("eigenvectors_sym", "m", m);
-  check_symmetric("eigenvalues_sym", "m", m);
+  check_symmetric("eigenvectors_sym", "m", m);
 
   matrix_cl<double> eigenvalues, eigenvectors;
   symmetric_eigensolver(m, eigenvalues, eigenvectors);
