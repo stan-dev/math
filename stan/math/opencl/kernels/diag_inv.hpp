@@ -72,6 +72,9 @@ static constexpr const char* diag_inv_kernel_code = STRINGIFY(
         }
         barrier(CLK_LOCAL_MEM_FENCE);
       }
+      // The copy below overwrites entries of A that other work items read
+      // above, so a global memory fence separates the two.
+      barrier(CLK_GLOBAL_MEM_FENCE);
       for (int j = 0; j < block_size; j++) {
         // Each thread copies one column.
         A(A_offset + j, A_offset + index) = tmp_inv[tmp_offset + j];
