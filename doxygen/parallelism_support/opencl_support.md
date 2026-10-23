@@ -141,6 +141,7 @@ C_sum.grad();
 - inv, inv_cloglog, inv_logit, inv_sqrt, inv_square, inv_Phi
 - ldexp
 - lgamma
+- lmultiply
 - log, log10, log1m, log1p, log2, logit
 - log1m_exp, log1p_exp, log1m_inv_logit, log_inv_logit
 - log_diff_exp, log_inv_logit_diff
@@ -149,7 +150,6 @@ C_sum.grad();
 - mean
 - mdivide_left_tri_low, mdivide_right_tri_low
 - multiply, operator*
-- multiply_log, lmultiply
 - Phi, Phi_approx
 - pow
 - segment

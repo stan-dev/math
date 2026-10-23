@@ -1,6 +1,6 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/math/prim/prob/scaled_inv_chi_square_lpdf.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/log.hpp>
 
@@ -77,14 +77,14 @@ class AgradDistributionsScaledInvChiSquare : public AgradDistributionTest {
   stan::return_type_t<T_y, T_dof, T_scale> log_prob_function(
       const T_y& y, const T_dof& nu, const T_scale& s, const T3&, const T4&,
       const T5&) {
-    using stan::math::multiply_log;
+    using stan::math::lmultiply;
     using stan::math::square;
     using std::log;
 
     if (y <= 0)
       return stan::math::LOG_ZERO;
 
-    return multiply_log(0.5 * nu, 0.5 * nu) - lgamma(0.5 * nu) + nu * log(s)
-           - multiply_log(nu * 0.5 + 1.0, y) - nu * 0.5 * square(s) / y;
+    return lmultiply(0.5 * nu, 0.5 * nu) - lgamma(0.5 * nu) + nu * log(s)
+           - lmultiply(nu * 0.5 + 1.0, y) - nu * 0.5 * square(s) / y;
   }
 };
