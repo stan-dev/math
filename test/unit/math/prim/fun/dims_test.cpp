@@ -59,3 +59,31 @@ TEST(MathMatrixPrimMat, dims) {
   EXPECT_EQ(7, dims8[1]);
   EXPECT_EQ(8, dims8[2]);
 }
+  TEST(MathMatrixPrimMat, dims_nested_vector_arrays) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::dims;
+  using std::vector;
+
+  Matrix<double, Dynamic, 1> v1(1);
+  vector<Matrix<double, Dynamic, 1>> inner1{v1};
+  vector<vector<Matrix<double, Dynamic, 1>>> x1{inner1};
+
+  const auto result1 = dims(x1);
+
+  ASSERT_EQ(3U, result1.size());
+  EXPECT_EQ(1, result1[0]);
+  EXPECT_EQ(1, result1[1]);
+  EXPECT_EQ(1, result1[2]);
+
+  Matrix<double, Dynamic, 1> v2(5);
+  vector<Matrix<double, Dynamic, 1>> inner2(3, v2);
+  vector<vector<Matrix<double, Dynamic, 1>>> x2(2, inner2);
+
+  const auto result2 = dims(x2);
+
+  ASSERT_EQ(3U, result2.size());
+  EXPECT_EQ(2, result2[0]);
+  EXPECT_EQ(3, result2[1]);
+  EXPECT_EQ(5, result2[2]);
+}
