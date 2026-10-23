@@ -55,7 +55,9 @@ static constexpr const char* tridiagonalization_householder_kernel_code
           // calculate column norm between threads
           __local double q_local[LOCAL_SIZE_];
           q_local[lid] = q;
-          barrier(CLK_LOCAL_MEM_FENCE);
+          // Work items below read and write entries of P that other work
+          // items wrote above, so this barrier also fences global memory.
+          barrier(CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE);
           for (int step = lsize / REDUCTION_STEP_SIZE; step > 0;
                step /= REDUCTION_STEP_SIZE) {
             if (lid < step) {
