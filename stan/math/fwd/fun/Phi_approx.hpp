@@ -4,7 +4,6 @@
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/inv_logit.hpp>
-#include <stan/math/fwd/fun/pow.hpp>
 #include <stan/math/prim/fun/Phi_approx.hpp>
 #include <cmath>
 
@@ -23,7 +22,8 @@ namespace math {
  */
 template <typename T>
 inline fvar<T> Phi_approx(const fvar<T>& x) {
-  return inv_logit(0.07056 * pow(x, 3.0) + 1.5976 * x);
+  const fvar<T> x_squared = x * x;
+  return inv_logit(0.07056 * x * x_squared + 1.5976 * x);
 }
 
 }  // namespace math
