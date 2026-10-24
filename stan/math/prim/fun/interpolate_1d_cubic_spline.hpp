@@ -37,6 +37,11 @@ using interpolate_1d_cubic_spline_store_t
  * This function validates the input knot locations, values, and derivatives,
  * then stores them in a tuple for use with `interpolate_1d_cubic_spline`.
  *
+ * @note Because the derivatives at the knots are supplied directly (rather
+ *   than derived by branching on `yk` as in PCHIP/MAKIMA), the interpolated
+ *   curve is smooth and the resulting log density is differentiable
+ *   everywhere with respect to `yk`.
+ *
  * @tparam EigVecX type of the knot locations
  * @tparam EigVecY type of the knot values
  * @tparam EigVecDyDx type of the derivative values
@@ -136,8 +141,8 @@ inline return_type_t<T, XkType, YkType, DydxkType> interpolate_1d_cubic_spline(
   const auto y0 = yk.coeff(i);
   const auto y1 = yk.coeff(i + 1);
   const auto s0 = dydxk.coeff(i);
-  const auto s1 = dydxk.coeff(i + 1);  
-  
+  const auto s1 = dydxk.coeff(i + 1);
+
   const auto h0 = t_minus_1 * t_minus_1 * (y0 * (1.0 + 2.0 * t) + h * s0 * t);
   const auto h1 = t * t * (y1 * (3.0 - 2.0 * t) + h * s1 * t_minus_1);
 
@@ -149,7 +154,20 @@ inline return_type_t<T, XkType, YkType, DydxkType> interpolate_1d_cubic_spline(
  *
  * Computes PCHIP (monotone-preserving) derivatives at the knots via Boost,
  * then delegates to `interpolate_1d_cubic_hermite_setup` so the result can be
- * evaluated with `interpolate_1d_cubic_spline`.
+ * evaluated with `interpolate_1d_cubic_spline`. The interpolation method
+ * itself -- including the formulas for the end slopes and the requirement of
+ * at least four points -- is defined by Boost; see the documentation for
+ * `boost::math::interpolators::pchip`.
+ *
+ * @note The PCHIP end slopes computed by Boost differ from those used by scipy
+ *   and MATLAB, so results at and near the boundary knots may not match those
+ *   libraries.
+ *
+ * @note The PCHIP slope formulas branch on the data (in `yk`), so the
+ *   interpolated curve has kinks in `yk` and the resulting log density is not
+ *   differentiable everywhere with respect to `yk`. If differentiability with
+ *   respect to `yk` is required, use `interpolate_1d_cubic_hermite_setup`
+ *   instead, which takes known derivatives and has no such problem.
  *
  * @tparam EigVecX type of the knot locations
  * @tparam EigVecY type of the knot values
@@ -203,7 +221,16 @@ interpolate_1d_pchip_setup(const EigVecX& xk, const EigVecY& yk) {
  *
  * Computes modified Akima derivatives at the knots via Boost, then delegates to
  * `interpolate_1d_cubic_hermite_setup` so the result can be evaluated with
- * `interpolate_1d_cubic_spline`.
+ * `interpolate_1d_cubic_spline`. The interpolation method itself -- including
+ * the formulas for the end slopes and the requirement of at least four points
+ * -- is defined by Boost; see the documentation for
+ * `boost::math::interpolators::makima`.
+ *
+ * @note The MAKIMA slope formulas branch on the data (in `yk`), so the
+ *   interpolated curve has kinks in `yk` and the resulting log density is not
+ *   differentiable everywhere with respect to `yk`. If differentiability with
+ *   respect to `yk` is required, use `interpolate_1d_cubic_hermite_setup`
+ *   instead, which takes known derivatives and has no such problem.
  *
  * @tparam EigVecX type of the knot locations
  * @tparam EigVecY type of the knot values
@@ -256,3 +283,4 @@ interpolate_1d_makima_setup(const EigVecX& xk, const EigVecY& yk) {
 }  // namespace stan
 
 #endif
+
