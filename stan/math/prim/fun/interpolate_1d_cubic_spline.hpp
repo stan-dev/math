@@ -19,7 +19,7 @@ namespace math {
  *
  * The tuple holds the knot locations, knot values, and derivative values as
  * owning Eigen column vectors, used as the precomputed representation consumed
- * by `interpolate_1d_cubic_spline_eval`.
+ * by `interpolate_1d_cubic_spline`.
  *
  * @tparam XkScalar scalar type of the knot locations
  * @tparam YkScalar scalar type of the knot values
@@ -35,7 +35,7 @@ using interpolate_1d_cubic_spline_store_t
  * Precompute storage for cubic Hermite interpolation.
  *
  * This function validates the input knot locations, values, and derivatives,
- * then stores them in a tuple for use with `interpolate_1d_cubic_spline_eval`.
+ * then stores them in a tuple for use with `interpolate_1d_cubic_spline`.
  *
  * @tparam EigVecX type of the knot locations
  * @tparam EigVecY type of the knot values
@@ -104,9 +104,9 @@ interpolate_1d_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
  */
  template <typename T, typename XkType, typename YkType, typename DydxkType,
           require_stan_scalar_t<T>* = nullptr>
-inline return_type_t<T, XkType, YkType, DydxkType> interpolate_1d_cubic_spline_eval(
+inline return_type_t<T, XkType, YkType, DydxkType> interpolate_1d_cubic_spline(
     const T& x, const std::tuple<XkType, YkType, DydxkType>& W) {
-  static constexpr const char* function = "interpolate_1d_cubic_spline_eval";
+  static constexpr const char* function = "interpolate_1d_cubic_spline";
   const auto& xk = std::get<0>(W);
   const auto& yk = std::get<1>(W);
   const auto& dydxk = std::get<2>(W);
@@ -149,7 +149,7 @@ inline return_type_t<T, XkType, YkType, DydxkType> interpolate_1d_cubic_spline_e
  *
  * Computes PCHIP (monotone-preserving) derivatives at the knots via Boost,
  * then delegates to `interpolate_1d_cubic_hermite_setup` so the result can be
- * evaluated with `interpolate_1d_cubic_spline_eval`.
+ * evaluated with `interpolate_1d_cubic_spline`.
  *
  * @tparam EigVecX type of the knot locations
  * @tparam EigVecY type of the knot values
@@ -203,7 +203,7 @@ interpolate_1d_pchip_setup(const EigVecX& xk, const EigVecY& yk) {
  *
  * Computes modified Akima derivatives at the knots via Boost, then delegates to
  * `interpolate_1d_cubic_hermite_setup` so the result can be evaluated with
- * `interpolate_1d_cubic_spline_eval`.
+ * `interpolate_1d_cubic_spline`.
  *
  * @tparam EigVecX type of the knot locations
  * @tparam EigVecY type of the knot values
