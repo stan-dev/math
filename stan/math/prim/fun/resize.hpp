@@ -7,24 +7,38 @@
 namespace stan {
 namespace math {
 namespace internal {
+
 template <typename T, int R, int C>
 inline void resize(Eigen::Matrix<T, R, C>& x, const std::vector<int>& dims,
                    int pos) {
+  if constexpr (R == 1 || C == 1) {
+    if (pos + 1 == static_cast<int>(dims.size())) {
+      if constexpr (R == 1 && C != 1) {
+        x.resize(1, dims[pos]);
+      } else {
+        x.resize(dims[pos], 1);
+      }
+      return;
+    }
+  }
   x.resize(dims[pos], dims[pos + 1]);
 }
 
 template <typename T>
-inline void resize(T /*x*/, const std::vector<int>& /*dims*/, int /*pos*/) {
-  // no-op
+inline void resize(T /*x*/, const std::vector<int>& /*dims*/,
+                   int /*pos*/ = 0) {  // no-op
 }
 
 template <typename T>
-inline void resize(std::vector<T>& x, const std::vector<int>& dims, int pos) {
+inline void resize(std::vector<T>& x, const std::vector<int>& dims,
+                   int pos = 0) {
   x.resize(dims[pos]);
   ++pos;
+
   if (pos >= static_cast<int>(dims.size())) {
     return;  // skips lowest loop to scalar
   }
+
   for (size_t i = 0; i < x.size(); ++i) {
     resize(x[i], dims, pos);
   }
@@ -47,5 +61,4 @@ inline void resize(T& x, std::vector<int> dims) {
 
 }  // namespace math
 }  // namespace stan
-
 #endif

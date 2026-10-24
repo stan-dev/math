@@ -45,7 +45,11 @@ template <typename T, typename Alloc>
 inline void dims(const std::vector<T, Alloc>& x, std::vector<int>& result) {
   result.push_back(x.size());
   if (x.size() > 0) {
-    dims(x[0], result);
+    if constexpr (is_eigen_vector<T>::value) {
+      result.push_back(x[0].size());
+    } else {
+      dims(x[0], result);
+    }
   }
 }
 
