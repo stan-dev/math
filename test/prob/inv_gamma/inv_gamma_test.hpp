@@ -1,7 +1,7 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/math/prim/prob/inv_gamma_lpdf.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -85,9 +85,9 @@ class AgradDistributionsInvGamma : public AgradDistributionTest {
       return stan::math::LOG_ZERO;
 
     using stan::math::lgamma;
-    using stan::math::multiply_log;
-    return -lgamma(alpha) + multiply_log(alpha, beta)
-           - multiply_log(alpha + 1.0, y) - beta / y;
+    using stan::math::lmultiply;
+    return -lgamma(alpha) + lmultiply(alpha, beta) - lmultiply(alpha + 1.0, y)
+           - beta / y;
   }
 };
 
