@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <iterator>
 #include <tuple>
+#include <boost/math/interpolators/pchip.hpp>
+#include <boost/math/interpolators/makima.hpp>
 
 namespace stan {
 namespace math {
@@ -125,6 +127,88 @@ inline return_type_t<T, XkType, YkType, DydxkType> interpolate_1d_cubic_spline_e
   const auto h1 = t * t * (y1 * (3.0 - 2.0 * t) + h * s1 * t_minus_1);
 
   return h0 + h1;
+}
+
+template <typename EigVecX, typename EigVecY,
+          require_all_eigen_col_vector_t<EigVecX, EigVecY>* = nullptr>
+inline std::tuple<
+    Eigen::Matrix<return_type_t<EigVecX>, Eigen::Dynamic, 1>,
+    Eigen::Matrix<return_type_t<EigVecY>, Eigen::Dynamic, 1>,
+    Eigen::Matrix<return_type_t<EigVecX, EigVecY>, Eigen::Dynamic, 1>>
+interpolate_1d_pchip_setup(const EigVecX& xk, const EigVecY& yk) {
+  static constexpr const char* function = "interpolate_1d_pchip_setup";
+  const auto& xk_ref = to_ref(xk);
+  const auto& yk_ref = to_ref(yk);
+
+  check_greater_or_equal(function, "number of knots", xk_ref.size(), 4);
+  check_size_match(function, "xk", xk_ref.size(), "yk", yk_ref.size());
+  check_finite(function, "xk", xk_ref);
+  check_finite(function, "yk", yk_ref);
+  check_ordered(function, "xk", xk_ref);
+
+  using scalar_t = return_type_t<EigVecX, EigVecY>;
+
+  // Convert Eigen vectors to std::vector for Boost compatibility
+  std::vector<scalar_t> xk_vec(xk_ref.data(), xk_ref.data() + xk_ref.size());
+  std::vector<scalar_t> yk_vec(yk_ref.data(), yk_ref.data() + yk_ref.size());
+
+  // Construct a Boost PCHIP interpolator
+  boost::math::interpolators::pchip<std::vector<scalar_t>> pchip_interpolator(std::move(xk_vec), std::move(yk_vec));
+
+  // Compute PCHIP derivatives at each knot
+  std::vector<scalar_t> dydxk_vec;
+  dydxk_vec.reserve(xk_ref.size());
+  for (std::size_t i = 0; i < xk_ref.size(); ++i) {
+    dydxk_vec.push_back(pchip_interpolator.prime(xk_ref[i]));
+  }
+
+  // Convert std::vector derivatives back to Eigen::Matrix
+  Eigen::Matrix<scalar_t, Eigen::Dynamic, 1> dydxk_out =
+      Eigen::Map<Eigen::Matrix<scalar_t, Eigen::Dynamic, 1>>(dydxk_vec.data(), dydxk_vec.size());
+
+  // Return the tuple using interpolate_1d_cubic_hermite_setup
+  return interpolate_1d_cubic_hermite_setup(xk_ref, yk_ref, dydxk_out);
+}
+
+template <typename EigVecX, typename EigVecY,
+          require_all_eigen_col_vector_t<EigVecX, EigVecY>* = nullptr>
+inline std::tuple<
+    Eigen::Matrix<return_type_t<EigVecX>, Eigen::Dynamic, 1>,
+    Eigen::Matrix<return_type_t<EigVecY>, Eigen::Dynamic, 1>,
+    Eigen::Matrix<return_type_t<EigVecX, EigVecY>, Eigen::Dynamic, 1>>
+interpolate_1d_makima_setup(const EigVecX& xk, const EigVecY& yk) {
+  static constexpr const char* function = "interpolate_1d_makima_setup";
+  const auto& xk_ref = to_ref(xk);
+  const auto& yk_ref = to_ref(yk);
+
+  check_greater_or_equal(function, "number of knots", xk_ref.size(), 4);
+  check_size_match(function, "xk", xk_ref.size(), "yk", yk_ref.size());
+  check_finite(function, "xk", xk_ref);
+  check_finite(function, "yk", yk_ref);
+  check_ordered(function, "xk", xk_ref);
+
+  using scalar_t = return_type_t<EigVecX, EigVecY>;
+
+  // Convert Eigen vectors to std::vector for Boost compatibility
+  std::vector<scalar_t> xk_vec(xk_ref.data(), xk_ref.data() + xk_ref.size());
+  std::vector<scalar_t> yk_vec(yk_ref.data(), yk_ref.data() + yk_ref.size());
+
+  // Construct a Boost MAKIMA interpolator
+  boost::math::interpolators::makima<std::vector<scalar_t>> makima_interpolator(std::move(xk_vec), std::move(yk_vec));
+
+  // Compute MAKIMA derivatives at each knot
+  std::vector<scalar_t> dydxk_vec;
+  dydxk_vec.reserve(xk_ref.size());
+  for (std::size_t i = 0; i < xk_ref.size(); ++i) {
+    dydxk_vec.push_back(makima_interpolator.prime(xk_ref[i]));
+  }
+
+  // Convert std::vector derivatives back to Eigen::Matrix
+  Eigen::Matrix<scalar_t, Eigen::Dynamic, 1> dydxk_out =
+      Eigen::Map<Eigen::Matrix<scalar_t, Eigen::Dynamic, 1>>(dydxk_vec.data(), dydxk_vec.size());
+
+  // Return the tuple using interpolate_1d_cubic_hermite_setup
+  return interpolate_1d_cubic_hermite_setup(xk_ref, yk_ref, dydxk_out);
 }
 
 }  // namespace math

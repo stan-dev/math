@@ -1,4 +1,4 @@
-# R script to run a stan trest of the interpolate_1d_cubic_hermite 
+# R script to run a stan trest of the interpolate_1d_cubic_spline 
 # interpolation functionality when supplied as a local clone 
 # of stan math. Probably to not include in the final pull 
 # request. Martin Lindén 2026-10-13
@@ -27,7 +27,7 @@ tibble(curve = "true", x = seq(-0.2, 1.2, 0.01)) |>
 
 mod <- cmdstan_model("hermite_math_test.stan", 
   force_recompile = FALSE,
-  user_header = "stan/math/prim/fun/interpolate_1d_cubic_hermite.hpp",
+  user_header = "stan/math/prim/fun/interpolate_1d_cubic_spline.hpp",
   cpp_options = list( include_paths = "math" )
 )
 
