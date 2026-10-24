@@ -240,7 +240,7 @@
 #include <stan/math/prim/fun/owens_t.hpp>
 #include <stan/math/prim/fun/Phi.hpp>
 #include <stan/math/prim/fun/Phi_approx.hpp>
-#include <stan/math/prim/fun/interpolate_1d_cubic_hermite.hpp>
+#include <stan/math/prim/fun/interpolate_1d_cubic_spline.hpp>
 #include <stan/math/prim/fun/plus.hpp>
 #include <stan/math/prim/fun/poisson_binomial_log_probs.hpp>
 #include <stan/math/prim/fun/polar.hpp>
