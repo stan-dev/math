@@ -15,6 +15,23 @@ namespace stan {
 namespace math {
 
 /**
+ * Storage tuple type for 1D cubic spline interpolants.
+ *
+ * The tuple holds the knot locations, knot values, and derivative values as
+ * owning Eigen column vectors, used as the precomputed representation consumed
+ * by `interpolate_1d_cubic_spline_eval`.
+ *
+ * @tparam XkScalar scalar type of the knot locations
+ * @tparam YkScalar scalar type of the knot values
+ * @tparam DydxkScalar scalar type of the derivative values
+ */
+template <typename XkScalar, typename YkScalar, typename DydxkScalar>
+using interpolate_1d_cubic_spline_store_t
+    = std::tuple<Eigen::Matrix<XkScalar, Eigen::Dynamic, 1>,
+                 Eigen::Matrix<YkScalar, Eigen::Dynamic, 1>,
+                 Eigen::Matrix<DydxkScalar, Eigen::Dynamic, 1>>;
+
+/**
  * Precompute storage for cubic Hermite interpolation.
  *
  * This function validates the input knot locations, values, and derivatives,
@@ -37,10 +54,9 @@ namespace math {
  */
 template <typename EigVecX, typename EigVecY, typename EigVecDyDx,
           require_all_eigen_col_vector_t<EigVecX, EigVecY, EigVecDyDx>* = nullptr>
-inline std::tuple<
-    Eigen::Matrix<return_type_t<EigVecX>, Eigen::Dynamic, 1>,
-    Eigen::Matrix<return_type_t<EigVecY>, Eigen::Dynamic, 1>,
-    Eigen::Matrix<return_type_t<EigVecDyDx>, Eigen::Dynamic, 1>>
+inline interpolate_1d_cubic_spline_store_t<return_type_t<EigVecX>,
+                                           return_type_t<EigVecY>,
+                                           return_type_t<EigVecDyDx>>
 interpolate_1d_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
                             const EigVecDyDx& dydxk) {
   static constexpr const char* function = "interpolate_1d_cubic_hermite_setup";
@@ -80,13 +96,12 @@ interpolate_1d_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
  * @tparam YkType type of the knot values
  * @tparam DydxkType type of the derivative values
  * @param x Location at which to evaluate the interpolation.
- * @param W Tuple returned by `interpolate_1d_cubic_spline_setup` containing (xk, yk, dydxk).
+ * @param W Tuple of (xk, yk, dydxk) from one of the `_setup` functions.
  * @return The interpolated value at `x`.
  * @throw std::invalid_argument if `W` does not have the expected structure
  * @throw std::domain_error if `x` is not finite or is outside of the range
  *   spanned by the knots
  */
-
  template <typename T, typename XkType, typename YkType, typename DydxkType,
           require_stan_scalar_t<T>* = nullptr>
 inline return_type_t<T, XkType, YkType, DydxkType> interpolate_1d_cubic_spline_eval(
@@ -129,12 +144,27 @@ inline return_type_t<T, XkType, YkType, DydxkType> interpolate_1d_cubic_spline_e
   return h0 + h1;
 }
 
+/**
+ * Precompute storage for PCHIP interpolation.
+ *
+ * Computes PCHIP (monotone-preserving) derivatives at the knots via Boost,
+ * then delegates to `interpolate_1d_cubic_hermite_setup` so the result can be
+ * evaluated with `interpolate_1d_cubic_spline_eval`.
+ *
+ * @tparam EigVecX type of the knot locations
+ * @tparam EigVecY type of the knot values
+ * @param xk Strictly increasing knot locations (at least four).
+ * @param yk Interpolation values at the knots.
+ * @return A `(xk, yk, dydxk)` tuple with PCHIP derivatives.
+ * @throw std::invalid_argument if `xk` and `yk` have different sizes
+ * @throw std::domain_error if there are fewer than four knots, any input is
+ *   not finite, or `xk` is not strictly increasing
+ */
 template <typename EigVecX, typename EigVecY,
           require_all_eigen_col_vector_t<EigVecX, EigVecY>* = nullptr>
-inline std::tuple<
-    Eigen::Matrix<return_type_t<EigVecX>, Eigen::Dynamic, 1>,
-    Eigen::Matrix<return_type_t<EigVecY>, Eigen::Dynamic, 1>,
-    Eigen::Matrix<return_type_t<EigVecX, EigVecY>, Eigen::Dynamic, 1>>
+inline interpolate_1d_cubic_spline_store_t<return_type_t<EigVecX>,
+                                           return_type_t<EigVecY>,
+                                           return_type_t<EigVecX, EigVecY>>
 interpolate_1d_pchip_setup(const EigVecX& xk, const EigVecY& yk) {
   static constexpr const char* function = "interpolate_1d_pchip_setup";
   const auto& xk_ref = to_ref(xk);
@@ -148,34 +178,47 @@ interpolate_1d_pchip_setup(const EigVecX& xk, const EigVecY& yk) {
 
   using scalar_t = return_type_t<EigVecX, EigVecY>;
 
-  // Convert Eigen vectors to std::vector for Boost compatibility
+  // Boost takes std::vector containers
   std::vector<scalar_t> xk_vec(xk_ref.data(), xk_ref.data() + xk_ref.size());
   std::vector<scalar_t> yk_vec(yk_ref.data(), yk_ref.data() + yk_ref.size());
+  boost::math::interpolators::pchip<std::vector<scalar_t>> pchip_interpolator(
+      std::move(xk_vec), std::move(yk_vec));
 
-  // Construct a Boost PCHIP interpolator
-  boost::math::interpolators::pchip<std::vector<scalar_t>> pchip_interpolator(std::move(xk_vec), std::move(yk_vec));
-
-  // Compute PCHIP derivatives at each knot
+  // PCHIP derivative at each knot
   std::vector<scalar_t> dydxk_vec;
   dydxk_vec.reserve(xk_ref.size());
   for (std::size_t i = 0; i < xk_ref.size(); ++i) {
     dydxk_vec.push_back(pchip_interpolator.prime(xk_ref[i]));
   }
+  Eigen::Matrix<scalar_t, Eigen::Dynamic, 1> dydxk_out
+      = Eigen::Map<Eigen::Matrix<scalar_t, Eigen::Dynamic, 1>>(
+          dydxk_vec.data(), dydxk_vec.size());
 
-  // Convert std::vector derivatives back to Eigen::Matrix
-  Eigen::Matrix<scalar_t, Eigen::Dynamic, 1> dydxk_out =
-      Eigen::Map<Eigen::Matrix<scalar_t, Eigen::Dynamic, 1>>(dydxk_vec.data(), dydxk_vec.size());
-
-  // Return the tuple using interpolate_1d_cubic_hermite_setup
+  // Reuse the cubic Hermite storage/eval path
   return interpolate_1d_cubic_hermite_setup(xk_ref, yk_ref, dydxk_out);
 }
 
+/**
+ * Precompute storage for MAKIMA interpolation.
+ *
+ * Computes modified Akima derivatives at the knots via Boost, then delegates to
+ * `interpolate_1d_cubic_hermite_setup` so the result can be evaluated with
+ * `interpolate_1d_cubic_spline_eval`.
+ *
+ * @tparam EigVecX type of the knot locations
+ * @tparam EigVecY type of the knot values
+ * @param xk Strictly increasing knot locations (at least four).
+ * @param yk Interpolation values at the knots.
+ * @return A `(xk, yk, dydxk)` tuple with MAKIMA derivatives.
+ * @throw std::invalid_argument if `xk` and `yk` have different sizes
+ * @throw std::domain_error if there are fewer than four knots, any input is
+ *   not finite, or `xk` is not strictly increasing
+ */
 template <typename EigVecX, typename EigVecY,
           require_all_eigen_col_vector_t<EigVecX, EigVecY>* = nullptr>
-inline std::tuple<
-    Eigen::Matrix<return_type_t<EigVecX>, Eigen::Dynamic, 1>,
-    Eigen::Matrix<return_type_t<EigVecY>, Eigen::Dynamic, 1>,
-    Eigen::Matrix<return_type_t<EigVecX, EigVecY>, Eigen::Dynamic, 1>>
+inline interpolate_1d_cubic_spline_store_t<return_type_t<EigVecX>,
+                                           return_type_t<EigVecY>,
+                                           return_type_t<EigVecX, EigVecY>>
 interpolate_1d_makima_setup(const EigVecX& xk, const EigVecY& yk) {
   static constexpr const char* function = "interpolate_1d_makima_setup";
   const auto& xk_ref = to_ref(xk);
@@ -189,25 +232,23 @@ interpolate_1d_makima_setup(const EigVecX& xk, const EigVecY& yk) {
 
   using scalar_t = return_type_t<EigVecX, EigVecY>;
 
-  // Convert Eigen vectors to std::vector for Boost compatibility
+  // Boost takes std::vector containers
   std::vector<scalar_t> xk_vec(xk_ref.data(), xk_ref.data() + xk_ref.size());
   std::vector<scalar_t> yk_vec(yk_ref.data(), yk_ref.data() + yk_ref.size());
+  boost::math::interpolators::makima<std::vector<scalar_t>> makima_interpolator(
+      std::move(xk_vec), std::move(yk_vec));
 
-  // Construct a Boost MAKIMA interpolator
-  boost::math::interpolators::makima<std::vector<scalar_t>> makima_interpolator(std::move(xk_vec), std::move(yk_vec));
-
-  // Compute MAKIMA derivatives at each knot
+  // MAKIMA derivative at each knot
   std::vector<scalar_t> dydxk_vec;
   dydxk_vec.reserve(xk_ref.size());
   for (std::size_t i = 0; i < xk_ref.size(); ++i) {
     dydxk_vec.push_back(makima_interpolator.prime(xk_ref[i]));
   }
+  Eigen::Matrix<scalar_t, Eigen::Dynamic, 1> dydxk_out
+      = Eigen::Map<Eigen::Matrix<scalar_t, Eigen::Dynamic, 1>>(
+          dydxk_vec.data(), dydxk_vec.size());
 
-  // Convert std::vector derivatives back to Eigen::Matrix
-  Eigen::Matrix<scalar_t, Eigen::Dynamic, 1> dydxk_out =
-      Eigen::Map<Eigen::Matrix<scalar_t, Eigen::Dynamic, 1>>(dydxk_vec.data(), dydxk_vec.size());
-
-  // Return the tuple using interpolate_1d_cubic_hermite_setup
+  // Reuse the cubic Hermite storage/eval path
   return interpolate_1d_cubic_hermite_setup(xk_ref, yk_ref, dydxk_out);
 }
 
