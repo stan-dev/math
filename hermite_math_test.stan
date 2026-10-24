@@ -1,6 +1,6 @@
 functions {
   tuple(matrix, vector) interpolate_1d_cubic_hermite_setup(vector xk, vector yk, vector dydxk);
-  real interpolate_1d_cubic_hermite_eval(real x, tuple(matrix, vector) W);
+  real interpolate_1d_cubic_spline_eval(real x, tuple(matrix, vector) W);
 }
 data {
   int<lower=2> K;
@@ -19,6 +19,6 @@ generated quantities {
   vector[N_eval] y_eval;
   
   for (n in 1 : N_eval) {
-    y_eval[n] = interpolate_1d_cubic_hermite_eval(x_eval[n], W);
+    y_eval[n] = interpolate_1d_cubic_spline_eval(x_eval[n], W);
   }
 }

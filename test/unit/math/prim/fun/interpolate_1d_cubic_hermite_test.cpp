@@ -88,7 +88,7 @@ TEST(MathPrimFun, interp1CubicHermiteSetupStorage) {
 /**
  * TEST: interp1CubicHermiteEval
  * 
- * Verifies that interpolate_1d_cubic_hermite_eval correctly evaluates the cubic
+ * Verifies that interpolate_1d_cubic_spline_eval correctly evaluates the cubic
  * Hermite interpolant at various locations using the standard Hermite basis
  * functions:
  *   y(x) = (1-t)^2 * (y0*(1+2*t) + h*s0*t) + t^2 * (y1*(3-2*t) + h*s1*(t-1))
@@ -111,7 +111,7 @@ TEST(MathPrimFun, interp1CubicHermiteEval) {
   {
     double x = 0.0;
     double expected = boost_interp(x);
-    double computed = stan::math::interpolate_1d_cubic_hermite_eval(x, W);
+    double computed = stan::math::interpolate_1d_cubic_spline_eval(x, W);
     EXPECT_NEAR(expected, computed, 1e-10);
   }
 
@@ -119,7 +119,7 @@ TEST(MathPrimFun, interp1CubicHermiteEval) {
   {
     double x = 4.0;
     double expected = boost_interp(x);
-    double computed = stan::math::interpolate_1d_cubic_hermite_eval(x, W);
+    double computed = stan::math::interpolate_1d_cubic_spline_eval(x, W);
     EXPECT_NEAR(expected, computed, 1e-10);
   }
 
@@ -127,7 +127,7 @@ TEST(MathPrimFun, interp1CubicHermiteEval) {
   {
     double x = 0.5;
     double expected = boost_interp(x);
-    double computed = stan::math::interpolate_1d_cubic_hermite_eval(x, W);
+    double computed = stan::math::interpolate_1d_cubic_spline_eval(x, W);
     EXPECT_NEAR(expected, computed, 1e-10);
   }
 
@@ -135,7 +135,7 @@ TEST(MathPrimFun, interp1CubicHermiteEval) {
   {
     double x = 1.5;
     double expected = boost_interp(x);
-    double computed = stan::math::interpolate_1d_cubic_hermite_eval(x, W);
+    double computed = stan::math::interpolate_1d_cubic_spline_eval(x, W);
     EXPECT_NEAR(expected, computed, 1e-10);
   }
 
@@ -143,7 +143,7 @@ TEST(MathPrimFun, interp1CubicHermiteEval) {
   {
     double x = 3.0;
     double expected = boost_interp(x);
-    double computed = stan::math::interpolate_1d_cubic_hermite_eval(x, W);
+    double computed = stan::math::interpolate_1d_cubic_spline_eval(x, W);
     EXPECT_NEAR(expected, computed, 1e-10);
   }
 
@@ -151,7 +151,7 @@ TEST(MathPrimFun, interp1CubicHermiteEval) {
   {
     double x = 1e-6;
     double expected = boost_interp(x);
-    double computed = stan::math::interpolate_1d_cubic_hermite_eval(x, W);
+    double computed = stan::math::interpolate_1d_cubic_spline_eval(x, W);
     EXPECT_NEAR(expected, computed, 1e-10);
   }
 
@@ -159,7 +159,7 @@ TEST(MathPrimFun, interp1CubicHermiteEval) {
   {
     double x = 4-1e-6;
     double expected = boost_interp(x);
-    double computed = stan::math::interpolate_1d_cubic_hermite_eval(x, W);
+    double computed = stan::math::interpolate_1d_cubic_spline_eval(x, W);
     EXPECT_NEAR(expected, computed, 1e-10);
   }
 }
@@ -180,7 +180,7 @@ TEST(MathPrimFun, interp1CubicHermiteEvalCloseSpacing) {
   double test_points[] = {0.0, 5e-7, 1e-6, 1.0};
   for (double x : test_points) {
     double expected = boost_interp(x);
-    double computed = stan::math::interpolate_1d_cubic_hermite_eval(x, W);
+    double computed = stan::math::interpolate_1d_cubic_spline_eval(x, W);
     EXPECT_NEAR(expected, computed, 1e-8) << "Failed at x = " << x;
   }
 }
@@ -202,7 +202,7 @@ TEST(MathPrimFun, interp1CubicHermiteEvalMinimalKnots) {
   double test_points[] = {0.0, 0.5, 1.0};
   for (double x_val : test_points) {
     double expected = boost_interp(x_val);
-    double computed = stan::math::interpolate_1d_cubic_hermite_eval(x_val, W);
+    double computed = stan::math::interpolate_1d_cubic_spline_eval(x_val, W);
     EXPECT_NEAR(expected, computed, 1e-10);
   }
 }
@@ -224,7 +224,7 @@ TEST(MathPrimFun, interp1CubicHermiteEvalNegativeDomainAndDerivatives) {
   
   for (double x_val : test_points) {
     double expected = boost_interp(x_val);
-    double computed = stan::math::interpolate_1d_cubic_hermite_eval(x_val, W);
+    double computed = stan::math::interpolate_1d_cubic_spline_eval(x_val, W);
     EXPECT_NEAR(expected, computed, 1e-10);
   }
 }
@@ -244,7 +244,7 @@ TEST(MathPrimFun, interp1CubicHermiteEvalLargeDerivatives) {
 
   double x_val = 0.5;
   double expected = boost_interp(x_val);
-  double computed = stan::math::interpolate_1d_cubic_hermite_eval(x_val, W);
+  double computed = stan::math::interpolate_1d_cubic_spline_eval(x_val, W);
   EXPECT_NEAR(expected, computed, 1e-9);
 }
 
@@ -265,7 +265,7 @@ TEST(MathPrimFun, interp1CubicHermiteEvalAtKnots) {
   // Verify that evaluation at each knot returns the knot value
   for (Eigen::Index i = 0; i < kTestX.size(); ++i) {
     double expected_y = kTestY(i);
-    double computed_y = stan::math::interpolate_1d_cubic_hermite_eval(kTestX(i), W);
+    double computed_y = stan::math::interpolate_1d_cubic_spline_eval(kTestX(i), W);
     EXPECT_NEAR(expected_y, computed_y, 1e-10) << "Failed at knot " << i;
   }
 }
@@ -357,23 +357,23 @@ TEST(MathPrimFun, interp1CubicHermiteSetupThrowsDomainErrors) {
 /**
  * TEST: interp1CubicHermiteEvalThrows
  * 
- * Verifies that interpolate_1d_cubic_hermite_eval throws std::domain_error
+ * Verifies that interpolate_1d_cubic_spline_eval throws std::domain_error
  * for invalid evaluation points.
  */
 TEST(MathPrimFun, interp1CubicHermiteEvalThrows) {
   auto W = stan::math::interpolate_1d_cubic_hermite_setup(kTestX, kTestY, kTestDydx);
 
   // Out of bounds (below)
-  EXPECT_THROW(stan::math::interpolate_1d_cubic_hermite_eval(-1.0, W), std::domain_error);
+  EXPECT_THROW(stan::math::interpolate_1d_cubic_spline_eval(-1.0, W), std::domain_error);
 
   // Out of bounds (above)
-  EXPECT_THROW(stan::math::interpolate_1d_cubic_hermite_eval(5.0, W), std::domain_error);
+  EXPECT_THROW(stan::math::interpolate_1d_cubic_spline_eval(5.0, W), std::domain_error);
 
   // Non-finite: NaN
-  EXPECT_THROW(stan::math::interpolate_1d_cubic_hermite_eval(std::nan(""), W), std::domain_error);
+  EXPECT_THROW(stan::math::interpolate_1d_cubic_spline_eval(std::nan(""), W), std::domain_error);
 
   // Non-finite: infinity
-  EXPECT_THROW(stan::math::interpolate_1d_cubic_hermite_eval(std::numeric_limits<double>::infinity(), W),
+  EXPECT_THROW(stan::math::interpolate_1d_cubic_spline_eval(std::numeric_limits<double>::infinity(), W),
                std::domain_error);
 }
 
@@ -393,13 +393,13 @@ TEST(MathPrimFun, interp1CubicHermiteEvalBoundaryConditions) {
   // At lower boundary
   double x_lower = kTestX(0);
   double expected_lower = boost_interp(x_lower);
-  double computed_lower = stan::math::interpolate_1d_cubic_hermite_eval(x_lower, W);
+  double computed_lower = stan::math::interpolate_1d_cubic_spline_eval(x_lower, W);
   EXPECT_NEAR(expected_lower, computed_lower, 1e-10);
 
   // At upper boundary
   double x_upper = kTestX(kTestX.size() - 1);
   double expected_upper = boost_interp(x_upper);
-  double computed_upper = stan::math::interpolate_1d_cubic_hermite_eval(x_upper, W);
+  double computed_upper = stan::math::interpolate_1d_cubic_spline_eval(x_upper, W);
   EXPECT_NEAR(expected_upper, computed_upper, 1e-10);
 }
 
@@ -421,32 +421,32 @@ TEST(MathPrimFun, interp1CubicHermiteEvalVerySmallInterval) {
   // Test at all knot points
   for (Eigen::Index i = 0; i < x.size(); ++i) {
     double expected = boost_interp(x(i));
-    double computed = stan::math::interpolate_1d_cubic_hermite_eval(x(i), W);
+    double computed = stan::math::interpolate_1d_cubic_spline_eval(x(i), W);
     EXPECT_NEAR(expected, computed, 1e-8) << "Failed at knot " << i;
   }
 
   // Test at intermediate point in first tiny interval [0, 1e-6]
   double x_mid1 = 5e-7;
   double expected_mid1 = boost_interp(x_mid1);
-  double computed_mid1 = stan::math::interpolate_1d_cubic_hermite_eval(x_mid1, W);
+  double computed_mid1 = stan::math::interpolate_1d_cubic_spline_eval(x_mid1, W);
   EXPECT_NEAR(expected_mid1, computed_mid1, 1e-8) << "Failed at x = 5e-7";
 
   // Test at intermediate point in second tiny interval [1e-6, 2e-6]
   double x_mid2 = 1.5e-6;
   double expected_mid2 = boost_interp(x_mid2);
-  double computed_mid2 = stan::math::interpolate_1d_cubic_hermite_eval(x_mid2, W);
+  double computed_mid2 = stan::math::interpolate_1d_cubic_spline_eval(x_mid2, W);
   EXPECT_NEAR(expected_mid2, computed_mid2, 1e-8) << "Failed at x = 1.5e-6";
 
   // Test near beginning of very tight intervals
   double x_near_start = 1e-8;  // Close to but not at x(0)
   double expected_near = boost_interp(x_near_start);
-  double computed_near = stan::math::interpolate_1d_cubic_hermite_eval(x_near_start, W);
+  double computed_near = stan::math::interpolate_1d_cubic_spline_eval(x_near_start, W);
   EXPECT_NEAR(expected_near, computed_near, 1e-8) << "Failed at x = 1e-8";
 
   // Test at quarter point in first interval
   double x_quarter = 2.5e-7;
   double expected_quarter = boost_interp(x_quarter);
-  double computed_quarter = stan::math::interpolate_1d_cubic_hermite_eval(x_quarter, W);
+  double computed_quarter = stan::math::interpolate_1d_cubic_spline_eval(x_quarter, W);
   EXPECT_NEAR(expected_quarter, computed_quarter, 1e-8) << "Failed at x = 2.5e-7";
 }
 
@@ -466,7 +466,7 @@ TEST(MathPrimFun, interp1CubicHermiteEvalZeroDerivatives) {
 
   double x_val = 0.5;
   double expected = boost_interp(x_val);
-  double computed = stan::math::interpolate_1d_cubic_hermite_eval(x_val, W);
+  double computed = stan::math::interpolate_1d_cubic_spline_eval(x_val, W);
   EXPECT_NEAR(expected, computed, 1e-10);
 }
 
@@ -487,7 +487,7 @@ TEST(MathPrimFun, interp1CubicHermiteEvalMixedSignDerivatives) {
   
   for (double x_val : test_points) {
     double expected = boost_interp(x_val);
-    double computed = stan::math::interpolate_1d_cubic_hermite_eval(x_val, W);
+    double computed = stan::math::interpolate_1d_cubic_spline_eval(x_val, W);
     EXPECT_NEAR(expected, computed, 1e-10) << "Failed at x = " << x_val;
   }
 }
