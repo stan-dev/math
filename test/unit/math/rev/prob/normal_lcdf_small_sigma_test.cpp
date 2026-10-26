@@ -35,7 +35,7 @@ const std::vector<double> sigmas{1.0, 1e-300, 1e-308, 1e-310, 4.9e-324};
 
 }  // namespace
 
-TEST(ProbNormalLcdf, median_with_subnormal_sigma) {
+TEST_F(AgradRev, ProbNormalLcdf_median_with_subnormal_sigma) {
   for (double s : sigmas) {
     expect_median(
         [](auto& y, auto& mu, auto& sigma) {
@@ -50,7 +50,7 @@ TEST(ProbNormalLcdf, median_with_subnormal_sigma) {
   }
 }
 
-TEST(ProbLognormalLcdf, median_with_subnormal_sigma) {
+TEST_F(AgradRev, ProbLognormalLcdf_median_with_subnormal_sigma) {
   for (double s : sigmas) {
     expect_median(
         [](auto& y, auto& mu, auto& sigma) {
@@ -65,7 +65,7 @@ TEST(ProbLognormalLcdf, median_with_subnormal_sigma) {
   }
 }
 
-TEST(ProbNormalLcdf, median_with_subnormal_sigma_vector) {
+TEST_F(AgradRev, ProbNormalLcdf_median_with_subnormal_sigma_vector) {
   using stan::math::var;
   Eigen::Matrix<var, Eigen::Dynamic, 1> sigma(3);
   sigma << 1.0, 1e-310, 2.0;
