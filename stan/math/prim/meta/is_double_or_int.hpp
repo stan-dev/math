@@ -2,8 +2,6 @@
 #define STAN_MATH_PRIM_META_IS_DOUBLE_OR_INT_HPP
 
 #include <stan/math/prim/meta/require_helpers.hpp>
-#include <stan/math/prim/meta/scalar_type.hpp>
-#include <stan/math/prim/meta/value_type.hpp>
 #include <type_traits>
 
 namespace stan {

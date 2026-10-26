@@ -2,7 +2,6 @@
 #include <stan/math/memory/stack_alloc.hpp>
 #include <stdlib.h>
 #include <cmath>
-#include <utility>
 #include <vector>
 
 TEST(MemoryStackAlloc, allocArray) {

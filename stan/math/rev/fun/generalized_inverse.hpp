@@ -4,8 +4,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/inverse.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/add_diag.hpp>
 #include <stan/math/prim/fun/generalized_inverse.hpp>
 
 namespace stan {

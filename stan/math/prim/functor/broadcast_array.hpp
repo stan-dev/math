@@ -3,13 +3,9 @@
 
 #include <stan/math/prim/functor/broadcast_array_fwd.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
-#include <stan/math/prim/meta/is_var_or_arithmetic.hpp>
 #include <stan/math/prim/meta/promote_scalar_type.hpp>
-#include <stan/math/prim/meta/ref_type.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <functional>
-#include <stdexcept>
 
 namespace stan {
 namespace math {

@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_ERR_CHECK_GREATER_OR_EQUAL_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err/check_matching_dims.hpp>
 #include <stan/math/prim/err/make_iter_name.hpp>
 #include <stan/math/prim/err/throw_domain_error_vec.hpp>
 #include <stan/math/prim/err/throw_domain_error_mat.hpp>

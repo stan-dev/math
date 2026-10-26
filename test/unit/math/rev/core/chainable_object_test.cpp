@@ -1,6 +1,5 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/util.hpp>
 #include <test/unit/math/rev/util.hpp>
 
 class ChainableObjectTest {

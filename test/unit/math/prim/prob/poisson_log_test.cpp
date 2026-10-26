@@ -2,9 +2,6 @@
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 #include <test/unit/math/prim/prob/VectorIntRNGTestRig.hpp>
 #include <gtest/gtest.h>
-#include <boost/math/distributions.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <limits>
 #include <vector>
 
 class PoissonLogTestRig : public VectorIntRNGTestRig {

@@ -3,14 +3,12 @@
 #ifdef STAN_MPI
 
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
 #include <test/unit/math/prim/functor/hard_work.hpp>
 #include <test/unit/math/prim/functor/faulty_functor.hpp>
 
-#include <iostream>
 #include <vector>
 
 STAN_REGISTER_MAP_RECT(0, hard_work)

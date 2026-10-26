@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_FWD_CONSTRAINT_UNIT_VECTOR_CONSTRAIN_HPP
 #define STAN_MATH_FWD_CONSTRAINT_UNIT_VECTOR_CONSTRAIN_HPP
 
-#include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/tcrossprod.hpp>
 #include <stan/math/fwd/fun/sqrt.hpp>
 #include <stan/math/prim/fun/divide.hpp>

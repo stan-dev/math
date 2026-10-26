@@ -6,7 +6,6 @@
 #include <stan/math/rev/fun/to_arena.hpp>
 #include <stan/math/prim/err/check_size_match.hpp>
 #include <stan/math/prim/fun/zip_index.hpp>
-#include <vector>
 
 namespace stan::math {
 

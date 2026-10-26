@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/mix/meta.hpp>
-#include <stan/math/rev/fun/grad.hpp>
 #include <stan/math/prim/functor/conditional_copy_and_promote.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/mix/functor/hessian_block_diag.hpp>

@@ -5,8 +5,6 @@
 #include <stan/math/mix/functor/gradient_dot_vector.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stdexcept>
-#include <vector>
 
 namespace stan {
 namespace math {

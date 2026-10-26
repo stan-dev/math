@@ -5,12 +5,9 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/inv_sqrt.hpp>
-#include <stan/math/rev/fun/sqrt.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/sd.hpp>
 #include <cmath>
-#include <vector>
 
 namespace stan {
 namespace math {

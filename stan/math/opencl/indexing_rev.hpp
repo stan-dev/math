@@ -5,7 +5,6 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/kernels/indexing_rev.hpp>
-#include <stan/math/opencl/kernels/add.hpp>
 
 namespace stan {
 namespace math {

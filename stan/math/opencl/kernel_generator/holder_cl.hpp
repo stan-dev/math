@@ -3,15 +3,10 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/opencl/matrix_cl_view.hpp>
-#include <stan/math/opencl/kernel_generator/type_str.hpp>
-#include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <memory>
-#include <string>
 #include <type_traits>
-#include <set>
 #include <tuple>
 #include <utility>
 

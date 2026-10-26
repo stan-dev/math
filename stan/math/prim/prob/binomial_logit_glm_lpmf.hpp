@@ -6,11 +6,8 @@
 #include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
-#include <stan/math/prim/fun/isfinite.hpp>
-#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/fun/max.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>

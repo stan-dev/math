@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_REV_FUN_GAMMA_P_HPP
 #define STAN_MATH_REV_FUN_GAMMA_P_HPP
 
-#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/lgamma.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/grad_reg_lower_inc_gamma.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>

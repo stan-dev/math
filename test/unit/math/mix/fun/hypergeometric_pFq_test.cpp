@@ -1,5 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <limits>
 
 TEST(mathMixScalFun, hyper_2f2) {
   using stan::math::to_array_1d;

@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_META_IS_VAR_DENSE_DYNAMIC
 
 #include <stan/math/prim/meta/conjunction.hpp>
-#include <stan/math/prim/meta/disjunction.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
 #include <stan/math/prim/meta/is_eigen_dense_dynamic.hpp>
 

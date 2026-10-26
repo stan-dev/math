@@ -3,16 +3,12 @@
 
 #include <stan/math/rev/core/recover_memory.hpp>
 #include <stan/math/rev/meta/is_var.hpp>
-#include <stan/math/prim/meta/require_helpers.hpp>
 #include <stan/math/prim/err/check_flag_sundials.hpp>
 #include <idas/idas.h>
 #include <nvector/nvector_serial.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
 #include <sundials/sundials_context.h>
-#include <ostream>
-#include <vector>
-#include <algorithm>
 #include <type_traits>
 
 namespace stan {

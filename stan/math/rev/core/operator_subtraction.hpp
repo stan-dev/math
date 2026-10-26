@@ -3,12 +3,8 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/rev/core/callback_vari.hpp>
-#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
-#include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/is_any_nan.hpp>
 
 namespace stan {
 namespace math {

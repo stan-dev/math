@@ -1,7 +1,5 @@
 // Arguments: Doubles
 #include <stan/math/prim/prob/std_normal_lpdf.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/sqrt.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

@@ -1,8 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/util.hpp>
-#include <test/unit/math/prim/util.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 
 template <int N, int M>
 inline void test_scale_matrix_exp_multiply() {

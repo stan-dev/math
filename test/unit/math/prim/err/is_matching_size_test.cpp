@@ -1,6 +1,5 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 #include <vector>
 
 TEST(ErrorHandling, isMatchingSize) {

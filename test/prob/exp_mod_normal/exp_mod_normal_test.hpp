@@ -1,8 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
 #include <stan/math/prim/prob/exp_mod_normal_lpdf.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/erfc.hpp>
-#include <stan/math/prim/fun/sqrt.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

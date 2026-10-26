@@ -1,6 +1,5 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
-#include <boost/math/distributions.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
 #include <vector>

@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_CORE_PRINT_STACK_HPP
 
 #include <stan/math/rev/core/chainablestack.hpp>
-#include <stan/math/rev/core/vari.hpp>
 #include <ostream>
 
 namespace stan {

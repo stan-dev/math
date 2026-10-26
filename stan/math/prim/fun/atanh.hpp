@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_FUN_ATANH_HPP
 #define STAN_MATH_PRIM_FUN_ATANH_HPP
 
-#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/copysign.hpp>

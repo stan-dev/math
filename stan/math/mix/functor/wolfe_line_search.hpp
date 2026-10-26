@@ -3,16 +3,9 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
-#include <stan/math/mix/meta.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/fun/quad_form_diag.hpp>
-#include <stan/math/prim/functor/iter_tuple_nested.hpp>
 #include <algorithm>
 #include <cmath>
 #include <limits>
-#include <tuple>
-#include <type_traits>
 
 namespace stan::math {
 

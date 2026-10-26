@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_FUN_COLUMNS_DOT_SELF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 
 namespace stan {
 namespace math {

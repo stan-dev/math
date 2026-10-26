@@ -7,7 +7,6 @@
 
 #include <stdexcept>
 #include <vector>
-#include <thread>
 #include <future>
 
 using Eigen::Dynamic;

@@ -10,7 +10,6 @@
 #include <stan/math/prim/functor/integrate_1d_gauss_kronrod.hpp>
 #include <cmath>
 #include <ostream>
-#include <vector>
 
 namespace stan {
 namespace math {

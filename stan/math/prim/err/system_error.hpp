@@ -1,10 +1,7 @@
 #ifndef STAN_MATH_PRIM_ERR_SYSTEM_ERROR_HPP
 #define STAN_MATH_PRIM_ERR_SYSTEM_ERROR_HPP
 
-#include <stan/math/prim/meta.hpp>
-#include <typeinfo>
 #include <sstream>
-#include <stdexcept>
 #include <system_error>
 namespace stan {
 namespace math {

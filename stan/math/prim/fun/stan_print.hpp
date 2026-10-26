@@ -2,9 +2,7 @@
 #define STAN_MATH_PRIM_FUN_STAN_PRINT_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/functor/for_each.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {

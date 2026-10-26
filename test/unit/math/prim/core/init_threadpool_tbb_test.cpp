@@ -1,7 +1,6 @@
 #include <stan/math/prim/core.hpp>
 
 #include <gtest/gtest.h>
-#include <test/unit/util.hpp>
 #include <test/unit/math/prim/functor/utils_threads.hpp>
 
 TEST(intel_tbb_new_init, check_status) {

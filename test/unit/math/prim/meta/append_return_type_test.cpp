@@ -1,7 +1,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
-#include <vector>
 
 TEST(MathMetaPrim, test_append_return_type) {
   EXPECT_SAME_TYPE(int, stan::math::append_return_type<int, int>::type);

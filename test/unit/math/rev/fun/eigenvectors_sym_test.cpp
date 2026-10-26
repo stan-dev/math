@@ -1,9 +1,6 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
-#include <stan/math/prim.hpp>
 #include <stan/math/rev/fun/eigenvectors_sym.hpp>
-#include <stan/math/rev/fun/sum.hpp>
-#include <stan/math/rev/fun/log.hpp>
 #include <gtest/gtest.h>
 
 TEST_F(AgradRev, Rev_eigenvectorsSym) {

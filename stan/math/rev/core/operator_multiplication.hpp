@@ -5,14 +5,9 @@
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/operator_addition.hpp>
 #include <stan/math/rev/core/operator_subtraction.hpp>
-#include <stan/math/rev/core/operator_plus_equal.hpp>
-#include <stan/math/rev/core/operator_minus_equal.hpp>
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
 #include <stan/math/prim/core/operator_multiplication.hpp>
-#include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/is_any_nan.hpp>
-#include <stan/math/prim/fun/isinf.hpp>
 #include <stan/math/prim/fun/isnan.hpp>
 
 namespace stan {

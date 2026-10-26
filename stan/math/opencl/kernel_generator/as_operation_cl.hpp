@@ -3,10 +3,8 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_generator/assignment_ops.hpp>
-#include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
-#include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <type_traits>
 

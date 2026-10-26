@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <functional>
 #include <tuple>
 #include <utility>
 

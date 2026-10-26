@@ -3,7 +3,6 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
-#include <vector>
 
 auto student_t_lpdf2_functor
     = [](const auto& y, const auto& nu, const auto& mu, const auto& sigma) {

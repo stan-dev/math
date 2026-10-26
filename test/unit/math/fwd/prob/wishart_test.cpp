@@ -1,8 +1,5 @@
 #include <stan/math/fwd.hpp>
 #include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/math/special_functions/digamma.hpp>
-#include <boost/math/distributions.hpp>
 
 TEST(ProbDistributionsWishart, fvar_double) {
   using Eigen::Dynamic;

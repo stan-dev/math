@@ -2,16 +2,13 @@
 #define STAN_MATH_REV_FUNCTOR_SOLVE_NEWTON_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/functor/algebra_system.hpp>
 #include <stan/math/rev/functor/kinsol_solve.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/algebra_solver_adapter.hpp>
 #include <stan/math/prim/functor/apply.hpp>
-#include <unsupported/Eigen/NonLinearOptimization>
 #include <iostream>
-#include <string>
 #include <vector>
 
 namespace stan {

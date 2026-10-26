@@ -3,7 +3,6 @@
 #include <test/unit/math/rev/prob/test_gradients.hpp>
 #include <test/unit/math/rev/util.hpp>
 #include <boost/random/mersenne_twister.hpp>
-#include <boost/math/distributions.hpp>
 #include <gtest/gtest.h>
 
 TEST_F(AgradRev, ProbDistributionsLkjCorr_var) {

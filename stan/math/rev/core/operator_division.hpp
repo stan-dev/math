@@ -1,11 +1,8 @@
 #ifndef STAN_MATH_REV_CORE_OPERATOR_DIVISION_HPP
 #define STAN_MATH_REV_CORE_OPERATOR_DIVISION_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/core/operator_division.hpp>
-#include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/is_any_nan.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/std_complex.hpp>
@@ -15,7 +12,6 @@
 #include <stan/math/rev/fun/to_arena.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <complex>
-#include <type_traits>
 
 namespace stan {
 namespace math {

@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_PRIM_FUN_IS_NONPOSITIVE_INTEGER_HPP
 #define STAN_MATH_PRIM_FUN_IS_NONPOSITIVE_INTEGER_HPP
 
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/floor.hpp>
 #include <cmath>
 
 namespace stan {

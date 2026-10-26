@@ -2,7 +2,6 @@
 #define STAN_MATH_MIX_FUNCTOR_BARZILAI_BORWEIN_STEP_SIZE_HPP
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <algorithm>
-#include <numeric>
 #include <cmath>
 
 namespace stan::math::internal {

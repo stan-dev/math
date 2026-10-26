@@ -2,11 +2,7 @@
 #include <test/unit/math/prim/functor/reduce_sum_util.hpp>
 #include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
-#include <algorithm>
-#include <sstream>
-#include <tuple>
 #include <vector>
-#include <set>
 
 TEST_F(AgradRev, StanMathRev_reduce_sum_no_args) {
   using stan::math::var;

@@ -1,7 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 
 TEST(prob_transform, ub_constrain) {
   double x = -1.0;

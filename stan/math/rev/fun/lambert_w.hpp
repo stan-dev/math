@@ -5,7 +5,6 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/fun/exp.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/boost_policy.hpp>
 #include <stan/math/prim/fun/lambert_w.hpp>
 
 namespace stan {

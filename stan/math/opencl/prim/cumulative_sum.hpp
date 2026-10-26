@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_OPENCL_PRIM_CUMULATIVE_SUM_HPP
 #define STAN_MATH_OPENCL_PRIM_CUMULATIVE_SUM_HPP
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/prim/size.hpp>
 #include <stan/math/opencl/kernels/cumulative_sum.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>

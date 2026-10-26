@@ -5,7 +5,6 @@
 #include <stan/math/prim/fun/to_vector.hpp>
 #include <stan/math/prim/fun/to_array_1d.hpp>
 #include <complex>
-#include <string>
 #include <vector>
 
 namespace stan {

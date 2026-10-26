@@ -1,7 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/require_util.hpp>
 #include <gtest/gtest.h>
-#include <type_traits>
 #include <string>
 
 TEST(requires_mix_scal, autodiff_mix_test) {

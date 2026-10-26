@@ -1,5 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <limits>
 
 TEST(mathMixScalFun, fma_matrix) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {

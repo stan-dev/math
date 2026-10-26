@@ -1,7 +1,6 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/math/prim/prob/normal_cdf.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/erf.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

@@ -1,7 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 
 TEST(MathMatrixCL, size_prim) {
   using stan::math::matrix_cl;

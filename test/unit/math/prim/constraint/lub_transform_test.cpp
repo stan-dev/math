@@ -1,7 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 
 TEST(prob_transform, lub) {
   EXPECT_FLOAT_EQ(2.0 + (5.0 - 2.0) * stan::math::inv_logit(-1.0),

@@ -2,7 +2,6 @@
 #define TEST_UNIT_MATH_REV_FUN_UTIL_HPP
 
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <vector>
 
 // Returns a matrix with the contents of a

@@ -3,13 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/row.hpp>
-#include <stan/math/prim/fun/col.hpp>
-#include <stan/math/prim/fun/transpose.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <vector>
 

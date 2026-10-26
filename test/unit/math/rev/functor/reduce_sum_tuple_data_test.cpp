@@ -1,7 +1,6 @@
 #include <stan/math.hpp>
 #include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
-#include <tuple>
 #include <vector>
 
 namespace {

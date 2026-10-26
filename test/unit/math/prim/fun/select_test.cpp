@@ -2,7 +2,6 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
-#include <limits>
 
 TEST(MathFunctions, select_scalar_scalar) {
   using stan::math::select;

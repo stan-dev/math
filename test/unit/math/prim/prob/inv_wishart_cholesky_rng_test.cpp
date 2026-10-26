@@ -1,10 +1,8 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/prim/util.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions/chi_squared.hpp>
 #include <gtest/gtest.h>
 #include <stdexcept>
-#include <vector>
 
 TEST(ProbDistributionsInvWishartCholesky, rng) {
   using Eigen::Dynamic;

@@ -5,7 +5,6 @@
 #include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_vector.hpp>
-#include <stan/math/prim/err/check_matching_sizes.hpp>
 
 namespace stan {
 namespace math {

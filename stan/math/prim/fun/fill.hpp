@@ -2,8 +2,6 @@
 #define STAN_MATH_PRIM_FUN_FILL_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {

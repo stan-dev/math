@@ -3,7 +3,6 @@
 
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <vector>
 
 struct coupled_mm_ode_fun {

@@ -1,7 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
-#include <limits>
 
 TEST(MathFunctions, hypergeometric_1F0Double) {
   using stan::math::hypergeometric_1F0;

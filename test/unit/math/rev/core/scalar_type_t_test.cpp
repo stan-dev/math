@@ -2,7 +2,6 @@
 #include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <string>
-#include <vector>
 
 TEST_F(AgradRev, RevScalar_scalar_type_t_var_value) {
   EXPECT_TRUE(

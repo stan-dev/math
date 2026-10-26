@@ -2,7 +2,6 @@
 #include <stan/math/prim/prob/neg_binomial_2_log_lpmf.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
-#include <boost/math/special_functions/binomial.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

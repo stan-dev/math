@@ -1,7 +1,5 @@
 // Arguments: Ints, Doubles
 #include <stan/math/prim/prob/bernoulli_logit_lpmf.hpp>
-#include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/log.hpp>
 
 using stan::math::var;
 using std::numeric_limits;

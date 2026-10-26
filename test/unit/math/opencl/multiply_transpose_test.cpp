@@ -6,7 +6,6 @@
 #include <test/unit/util.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
-#include <algorithm>
 boost::random::mt19937 rng;
 
 TEST(MathMatrixOpenCL, multiply_transpose_exception_fail_zero) {

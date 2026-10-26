@@ -7,7 +7,6 @@
 #include <stan/math/rev/core/var.hpp>
 
 #include <utility>
-#include <vector>
 
 namespace stan {
 namespace math {

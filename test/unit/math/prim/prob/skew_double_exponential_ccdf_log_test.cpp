@@ -1,10 +1,6 @@
 #include <stan/math/prim.hpp>
-#include <stan/math/prim/fun/sign.hpp>
-#include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/math/distributions.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <gtest/gtest.h>
 #include <limits>

@@ -3,7 +3,6 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/err/check_size_match.hpp>
-#include <stan/math/prim/meta/is_kernel_expression.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/assignment_ops.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
@@ -11,7 +10,6 @@
 #include <stan/math/opencl/kernel_generator/check_cl.hpp>
 #include <stan/math/opencl/kernel_generator/colwise_reduction.hpp>
 #include <stan/math/opencl/kernel_generator/reduction_2d.hpp>
-#include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <algorithm>
 #include <string>

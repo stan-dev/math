@@ -6,10 +6,7 @@
 #include <stan/math/rev/fun/exp.hpp>
 #include <stan/math/rev/fun/hypergeometric_pFq.hpp>
 #include <stan/math/rev/fun/hypergeometric_2F1.hpp>
-#include <stan/math/rev/fun/inv.hpp>
 #include <stan/math/rev/fun/inv_inc_beta.hpp>
-#include <stan/math/rev/fun/log.hpp>
-#include <stan/math/rev/fun/sqrt.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/prob/student_t_lpdf.hpp>
 

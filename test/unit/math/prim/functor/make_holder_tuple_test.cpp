@@ -1,9 +1,6 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/util.hpp>
 #include <test/unit/math/prim/util.hpp>
 #include <gtest/gtest.h>
-#include <vector>
-#include <stdexcept>
 namespace {
 
 TEST(MathMatrix, partial_forward_as_tuples_rvalues) {

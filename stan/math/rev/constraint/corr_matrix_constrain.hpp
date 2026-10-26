@@ -7,7 +7,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/constraint/corr_constrain.hpp>
 #include <stan/math/prim/fun/read_corr_matrix.hpp>
-#include <stdexcept>
 
 namespace stan {
 namespace math {

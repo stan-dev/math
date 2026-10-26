@@ -1,6 +1,5 @@
 #include <stan/math.hpp>
 #include <test/unit/math/rev/util.hpp>
-#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
 TEST_F(AgradRev, RevZeroNested_set_zero_all_adjoints_nested_outside) {

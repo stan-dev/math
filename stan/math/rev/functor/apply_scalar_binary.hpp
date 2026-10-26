@@ -1,12 +1,9 @@
 #ifndef STAN_MATH_REV_FUNCTOR_APPLY_SCALAR_BINARY_HPP
 #define STAN_MATH_REV_FUNCTOR_APPLY_SCALAR_BINARY_HPP
 
-#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/err/check_matching_dims.hpp>
 #include <stan/math/prim/err/check_matching_sizes.hpp>
-#include <stan/math/prim/fun/num_elements.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {

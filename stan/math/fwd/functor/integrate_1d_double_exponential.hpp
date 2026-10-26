@@ -4,8 +4,6 @@
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/prim/functor/integrate_1d_double_exponential.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/meta/forward_as.hpp>
-#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/fwd/functor/finite_diff.hpp>
 
 namespace stan {

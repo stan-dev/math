@@ -5,9 +5,7 @@
 #include <stan/math/opencl/prim/dot_product.hpp>
 #include <stan/math/opencl/prim/softmax.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/prim/err/check_nonzero_size.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
 
 namespace stan {
 namespace math {

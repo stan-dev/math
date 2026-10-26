@@ -2,7 +2,6 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/math/require_util.hpp>
 #include <gtest/gtest.h>
-#include <type_traits>
 #include <string>
 
 TEST(requires_fwd_scal, fvar_test) {

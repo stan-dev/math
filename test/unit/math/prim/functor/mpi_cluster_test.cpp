@@ -6,7 +6,6 @@
 
 #include <stan/math/prim.hpp>
 
-#include <iostream>
 #include <vector>
 #include <memory>
 

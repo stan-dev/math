@@ -6,7 +6,6 @@
 #include <stan/math/opencl/kernels/mergesort.hpp>
 #include <algorithm>
 
-#include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 
 namespace stan {

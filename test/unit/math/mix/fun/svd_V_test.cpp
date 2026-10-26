@@ -1,5 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <stdexcept>
 
 TEST(MathMixMatFun, svd_V) {
   auto f = [](const auto& x) { return stan::math::svd_V(x); };

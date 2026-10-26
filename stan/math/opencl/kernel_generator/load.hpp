@@ -13,7 +13,6 @@
 #include <type_traits>
 #include <string>
 #include <utility>
-#include <map>
 #include <vector>
 
 namespace stan {

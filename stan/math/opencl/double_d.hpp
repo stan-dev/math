@@ -3,10 +3,8 @@
 
 #include <stan/math/opencl/stringify.hpp>
 
-#include <string>
 #include <cmath>
 #include <cfloat>
-#include <limits>
 
 /**
  * Alternative stringify, that also exposes the code for use in C++ host code.

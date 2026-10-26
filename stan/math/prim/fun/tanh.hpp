@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_FUN_TANH_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/core/operator_division.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>

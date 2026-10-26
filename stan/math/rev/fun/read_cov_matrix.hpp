@@ -6,7 +6,6 @@
 #include <stan/math/rev/fun/read_corr_L.hpp>
 #include <stan/math/rev/fun/read_cov_L.hpp>
 #include <stan/math/rev/fun/multiply_lower_tri_self_transpose.hpp>
-#include <stan/math/rev/fun/rows_dot_product.hpp>
 #include <stan/math/prim/fun/read_cov_matrix.hpp>
 
 namespace stan {

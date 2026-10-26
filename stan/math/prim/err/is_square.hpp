@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_ERR_IS_SQUARE_HPP
 #define STAN_MATH_PRIM_ERR_IS_SQUARE_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/is_size_match.hpp>
 

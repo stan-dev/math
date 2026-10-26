@@ -2,7 +2,6 @@
 #include <stan/math/prim.hpp>
 #include <stan/math/opencl/prim.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 
 TEST(ErrorHandlingScalarCL, check_rv_v_symmetric_cl) {
   const char* function = "check_symmetric";

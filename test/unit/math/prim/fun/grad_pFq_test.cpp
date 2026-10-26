@@ -1,6 +1,5 @@
 #include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/fun/util.hpp>
 
 TEST(PrimMath, grad_2F2) {
   using stan::math::grad_pFq;

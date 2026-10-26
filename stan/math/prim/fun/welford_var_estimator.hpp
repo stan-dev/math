@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_FUN_WELFORD_VAR_ESTIMATOR_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {

@@ -1,14 +1,8 @@
 #ifndef TEST_UNIT_MATH_MIX_FUNCTOR_REDUCE_SUM_UTIL
 #define TEST_UNIT_MATH_MIX_FUNCTOR_REDUCE_SUM_UTIL
 
-#include <stan/math.hpp>
 #include <test/unit/math/prim/functor/reduce_sum_util.hpp>
 #include <test/unit/math/test_ad.hpp>
-#include <gtest/gtest.h>
-#include <algorithm>
-#include <sstream>
-#include <tuple>
-#include <vector>
 
 namespace stan {
 namespace math {

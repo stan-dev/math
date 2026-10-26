@@ -3,7 +3,6 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
-#include <vector>
 
 namespace cauchy_lccdf_test {
 TEST(ProbDistributionsCauchyLccdf, error_checking) {

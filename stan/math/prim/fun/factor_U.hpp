@@ -5,8 +5,6 @@
 #include <stan/math/prim/fun/atanh.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <cstddef>
-#include <stdexcept>
-#include <vector>
 
 namespace stan {
 namespace math {

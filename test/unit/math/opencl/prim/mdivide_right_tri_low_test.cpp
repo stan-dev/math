@@ -2,10 +2,8 @@
 #include <stan/math/prim.hpp>
 #include <stan/math/opencl/prim.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
-#include <test/unit/util.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
-#include <algorithm>
 
 TEST(MathMatrixCL, mdivide_right_tri_low_cl_exception) {
   stan::math::matrix_d m1(2, 3);

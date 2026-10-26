@@ -1,6 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <limits>
-#include <vector>
 
 TEST(mathMixScalFun, logMix) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {

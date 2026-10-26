@@ -19,13 +19,10 @@
 #define STAN_MATH_PRIM_FUNCTOR_HCUBATURE_HPP
 
 #include <stan/math/prim/fun/choose.hpp>
-#include <stan/math/prim/fun/isfinite.hpp>
 #include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/fmax.hpp>
-#include <stan/math/prim/fun/max.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/integrate_1d.hpp>
-#include <queue>
 #include <tuple>
 
 namespace stan {

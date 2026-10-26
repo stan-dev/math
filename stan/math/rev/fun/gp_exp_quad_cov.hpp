@@ -11,7 +11,6 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/gp_exp_quad_cov.hpp>
 #include <cmath>
-#include <type_traits>
 #include <vector>
 
 namespace stan {

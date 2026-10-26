@@ -5,7 +5,6 @@
 #include <stan/math/opencl/prim/log_softmax.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
 
 namespace stan {
 namespace math {

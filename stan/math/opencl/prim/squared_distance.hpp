@@ -3,12 +3,8 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/err.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/opencl/scalar_type.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <algorithm>
 
 namespace stan {
 namespace math {

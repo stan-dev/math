@@ -3,9 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
-#include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/square.hpp>
-#include <stan/math/prim/fun/sum.hpp>
 #include <cstddef>
 #include <cmath>
 

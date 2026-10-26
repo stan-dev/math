@@ -2,7 +2,6 @@
 #include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
-#include <limits>
 
 TEST_F(AgradRev, ProbDistributionsGamma_lccdf_values) {
   using stan::math::gamma_lccdf;

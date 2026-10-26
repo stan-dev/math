@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_FUNCTOR_FOR_EACH_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <functional>
 #include <tuple>
 #include <utility>
 

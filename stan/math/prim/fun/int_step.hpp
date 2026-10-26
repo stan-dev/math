@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_FUN_INT_STEP_HPP
 #define STAN_MATH_PRIM_FUN_INT_STEP_HPP
 
-#include <stan/math/prim/meta.hpp>
 namespace stan {
 namespace math {
 

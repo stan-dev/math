@@ -3,7 +3,6 @@
 #include <stan/math/prim/prob/wiener_full_lpdf.hpp>
 
 #include <gtest/gtest.h>
-#include <vector>
 
 namespace hcubature_test {
 

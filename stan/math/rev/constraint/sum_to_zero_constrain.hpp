@@ -3,7 +3,6 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
-#include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/inv_sqrt.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>

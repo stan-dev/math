@@ -1,7 +1,6 @@
 // Arguments: Ints, Doubles
 #include <stan/math/prim/prob/yule_simon_lpmf.hpp>
 #include <stan/math/prim/fun/lbeta.hpp>
-#include <stan/math/prim/fun/lgamma.hpp>
 
 using std::numeric_limits;
 using std::vector;

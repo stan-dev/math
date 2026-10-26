@@ -3,7 +3,6 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/LDLT_factor.hpp>
 
 namespace stan {

@@ -1,12 +1,10 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/functor/solve_newton.hpp>
-#include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/util.hpp>
 #include <test/unit/math/rev/functor/util_algebra_solver.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
-#include <fstream>
 #include <vector>
 #include <string>
 

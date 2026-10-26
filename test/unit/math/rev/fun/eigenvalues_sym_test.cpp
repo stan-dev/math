@@ -2,7 +2,6 @@
 #include <test/unit/math/rev/util.hpp>
 #include <stan/math/rev/fun/eigenvalues_sym.hpp>
 #include <stan/math/rev/fun/sum.hpp>
-#include <stan/math/rev/fun/log.hpp>
 #include <gtest/gtest.h>
 
 TEST_F(AgradRev, Rev_eigenvaluesSymLogDet) {

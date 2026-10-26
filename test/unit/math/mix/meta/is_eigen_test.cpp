@@ -1,6 +1,5 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/mix/meta/eigen_utils.hpp>
-#include <Eigen/Sparse>
 #include <gtest/gtest.h>
 
 TEST(MathMetaPrim, is_eigen_hierarchy_tests) {

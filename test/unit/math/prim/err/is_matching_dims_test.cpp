@@ -1,6 +1,5 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/util.hpp>
 #include <limits>
 
 TEST(ErrorHandlingMatrix, isMatchingDimsMatrix) {

@@ -14,7 +14,6 @@
 #include <nvector/nvector_serial.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
-#include <algorithm>
 #include <ostream>
 #include <utility>
 #include <vector>

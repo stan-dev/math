@@ -12,7 +12,6 @@
 #include <mutex>
 #include <algorithm>
 #include <vector>
-#include <type_traits>
 #include <functional>
 
 namespace stan {

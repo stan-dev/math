@@ -1,6 +1,5 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/util.hpp>
 
 TEST(MathMetaMix, IncludeSummandProptoTrueFvarVar) {
   using stan::math::fvar;

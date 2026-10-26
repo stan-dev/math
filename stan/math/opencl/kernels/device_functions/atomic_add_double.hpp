@@ -3,7 +3,6 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/stringify.hpp>
-#include <string>
 
 namespace stan {
 namespace math {

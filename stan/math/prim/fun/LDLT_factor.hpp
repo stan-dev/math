@@ -4,9 +4,6 @@
 #include <stan/math/prim/err/check_square.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/sum.hpp>
-#include <stan/math/prim/fun/is_nan.hpp>
-#include <memory>
 
 namespace stan {
 namespace math {

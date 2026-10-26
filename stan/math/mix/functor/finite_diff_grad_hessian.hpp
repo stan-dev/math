@@ -2,7 +2,6 @@
 #define STAN_MATH_MIX_FUNCTOR_FINITE_DIFF_GRAD_HESSIAN_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/rev/core.hpp>
 #include <stan/math/mix/functor/hessian.hpp>
 #include <vector>
 

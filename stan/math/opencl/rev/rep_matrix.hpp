@@ -2,9 +2,7 @@
 #define STAN_MATH_OPENCL_REV_REP_MATRIX_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/opencl/kernels/rep_matrix.hpp>
 #include <stan/math/opencl/prim/rep_matrix.hpp>
 #include <stan/math/opencl/prim/sum.hpp>

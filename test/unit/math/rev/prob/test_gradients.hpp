@@ -4,7 +4,6 @@
 #include <gtest/gtest.h>
 #include <cmath>
 #include <vector>
-#include <iomanip>
 
 inline void test_grad_eq(Eigen::Matrix<double, -1, 1> grad_1,
                          Eigen::Matrix<double, -1, 1> grad_2) {

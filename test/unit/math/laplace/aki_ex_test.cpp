@@ -1,16 +1,12 @@
 #include <test/unit/math/test_ad.hpp>
 #include <stan/math.hpp>
 #include <stan/math/mix.hpp>
-#include <test/unit/math/rev/fun/util.hpp>
-#include <test/unit/math/laplace/laplace_utility.hpp>
 #include <test/unit/math/laplace/roach_data/sigmaz.hpp>
 #include <test/unit/math/laplace/roach_data/y.hpp>
 #include <test/unit/math/laplace/csv_reader.hpp>
 
 #include <gtest/gtest.h>
 #include <iostream>
-#include <istream>
-#include <fstream>
 #include <vector>
 
 struct poisson_re_log_ll_functor {

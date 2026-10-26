@@ -1,5 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <limits>
 
 TEST(MathMixMatFun, qrR) {
   auto f = [](const auto& x) { return stan::math::qr_R(x); };

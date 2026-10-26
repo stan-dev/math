@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_FUN_DOT_HPP
 #define STAN_MATH_PRIM_FUN_DOT_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <vector>
 #include <cstddef>
 

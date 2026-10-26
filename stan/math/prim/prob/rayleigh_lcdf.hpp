@@ -3,16 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
-#include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 

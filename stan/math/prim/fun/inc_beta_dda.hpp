@@ -1,13 +1,10 @@
 #ifndef STAN_MATH_PRIM_FUN_INC_BETA_DDA_HPP
 #define STAN_MATH_PRIM_FUN_INC_BETA_DDA_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta_ddb.hpp>
 #include <stan/math/prim/fun/inv.hpp>
-#include <stan/math/prim/fun/log.hpp>
 #include <cmath>
 
 namespace stan {

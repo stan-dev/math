@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_FWD_FUN_QUAD_FORM_SYM_HPP
 #define STAN_MATH_FWD_FUN_QUAD_FORM_SYM_HPP
 
-#include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/multiply.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>

@@ -1,5 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <iostream>
 
 inline void expect_diag_pre_multiply(const Eigen::VectorXd& v,
                                      const Eigen::MatrixXd& a) {

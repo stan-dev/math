@@ -3,13 +3,7 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 
-#include <tbb/parallel_for.h>
-#include <tbb/blocked_range.h>
-
-#include <stdexcept>
 #include <vector>
-#include <thread>
-#include <future>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;

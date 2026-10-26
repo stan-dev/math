@@ -4,7 +4,6 @@
 #include <stan/math/prim/err/invalid_argument.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
-#include <algorithm>
 #include <sstream>
 #include <string>
 

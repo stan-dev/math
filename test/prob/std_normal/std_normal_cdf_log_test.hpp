@@ -2,7 +2,6 @@
 #include <stan/math/prim/prob/std_normal_lcdf.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
-#include <stan/math/prim/fun/erfc.hpp>
 #include <stan/math/prim/fun/log.hpp>
 
 using stan::math::square;

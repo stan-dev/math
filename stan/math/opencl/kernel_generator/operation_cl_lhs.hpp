@@ -5,7 +5,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <string>
-#include <map>
 #include <array>
 #include <numeric>
 #include <vector>

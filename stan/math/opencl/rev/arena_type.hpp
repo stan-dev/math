@@ -3,7 +3,6 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/rev/meta/arena_type.hpp>
-#include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/is_kernel_expression.hpp>
 #include <stan/math/opencl/rev/arena_matrix_cl.hpp>
 

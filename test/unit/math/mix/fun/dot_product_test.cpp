@@ -1,5 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <limits>
 #include <vector>
 
 TEST(mathMixMatFun, dotProduct) {

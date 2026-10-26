@@ -1,18 +1,12 @@
 #include <stan/math.hpp>
 #include <stan/math/rev/core.hpp>
-#include <test/unit/math/rev/fun/util.hpp>
 #include <stan/math/rev/functor/dae_system.hpp>
-#include <test/unit/math/rev/util.hpp>
-#include <nvector/nvector_serial.h>
-#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <iostream>
-#include <fstream>
 #include <vector>
-#include <limits>
 
 namespace idas_system_test {
 

@@ -2,16 +2,9 @@
 #define STAN_MATH_TEST_FIXTURE_DAE_ANALYTICAL_HPP
 
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/functor/coupled_mm.hpp>
 #include <test/unit/math/rev/functor/test_fixture_ode.hpp>
-#include <test/unit/util.hpp>
 #include <iostream>
-#include <sstream>
 #include <vector>
-#include <limits>
-#include <string>
 
 template <typename T>
 struct analytical_dae_base {

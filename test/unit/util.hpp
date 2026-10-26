@@ -4,7 +4,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
-#include <boost/typeof/typeof.hpp>
 #include <test/unit/pretty_print_types.hpp>
 #include <gtest/gtest.h>
 #include <type_traits>

@@ -1,7 +1,6 @@
 #include <stan/math/fwd.hpp>
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
-#include <boost/math/distributions.hpp>
 
 TEST(ProbDistributionsLkjCorr, fvar_double) {
   using stan::math::fvar;

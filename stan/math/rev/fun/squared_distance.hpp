@@ -10,7 +10,6 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/squared_distance.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {

@@ -5,8 +5,6 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/atan2.hpp>
 #include <stan/math/rev/fun/cos.hpp>
-#include <stan/math/rev/fun/hypot.hpp>
-#include <stan/math/rev/fun/sin.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <cmath>
 #include <complex>

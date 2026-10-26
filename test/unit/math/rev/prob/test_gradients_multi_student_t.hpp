@@ -2,8 +2,6 @@
 #define TEST_UNIT_MATH_REV_PROB_TEST_GRADIENTS_MULTI_STUDENT_T
 #include <cmath>
 #include <vector>
-#include <iomanip>
-#include <stdexcept>
 #include <stan/math.hpp>
 #include <test/unit/math/rev/util.hpp>
 

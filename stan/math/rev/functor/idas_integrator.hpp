@@ -6,12 +6,8 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/err/check_flag_sundials.hpp>
 #include <idas/idas.h>
-#include <sunmatrix/sunmatrix_dense.h>
-#include <sunlinsol/sunlinsol_dense.h>
 #include <nvector/nvector_serial.h>
-#include <ostream>
 #include <vector>
-#include <algorithm>
 
 namespace stan {
 namespace math {

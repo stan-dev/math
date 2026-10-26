@@ -1,6 +1,5 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/rev.hpp>
-#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
 TEST(AgradRev, arena_matrix_cl_shallow_copies) {

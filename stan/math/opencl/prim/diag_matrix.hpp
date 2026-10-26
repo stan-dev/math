@@ -4,7 +4,6 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/add_diag.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err.hpp>
 
 namespace stan {
 namespace math {

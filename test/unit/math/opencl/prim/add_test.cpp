@@ -1,9 +1,7 @@
 #ifdef STAN_OPENCL
 #include <stan/math.hpp>
-#include <test/unit/math/opencl/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-#include <algorithm>
 
 TEST(OpenCLPrim, add_exceptions) {
   stan::math::vector_d vd1(2), vd2(3);

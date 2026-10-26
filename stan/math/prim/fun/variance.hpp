@@ -3,8 +3,6 @@
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/mean.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {
