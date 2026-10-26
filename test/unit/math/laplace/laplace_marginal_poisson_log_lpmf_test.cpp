@@ -314,10 +314,7 @@ struct constant_covariance {
   }
 };
 
-// At mean -30 the mode is at theta = 31, but the Newton step from theta = 0 is
-// about 1e10 (alpha = 3e4) or 1e11 (alpha = 1e5): every step down to
-// min_alpha times it lowers the objective (3e4, where the line search must not
-// fall back to the zero step) or overflows exp(mean + theta) (1e5).
+// The Newton step from theta = 0 (1e10 to 1e11) overshoots even at min_alpha.
 TEST(laplace_marginal_poisson_log_lpmf_newton, step_overshoots_mode) {
   const std::vector<int> y{3, 1, 4, 1, 5};
   const std::vector<int> y_index{1, 2, 3, 4, 5};
@@ -333,9 +330,7 @@ TEST(laplace_marginal_poisson_log_lpmf_newton, step_overshoots_mode) {
   EXPECT_NEAR(-22.1750873716, marginal(1e5), 1e-2);
 }
 
-// K = 1e18 J in double precision (the jitter 1e-8 is below its ulp), so all
-// rows of I + K W are equal and the LU factorization of solver 3 has zero
-// pivots: the Laplace approximation is not defined and the solver throws.
+// alpha = 1e9: K = 1e18 J exactly in double, so all rows of I + K W are equal.
 TEST(laplace_marginal_poisson_log_lpmf_newton, singular_log_determinant) {
   const std::vector<int> y{3, 1, 4, 1, 5};
   const std::vector<int> y_index{1, 2, 3, 4, 5};

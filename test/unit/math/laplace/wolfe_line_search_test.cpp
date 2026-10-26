@@ -877,9 +877,6 @@ TEST(CubicOrBisect, MovesRightWhenRightImproves) {
   EXPECT_GT(alpha2, alpha1);
 }
 
-// Every trial step lowers the objective, so no step satisfies Armijo. The
-// search must report a failure instead of accepting the zero step, which
-// satisfies Armijo trivially.
 TEST(WolfeLineSearch, NoImprovingStepFailsInsteadOfZeroStep) {
   using internal::Eval;
 
