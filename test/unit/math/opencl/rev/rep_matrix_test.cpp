@@ -55,6 +55,13 @@ TEST(OpenCLRepMatrix, vector_prim_rev_values_large) {
   stan::math::test::compare_cpu_opencl_prim_rev(rep_matrix_functor, b, M);
 }
 
+TEST(OpenCLRepMatrix, row_vector_prim_rev_fewer_rows) {
+  Eigen::RowVectorXd b(3);
+  b << -2.2, -0.8, 0.5;
+  stan::math::test::compare_cpu_opencl_prim_rev(rep_matrix_functor, b, 1);
+  stan::math::test::compare_cpu_opencl_prim_rev(rep_matrix_functor, b, 0);
+}
+
 TEST(OpenCLRepMatrix, vector_triangular_adj) {
   using stan::math::matrix_cl;
   using stan::math::var_value;
