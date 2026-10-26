@@ -3,99 +3,84 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/fabs.hpp>
-#include <stan/math/prim/fun/inc_beta.hpp>
-#include <stan/math/prim/fun/inc_beta_ddb.hpp>
-#include <stan/math/prim/fun/inv.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <cmath>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
 
 /**
- * Returns the partial derivative of the regularized
- * incomplete beta function, I_{z}(a, b) with respect to a.
- * The power series used to compute the derivative tends to
- * converge slowly when a and b are large, especially if z
- * approaches 1.  The implementation will throw an exception
- * if the series have not converged within 100,000 iterations.
- * The current implementation has been tested for values
- * of a and b up to 12500 and z = 0.999.
+ * Returns the partial derivative of the regularized incomplete beta function
+ * I_z(a, b) with respect to a.
  *
- * @tparam T scalar types of arguments
+ * This calls <code>grad_reg_inc_beta<GRAD_RIB::G1></code>, which computes
+ * only the derivative with respect to a.
+ *
+ * @tparam T1 type of a
+ * @tparam T2 type of b
+ * @tparam T3 type of z
+ * @tparam T4 type of digamma_a
+ * @tparam T5 type of digamma_ab
  * @param a first argument
  * @param b second argument
  * @param z upper bound of the integral
  * @param digamma_a value of digamma(a)
- * @param digamma_ab value of digamma(b)
+ * @param digamma_ab value of digamma(a + b)
  * @return partial derivative of the incomplete beta with respect to a
  *
  * @pre a >= 0
  * @pre b >= 0
  * @pre 0 <= z <= 1
  */
-template <typename T>
-inline T inc_beta_dda(T a, T b, T z, T digamma_a, T digamma_ab) {
-  using std::fabs;
-  using std::log;
-  using std::pow;
+template <typename T1, typename T2, typename T3, typename T4, typename T5,
+          require_all_stan_scalar_t<T1, T2, T3, T4, T5>* = nullptr>
+inline auto inc_beta_dda(const T1& a, const T2& b, const T3& z,
+                         const T4& digamma_a, const T5& digamma_ab) {
+  return grad_reg_inc_beta<GRAD_RIB::G1>(a, b, z, digamma_a, 0.0, digamma_ab,
+                                         0.0);
+}
 
-  if (b > a) {
-    if ((0.1 < z && z <= 0.75 && b > 500) || (0.01 < z && z <= 0.1 && b > 2500)
-        || (0.001 < z && z <= 0.01 && b > 1e5)) {
-      return -inc_beta_ddb(b, a, 1 - z, digamma_a, digamma_ab);
-    }
+/**
+ * Enables the vectorized application of the inc_beta_dda function, when
+ *  any arguments are vectors. Scalar arguments are broadcast against the
+ *  vectors, which must all have the same size.
+ *
+ * @tparam T1 type of a
+ * @tparam T2 type of b
+ * @tparam T3 type of z
+ * @tparam T4 type of digamma_a
+ * @tparam T5 type of digamma_ab
+ * @param a first argument
+ * @param b second argument
+ * @param z upper bound of the integral
+ * @param digamma_a value of digamma(a)
+ * @param digamma_ab value of digamma(a + b)
+ * @return column array of the partial derivatives of the incomplete beta
+ *  with respect to a
+ * @throw std::invalid_argument if the vector arguments differ in size
+ */
+template <typename T1, typename T2, typename T3, typename T4, typename T5,
+          require_any_vector_t<T1, T2, T3, T4, T5>* = nullptr,
+          require_all_not_var_matrix_t<T1, T2, T3, T4, T5>* = nullptr>
+inline auto inc_beta_dda(const T1& a, const T2& b, const T3& z,
+                         const T4& digamma_a, const T5& digamma_ab) {
+  check_consistent_sizes("inc_beta_dda", "a", a, "b", b, "z", z, "digamma_a",
+                         digamma_a, "digamma_ab", digamma_ab);
+  using ret_t = return_type_t<T1, T2, T3, T4, T5>;
+  scalar_seq_view<T1> a_vec(a);
+  scalar_seq_view<T2> b_vec(b);
+  scalar_seq_view<T3> z_vec(z);
+  scalar_seq_view<T4> digamma_a_vec(digamma_a);
+  scalar_seq_view<T5> digamma_ab_vec(digamma_ab);
+  const size_t N = max_size(a, b, z, digamma_a, digamma_ab);
+  Eigen::Array<ret_t, Eigen::Dynamic, 1> result(N);
+  for (size_t i = 0; i < N; ++i) {
+    result.coeffRef(i) = inc_beta_dda(a_vec[i], b_vec[i], z_vec[i],
+                                      digamma_a_vec[i], digamma_ab_vec[i]);
   }
-
-  if (z > 0.75 && a < 500) {
-    return -inc_beta_ddb(b, a, 1 - z, digamma_a, digamma_ab);
-  }
-  if (z > 0.9 && a < 2500) {
-    return -inc_beta_ddb(b, a, 1 - z, digamma_a, digamma_ab);
-  }
-  if (z > 0.99 && a < 1e5) {
-    return -inc_beta_ddb(b, a, 1 - z, digamma_a, digamma_ab);
-  }
-  if (z > 0.999) {
-    return -inc_beta_ddb(b, a, 1 - z, digamma_a, digamma_ab);
-  }
-
-  double threshold = 1e-10;
-
-  const T a_plus_b = a + b;
-  const T a_plus_1 = a + 1;
-
-  digamma_a += inv(a);  // Need digamma(a + 1), not digamma(a);
-
-  // Common prefactor to regularize numerator and denominator
-  T prefactor = pow(a_plus_1 / a_plus_b, 3);
-
-  T sum_numer = (digamma_ab - digamma_a) * prefactor;
-  T sum_denom = prefactor;
-
-  T summand = prefactor * z * a_plus_b / a_plus_1;
-
-  T k = 1;
-  digamma_ab += inv(a_plus_b);
-  digamma_a += inv(a_plus_1);
-
-  while (fabs(summand) > threshold) {
-    sum_numer += (digamma_ab - digamma_a) * summand;
-    sum_denom += summand;
-
-    summand *= (1 + (a_plus_b) / k) * (1 + k) / (1 + a_plus_1 / k);
-    digamma_ab += inv(a_plus_b + k);
-    digamma_a += inv(a_plus_1 + k);
-    ++k;
-    summand *= z / k;
-
-    if (k > 1e5) {
-      throw_domain_error("inc_beta_dda",
-                         "did not converge within 10000 iterations", "", "");
-    }
-  }
-  return inc_beta(a, b, z) * (log(z) + sum_numer / sum_denom);
+  return result;
 }
 
 }  // namespace math
