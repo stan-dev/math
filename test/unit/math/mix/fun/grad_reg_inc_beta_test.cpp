@@ -1,145 +1,95 @@
-#include <stan/math/mix.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/fun/util.hpp>
+#include <test/unit/math/test_ad.hpp>
+#include <vector>
 
-TEST(ProbInternalMath, grad_reg_inc_beta_fv) {
-  using stan::math::digamma;
-  using stan::math::exp;
-  using stan::math::fvar;
-  using stan::math::lbeta;
-  using stan::math::var;
+namespace {
 
-  fvar<var> a = 1.0;
-  fvar<var> b = 1.0;
-  fvar<var> g = 0.4;
-  a.d_ = 1.0;
-  b.d_ = 1.0;
-  g.d_ = 1.0;
-  fvar<var> dig_a = digamma(a);
-  fvar<var> dig_b = digamma(b);
-  fvar<var> dig_sum = digamma(a + b);
-  fvar<var> beta_ab = exp(lbeta(a, b));
-  fvar<var> g_a;
-  fvar<var> g_b;
-
-  stan::math::grad_reg_inc_beta(g_a, g_b, a, b, g, dig_a, dig_b, dig_sum,
-                                beta_ab);
-  EXPECT_FLOAT_EQ(-0.36651629442883944183907601651838247842001142107486495485,
-                  g_a.val_.val());
-  EXPECT_NEAR(0.306495375042422864944011633197968575202046200428315551199,
-              g_b.val_.val(), 1e-6);
+/**
+ * Runs expect_ad at points in each region of grad_reg_inc_beta:
+ *   (1, 1, 0.4), (2, 3, 0.25), (0.5, 0.5, 0.3): power series
+ *   (10, 1, 0.5): power series, integer b
+ *   (2, 3, 0.6): power series through the symmetry relation
+ *   (20, 20, 0.3), (5, 30, 0.1): continued fraction
+ *   (20, 20, 0.7), (5, 30, 0.3): continued fraction through the symmetry
+ *     relation
+ *   (10, 1, 0.7), (4, 4, 0.5): continued fraction, integer b, where the
+ *     partial numerator d_{2b} is 0 but its b derivative is not
+ */
+template <typename F>
+void expect_ad_grad_reg_inc_beta(const F& f) {
+  stan::test::expect_ad(f, 1.0, 1.0, 0.4);
+  stan::test::expect_ad(f, 2.0, 3.0, 0.25);
+  stan::test::expect_ad(f, 0.5, 0.5, 0.3);
+  stan::test::expect_ad(f, 10.0, 1.0, 0.5);
+  stan::test::expect_ad(f, 2.0, 3.0, 0.6);
+  stan::test::expect_ad(f, 20.0, 20.0, 0.3);
+  stan::test::expect_ad(f, 5.0, 30.0, 0.1);
+  stan::test::expect_ad(f, 20.0, 20.0, 0.7);
+  stan::test::expect_ad(f, 5.0, 30.0, 0.3);
+  stan::test::expect_ad(f, 10.0, 1.0, 0.7);
+  stan::test::expect_ad(f, 4.0, 4.0, 0.5);
 }
-TEST(ProbInternalMath, grad_reg_inc_beta_fv_1stDeriv1) {
-  using stan::math::digamma;
-  using stan::math::exp;
-  using stan::math::fvar;
-  using stan::math::lbeta;
-  using stan::math::var;
 
-  fvar<var> a = 1.0;
-  fvar<var> b = 1.0;
-  fvar<var> g = 0.4;
-  a.d_ = 1.0;
-  b.d_ = 0.0;
-  g.d_ = 0.0;
-  fvar<var> dig_a = digamma(a);
-  fvar<var> dig_b = digamma(b);
-  fvar<var> dig_sum = digamma(a + b);
-  fvar<var> beta_ab = exp(lbeta(a, b));
-  fvar<var> g_a;
-  fvar<var> g_b;
+}  // namespace
 
-  stan::math::grad_reg_inc_beta(g_a, g_b, a, b, g, dig_a, dig_b, dig_sum,
-                                beta_ab);
-
-  std::vector<stan::math::var> y1{a.val_};
-  std::vector<double> grad1;
-  g_a.val_.grad(y1, grad1);
-  EXPECT_FLOAT_EQ(0.33583548212738989400284958327902414335945097838423129,
-                  grad1[0]);
+TEST(mathMixScalFun, grad_reg_inc_beta_g1) {
+  auto f = [](const auto& a, const auto& b, const auto& z) {
+    using stan::math::digamma;
+    return stan::math::grad_reg_inc_beta<stan::math::GRAD_RIB::G1>(
+        a, b, z, digamma(a), 0.0, digamma(a + b), 0.0);
+  };
+  expect_ad_grad_reg_inc_beta(f);
 }
-TEST(ProbInternalMath, grad_reg_inc_beta_fv_1stDeriv2) {
-  using stan::math::digamma;
-  using stan::math::exp;
-  using stan::math::fvar;
-  using stan::math::lbeta;
-  using stan::math::var;
 
-  fvar<var> a = 1.0;
-  fvar<var> b = 1.0;
-  fvar<var> g = 0.4;
-  a.d_ = 0.0;
-  b.d_ = 1.0;
-  g.d_ = 0.0;
-  fvar<var> dig_a = digamma(a);
-  fvar<var> dig_b = digamma(b);
-  fvar<var> dig_sum = digamma(a + b);
-  fvar<var> beta_ab = exp(lbeta(a, b));
-  fvar<var> g_a;
-  fvar<var> g_b;
-
-  stan::math::grad_reg_inc_beta(g_a, g_b, a, b, g, dig_a, dig_b, dig_sum,
-                                beta_ab);
-
-  std::vector<stan::math::var> y1{b.val_};
-  std::vector<double> grad1;
-  g_b.val_.grad(y1, grad1);
-  EXPECT_NEAR(-0.156565690737548079304827886, grad1[0], 1e-6);
+TEST(mathMixScalFun, grad_reg_inc_beta_g2) {
+  auto f = [](const auto& a, const auto& b, const auto& z) {
+    using stan::math::digamma;
+    return stan::math::grad_reg_inc_beta<stan::math::GRAD_RIB::G2>(
+        a, b, z, 0.0, digamma(b), digamma(a + b), 0.0);
+  };
+  expect_ad_grad_reg_inc_beta(f);
 }
-TEST(ProbInternalMath, grad_reg_inc_beta_fv_2ndDeriv1) {
-  using stan::math::digamma;
-  using stan::math::exp;
-  using stan::math::fvar;
-  using stan::math::lbeta;
-  using stan::math::var;
 
-  fvar<var> a = 1.0;
-  fvar<var> b = 1.0;
-  fvar<var> g = 0.4;
-  a.d_ = 1.0;
-  b.d_ = 0.0;
-  g.d_ = 0.0;
-  fvar<var> dig_a = digamma(a);
-  fvar<var> dig_b = digamma(b);
-  fvar<var> dig_sum = digamma(a + b);
-  fvar<var> beta_ab = exp(lbeta(a, b));
-  fvar<var> g_a;
-  fvar<var> g_b;
-
-  stan::math::grad_reg_inc_beta(g_a, g_b, a, b, g, dig_a, dig_b, dig_sum,
-                                beta_ab);
-
-  std::vector<stan::math::var> y1{a.val_};
-  std::vector<double> grad1;
-  g_a.d_.grad(y1, grad1);
-  EXPECT_FLOAT_EQ(-0.30772293970781581317390510390046098438962772318921,
-                  grad1[0]);
+TEST(mathMixScalFun, grad_reg_inc_beta_both) {
+  auto f = [](const auto& a, const auto& b, const auto& z) {
+    using stan::math::digamma;
+    auto grads = stan::math::grad_reg_inc_beta<stan::math::GRAD_RIB::BOTH>(
+        a, b, z, digamma(a), digamma(b), digamma(a + b), 0.0);
+    Eigen::Matrix<decltype(grads.first), Eigen::Dynamic, 1> ret(2);
+    ret << grads.first, grads.second;
+    return ret;
+  };
+  expect_ad_grad_reg_inc_beta(f);
 }
-TEST(ProbInternalMath, grad_reg_inc_beta_fv_2ndDeriv2) {
-  using stan::math::digamma;
-  using stan::math::exp;
-  using stan::math::fvar;
-  using stan::math::lbeta;
-  using stan::math::var;
 
-  fvar<var> a = 1.0;
-  fvar<var> b = 1.0;
-  fvar<var> g = 0.4;
-  a.d_ = 0.0;
-  b.d_ = 1.0;
-  g.d_ = 0.0;
-  fvar<var> dig_a = digamma(a);
-  fvar<var> dig_b = digamma(b);
-  fvar<var> dig_sum = digamma(a + b);
-  fvar<var> beta_ab = exp(lbeta(a, b));
-  fvar<var> g_a;
-  fvar<var> g_b;
+// the student_t_cdf call: a = nu / 2, b = 1 / 2 fixed, z = 1 - r
+TEST(mathMixScalFun, grad_reg_inc_beta_student) {
+  auto f = [](const auto& a, const auto& /* b */, const auto& z) {
+    using stan::math::digamma;
+    return stan::math::grad_reg_inc_beta<stan::math::GRAD_RIB::G1>(
+        0.5 * a, 0.5, 1.0 - z, digamma(0.5 * a), 0.0, digamma(0.5 + 0.5 * a),
+        0.0);
+  };
+  expect_ad_grad_reg_inc_beta(f);
+}
 
-  stan::math::grad_reg_inc_beta(g_a, g_b, a, b, g, dig_a, dig_b, dig_sum,
-                                beta_ab);
-
-  std::vector<stan::math::var> y1{b.val_};
-  std::vector<double> grad1;
-  g_b.d_.grad(y1, grad1);
-  EXPECT_NEAR(0.079977766631361187517939795, grad1[0], 1e-4);
+/**
+ * The overload writing both partials through out-parameters takes every
+ * argument as the same type.
+ */
+TEST(mathMixScalFun, grad_reg_inc_beta_out_params) {
+  auto f = [](const auto& a, const auto& b, const auto& z) {
+    using stan::math::digamma;
+    using T = stan::return_type_t<decltype(a), decltype(b), decltype(z)>;
+    const T a_t = a;
+    const T b_t = b;
+    const T z_t = z;
+    T g1 = 0;
+    T g2 = 0;
+    stan::math::grad_reg_inc_beta(g1, g2, a_t, b_t, z_t, digamma(a_t),
+                                  digamma(b_t), digamma(a_t + b_t), T(0));
+    Eigen::Matrix<T, Eigen::Dynamic, 1> ret(2);
+    ret << g1, g2;
+    return ret;
+  };
+  expect_ad_grad_reg_inc_beta(f);
 }
