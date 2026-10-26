@@ -965,8 +965,8 @@ struct LUSolver {
 template <typename UpdateFun, typename NewtonStateT, typename OptionsT,
           typename CovarMatT>
 inline bool run_line_search(UpdateFun&& update_fun, NewtonStateT& state,
-                              const OptionsT& options,
-                              const CovarMatT& covariance, std::ostream* msgs) {
+                            const OptionsT& options,
+                            const CovarMatT& covariance, std::ostream* msgs) {
   auto&& proposal = state.proposal_step();
   proposal.eval_.alpha() = 1.0;
   const bool proposal_valid = update_fun(proposal, state.curr(), state.prev(),
@@ -991,8 +991,8 @@ inline bool run_line_search(UpdateFun&& update_fun, NewtonStateT& state,
       s, full_step_grad, state.prev_g, state.prev().alpha(),
       state.wolfe_status.num_backtracks_, options.line_search.min_alpha,
       options.line_search.max_alpha);
-  state.wolfe_status = internal::wolfe_line_search(
-      state.wolfe_info, update_fun, options.line_search, msgs);
+  state.wolfe_status = internal::wolfe_line_search(state.wolfe_info, update_fun,
+                                                   options.line_search, msgs);
   if (!state.wolfe_status.accept_
       && internal::check_armijo(proposal.obj(), state.prev().obj(),
                                 proposal.alpha(), state.wolfe_info.init_dir_,
@@ -1055,9 +1055,9 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
         const double predicted_increase
             = options.line_search.min_alpha * state.wolfe_info.init_dir_;
         if (!std::isfinite(predicted_increase)
-            || predicted_increase <= std::max(options.tolerance,
-                                        std::numeric_limits<double>::epsilon()
-                                            * std::abs(state.prev().obj()))) {
+            || predicted_increase <= std::max(
+                   options.tolerance, std::numeric_limits<double>::epsilon()
+                                          * std::abs(state.prev().obj()))) {
           break;
         }
         state.wolfe_info.p_ *= options.line_search.min_alpha;
