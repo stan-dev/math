@@ -3,122 +3,115 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/any.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta_dda.hpp>
 #include <stan/math/prim/fun/inc_beta_ddz.hpp>
 #include <stan/math/prim/fun/inv.hpp>
-#include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/fun/scalar_seq_view.hpp>
-#include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/prod.hpp>
+#include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/square.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
-#include <cmath>
 #include <limits>
 
 namespace stan {
 namespace math {
 
-template <typename T_n, typename T_shape, typename T_inv_scale>
+/** \ingroup prob_dists
+ * Returns the CDF of the negative binomial distribution. Given containers of
+ * matching sizes, returns the product of probabilities.
+ *
+ * With p = beta / (1 + beta), the CDF at n is the regularized incomplete beta
+ * function I_p(alpha, n + 1).
+ *
+ * @tparam T_n type of integer parameter
+ * @tparam T_shape type of shape parameter
+ * @tparam T_inv_scale type of inverse scale parameter
+ * @param n failures variable
+ * @param alpha shape parameter
+ * @param beta inverse scale parameter
+ * @return probability or product of probabilities
+ * @throw std::domain_error if alpha or beta is not positive and finite
+ * @throw std::invalid_argument if container sizes mismatch
+ */
+template <typename T_n, typename T_shape, typename T_inv_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_n, T_shape, T_inv_scale>* = nullptr>
 inline return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(
-    const T_n& n, const T_shape& alpha, const T_inv_scale& beta) {
+    T_n&& n, T_shape&& alpha, T_inv_scale&& beta) {
   using T_partials_return = partials_return_t<T_n, T_shape, T_inv_scale>;
   using T_n_ref = ref_type_t<T_n>;
-  using T_alpha_ref = ref_type_t<T_shape>;
-  using T_beta_ref = ref_type_t<T_inv_scale>;
+  using T_alpha_ref = ref_type_if_not_constant_t<T_shape>;
+  using T_beta_ref = ref_type_if_not_constant_t<T_inv_scale>;
   static constexpr const char* function = "neg_binomial_cdf";
   check_consistent_sizes(function, "Failures variable", n, "Shape parameter",
                          alpha, "Inverse scale parameter", beta);
-  T_n_ref n_ref = n;
-  T_alpha_ref alpha_ref = alpha;
-  T_beta_ref beta_ref = beta;
-  check_positive_finite(function, "Shape parameter", alpha_ref);
-  check_positive_finite(function, "Inverse scale parameter", beta_ref);
+  T_n_ref n_ref = std::forward<T_n>(n);
+  T_alpha_ref alpha_ref = std::forward<T_shape>(alpha);
+  T_beta_ref beta_ref = std::forward<T_inv_scale>(beta);
 
-  if (size_zero(n, alpha, beta)) {
+  decltype(auto) n_val = to_ref(as_value_column_array_or_scalar(n_ref));
+  decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
+  decltype(auto) beta_val = to_ref(as_value_column_array_or_scalar(beta_ref));
+
+  check_positive_finite(function, "Shape parameter", alpha_val);
+  check_positive_finite(function, "Inverse scale parameter", beta_val);
+
+  if (size_zero(n_ref, alpha_ref, beta_ref)) {
     return 1.0;
   }
 
-  T_partials_return P(1.0);
   auto ops_partials = make_partials_propagator(alpha_ref, beta_ref);
-
-  scalar_seq_view<T_n_ref> n_vec(n_ref);
-  scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
-  scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
-  size_t size_alpha = stan::math::size(alpha);
-  size_t size_n_alpha = max_size(n, alpha);
-  size_t max_size_seq_view = max_size(n, alpha, beta);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::math::size(n); i++) {
-    if (n_vec.val(i) < 0) {
-      return ops_partials.build(0.0);
-    }
+  if (any(n_val < 0)) {
+    return ops_partials.build(0.0);
+  }
+  if (any(n_val == std::numeric_limits<int>::max())) {
+    return ops_partials.build(1.0);
   }
 
-  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_shape>
-      digamma_alpha_vec(size_alpha);
-  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_n, T_shape>
-      digamma_sum_vec(size_n_alpha);
-
-  if constexpr (is_autodiff_v<T_shape>) {
-    for (size_t i = 0; i < size_alpha; i++) {
-      digamma_alpha_vec[i] = digamma(alpha_vec.val(i));
+  if constexpr (is_autodiff_v<T_shape> || is_autodiff_v<T_inv_scale>) {
+    auto inv_beta_p1 = to_ref(inv(beta_val + 1.0));
+    auto p_val = to_ref(beta_val * inv_beta_p1);
+    auto n_p1 = to_ref(promote_scalar<T_partials_return>(n_val + 1.0));
+    auto P_i = to_ref(as_array_or_scalar(inc_beta(alpha_val, n_p1, p_val)));
+    const T_partials_return P = prod(P_i);
+    // d/dx prod(P_i) = sum(dP_i/dx * P / P_i)
+    if constexpr (is_autodiff_v<T_shape> && is_autodiff_v<T_inv_scale>) {
+      auto P_div_P_i = to_ref(P / P_i);
+      partials<0>(ops_partials)
+          = inc_beta_dda(alpha_val, n_p1, p_val, to_ref(digamma(alpha_val)),
+                         to_ref(digamma(alpha_val + n_p1)))
+            * P_div_P_i;
+      partials<1>(ops_partials)
+          = as_array_or_scalar(inc_beta_ddz(alpha_val, n_p1, p_val))
+            * square(inv_beta_p1) * P_div_P_i;
+    } else if constexpr (is_autodiff_v<T_shape>) {
+      partials<0>(ops_partials)
+          = inc_beta_dda(alpha_val, n_p1, p_val, to_ref(digamma(alpha_val)),
+                         to_ref(digamma(alpha_val + n_p1)))
+            / P_i * P;
+    } else if constexpr (is_autodiff_v<T_inv_scale>) {
+      partials<1>(ops_partials)
+          = as_array_or_scalar(inc_beta_ddz(alpha_val, n_p1, p_val))
+            * square(inv_beta_p1) / P_i * P;
     }
-    for (size_t i = 0; i < size_n_alpha; i++) {
-      const T_partials_return n_dbl = n_vec.val(i);
-      const T_partials_return alpha_dbl = alpha_vec.val(i);
-      digamma_sum_vec[i] = digamma(n_dbl + alpha_dbl + 1);
-    }
+    return ops_partials.build(P);
+  } else {
+    auto inv_beta_p1 = to_ref(inv(beta_val + 1.0));
+    auto p_val = to_ref(beta_val * inv_beta_p1);
+    auto n_p1 = to_ref(promote_scalar<T_partials_return>(n_val + 1.0));
+    const T_partials_return P
+        = prod(as_array_or_scalar(inc_beta(alpha_val, n_p1, p_val)));
+    return ops_partials.build(P);
   }
-
-  for (size_t i = 0; i < max_size_seq_view; i++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
-    if (n_vec.val(i) == std::numeric_limits<int>::max()) {
-      return ops_partials.build(1.0);
-    }
-
-    const T_partials_return n_dbl = n_vec.val(i);
-    const T_partials_return alpha_dbl = alpha_vec.val(i);
-    const T_partials_return beta_dbl = beta_vec.val(i);
-    const T_partials_return inv_beta_p1 = inv(beta_dbl + 1);
-    const T_partials_return p_dbl = beta_dbl * inv_beta_p1;
-    const T_partials_return d_dbl = square(inv_beta_p1);
-
-    const T_partials_return P_i = inc_beta(alpha_dbl, n_dbl + 1.0, p_dbl);
-
-    P *= P_i;
-
-    if constexpr (is_autodiff_v<T_shape>) {
-      partials<0>(ops_partials)[i]
-          += inc_beta_dda(alpha_dbl, n_dbl + 1, p_dbl, digamma_alpha_vec[i],
-                          digamma_sum_vec[i])
-             / P_i;
-    }
-
-    if constexpr (is_autodiff_v<T_inv_scale>) {
-      partials<1>(ops_partials)[i]
-          += inc_beta_ddz(alpha_dbl, n_dbl + 1.0, p_dbl) * d_dbl / P_i;
-    }
-  }
-
-  if constexpr (is_autodiff_v<T_shape>) {
-    for (size_t i = 0; i < size_alpha; ++i) {
-      partials<0>(ops_partials)[i] *= P;
-    }
-  }
-
-  if constexpr (is_autodiff_v<T_inv_scale>) {
-    for (size_t i = 0; i < stan::math::size(beta); ++i) {
-      partials<1>(ops_partials)[i] *= P;
-    }
-  }
-
-  return ops_partials.build(P);
 }
 
 }  // namespace math

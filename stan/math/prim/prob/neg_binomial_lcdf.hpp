@@ -53,8 +53,6 @@ inline return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
   scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
   size_t size_n = stan::math::size(n);
-  size_t size_alpha = stan::math::size(alpha);
-  size_t size_n_alpha = max_size(n, alpha);
   size_t max_size_seq_view = max_size(n, alpha, beta_param);
 
   // Explicit return for extreme values
@@ -62,27 +60,6 @@ inline return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
   for (size_t i = 0; i < size_n; i++) {
     if (n_vec.val(i) < 0) {
       return ops_partials.build(negative_infinity());
-    }
-  }
-
-  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_n> digammaN_vec(
-      size_n);
-  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_shape>
-      digammaAlpha_vec(size_alpha);
-  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_n, T_shape>
-      digammaSum_vec(size_n_alpha);
-
-  if constexpr (is_autodiff_v<T_shape>) {
-    for (size_t i = 0; i < size_n; i++) {
-      digammaN_vec[i] = digamma(n_vec.val(i) + 1);
-    }
-    for (size_t i = 0; i < size_alpha; i++) {
-      digammaAlpha_vec[i] = digamma(alpha_vec.val(i));
-    }
-    for (size_t i = 0; i < size_n_alpha; i++) {
-      const T_partials_return n_dbl = n_vec.val(i);
-      const T_partials_return alpha_dbl = alpha_vec.val(i);
-      digammaSum_vec[i] = digamma(n_dbl + alpha_dbl + 1);
     }
   }
 
@@ -104,14 +81,13 @@ inline return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
 
     P += log(Pi);
 
+    // alpha is the first shape of inc_beta, so only its partial is needed
     if constexpr (is_autodiff_v<T_shape>) {
-      T_partials_return g1 = 0;
-      T_partials_return g2 = 0;
-
-      grad_reg_inc_beta(g1, g2, alpha_dbl, n_dbl + 1, p_dbl,
-                        digammaAlpha_vec[i], digammaN_vec[i], digammaSum_vec[i],
-                        beta_func);
-      partials<0>(ops_partials)[i] += g1 / Pi;
+      partials<0>(ops_partials)[i]
+          += grad_reg_inc_beta<GRAD_RIB::G1>(
+                 alpha_dbl, n_dbl + 1, p_dbl, digamma(alpha_dbl), 0.0,
+                 digamma(n_dbl + alpha_dbl + 1), 0.0)
+             / Pi;
     }
     if constexpr (is_autodiff_v<T_inv_scale>) {
       partials<1>(ops_partials)[i] += d_dbl * pow(1 - p_dbl, n_dbl)
