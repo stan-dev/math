@@ -77,6 +77,21 @@ TEST(mathMixMatFun, sylvester_solver_complex) {
   stan::test::expect_ad(f, A_r, B_r, C);
 }
 
+TEST(mathMixMatFun, sylvester_solver_triangular) {
+  // Schur of a triangular matrix deflates on exact zeros, which must not
+  // drop the tangents of the zero entries
+  auto f = [](const auto& a, const auto& b, const auto& c) {
+    return stan::math::sylvester_solver(a, b, c);
+  };
+  Eigen::MatrixXd A(2, 2);
+  A << 4, 1, 0, 3;
+  Eigen::MatrixXd B(3, 3);
+  B << 5, 2, -1, 0, 6, 1, 0, 0, 4;
+  Eigen::MatrixXd C(2, 3);
+  C << 1, 2, 3, 4, 5, 6;
+  stan::test::expect_ad(f, A, B, C);
+}
+
 TEST(mathMixMatFun, sylvester_solver_varmat) {
   // var_value<Matrix> inputs must give the same value and adjoints as
   // Matrix<var> inputs

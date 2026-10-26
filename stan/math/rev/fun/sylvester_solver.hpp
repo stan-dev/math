@@ -35,9 +35,8 @@ namespace math {
  */
 template <typename MatA, typename MatB, typename MatC,
           require_all_matrix_t<MatA, MatB, MatC>* = nullptr,
-          require_any_t<is_var<base_type_t<MatA>>, is_var<base_type_t<MatB>>,
-                        is_var<base_type_t<MatC>>>* = nullptr>
-inline auto sylvester_solver(const MatA& A, const MatB& B, const MatC& C) {
+          require_any_bt_var<MatA, MatB, MatC>* = nullptr>
+inline auto sylvester_solver(MatA&& A, MatB&& B, MatC&& C) {
   using cdouble = std::complex<double>;
   using ret_type
       = Eigen::Matrix<std::complex<var>, Eigen::Dynamic, Eigen::Dynamic>;
@@ -52,9 +51,9 @@ inline auto sylvester_solver(const MatA& A, const MatB& B, const MatC& C) {
     return ret_type(A.rows(), B.rows());
   }
 
-  auto arena_A = to_arena(A);
-  auto arena_B = to_arena(B);
-  auto arena_C = to_arena(C);
+  auto arena_A = to_arena(std::forward<MatA>(A));
+  auto arena_B = to_arena(std::forward<MatB>(B));
+  auto arena_C = to_arena(std::forward<MatC>(C));
 
   const Eigen::Index m = B.rows();
 
@@ -71,8 +70,7 @@ inline auto sylvester_solver(const MatA& A, const MatB& B, const MatC& C) {
 
   // Y holds D = U^H C V initially, overwritten column by column
   auto Y = (arena_U.adjoint() * value_of(arena_C) * arena_V).eval();
-  // deep copy: copying an arena_matrix would alias arena_S
-  auto Sshift = arena_S.eval();
+  plain_type_t<decltype(arena_S)> Sshift = arena_S;
   for (Eigen::Index i = 0; i < m; ++i) {
     Y.col(i).noalias() -= Y.leftCols(i) * arena_T.col(i).head(i);
     Sshift.diagonal() = arena_S.diagonal().array() + arena_T(i, i);
@@ -80,8 +78,7 @@ inline auto sylvester_solver(const MatA& A, const MatB& B, const MatC& C) {
   }
   arena_t<Eigen::MatrixXcd> arena_X = arena_U * Y * arena_V.adjoint();
 
-  auto res = to_arena(arena_X.unaryExpr(
-      [](const cdouble& x) { return std::complex<var>(x.real(), x.imag()); }));
+  auto res = to_arena(arena_X.cast<std::complex<var>>());
 
   // ---- reverse pass ----
   reverse_pass_callback([arena_A, arena_B, arena_C, arena_U, arena_S, arena_V,
@@ -115,8 +112,10 @@ inline auto sylvester_solver(const MatA& A, const MatB& B, const MatC& C) {
     auto accumulate = [](auto& in, const Eigen::MatrixXcd& g) {
       using in_t = std::decay_t<decltype(in)>;
       if constexpr (is_complex<value_type_t<in_t>>::value) {
-        for (Eigen::Index c = 0; c < g.cols(); ++c) {
-          for (Eigen::Index r = 0; r < g.rows(); ++r) {
+        const Eigen::Index rows = g.rows();
+        const Eigen::Index cols = g.cols();
+        for (Eigen::Index c = 0; c < cols; ++c) {
+          for (Eigen::Index r = 0; r < rows; ++r) {
             in(r, c).real().adj() += g(r, c).real();
             in(r, c).imag().adj() += g(r, c).imag();
           }
@@ -136,8 +135,6 @@ inline auto sylvester_solver(const MatA& A, const MatB& B, const MatC& C) {
       accumulate(arena_C, Z);
     }
   });
-  // copy out of the arena: the callback reads adjoints from res, so the
-  // caller must not be able to overwrite its entries
   return ret_type(res);
 }
 
