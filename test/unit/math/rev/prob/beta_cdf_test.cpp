@@ -4,10 +4,11 @@
 #include <cmath>
 #include <vector>
 
+/**
+ * For one observation the shape partials of beta_cdf are d/da I and d/db I.
+ * Reference: mpmath, 80 digits. The point has b >> a with a small y.
+ */
 TEST_F(AgradRev, ProbDistributionsBeta_cdf_shape_gradients) {
-  // For one observation the shape partials of beta_cdf are d/da I and
-  // d/db I. Reference: mpmath, 80 digits. The point has b >> a with a
-  // small y.
   using stan::math::var;
   var a = 1.145;
   var b = 6786;

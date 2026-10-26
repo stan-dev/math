@@ -4,8 +4,10 @@
 
 namespace {
 
-// d/da of I_z(a, b) against a high-precision reference (mpmath, 80 digits,
-// density-form quadrature checked against numerical differentiation).
+/**
+ * d/da of I_z(a, b) against a high-precision reference (mpmath, 80 digits,
+ * density-form quadrature checked against numerical differentiation).
+ */
 void expect_dda(double a, double b, double z, double expected, double rtol) {
   using stan::math::digamma;
   using stan::math::inc_beta_dda;

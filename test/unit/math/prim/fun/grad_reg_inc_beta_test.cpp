@@ -5,9 +5,13 @@
 
 namespace {
 
-// Both shape derivatives of I_z(a, b) against a high-precision reference
-// (mpmath, 80 digits, density-form quadrature checked against numerical
-// differentiation at 110 digits).
+/**
+ * Both shape derivatives of I_z(a, b) against a high-precision reference
+ * (mpmath, 80 digits, density-form quadrature checked against numerical
+ * differentiation at 110 digits). Each one-sided request is also checked.
+ * It carries only its own derivative through the expansion, with the other
+ * digamma unused.
+ */
 void expect_grads(double a, double b, double z, double dda, double ddb,
                   double rtol) {
   using stan::math::digamma;
@@ -23,8 +27,6 @@ void expect_grads(double a, double b, double z, double dda, double ddb,
   EXPECT_NEAR(ddb, g2, rtol * std::fabs(ddb))
       << "a=" << a << " b=" << b << " z=" << z;
 
-  // each one-sided request carries only its own derivative through the
-  // expansion, with the other digamma unused
   using stan::math::GRAD_RIB;
   const double only_g1 = stan::math::grad_reg_inc_beta<GRAD_RIB::G1>(
       a, b, z, digamma(a), 0.0, digamma(a + b), 0.0);
@@ -83,9 +85,11 @@ TEST(grad_reg_inc_beta, prefactor_underflow) {
                4.5390666074606649e-138, 1e-12);
 }
 
+/**
+ * For integer b the power series of the value terminates but the derivative
+ * series does not. The stop test must check both.
+ */
 TEST(grad_reg_inc_beta, integer_b) {
-  // for integer b the power series of the value terminates but the
-  // derivative series does not; the stop test must watch both
   expect_grads(10, 1, 0.5, -0.00067690154351557159, 0.00226574342615196, 1e-12);
   expect_grads(1, 100, 0.01, -0.42882413065860014, 0.0036787479630394138,
                1e-12);

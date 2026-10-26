@@ -28,9 +28,11 @@ TEST(mathMixScalFun, inc_beta) {
   stan::test::expect_ad(f, nan, nan, nan);
 }
 
+/**
+ * At z = 1 with b < 1 the density is infinite. The forward and reverse
+ * sweeps of fvar<var> must not throw there.
+ */
 TEST(mathMixScalFun, inc_beta_upper_bound_infinite_density) {
-  // At z = 1 with b < 1 the density is infinite; the forward and reverse
-  // sweeps of fvar<var> must not throw there.
   using stan::math::fvar;
   using stan::math::var;
   // grad() runs every node on the stack; start from an empty one

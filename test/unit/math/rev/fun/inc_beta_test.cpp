@@ -6,8 +6,10 @@
 
 namespace {
 
-// Shape gradients of inc_beta against a high-precision reference (mpmath,
-// 80 digits), at points where a finite-difference check is not informative.
+/**
+ * Shape gradients of inc_beta against a high-precision reference (mpmath,
+ * 80 digits), at points where a finite-difference check is not informative.
+ */
 void expect_inc_beta_grads(double a, double b, double z, double dda, double ddb,
                            double rtol) {
   using stan::math::var;
@@ -42,9 +44,11 @@ TEST_F(AgradRev, inc_beta_shape_gradients) {
                         0.00226574342615196, 1e-12);
 }
 
+/**
+ * At z = 1, I is 1 for all shapes, so the shape gradients are 0. With b < 1
+ * the density, which is the z gradient, is infinite.
+ */
 TEST_F(AgradRev, inc_beta_upper_bound_infinite_density) {
-  // At z = 1, I is 1 for all shapes, so the shape gradients are 0; with
-  // b < 1 the density, the z gradient, is infinite.
   using stan::math::var;
   var a = 1.05;
   var b = 0.35;

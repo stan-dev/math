@@ -38,8 +38,8 @@ inline auto inc_beta_ddz(T1 a, T2 b, T3 z) {
  * Returns the partial derivative of the regularized
  * incomplete beta function, I_{z}(a, b) with respect to z.
  *
- * Overload for double arguments, evaluated by Boost. Where the density is
- * infinite (z = 0 with a < 1, or z = 1 with b < 1) it returns infinity
+ * This overload for double arguments is evaluated by Boost. Where the density
+ * is infinite (z = 0 with a < 1, or z = 1 with b < 1) it returns infinity
  * instead of throwing.
  *
  * @param a first argument

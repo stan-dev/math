@@ -4,9 +4,11 @@
 
 namespace {
 
-// d/db of I_z(a, b) against a high-precision reference (mpmath, 80 digits,
-// density-form quadrature checked against numerical differentiation).
-// The fourth argument of inc_beta_ddb is digamma(b).
+/**
+ * d/db of I_z(a, b) against a high-precision reference (mpmath, 80 digits,
+ * density-form quadrature checked against numerical differentiation).
+ * The fourth argument of inc_beta_ddb is digamma(b).
+ */
 void expect_ddb(double a, double b, double z, double expected, double rtol) {
   using stan::math::digamma;
   using stan::math::inc_beta_ddb;
