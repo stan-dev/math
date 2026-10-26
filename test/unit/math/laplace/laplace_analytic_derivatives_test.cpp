@@ -22,6 +22,8 @@ auto autodiff_version() {
   return [](auto&&... args) { return LL{}(args...); };
 }
 
+// relative tolerance for entries above 1 in absolute value,
+// absolute tolerance below 1
 void expect_near_rel(const Eigen::VectorXd& expected,
                      const Eigen::VectorXd& actual, double tol,
                      const char* what) {
@@ -183,6 +185,45 @@ TEST(laplace_analytic_derivatives, equal_to_autodiff) {
     expect_analytic_equals_autodiff<neg_binomial_2_log_likelihood_summary>(
         th, tol, 2.5, y_counts, n_per_group, counts_per_group, mean);
   }
+}
+
+// The shifted cases of equal_to_autodiff compare entries of about 1e-13 with
+// an absolute tolerance of 1e-12, so they do not see the cancellation in
+// `1 - p`.  Reference values (mpmath, 50 digits, from the double values of
+// `theta + mean` and `theta + mean - log(eta)`) check the stable forms.
+TEST(laplace_analytic_derivatives, tail_reference_values) {
+  Eigen::VectorXd theta(4);
+  theta << 30.3, 28.8, 31.7, 30.05;
+  const Eigen::VectorXd mean = Eigen::VectorXd::Constant(4, 0.4);
+  std::ostream* msgs = nullptr;
+  auto expect_rel = [](const std::vector<double>& ref,
+                       const Eigen::VectorXd& actual, const char* what) {
+    ASSERT_EQ(static_cast<Eigen::Index>(ref.size()), actual.size()) << what;
+    for (int i = 0; i < 4; ++i) {
+      EXPECT_NEAR(ref[i], actual(i), 1e-14 * std::fabs(ref[i]))
+          << what << " [" << i << "]";
+    }
+  };
+  expect_rel({1.3940574134239623e-13, 2.0825772910546344e-13,
+              2.2918021714044091e-14, 1.1933367674388607e-13},
+             lli::diagonal_hessian(bernoulli_logit_likelihood{}, theta, msgs,
+                                   y_binary, y_index, mean),
+             "bernoulli neg_hessian");
+  expect_rel({1.3940574134238327e-13, 2.082577291053767e-13,
+              2.2918021714043565e-14, 1.1933367674387183e-13},
+             lli::third_diff(bernoulli_logit_likelihood{}, theta, msgs,
+                             y_binary, y_index, mean),
+             "bernoulli third_diff");
+  expect_rel({2.0330003945763301e-12, 2.3428994524350021e-12,
+              2.8647527142554155e-13, 3.8783444941756066e-12},
+             lli::diagonal_hessian(neg_binomial_2_log_likelihood{}, theta, msgs,
+                                   2.5, y_counts, y_index, mean),
+             "neg_binomial_2 neg_hessian");
+  expect_rel({2.0330003945758578e-12, 2.3428994524325625e-12,
+              2.8647527142552514e-13, 3.8783444941744496e-12},
+             lli::third_diff(neg_binomial_2_log_likelihood{}, theta, msgs, 2.5,
+                             y_counts, y_index, mean),
+             "neg_binomial_2 third_diff");
 }
 
 TEST(laplace_analytic_derivatives, finite_at_large_theta) {

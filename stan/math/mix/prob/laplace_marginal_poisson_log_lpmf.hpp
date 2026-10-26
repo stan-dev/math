@@ -2,7 +2,6 @@
 #define STAN_MATH_MIX_PROB_LAPLACE_MARGINAL_POISSON_LOG_LPMF_HPP
 
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
-#include <type_traits>
 #include <stan/math/mix/functor/laplace_marginal_density.hpp>
 #include <stan/math/mix/meta.hpp>
 #include <stan/math/rev/fun/dot_product.hpp>
@@ -13,6 +12,8 @@
 #include <stan/math/fwd/fun/lgamma.hpp>
 #include <stan/math/rev/fun/lgamma.hpp>
 #include <stan/math/prim/fun/add.hpp>
+#include <type_traits>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -64,25 +65,12 @@ namespace laplace_likelihood {
  */
 template <>
 struct analytic_derivatives<poisson_log_likelihood> : std::true_type {
-  // sum of the counts and number of observations of each group
-  template <typename YVec>
-  static void group_sums(Eigen::Index theta_size, const YVec& y,
-                         const std::vector<int>& y_index,
-                         Eigen::VectorXd& counts, Eigen::VectorXd& n) {
-    counts = Eigen::VectorXd::Zero(theta_size);
-    n = Eigen::VectorXd::Zero(theta_size);
-    for (size_t i = 0; i < y_index.size(); i++) {
-      counts(y_index[i] - 1) += y[i];
-      n(y_index[i] - 1) += 1;
-    }
-  }
-
   template <typename Theta, typename YVec, typename Mean>
   static void rates(const Theta& theta, const YVec& y,
                     const std::vector<int>& y_index, const Mean& mean,
                     Eigen::VectorXd& counts, Eigen::VectorXd& m) {
     Eigen::VectorXd n;
-    group_sums(theta.size(), y, y_index, counts, n);
+    internal::group_sums(theta.size(), y, y_index, counts, n);
     Eigen::VectorXd theta_offset = add(theta, mean);
     m = n.cwiseProduct(theta_offset.array().exp().matrix());
   }

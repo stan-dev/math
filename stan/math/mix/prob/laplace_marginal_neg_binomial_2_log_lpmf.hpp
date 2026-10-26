@@ -3,8 +3,6 @@
 
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
-#include <cmath>
-#include <type_traits>
 #include <stan/math/mix/functor/laplace_marginal_density.hpp>
 
 #include <stan/math/rev/core/operator_addition.hpp>
@@ -25,6 +23,8 @@
 #include <stan/math/fwd/fun/sum.hpp>
 #include <stan/math/prim/err/check_size_match.hpp>
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
+#include <type_traits>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -232,21 +232,15 @@ struct analytic_derivatives<neg_binomial_2_log_likelihood> : std::true_type {
                     const Mean& mean, Eigen::VectorXd& counts,
                     Eigen::VectorXd& s, Eigen::VectorXd& x) {
     const Eigen::Index theta_size = theta.size();
-    counts = Eigen::VectorXd::Zero(theta_size);
-    Eigen::VectorXd n = Eigen::VectorXd::Zero(theta_size);
-    for (size_t i = 0; i < y.size(); i++) {
-      counts(y_index[i] - 1) += y[i];
-      n(y_index[i] - 1) += 1;
-    }
+    Eigen::VectorXd n;
+    internal::group_sums(theta_size, y, y_index, counts, n);
     Eigen::VectorXd eta_g(theta_size);
     if constexpr (is_stan_scalar<Eta>::value) {
       eta_g.setConstant(eta);
     } else {
       check_size_match("neg_binomial_2_log_likelihood", "eta", eta.size(),
                        "theta", theta_size);
-      for (Eigen::Index g = 0; g < theta_size; ++g) {
-        eta_g(g) = eta[g];
-      }
+      eta_g = eta;
     }
     s = counts + eta_g.cwiseProduct(n);
     x = add(theta, mean) - eta_g.array().log().matrix();
@@ -309,7 +303,7 @@ struct analytic_derivatives<neg_binomial_2_log_likelihood_summary>
     check_size_match("neg_binomial_2_log_likelihood_summary", "n_per_group",
                      n.size(), "theta", theta_size);
     s = counts + eta * n;
-    x = add(theta, mean) - Eigen::VectorXd::Constant(theta_size, std::log(eta));
+    x = (add(theta, mean).array() - log(eta)).matrix();
   }
 
   template <typename Theta, typename Eta, typename Mean>

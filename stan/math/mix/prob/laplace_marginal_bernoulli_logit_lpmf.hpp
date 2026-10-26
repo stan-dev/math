@@ -4,7 +4,6 @@
 #include <stan/math/mix/meta.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
-#include <type_traits>
 #include <stan/math/mix/functor/laplace_marginal_density.hpp>
 #include <stan/math/rev/fun/elt_multiply.hpp>
 #include <stan/math/rev/fun/exp.hpp>
@@ -22,6 +21,8 @@
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
 #include <stan/math/rev/fun/to_vector.hpp>
 #include <stan/math/prim/fun/to_vector.hpp>
+#include <type_traits>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -71,25 +72,12 @@ namespace laplace_likelihood {
  */
 template <>
 struct analytic_derivatives<bernoulli_logit_likelihood> : std::true_type {
-  // sum of the counts and number of observations of each group
-  template <typename YVec>
-  static void group_sums(Eigen::Index theta_size, const YVec& y,
-                         const std::vector<int>& y_index,
-                         Eigen::VectorXd& counts, Eigen::VectorXd& n) {
-    counts = Eigen::VectorXd::Zero(theta_size);
-    n = Eigen::VectorXd::Zero(theta_size);
-    for (size_t i = 0; i < y_index.size(); i++) {
-      counts(y_index[i] - 1) += y[i];
-      n(y_index[i] - 1) += 1;
-    }
-  }
-
   template <typename Theta, typename YVec, typename Mean>
   static void probabilities(const Theta& theta, const YVec& y,
                             const std::vector<int>& y_index, const Mean& mean,
                             Eigen::VectorXd& counts, Eigen::VectorXd& n,
                             Eigen::VectorXd& p, Eigen::VectorXd& q) {
-    group_sums(theta.size(), y, y_index, counts, n);
+    internal::group_sums(theta.size(), y, y_index, counts, n);
     Eigen::VectorXd theta_offset = add(theta, mean);
     p = inv_logit(theta_offset);
     q = inv_logit(-theta_offset);
