@@ -4,13 +4,11 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/gamma_p.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 #include <cmath>
 #include <limits>
 
@@ -93,12 +91,12 @@ inline return_type_t<T1, T2> grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
     TP log_s = 0.0;
     double s_sign = 1.0;
     T2 log_z = log(z);
-    TP log_delta = log_s - multiply_log(2, a);
+    TP log_delta = log_s - lmultiply(2, a);
     for (int k = 1; k <= max_steps; ++k) {
       S += s_sign >= 0.0 ? exp(log_delta) : -exp(log_delta);
       log_s += log_z - log(k);
       s_sign = -s_sign;
-      log_delta = log_s - multiply_log(2, k + a);
+      log_delta = log_s - lmultiply(2, k + a);
       if (is_inf(log_delta)) {
         throw_domain_error("grad_reg_inc_gamma", "is not converging", "", "");
       }
