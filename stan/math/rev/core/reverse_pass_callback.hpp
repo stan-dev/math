@@ -12,7 +12,8 @@ template <typename F>
 struct reverse_pass_callback_vari : public vari_base {
   F rev_functor_;
 
-  STAN_STRONG_INLINE explicit reverse_pass_callback_vari(F&& rev_functor)
+  STAN_STRONG_INLINE STAN_HOT_PATH explicit reverse_pass_callback_vari(
+      F&& rev_functor)
       : rev_functor_(std::forward<F>(rev_functor)) {
     ChainableStack::instance_->push_var_stack(this);
   }
@@ -36,11 +37,9 @@ struct reverse_pass_callback_vari : public vari_base {
  * @param functor funtor or other callable to call in the reverse pass
  */
 template <typename F>
-STAN_STRONG_INLINE inline void reverse_pass_callback(F&& functor) {
-  // The callback can capture types that need more than the 8 byte alignment
-  // of `vari_base::operator new(size_t)`, e.g. fixed-size Eigen matrices.
-  // C++17 only calls the aligned operator new above
-  // __STDCPP_DEFAULT_NEW_ALIGNMENT__, so allocate with the type's alignment.
+STAN_STRONG_INLINE STAN_HOT_PATH void reverse_pass_callback(F&& functor) {
+  // Captures such as fixed-size Eigen matrices can need more than the 8 byte
+  // alignment of `vari_base::operator new`.
   using vari_t = internal::reverse_pass_callback_vari<F>;
   ::new (ChainableStack::instance_->memalloc_.alloc(
       sizeof(vari_t), alignof(vari_t))) vari_t(std::forward<F>(functor));
