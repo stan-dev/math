@@ -162,6 +162,7 @@
 #include <stan/math/rev/fun/stan_print.hpp>
 #include <stan/math/rev/fun/step.hpp>
 #include <stan/math/rev/fun/sum.hpp>
+#include <stan/math/rev/fun/sylvester_solver.hpp>
 #include <stan/math/rev/fun/tan.hpp>
 #include <stan/math/rev/fun/tanh.hpp>
 #include <stan/math/rev/fun/tcrossprod.hpp>
