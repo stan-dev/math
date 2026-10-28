@@ -14,7 +14,7 @@
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/sum.hpp>
@@ -273,7 +273,7 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
       if constexpr (is_vector<T_precision>::value) {
         logp -= sum(phi_arr * log_phi);
       } else {
-        logp -= N_instances * multiply_log(phi_val, phi_val);
+        logp -= N_instances * lmultiply(phi_val, phi_val);
       }
     }
     if constexpr (!include_summand<propto, T_x, T_alpha, T_beta>::value) {

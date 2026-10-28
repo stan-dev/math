@@ -15,7 +15,7 @@ namespace stan {
 namespace math {
 
 /**
- * Throw an exception if the specified the vector contains negative values or
+ * Throw an exception if the specified vector contains non-positive values or
  * is not sorted into strictly increasing order.
  * @tparam Vec A type derived from `Eigen::EigenBase` with 1 compile time row or
  * column
@@ -34,7 +34,7 @@ inline void check_positive_ordered(const char* function, const char* name,
     return;
   }
   auto&& y_ref = to_ref(value_of_rec(y));
-  if (y_ref.coeff(0) < 0) {
+  if (!(y_ref.coeff(0) > 0)) {
     [&]() STAN_COLD_PATH {
       std::ostringstream msg;
       msg << "is not a valid positive_ordered vector."
@@ -49,7 +49,7 @@ inline void check_positive_ordered(const char* function, const char* name,
 
 /**
  * Throw an exception if any of the vectors in a standard vector contains
- * negative values or is not sorted into strictly increasing order.
+ * non-positive values or is not sorted into strictly increasing order.
  * @tparam StdVec A standard vector type with an `value_type` inheriting from
  * `Eigen::EigenBase` with 1 compile time row or column
  * @param function Function name (for error messages)

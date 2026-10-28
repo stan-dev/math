@@ -7,7 +7,7 @@
 #include <stan/math/prim/fun/digamma_diff.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -78,11 +78,11 @@ inline return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   if constexpr (include_precision || include_location) {
     if constexpr (include_precision && include_location) {
       logp += sum(-lbeta(phi_val, n_vec + 1) - log(n_plus_phi)
-                  + multiply_log(n_vec, mu_val) + logp_calc());
+                  + lmultiply(n_vec, mu_val) + logp_calc());
     } else if constexpr (include_precision) {
       logp += sum(-lbeta(phi_val, n_vec + 1) - log(n_plus_phi) + logp_calc());
     } else if constexpr (include_location) {
-      logp += sum(multiply_log(n_vec, mu_val) + logp_calc());
+      logp += sum(lmultiply(n_vec, mu_val) + logp_calc());
     }
   }
   if constexpr (is_autodiff_v<T_location>) {

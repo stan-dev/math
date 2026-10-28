@@ -267,7 +267,6 @@ TEST_BINARY_FUNCTION(fmin)
 TEST_BINARY_FUNCTION(fmod)
 TEST_BINARY_FUNCTION(lbeta)
 TEST_BINARY_FUNCTION(lmultiply)
-TEST_BINARY_FUNCTION(multiply_log)
 TEST_BINARY_FUNCTION(pow)
 
 TEST(KernelGenerator, log_beta_ratio_test) {
