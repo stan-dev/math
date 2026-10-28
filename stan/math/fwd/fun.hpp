@@ -72,6 +72,7 @@
 #include <stan/math/fwd/fun/log1p.hpp>
 #include <stan/math/fwd/fun/log1p_exp.hpp>
 #include <stan/math/fwd/fun/log2.hpp>
+#include <stan/math/fwd/fun/log_cosh.hpp>
 #include <stan/math/fwd/fun/log_determinant.hpp>
 #include <stan/math/fwd/fun/log_diff_exp.hpp>
 #include <stan/math/fwd/fun/log_falling_factorial.hpp>
