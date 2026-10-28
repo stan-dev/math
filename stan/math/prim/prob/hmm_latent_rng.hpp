@@ -18,8 +18,8 @@ namespace math {
  * In this setting, the hidden states are discrete
  * and takes values over the finite space {1, ..., K}.
  * log_omegas is a matrix of observational densities, where
- * the (i, j)th entry corresponds to the density of the ith observation, y_i,
- * given x_i = j.
+ * the (i, j)th entry corresponds to the density of the jth observation, y_j,
+ * given x_j = i.
  * The transition matrix Gamma is such that the (i, j)th entry is the
  * probability that x_n = j given x_{n - 1} = i. The rows of Gamma are
  * simplexes.
@@ -47,10 +47,19 @@ inline std::vector<int> hmm_latent_rng(const T_omega& log_omegas,
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
-  Eigen::MatrixXd omegas = value_of(log_omegas).array().exp();
   ref_type_t<decltype(value_of(rho))> rho_dbl = value_of(rho);
   ref_type_t<decltype(value_of(Gamma))> Gamma_dbl = value_of(Gamma);
   hmm_check(log_omegas, Gamma_dbl, rho_dbl, "hmm_latent_rng");
+
+  // Subtract the maximum of each column before exponentiating, so that
+  // omegas neither underflows nor overflows. The sampling probabilities
+  // are invariant to a positive factor on each column of omegas.
+  ref_type_t<decltype(value_of(log_omegas))> log_omegas_dbl
+      = value_of(log_omegas);
+  Eigen::MatrixXd omegas
+      = (log_omegas_dbl.rowwise() - log_omegas_dbl.colwise().maxCoeff())
+            .array()
+            .exp();
 
   Eigen::MatrixXd alphas(n_states, n_transitions + 1);
   alphas.col(0) = omegas.col(0).cwiseProduct(rho_dbl);
