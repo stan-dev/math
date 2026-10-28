@@ -23,7 +23,6 @@
 #include <stan/math/opencl/kernels/device_functions/log1p_exp.hpp>
 #include <stan/math/opencl/kernels/device_functions/logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/Phi.hpp>
-#include <stan/math/opencl/kernels/device_functions/Phi_approx.hpp>
 #include <stan/math/opencl/kernels/device_functions/std_normal_lcdf.hpp>
 #include <stan/math/opencl/kernels/device_functions/trigamma.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
@@ -310,9 +309,6 @@ ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_logit,
 ADD_UNARY_FUNCTION_WITH_INCLUDES(logit, opencl_kernels::log1m_device_function,
                                  opencl_kernels::logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(Phi, opencl_kernels::phi_device_function)
-ADD_UNARY_FUNCTION_WITH_INCLUDES(Phi_approx,
-                                 opencl_kernels::inv_logit_device_function,
-                                 opencl_kernels::phi_approx_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(
     std_normal_lcdf_scaled_impl,
     opencl_kernels::std_normal_lcdf_device_function)
