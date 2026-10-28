@@ -1,3 +1,10 @@
+// Original code derived from TensorFlow Probability and is distributed here
+// under the Apache License 2.0 (licenses/tensorflow-probability-license.txt)
+//    Copyright 2020 The TensorFlow Probability Authors.
+//    tensorflow_probability/python/math/special.py, betainc partials
+// Secondary code copyright by its author and is distributed here
+// under the BSD-3 license (LICENSE.md)
+
 #ifndef STAN_MATH_PRIM_FUN_GRAD_REG_INC_BETA_HPP
 #define STAN_MATH_PRIM_FUN_GRAD_REG_INC_BETA_HPP
 
@@ -56,7 +63,8 @@ namespace internal {
  * test therefore also requires dt_n/db to be small whenever that sum
  * matters. That is the case when d/db is requested, and also when b is an
  * autodiff type, because autodiff then differentiates the d/da result in b
- * and needs the same terms.
+ * and needs the same terms. This test of dt_n/db is a change from the
+ * TensorFlow Probability source, which tests t_n only.
  *
  * @tparam grads_requested which partials to compute
  * @tparam flip_sign true when the caller evaluates its I_z(a, b) through the
@@ -117,6 +125,7 @@ inline auto inc_beta_power_series_kernel(const T1& a, const T2& b, const T3& x,
     }
     product = new_product;
     series_sum += term;
+    // changed from TFP, which tests the term only: db_converged added
     if (fabs(value_of_rec(term)) <= tolerance && db_converged) {
       break;
     }
@@ -199,7 +208,8 @@ inline auto inc_beta_power_series_kernel(const T1& a, const T2& b, const T3& x,
  * a derivative no longer change. The b derivative of d_{2b} is b x / den,
  * which is not 0, so dh/db is still changing. The b derivative is therefore
  * tested whenever it matters, which is when d/db is requested and also when b
- * is an autodiff type, as in the power series.
+ * is an autodiff type, as in the power series. The tests of the derivatives
+ * are a change from the TensorFlow Probability source, which tests C D only.
  *
  * @tparam grads_requested which partials to compute
  * @tparam flip_sign true when the caller evaluates its I_z(a, b) through the
@@ -316,6 +326,7 @@ inline auto inc_beta_continued_fraction_kernel(const T1& a, const T2& b,
       const double h_d = value_of_rec(h);
       const double dh_a_now = h_d * value_of_rec(r_a);
       const double dh_b_now = h_d * value_of_rec(r_b);
+      // changed from TFP, which tests C D only: the derivative tests added
       if (fabs(value_of_rec(delta) - 1.0) < tolerance
           && (grads_requested == GRAD_RIB::G2
               || fabs(dh_a_now - dh_a_prev) <= tolerance * fabs(dh_a_now))
@@ -393,6 +404,10 @@ inline auto inc_beta_continued_fraction_kernel(const T1& a, const T2& b,
  * the fraction of I_{1-z}(b, a). The mode (a - 1) / (a + b - 2) is not used
  * as the threshold because it exceeds 1 for b < 1. The fraction of I_z(a, b)
  * would then be used for z near 1, where it needs hundreds of steps.
+ *
+ * Both choices are changes from the TensorFlow Probability source, which
+ * uses the power series up to z = 0.95 (from z = 0.05 for I_{1-z}(b, a))
+ * and switches the continued fraction at the mode.
  *
  * The partials are 0 at z = 0 and z = 1.
  *

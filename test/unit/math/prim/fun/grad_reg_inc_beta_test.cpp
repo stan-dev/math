@@ -8,9 +8,8 @@ namespace {
 /**
  * Both shape derivatives of I_z(a, b) against a high-precision reference
  * (mpmath, 80 digits, density-form quadrature checked against numerical
- * differentiation at 110 digits). Each one-sided request is also checked.
- * It carries only its own derivative through the expansion, with the other
- * digamma unused.
+ * differentiation at 110 digits). The one-sided GRAD_RIB requests are
+ * tested in grad_reg_inc_beta_one_sided_test.cpp.
  */
 void expect_grads(double a, double b, double z, double dda, double ddb,
                   double rtol) {
@@ -26,20 +25,6 @@ void expect_grads(double a, double b, double z, double dda, double ddb,
       << "a=" << a << " b=" << b << " z=" << z;
   EXPECT_NEAR(ddb, g2, rtol * std::fabs(ddb))
       << "a=" << a << " b=" << b << " z=" << z;
-
-  using stan::math::GRAD_RIB;
-  const double only_g1 = stan::math::grad_reg_inc_beta<GRAD_RIB::G1>(
-      a, b, z, digamma(a), 0.0, digamma(a + b), 0.0);
-  EXPECT_NEAR(dda, only_g1, rtol * std::fabs(dda))
-      << "G1 a=" << a << " b=" << b << " z=" << z;
-  const double only_g2 = stan::math::grad_reg_inc_beta<GRAD_RIB::G2>(
-      a, b, z, 0.0, digamma(b), digamma(a + b), 0.0);
-  EXPECT_NEAR(ddb, only_g2, rtol * std::fabs(ddb))
-      << "G2 a=" << a << " b=" << b << " z=" << z;
-  const auto both = stan::math::grad_reg_inc_beta<GRAD_RIB::BOTH>(
-      a, b, z, digamma(a), digamma(b), digamma(a + b), 0.0);
-  EXPECT_EQ(g1, both.first) << "BOTH a=" << a << " b=" << b << " z=" << z;
-  EXPECT_EQ(g2, both.second) << "BOTH a=" << a << " b=" << b << " z=" << z;
 }
 
 }  // namespace
@@ -106,4 +91,12 @@ TEST(grad_reg_inc_beta, tails) {
                2.008497927784773e-6, 1e-10);
   expect_grads(15000, 12500, 0.5, -8.7210244281937301e-53,
                9.5528279245811057e-53, 1e-10);
+}
+
+TEST(grad_reg_inc_beta, upper_tail_no_throw) {
+  // deep upper tail: I rounds to 1 and the derivatives are near the smallest
+  // normal double
+  EXPECT_NO_THROW(expect_grads(4.0845138072907865, 150.97164240761546,
+                               0.991606836273885, -1.1190795130668706e-307,
+                               1.4196439874655394e-307, 1e-10));
 }

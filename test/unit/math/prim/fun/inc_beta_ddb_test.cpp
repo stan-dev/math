@@ -70,3 +70,16 @@ TEST(MathFunctions, inc_beta_ddb_regressions) {
   expect_ddb(0.5, 0.5, 0.5, 0.58312180806163756, 1e-10);
   expect_ddb(20, 20, 0.5, 0.063740468830439859, 1e-10);
 }
+
+TEST(MathFunctions, inc_beta_ddb_upper_tail_no_throw) {
+  // deep upper tail of large shapes: I rounds to 1 and the derivative is
+  // subnormal, so the tolerance allows for its 12 significant digits
+  const double a = 936.5962745738543;
+  const double b = 1294.2043377235907;
+  const double z = 0.7877755442980134;
+  double got = 0;
+  EXPECT_NO_THROW(got
+                  = stan::math::inc_beta_ddb(a, b, z, stan::math::digamma(b),
+                                             stan::math::digamma(a + b)));
+  EXPECT_NEAR(6.29796155252e-312, got, 1e-9 * 6.29796155252e-312);
+}
