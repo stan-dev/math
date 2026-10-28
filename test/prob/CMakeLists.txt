@@ -15,9 +15,12 @@ if(STAN_USE_SYSTEM_BOOST)
 else()
   target_include_directories(generate_tests SYSTEM PRIVATE "${STAN_BOOST_ROOT}")
 endif()
-stan_add_pch(prob_pch stan_test_options <gtest/gtest.h> <tuple>
-  <test/prob/test_fixture_distr.hpp> <test/prob/test_fixture_cdf.hpp>
-  <test/prob/test_fixture_cdf_log.hpp> <test/prob/test_fixture_ccdf_log.hpp>)
+# The fixtures stay out of the PCH: their TYPED_TEST_P and
+# REGISTER_TYPED_TEST_SUITE_P statics must initialize in definition order, and
+# Clang 7 reorders static initializers that come from a PCH. The PCH holds
+# their dependencies instead.
+stan_add_pch(prob_pch stan_test_options <gtest/gtest.h> <tuple> <type_traits> <stdexcept>
+  <stan/math/mix.hpp> <test/prob/utility.hpp> <test/unit/math/expect_near_rel.hpp>)
 
 # These are the argument combinations used by generate_tests.cpp with its
 # selected row-vector setting. Non-reverse modes omit all-constant combinations.

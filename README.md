@@ -46,12 +46,12 @@ CMake saves persistent build settings in a cache.
 The default cache file is `build/CMakeCache.txt`.
 Cached settings can override later changes to `make/local`.
 `--fresh` resets the CMake configuration before building.
-`--fresh` passes CMake's native `--fresh` option during configuration.
-CMake removes `CMakeCache.txt` and the top-level `CMakeFiles` directory.
+`--fresh` removes `CMakeCache.txt` and the top-level `CMakeFiles` directory, which is what CMake's own `--fresh` option does.
+It works with any supported CMake version, while the native option needs CMake 3.24 or newer.
 CMake then configures the build with the current arguments and `make/local` settings.
+Objects whose compile flags did not change are not rebuilt.
 Use `--fresh` when cached settings no longer match the intended build.
 Pass required custom settings again because `--fresh` removes cached overrides.
-`--fresh` requires CMake 3.24 or newer.
 `--test-only` runs an existing executable without configuration or compilation.
 `--fresh` cannot be combined with `--test-only`.
 
@@ -97,6 +97,24 @@ Repeat `-f` to require all filters to match.
 ```sh
 # Build the executable for `sum_test.cpp`.
 ./runTests.py --make-only test/unit/math/prim/fun/sum_test.cpp
+```
+
+Selected files and distribution fixtures build through one CMake target, `stan_selected_tests`, so all of them compile in parallel.
+Each selected file is still its own executable.
+
+- A distribution fixture such as `test/prob/normal/normal_test.hpp` selects the tests generated from that fixture.
+
+```sh
+# Build and run the tests generated from the normal distribution fixture.
+./runTests.py -j8 test/prob/normal/normal_test.hpp
+```
+
+- `--configure-only` configures `<build-dir>` without building or running tests.
+`test/prob/getDependencies.py` reads that configuration's compile commands to select the distribution fixtures whose included Stan headers changed:
+
+```sh
+./runTests.py --configure-only
+./runTests.py -j8 $(python3 test/prob/getDependencies.py --build-dir build)
 ```
 
 - `--test-only` runs an existing test executable.
@@ -152,6 +170,22 @@ The CMake argument `-DNAME=VALUE` sets a named cache setting.
 ```sh
 # Build reverse-mode core tests with threading enabled.
 ./runTests.py --cmake-arg=-DSTAN_THREADS=ON test/unit/math/rev/core
+```
+
+`-DSTAN_SANITIZE_ADDRESS=ON` compiles C++ sources and links with AddressSanitizer.
+The vendored TBB build does not use it.
+
+```sh
+# Build mixed-mode tests at -O1 with AddressSanitizer, without make/local.
+./runTests.py --cmake-arg=-DSTAN_USE_MAKE_LOCAL=OFF --cmake-arg=-DSTAN_SANITIZE_ADDRESS=ON \
+  --cmake-arg=-DSTAN_TEST_OPTIMIZATION=1 test/unit/math/mix
+```
+
+The `cpplint` and `test-math-dependencies` CMake targets run the same checks as `make cpplint` and `make test-math-dependencies`:
+
+```sh
+cmake -S . -B build -DBUILD_TESTING=OFF
+cmake --build build --target cpplint
 ```
 
 The CMake argument `-G NAME` selects a generator.
@@ -236,10 +270,15 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 
 The native CMake option `--fresh` resets the configuration cache.
 `--fresh` requires CMake 3.24 or newer.
+With older CMake, delete the cache file and the top-level `CMakeFiles` directory instead.
 Example: Reset cached settings and configure a release build.
 
 ```sh
 cmake --fresh -S . -B build -DCMAKE_BUILD_TYPE=Release
+# CMake older than 3.24
+cmake -E remove -f build/CMakeCache.txt
+cmake -E remove_directory build/CMakeFiles
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 ```
 
 #### List settings and descriptions

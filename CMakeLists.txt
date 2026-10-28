@@ -9,7 +9,11 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 set(CMAKE_CXX_EXTENSIONS NO)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+stan_cache_default(CMAKE_POSITION_INDEPENDENT_CODE ON BOOL
+  "Compile position-independent code and link executables as PIE")
+# Link executables as PIE to match their position-independent objects.
+include(CheckPIESupported)
+check_pie_supported()
 
 option(STAN_BUILD_DOCS "Build the Stan Math library documentation" OFF)
 option(STAN_TEST_HEADERS "Create targets that check standalone headers" ON)
@@ -22,10 +26,13 @@ option(STAN_NO_RANGE_CHECKS "Disable range checks within the Stan library" OFF)
 option(STAN_MPI "Enable MPI support" OFF)
 option(STAN_OPENCL "Enable OpenCL support" OFF)
 option(STAN_THREADS "Enable multi-threading support" OFF)
+option(STAN_SANITIZE_ADDRESS "Compile C++ sources and link with AddressSanitizer" OFF)
 stan_cache_default(STAN_OPENCL_DEVICE_ID "0" STRING "OpenCL device ID")
 stan_cache_default(STAN_OPENCL_PLATFORM_ID "0" STRING "OpenCL platform ID")
 stan_cache_default(STAN_INTEGRATED_OPENCL "0" STRING "Enable integrated OpenCL features")
 set(STAN_TEST_NAME_FILTERS "" CACHE STRING "Required substrings in selected test source paths")
+set(STAN_SELECTED_TEST_REGEX "" CACHE STRING
+  "Tests whose source paths match this regex are built by stan_selected_tests")
 include(CTest)
 stan_cache_default(STAN_TEST_OPTIMIZATION "1" STRING "Optimization level for tests and solver libraries")
 if(DEFINED CACHE{STAN_TEST_OPTIMIZATION})
@@ -45,6 +52,16 @@ if(MSVC)
   endif()
 else()
   set(STAN_TEST_OPTIMIZATION_FLAGS -O${STAN_TEST_OPTIMIZATION})
+endif()
+# Like Make's CXXFLAGS, reach every C++ compile and link, but not the
+# vendored TBB build, which takes its own flags.
+if(STAN_SANITIZE_ADDRESS)
+  if(MSVC)
+    add_compile_options(/fsanitize=address)
+  else()
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fsanitize=address>)
+    add_link_options(-fsanitize=address)
+  endif()
 endif()
 
 add_library(stanmath INTERFACE)
@@ -105,7 +122,13 @@ if(STAN_MPI)
   target_link_libraries(stan_mpi PRIVATE stanmath)
 endif()
 
-message(STATUS "Stan Math: threads=${STAN_THREADS}, OpenCL=${STAN_OPENCL}, MPI=${STAN_MPI}")
+message(STATUS "Stan Math: compiler=${CMAKE_CXX_COMPILER} "
+  "(${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}), "
+  "build type=${CMAKE_BUILD_TYPE}, test optimization=${STAN_TEST_OPTIMIZATION}")
+message(STATUS "Stan Math: CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}, "
+  "CMAKE_EXE_LINKER_FLAGS=${CMAKE_EXE_LINKER_FLAGS}")
+message(STATUS "Stan Math: threads=${STAN_THREADS}, OpenCL=${STAN_OPENCL}, MPI=${STAN_MPI}, "
+  "AddressSanitizer=${STAN_SANITIZE_ADDRESS}")
 set(STAN_EFFECTIVE_MPI "${STAN_MPI}" CACHE INTERNAL "MPI setting used by test executables")
 include(cmake/StanTest.cmake)
 if(BUILD_TESTING)
@@ -120,6 +143,23 @@ if(STAN_BUILD_DOCS)
       doc/api/html/eigen_navtree_hacks.js
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
     COMMENT "Generating API documentation with Doxygen"
+    VERBATIM)
+endif()
+
+find_package(Python3 COMPONENTS Interpreter)
+if(Python3_FOUND)
+  # The same checks as make/cpplint and Make's test-math-dependencies.
+  set(cpplint_command "${Python3_EXECUTABLE}" lib/cpplint_2.0.2/cpplint.py
+    --output=vs7 --counting=detailed --root=stan --extensions=hpp,cpp --recursive
+    "--filter=-runtime/indentation_namespace,-build/c++11,-readability/namespace,-legal/copyright,-whitespace/indent,-build/header_guard,-build/include_order,-build/include_what_you_use,-runtime/string,-build/namespaces")
+  add_custom_target(cpplint
+    COMMAND ${cpplint_command} stan
+    COMMAND ${cpplint_command} test/unit
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    VERBATIM)
+  add_custom_target(test-math-dependencies
+    COMMAND "${Python3_EXECUTABLE}" runChecks.py
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
     VERBATIM)
 endif()
 

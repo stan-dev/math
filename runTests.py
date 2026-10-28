@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import re
 import shlex
+import shutil
 import subprocess
 import sys
 from argparse import ArgumentParser, RawTextHelpFormatter
@@ -26,12 +27,9 @@ def processCLIArgs(arguments):
     )
 
     parser.set_defaults(command=None)
-    if arguments and arguments[0] in ("changed-unit-filter", "changed-distribution-filter",
-                                      "generate-expressions", "build-tests"):
+    if arguments and arguments[0] in ("changed-unit-filter", "generate-expressions", "build-tests"):
         commands = parser.add_subparsers(dest="command", required=True)
         commands.add_parser("changed-unit-filter")
-        distributions = commands.add_parser("changed-distribution-filter")
-        distributions.add_argument("--all", action="store_true")
         expressions = commands.add_parser("generate-expressions")
         expressions.add_argument("build_dir")
         expressions.add_argument("--functions", nargs="*", default=[])
@@ -89,6 +87,12 @@ def processCLIArgs(arguments):
         help="Don't make tests, just try to run them (must already be made).",
     )
     parser.add_argument(
+        "--configure-only",
+        dest="configure_only",
+        action="store_true",
+        help="Only configure the CMake build directory.",
+    )
+    parser.add_argument(
         "--run-all",
         dest="run_all",
         action="store_true",
@@ -110,11 +114,12 @@ def processCLIArgs(arguments):
 
     tests_help_msg = "The path(s) to the test case(s) to run.\n"
     tests_help_msg += "Example: 'test/unit', 'test/prob', and/or\n"
-    tests_help_msg += "         'test/unit/math/prim/fun/abs_test.cpp'"
+    tests_help_msg += "         'test/unit/math/prim/fun/abs_test.cpp', and/or\n"
+    tests_help_msg += "         'test/prob/normal/normal_test.hpp' (a distribution fixture)"
     parser.add_argument("tests", nargs="*", type=str, help=tests_help_msg)
     parser.add_argument("--build-dir", default="build", help="CMake build directory")
     parser.add_argument("--fresh", action="store_true",
-                        help="reset the CMake cache before configuring (requires CMake 3.24 or newer)")
+                        help="reset the CMake cache before configuring, like cmake --fresh")
     parser.add_argument("--cmake-arg", action="append", default=[],
                         help="extra configure argument, e.g. --cmake-arg=-DSTAN_THREADS=ON")
     parser.add_argument("--config", default="Release", help="CMake build configuration")
@@ -122,8 +127,8 @@ def processCLIArgs(arguments):
     inputs = parser.parse_args(arguments)
     if inputs.j < 1 or inputs.test_jobs < 1:
         parser.error("-j and --test-jobs must be positive")
-    if inputs.make_only and inputs.test_only:
-        parser.error("--make-only and --test-only cannot be combined")
+    if inputs.test_only and (inputs.make_only or inputs.configure_only):
+        parser.error("--test-only cannot be combined with --make-only or --configure-only")
     if inputs.fresh and inputs.test_only:
         parser.error("--fresh cannot be combined with --test-only")
     return inputs
@@ -149,6 +154,38 @@ def findChangedTests(files, existing_tests, limit=20):
     return sorted(selected) if len(selected) <= limit else []
 
 
+def is_fixture(path):
+    return re.fullmatch(r"test/prob/[^/]+/[^/]+_test\.hpp", path) is not None
+
+
+def cmake_escape(text):
+    return re.sub(r"([.+*?^$()\[\]{}|\\])", r"\\\1", text)
+
+
+def selection_regex(paths):
+    """Match the source paths of the selected files and fixtures' generated tests."""
+    patterns = [cmake_escape(path[:-len("_test.hpp")]) + "_[0-9]+_generated_.*" if is_fixture(path)
+                else cmake_escape(path) for path in sorted(paths)
+                if is_fixture(path) or path.endswith(".cpp")]
+    return "^(" + "|".join(patterns) + ")$" if patterns else ""
+
+
+def fixture_tests(inventory, fixtures):
+    """Expand fixtures to the generated sources CMake registered for them."""
+    prefixes = tuple(fixture[:-len("_test.hpp")] + "_" for fixture in fixtures)
+    sources = set()
+    for test in inventory["tests"]:
+        for entry in test.get("properties", []):
+            if entry["name"] != "LABELS":
+                continue
+            for label in entry["value"]:
+                for prefix in prefixes:
+                    if label.startswith(prefix) and re.match(
+                            r"[0-9]+_generated_.*_test\.cpp$", label[len(prefix):]):
+                        sources.add(label)
+    return sorted(sources)
+
+
 def select_paths(matches, directories):
     """Validate expanded paths and remove selections covered by a directory."""
     paths = set()
@@ -159,8 +196,9 @@ def select_paths(matches, directories):
             if not any(path == base or path.startswith(base + "/")
                        for base in ("test/unit", "test/prob", "test/expressions")):
                 raise ValueError("Unsupported test path: " + path)
-            if path not in directories and not path.endswith("_test.cpp"):
-                raise ValueError("Expected a test directory or *_test.cpp: " + path)
+            if path not in directories and not path.endswith("_test.cpp") and not is_fixture(path):
+                raise ValueError("Expected a test directory, *_test.cpp, or "
+                                 "test/prob/*/*_test.hpp: " + path)
             paths.add(path)
     return [path for path in sorted(paths)
             if not any(path.startswith(parent + "/") for parent in directories)]
@@ -185,18 +223,24 @@ def build_commands(inputs, paths, root, build_dir):
     if inputs.test_only:
         return []
     expressions = any(path.startswith("test/expressions") for path in paths)
+    regex = selection_regex(paths)
     configure = ["cmake", "-S", str(root), "-B", str(build_dir),
                  "-DCMAKE_BUILD_TYPE=" + inputs.config, "-DBUILD_TESTING=ON",
-                 "-DSTAN_TEST_HEADERS=OFF",
+                 "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON", "-DSTAN_TEST_HEADERS=OFF",
                  "-DSTAN_BUILD_PROB_TESTS=" + ("ON" if any(path.startswith("test/prob") for path in paths) else "OFF"),
                  "-DSTAN_BUILD_EXPRESSION_TESTS=" + ("ON" if expressions else "OFF"),
-                 "-DSTAN_TEST_NAME_FILTERS=" + ";".join(inputs.f)]
+                 "-DSTAN_TEST_NAME_FILTERS=" + ";".join(inputs.f),
+                 "-DSTAN_SELECTED_TEST_REGEX=" + regex]
     if expressions:
         configure.append("-DSTAN_EXPRESSION_TEST_DIR=" + str(build_dir / "expression-sources"))
-    if inputs.fresh:
-        configure.append("--fresh")
+    if inputs.configure_only:
+        return [configure + inputs.cmake_arg]
+    # Individual files and fixtures build through one aggregate target.
+    targets = [target_for(path)[0] for path in paths if not path.endswith(".cpp") and not is_fixture(path)]
+    if regex:
+        targets.append("stan_selected_tests")
     build = ["cmake", "--build", str(build_dir), "--config", inputs.config,
-             "--parallel", str(inputs.j), "--target"] + [target_for(path)[0] for path in paths]
+             "--parallel", str(inputs.j), "--target"] + targets
     return [configure + inputs.cmake_arg, build]
 
 
@@ -257,41 +301,16 @@ def build_tests(inventory, source_pattern, build_dir, jobs, batch_size):
             + targets[offset:offset + batch_size] for offset in range(0, len(targets), batch_size)]
 
 
-def changed_distributions(files, run_all=False):
-    # Every distribution fixture includes the Stan umbrella headers. Library,
-    # build-system, and shared test-header changes can affect all distributions.
-    if run_all or any(
-        path.startswith(("stan/", "lib/", "make/", "cmake/"))
-        or path in ("CMakeLists.txt", "Jenkinsfile", "makefile")
-        or (path.startswith("test/") and path.endswith(".hpp")
-            and not re.fullmatch(r"test/prob/[^/]+/[^/]+_test\.hpp", path))
-        or (path.startswith("test/prob/") and not path.endswith("_test.hpp"))
-        for path in files
-    ):
-        return "^test/prob/"
-    fixtures = [path for path in files
-                if re.fullmatch(r"test/prob/[^/]+/[^/]+_test\.hpp", path)]
-    return ("^(" + "|".join(re.escape(path[:-len("_test.hpp")])
-                            for path in sorted(fixtures)) + ")_[0-9]+_generated_"
-            if fixtures else "")
-
-
 def main(arguments, root, working_dir, windows, error_stream):
     """Perform command-line I/O. Helpers above only transform explicit inputs."""
     inputs = processCLIArgs(arguments)
     try:
-        files = []
-        if getattr(inputs, "changed", False) or inputs.command == "changed-unit-filter" or (
-                inputs.command == "changed-distribution-filter" and not inputs.all):
+        if getattr(inputs, "changed", False) or inputs.command == "changed-unit-filter":
             files = subprocess.run(["git", "diff", "--name-only", "--diff-filter=d",
                                     "origin/develop...HEAD"], cwd=root, check=True,
                                    text=True, capture_output=True).stdout.splitlines()
             if getattr(inputs, "debug", False):
                 print("Changed files:", files)
-        if inputs.command == "changed-distribution-filter":
-            print(changed_distributions(files, inputs.all))
-            return 0
-        if getattr(inputs, "changed", False) or inputs.command == "changed-unit-filter":
             existing = {path.relative_to(root).as_posix()
                         for path in (root / "test/unit").rglob("*_test.cpp")}
             paths = findChangedTests(files, existing)
@@ -316,8 +335,8 @@ def main(arguments, root, working_dir, windows, error_stream):
             paths = select_paths(matches, directories)
         build_dir = (working_dir / inputs.build_dir).resolve()
         if inputs.command == "build-tests":
-            inventory = subprocess.run(["ctest", "--test-dir", str(build_dir), "--show-only=json-v1"],
-                                       cwd=root, check=True, text=True, capture_output=True)
+            inventory = subprocess.run(["ctest", "--show-only=json-v1"],
+                                       cwd=build_dir, check=True, text=True, capture_output=True)
             commands = build_tests(json.loads(inventory.stdout), inputs.source_regex,
                                    build_dir, inputs.jobs, 50 if windows else 500)
         else:
@@ -325,7 +344,7 @@ def main(arguments, root, working_dir, windows, error_stream):
             if not generate:
                 paths = [path for path in paths if not path.endswith(".cpp")
                          or all(value in path for value in inputs.f)]
-                if not paths:
+                if not paths and not inputs.configure_only:
                     raise ValueError("No matching tests found")
                 expressions = any(path.startswith("test/expressions") for path in paths)
                 if inputs.only_functions and not expressions:
@@ -348,11 +367,23 @@ def main(arguments, root, working_dir, windows, error_stream):
             if inputs.command == "generate-expressions":
                 return 0
             commands = build_commands(inputs, paths, root, build_dir)
+            if inputs.fresh:
+                # cmake --fresh (CMake 3.24+) deletes the same two paths.
+                (build_dir / "CMakeCache.txt").unlink(missing_ok=True)
+                shutil.rmtree(build_dir / "CMakeFiles", ignore_errors=True)
         for command in commands:
             print(" ".join(shlex.quote(str(arg)) for arg in command), flush=True)
             subprocess.run(command, cwd=root, check=True)
-        if inputs.command == "build-tests" or inputs.make_only:
+        if inputs.command == "build-tests" or inputs.make_only or inputs.configure_only:
             return 0
+        fixtures = [path for path in paths if is_fixture(path)]
+        if fixtures:
+            inventory = subprocess.run(["ctest", "--show-only=json-v1"],
+                                       cwd=build_dir, check=True, text=True, capture_output=True)
+            generated =fixture_tests(json.loads(inventory.stdout), fixtures)
+            if not generated:
+                raise ValueError("No generated tests found for: " + " ".join(fixtures))
+            paths = [path for path in paths if not is_fixture(path)] + generated
         cache_file = build_dir / "CMakeCache.txt"
         cache = parse_cache(cache_file.read_text() if cache_file.exists() else "")
         (build_dir / "test-results").mkdir(parents=True, exist_ok=True)

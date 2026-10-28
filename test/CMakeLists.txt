@@ -60,6 +60,9 @@ function(stan_add_gtest name source repo_relative pch)
   set_tests_properties(${name} PROPERTIES
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
     LABELS "${ARGN};${repo_relative}")
+  if(STAN_SELECTED_TEST_REGEX AND repo_relative MATCHES "${STAN_SELECTED_TEST_REGEX}")
+    set_property(GLOBAL APPEND PROPERTY STAN_SELECTED_TESTS ${name})
+  endif()
 endfunction()
 
 # Build the tests in ARGN with `prefix`_subtests, or as one executable with
@@ -174,6 +177,13 @@ if(STAN_BUILD_EXPRESSION_TESTS)
   stan_add_pch(expression_pch stan_test_options <stan/math/mix.hpp> <gtest/gtest.h>)
   add_gtest_grouped_test(PREFIX expressions REPO_PATH test/expressions
     DIRECTORY "${STAN_EXPRESSION_TEST_DIR}" PCH expression_pch SOURCES ${expression_sources})
+endif()
+
+# Makefile generators build separate top-level targets one at a time; one
+# aggregate builds a selection of individual tests with every job.
+get_property(selected_tests GLOBAL PROPERTY STAN_SELECTED_TESTS)
+if(selected_tests)
+  add_custom_target(stan_selected_tests DEPENDS ${selected_tests})
 endif()
 
 if(STAN_TEST_HEADERS)
