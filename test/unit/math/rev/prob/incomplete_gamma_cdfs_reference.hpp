@@ -16,8 +16,10 @@ namespace incomplete_gamma_cdfs {
  * and a quadrature of the scaled density with the chain rule. Only rows
  * where the routes agree to 1e-25 are kept. Each row is one point (a, z)
  * of the incomplete gamma function, mapped to the arguments of the
- * function; the comment names the region. The gradient is with respect to
- * (y, p1, p2); for poisson with respect to lambda only.
+ * function; the comment names the region. The rows marked root_table put
+ * z = a with the shape at 100, 171 and 180 (beta = 1 and s = 1 where the
+ * function has them). The gradient is with respect to (y, p1, p2); for
+ * poisson with respect to lambda only.
  */
 struct Row {
   std::string function;
@@ -357,6 +359,16 @@ inline const std::vector<Row>& rows() {
       {"poisson_cdf", 999.0, 100.0, 0.0, 1.0, {-9.2450143061390734e-611, 0, 0}, 1},  // lower_deep
       {"poisson_cdf", 499.0, 30.0, 0.0, 1.0, {-4.6476468105176607e-408, 0, 0}, 1},  // lower_deep
       {"poisson_cdf", 99.0, 0.001, 0.0, 1.0, {-1.0704393134139473e-453, 0, 0}, 1},  // lower_deep
+      {"chi_square_lccdf", 200.0, 200.0, 0.0, -0.72010489302547398, {-0.040950172989309268, 0.041018491136463812, 0}, 2},  // root_table
+      {"chi_square_lccdf", 342.0, 342.0, 0.0, -0.71369610895204204, {-0.031126096000707824, 0.03115645100795608, 0}, 2},  // root_table
+      {"chi_square_lccdf", 360.0, 360.0, 0.0, -0.71317052185865667, {-0.030322763441311283, 0.030350855622636202, 0}, 2},  // root_table
+      {"chi_square_lcdf", 200.0, 200.0, 0.0, -0.66689715058528937, {0.038828258455681619, -0.038893036562372949, 0}, 2},  // root_table
+      {"chi_square_lcdf", 360.0, 360.0, 0.0, -0.67351691563077278, {0.029143884392109, -0.029170884414268596, 0}, 2},  // root_table
+      {"gamma_cdf", 100.0, 100.0, 1.0, 0.51329879827914866, {0.039860996809147135, -0.039927497857786052, 3.9860996809147135}, 3},  // root_table
+      {"gamma_cdf", 180.0, 180.0, 1.0, 0.50991210276813142, {0.029721638746423251, -0.029749174022571623, 5.3498949743561852}, 3},  // root_table
+      {"inv_gamma_lccdf", 0.01, 100.0, 1.0, -0.66689715058528953, {-776.56516911363248, -0.077786073124745912, 7.765651691136325}, 3},  // root_table
+      {"inv_gamma_lccdf", 0.005555555555555556, 180.0, 1.0, -0.67351691563077318, {-1888.5237086086639, -0.058341768828537217, 10.491798381159244}, 3},  // root_table
+      {"scaled_inv_chi_square_lcdf", 1.0, 360.0, 1.0, -0.71317052185865667, {10.916194838872062, 2.8092181324919014e-5, -21.832389677744124}, 3},  // root_table
   };
   // NOLINTEND
   // clang-format on

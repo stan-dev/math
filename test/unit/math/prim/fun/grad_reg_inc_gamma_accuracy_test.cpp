@@ -78,9 +78,22 @@ TEST(MathPrimScalFun, grad_reg_inc_gamma_agrees_with_lower) {
   }
 }
 
-/** Points in the series region with small a. */
-TEST(MathPrimScalFun, grad_reg_inc_gamma_unchanged_points) {
+/** Points with a below 10, with z below a (series) and above a. */
+TEST(MathPrimScalFun, grad_reg_inc_gamma_small_a) {
   expect_rel(3.14163648924108863e-01, upper(1.1, 0.2), 1e-10, "a=1.1 z=0.2");
   expect_rel(1.20855166827777014e-01, upper(9.0, 10.0), 1e-10, "a=9 z=10");
   expect_rel(3.32046796768609819e-11, upper(2.5, 30.0), 1e-10, "a=2.5 z=30");
+}
+
+/**
+ * z below a, with g = tgamma(a) exact to rounding. The first two points
+ * need the power series summed to machine precision. At the last two,
+ * a log z is above 709, so z^a overflows although the result is finite.
+ */
+TEST(MathPrimScalFun, grad_reg_inc_gamma_series_region) {
+  expect_rel(7.97947316783222941e-01, upper(0.5, 0.25), 1e-10, "a=0.5 z=0.25");
+  expect_rel(4.21220900217986691e-02, upper(8.0, 4.0), 1e-10, "a=8 z=4");
+  expect_rel(6.61200020243054050e-11, upper(170.0, 100.0), 1e-10,
+             "a=170 z=100");
+  expect_rel(4.78809514042653882e-17, upper(165.0, 80.0), 1e-10, "a=165 z=80");
 }

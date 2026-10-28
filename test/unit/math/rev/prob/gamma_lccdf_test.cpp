@@ -285,8 +285,8 @@ TEST_F(AgradRev, ProbDistributionsGammalccdf_far_tail_matches_log1m_exp_lcdf) {
   double alpha_d = 800.0;
   double beta_d = 0.1;
 
-  // lcdf is about -1e-204, so it does not round to 0, and
-  // log1m_exp(lcdf) recovers lccdf
+  // lcdf is -1.48e-205 (mpmath at 80 digits); log1m_exp(lcdf) recovers
+  // lccdf
   double lcdf = gamma_lcdf(y_d, alpha_d, beta_d);
 
   var y_v = y_d;
@@ -294,6 +294,8 @@ TEST_F(AgradRev, ProbDistributionsGammalccdf_far_tail_matches_log1m_exp_lcdf) {
   var beta_v = beta_d;
   var lccdf_var = gamma_lccdf(y_v, alpha_v, beta_v);
 
+  const double lcdf_expected = -1.48339094805287366e-205;
+  EXPECT_NEAR(lcdf_expected, lcdf, 1e-11 * std::fabs(lcdf_expected));
   EXPECT_LT(lcdf, 0.0);
   EXPECT_NEAR(log1m_exp(lcdf), lccdf_var.val(),
               1e-12 * std::fabs(lccdf_var.val()));

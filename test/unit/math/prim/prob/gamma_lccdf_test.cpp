@@ -100,11 +100,13 @@ TEST(ProbGamma, lccdf_far_tail_matches_log1m_exp_lcdf) {
   double alpha = 800.0;
   double beta = 0.1;
 
-  // lcdf is about -1e-204, so it does not round to 0, and
-  // log1m_exp(lcdf) recovers lccdf
+  // lcdf is -1.48e-205 (mpmath at 80 digits); log1m_exp(lcdf) recovers
+  // lccdf
   double lcdf = gamma_lcdf(y, alpha, beta);
   double lccdf = gamma_lccdf(y, alpha, beta);
 
+  const double lcdf_expected = -1.48339094805287366e-205;
+  EXPECT_NEAR(lcdf_expected, lcdf, 1e-11 * std::fabs(lcdf_expected));
   EXPECT_LT(lcdf, 0.0);
   EXPECT_TRUE(std::isfinite(lccdf));
   EXPECT_LT(lccdf, 0.0);
