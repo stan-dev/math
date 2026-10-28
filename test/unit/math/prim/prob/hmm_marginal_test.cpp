@@ -140,3 +140,41 @@ TEST(hmm_marginal, exceptions) {
       "  all arguments must be scalars or multidimensional values of"
       " the same shape.")
 }
+
+TEST_F(hmm_test, shifted_log_omegas) {
+  // Adding a constant to a column of log_omegas adds it to the log marginal
+  // density and leaves the gradients unchanged. Shifts of -1000 and 1000
+  // underflow or overflow if log_omegas is exponentiated directly (#2677).
+  using stan::math::hmm_marginal;
+  using stan::math::var;
+  auto gradients = [&](const Eigen::MatrixXd& log_omegas) {
+    Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> log_omegas_v
+        = log_omegas;
+    Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> Gamma_v = Gamma_;
+    Eigen::Matrix<var, Eigen::Dynamic, 1> rho_v = rho_;
+    hmm_marginal(log_omegas_v, Gamma_v, rho_v).grad();
+    std::vector<Eigen::MatrixXd> adjs{log_omegas_v.adj(), Gamma_v.adj(),
+                                      rho_v.adj()};
+    stan::math::recover_memory();
+    return adjs;
+  };
+  std::vector<Eigen::MatrixXd> adjs_ref = gradients(log_omegas_);
+
+  for (double shift : {-1000.0, 1000.0}) {
+    Eigen::MatrixXd log_omegas = log_omegas_;
+    double total_shift = 0;
+    for (int n = 0; n < log_omegas.cols(); ++n) {
+      log_omegas.col(n).array() += shift + 10 * n;
+      total_shift += shift + 10 * n;
+    }
+    EXPECT_FLOAT_EQ(hmm_marginal(log_omegas, Gamma_, rho_) - total_shift,
+                    -18.37417)
+        << "shift " << shift;
+
+    std::vector<Eigen::MatrixXd> adjs = gradients(log_omegas);
+    for (size_t i = 0; i < adjs.size(); ++i) {
+      EXPECT_LT((adjs[i] - adjs_ref[i]).cwiseAbs().maxCoeff(), 1e-10)
+          << "shift " << shift << ", argument " << i;
+    }
+  }
+}

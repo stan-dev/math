@@ -62,7 +62,7 @@ TEST_F(hmm_test, hidden_state_single_outcome) {
 
   Eigen::MatrixXd prob = hmm_hidden_state_prob(log_omegas_, Gamma, rho);
 
-  for (int i = 0; i < n_transitions_; i++) {
+  for (int i = 0; i <= n_transitions_; i++) {
     EXPECT_EQ(prob(0, i), 1);
     EXPECT_EQ(prob(1, i), 0);
   }
@@ -80,7 +80,7 @@ TEST_F(hmm_test, hidden_state_identity_transition) {
 
   Eigen::MatrixXd prob = hmm_hidden_state_prob(log_omegas, Gamma, rho_);
 
-  for (int i = 0; i < n_transitions_; i++) {
+  for (int i = 0; i <= n_transitions_; i++) {
     EXPECT_FLOAT_EQ(prob(0, i), rho_(0));
     EXPECT_FLOAT_EQ(prob(1, i), rho_(1));
   }
@@ -107,7 +107,7 @@ TEST(hmm_test_nonstandard, hidden_state_symmetry) {
   EXPECT_FLOAT_EQ(prob(0, 0), 0.3);
   EXPECT_FLOAT_EQ(prob(1, 0), 0.7);
 
-  for (int i = 1; i < n_transitions; i++) {
+  for (int i = 1; i <= n_transitions; i++) {
     EXPECT_FLOAT_EQ(prob(0, i), 0.5);
     EXPECT_FLOAT_EQ(prob(1, i), 0.5);
   }
@@ -131,7 +131,7 @@ TEST(hmm_test_nonstandard, hidden_state_prob1) {
   EXPECT_FLOAT_EQ(prob(0, 0), 0.3);
   EXPECT_FLOAT_EQ(prob(1, 0), 0.7);
 
-  for (int i = 1; i < n_transitions; i++) {
+  for (int i = 1; i <= n_transitions; i++) {
     EXPECT_FLOAT_EQ(prob(0, i), 1);
     EXPECT_FLOAT_EQ(prob(1, i), 0);
   }
@@ -209,4 +209,31 @@ TEST(hmm_test_nonstandard, hidden_state_long_sequence) {
   // The log scale reference loses about machine epsilon times the
   // magnitude of the log densities, hence the looser tolerance.
   EXPECT_LT((prob - prob_ref).cwiseAbs().maxCoeff(), 1e-10);
+}
+
+TEST_F(hmm_test, hidden_state_neg_inf_log_omega) {
+  // A log density of -inf rules out that state for that observation.
+  using stan::math::hmm_hidden_state_prob;
+  Eigen::MatrixXd log_omegas = log_omegas_;
+  log_omegas(0, 4) = -std::numeric_limits<double>::infinity();
+
+  Eigen::MatrixXd prob = hmm_hidden_state_prob(log_omegas, Gamma_, rho_);
+  Eigen::MatrixXd prob_ref
+      = hmm_hidden_state_prob_log_space(log_omegas, Gamma_, rho_);
+
+  EXPECT_EQ(prob(0, 4), 0);
+  EXPECT_TRUE(prob.allFinite());
+  EXPECT_LT((prob - prob_ref).cwiseAbs().maxCoeff(), 1e-12);
+}
+
+TEST(hmm_test_nonstandard, hidden_state_no_states_throws) {
+  // The arguments must be checked before log_omegas is shifted by the
+  // maximum of each column, which is undefined for an empty column.
+  using stan::math::hmm_hidden_state_prob;
+  Eigen::MatrixXd Gamma(2, 2);
+  Gamma << 0.5, 0.5, 0.5, 0.5;
+  Eigen::VectorXd rho(0);
+  Eigen::MatrixXd log_omegas(0, 3);
+  EXPECT_THROW(hmm_hidden_state_prob(log_omegas, Gamma, rho),
+               std::invalid_argument);
 }

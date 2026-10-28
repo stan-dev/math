@@ -133,3 +133,24 @@ TEST(hmm_rng_test, chiSquareGoodnessFitTest_symmetric) {
   // double threshold = 0.1;  // CHECK -- what is an appropriate threshold?
   // EXPECT_TRUE(p_value > threshold);
 }
+
+TEST_F(hmm_test, latent_rng_shifted_log_omegas) {
+  // Adding a constant to a column of log_omegas does not change the
+  // posterior of the hidden states, so with the same seed the draws match
+  // the draws for the unshifted log_omegas. Shifts of -1000 and 1000
+  // underflow or overflow if log_omegas is exponentiated directly (#2677).
+  using stan::math::hmm_latent_rng;
+  for (double shift : {-1000.0, 1000.0}) {
+    Eigen::MatrixXd log_omegas = log_omegas_;
+    for (int n = 0; n < log_omegas.cols(); ++n) {
+      log_omegas.col(n).array() += shift + 10 * n;
+    }
+    boost::random::mt19937 rng(2677);
+    boost::random::mt19937 rng_ref(2677);
+    for (int i = 0; i < 100; ++i) {
+      EXPECT_EQ(hmm_latent_rng(log_omegas, Gamma_, rho_, rng),
+                hmm_latent_rng(log_omegas_, Gamma_, rho_, rng_ref))
+          << "shift " << shift << ", draw " << i;
+    }
+  }
+}
