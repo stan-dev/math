@@ -52,6 +52,7 @@
 #include <stan/math/rev/fun/elt_multiply.hpp>
 #include <stan/math/rev/fun/erf.hpp>
 #include <stan/math/rev/fun/erfc.hpp>
+#include <stan/math/rev/fun/erfcx.hpp>
 #include <stan/math/rev/fun/exp.hpp>
 #include <stan/math/rev/fun/exp2.hpp>
 #include <stan/math/rev/fun/expm1.hpp>
@@ -126,7 +127,6 @@
 #include <stan/math/rev/fun/modified_bessel_first_kind.hpp>
 #include <stan/math/rev/fun/modified_bessel_second_kind.hpp>
 #include <stan/math/rev/fun/multiply.hpp>
-#include <stan/math/rev/fun/multiply_log.hpp>
 #include <stan/math/rev/fun/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/rev/fun/norm.hpp>
 #include <stan/math/rev/fun/norm1.hpp>
@@ -163,6 +163,7 @@
 #include <stan/math/rev/fun/stan_print.hpp>
 #include <stan/math/rev/fun/step.hpp>
 #include <stan/math/rev/fun/sum.hpp>
+#include <stan/math/rev/fun/sylvester_solver.hpp>
 #include <stan/math/rev/fun/tan.hpp>
 #include <stan/math/rev/fun/tanh.hpp>
 #include <stan/math/rev/fun/tcrossprod.hpp>
@@ -183,6 +184,7 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/fun/variance.hpp>
+#include <stan/math/rev/fun/zip_index.hpp>
 
 #include <stan/math/prim/constraint.hpp>
 #include <stan/math/prim/err.hpp>

@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_var.hpp>
+#include <stan/math/prim/meta/require_helpers.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <type_traits>
@@ -51,6 +53,34 @@ template <typename T>
 struct base_type<T, std::enable_if_t<is_eigen<T>::value>> {
   using type = base_type_t<typename std::decay_t<T>::Scalar>;
 };
+
+/*! \ingroup require_stan_scalar_real */
+/*! \addtogroup var_types */
+/*! @{ */
+
+/*! \brief Require any of the base types satisfy @ref is_var */
+/*! Unlike @ref require_any_st_var this also matches `std::complex<var>`. */
+/*! Defined here because is_var.hpp cannot include base_type.hpp. */
+/*! @tparam Types The types with a valid overload of @ref base_type available
+ */
+template <typename... Types>
+using require_any_bt_var
+    = require_any_t<is_var<base_type_t<std::decay_t<Types>>>...>;
+/*! @} */
+
+/*! \ingroup require_stan_scalar_real */
+/*! \addtogroup arithmetic_types */
+/*! @{ */
+
+/*! \brief Require all of the base types satisfy std::is_arithmetic */
+/*! Unlike @ref require_all_st_arithmetic this also matches */
+/*! `std::complex<double>`. */
+/*! @tparam Types The types with a valid overload of @ref base_type available
+ */
+template <typename... Types>
+using require_all_bt_arithmetic
+    = require_all_t<std::is_arithmetic<base_type_t<std::decay_t<Types>>>...>;
+/*! @} */
 
 }  // namespace stan
 #endif

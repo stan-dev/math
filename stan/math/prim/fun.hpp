@@ -83,6 +83,7 @@
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/prim/fun/erf.hpp>
 #include <stan/math/prim/fun/erfc.hpp>
+#include <stan/math/prim/fun/erfcx.hpp>
 #include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/exp2.hpp>
@@ -312,6 +313,7 @@
 #include <stan/math/prim/fun/svd.hpp>
 #include <stan/math/prim/fun/svd_U.hpp>
 #include <stan/math/prim/fun/svd_V.hpp>
+#include <stan/math/prim/fun/sylvester_solver.hpp>
 #include <stan/math/prim/fun/symmetrize_from_lower_tri.hpp>
 #include <stan/math/prim/fun/symmetrize_from_upper_tri.hpp>
 #include <stan/math/prim/fun/tail.hpp>
@@ -352,5 +354,6 @@
 #include <stan/math/prim/fun/zeros_int_array.hpp>
 #include <stan/math/prim/fun/zeros_row_vector.hpp>
 #include <stan/math/prim/fun/zeros_vector.hpp>
+#include <stan/math/prim/fun/zip_index.hpp>
 
 #endif

@@ -43,6 +43,7 @@
 #include <stan/math/opencl/rev/elt_multiply.hpp>
 #include <stan/math/opencl/rev/erf.hpp>
 #include <stan/math/opencl/rev/erfc.hpp>
+#include <stan/math/opencl/rev/erfcx.hpp>
 #include <stan/math/opencl/rev/exp.hpp>
 #include <stan/math/opencl/rev/exp2.hpp>
 #include <stan/math/opencl/rev/expm1.hpp>
@@ -82,7 +83,6 @@
 #include <stan/math/opencl/rev/mdivide_left_tri_low.hpp>
 #include <stan/math/opencl/rev/mdivide_right_tri_low.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>
-#include <stan/math/opencl/rev/multiply_log.hpp>
 #include <stan/math/opencl/rev/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/rev/operator_unary_minus.hpp>
