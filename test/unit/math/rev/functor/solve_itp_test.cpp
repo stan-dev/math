@@ -1,4 +1,5 @@
 #include <stan/math/rev/functor/solve_itp.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <Eigen/Core>
 #include <cmath>
@@ -38,7 +39,7 @@ struct singular_parameter_functor {
 
 }  // namespace
 
-TEST(MathRevFunctorSolveItp, ImplicitDerivativeScalarParameter) {
+TEST_F(AgradRev, SolveItpImplicitDerivativeScalarParameter) {
   using stan::math::var;
   var theta = 2.0;
   var root = stan::math::solve_itp(cubic_parameter_functor(), 0.0, 2.0, nullptr,
@@ -56,7 +57,7 @@ TEST(MathRevFunctorSolveItp, ImplicitDerivativeScalarParameter) {
   stan::math::recover_memory();
 }
 
-TEST(MathRevFunctorSolveItp, ImplicitDerivativeVariadicParameters) {
+TEST_F(AgradRev, SolveItpImplicitDerivativeVariadicParameters) {
   using stan::math::var;
   var scale = 3.0;
   var offset = 2.0;
@@ -73,7 +74,7 @@ TEST(MathRevFunctorSolveItp, ImplicitDerivativeVariadicParameters) {
   stan::math::recover_memory();
 }
 
-TEST(MathRevFunctorSolveItp, ImplicitDerivativeVectorParameter) {
+TEST_F(AgradRev, SolveItpImplicitDerivativeVectorParameter) {
   using stan::math::var;
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta(3);
   theta << 2.0, 1.0, 5.0;
@@ -91,7 +92,7 @@ TEST(MathRevFunctorSolveItp, ImplicitDerivativeVectorParameter) {
   stan::math::recover_memory();
 }
 
-TEST(MathRevFunctorSolveItp, RejectsSingularImplicitDerivative) {
+TEST_F(AgradRev, SolveItpRejectsSingularImplicitDerivative) {
   using stan::math::var;
   var theta = 0.0;
   EXPECT_THROW(stan::math::solve_itp(singular_parameter_functor(), -1.0, 0.0,
