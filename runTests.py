@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build and run Stan Math tests with CMake."""
 
+from concurrent.futures import ThreadPoolExecutor
 import glob
 import json
 import os
@@ -46,6 +47,10 @@ def processCLIArgs(arguments):
 
     parser.add_argument(
         "-j", metavar="N", type=int, default=1, help="parallel build jobs (default: 1)"
+    )
+    parser.add_argument(
+        "--test-jobs", metavar="N", type=int, default=1,
+        help="test executables run at once (default: 1)"
     )
 
     parser.add_argument(
@@ -115,8 +120,8 @@ def processCLIArgs(arguments):
     parser.add_argument("--config", default="Release", help="CMake build configuration")
     # And parse the command line against those rules
     inputs = parser.parse_args(arguments)
-    if inputs.j < 1:
-        parser.error("-j must be positive")
+    if inputs.j < 1 or inputs.test_jobs < 1:
+        parser.error("-j and --test-jobs must be positive")
     if inputs.make_only and inputs.test_only:
         parser.error("--make-only and --test-only cannot be combined")
     if inputs.fresh and inputs.test_only:
@@ -299,7 +304,8 @@ def main(arguments, root, working_dir, windows, error_stream):
         elif inputs.command is None:
             matches = {}
             for argument in inputs.tests:
-                expanded = glob.glob(str(root / argument))
+                # os.path.join keeps a trailing slash, so "test/prob/*/" matches directories.
+                expanded = glob.glob(os.path.join(str(root), argument))
                 if not expanded and argument.replace("\\", "/").lstrip("./").startswith(
                         ("test/prob/", "test/expressions/")) and argument.endswith("_test.cpp"):
                     expanded = [str(root / argument)]
@@ -351,8 +357,19 @@ def main(arguments, root, working_dir, windows, error_stream):
         cache = parse_cache(cache_file.read_text() if cache_file.exists() else "")
         (build_dir / "test-results").mkdir(parents=True, exist_ok=True)
         failed = False
-        for path in paths:
-            command = test_command(path, build_dir, inputs.config, cache, windows)
+        commands = [test_command(path, build_dir, inputs.config, cache, windows) for path in paths]
+        if inputs.test_jobs > 1:
+            # Concurrent executables print their output in order once each finishes.
+            def run(command):
+                return subprocess.run(command, cwd=root, text=True,
+                                      stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            with ThreadPoolExecutor(inputs.test_jobs) as pool:
+                for command, result in zip(commands, pool.map(run, commands)):
+                    print(" ".join(shlex.quote(arg) for arg in command), flush=True)
+                    print(result.stdout, end="", flush=True)
+                    failed = failed or result.returncode != 0
+            return int(failed)
+        for command in commands:
             print(" ".join(shlex.quote(arg) for arg in command), flush=True)
             try:
                 subprocess.run(command, cwd=root, check=True)

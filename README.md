@@ -128,6 +128,16 @@ Build failures stop `runTests.py`.
 ./runTests.py --run-all test/unit/math/prim/fun/sum_test.cpp test/unit/math/prim/fun/abs_test.cpp
 ```
 
+- `--test-jobs N` runs up to `N` test executables at once. The default is 1.
+Each executable prints its output when it finishes, in the order of the selected paths.
+With more than one job, every executable runs even if one fails.
+A trailing `/` in a pattern selects only directories.
+
+```sh
+# Build one executable per distribution directory and run four at a time.
+./runTests.py -j8 --test-jobs 4 'test/prob/*/'
+```
+
 `<build-dir>` means the directory selected by `--build-dir`.
 XML results are written under `<build-dir>/test-results` by default.
 `make/local` is an optional file for local compiler and build settings.

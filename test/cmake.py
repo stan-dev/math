@@ -1,12 +1,16 @@
 """Check CMake command planning. Run with python3 test/cmake.py."""
 
+import io
 from pathlib import Path
 import re
+import subprocess
 import sys
+import tempfile
 import unittest
 from unittest.mock import patch
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 import runTests as runner
 
 
@@ -45,11 +49,46 @@ class CMakeTest(unittest.TestCase):
         self.assertEqual(inputs("-j20").j, 20)
         parsed = runner.processCLIArgs(["build-tests", "build", "--source-regex", "^test/unit/", "--jobs", "4"])
         self.assertEqual((parsed.command, parsed.jobs), ("build-tests", 4))
-        for flags in (("-j0",), ("--fresh", "--test-only"), ("--make-only", "--test-only")):
+        self.assertEqual(inputs("--test-jobs", "6").test_jobs, 6)
+        for flags in (("-j0",), ("--test-jobs", "0"), ("--fresh", "--test-only"),
+                      ("--make-only", "--test-only")):
             with self.subTest(flags=flags), patch.object(sys, "stderr"):
                 with self.assertRaises(SystemExit) as error:
                     inputs(*flags)
                 self.assertEqual(error.exception.code, 2)
+
+    def test_parallel_test_runs_print_in_order_and_report_failures(self):
+        codes = {"unit_math_prim_fun_all_tests": 1, "unit_math_rev_fun_all_tests": 0}
+
+        def run(command, **kwargs):
+            name = Path(command[0]).name
+            return subprocess.CompletedProcess(command, codes[name], stdout=name + " output\n")
+
+        output = io.StringIO()
+        with tempfile.TemporaryDirectory() as working_dir, \
+                patch.object(runner.subprocess, "run", run), patch.object(sys, "stdout", output):
+            code = runner.main(["--test-only", "--test-jobs", "2", "test/unit/math/prim/fun",
+                                "test/unit/math/rev/fun"], ROOT, Path(working_dir), False, io.StringIO())
+        self.assertEqual(code, 1)
+        printed = output.getvalue()
+        self.assertLess(printed.index("unit_math_prim_fun_all_tests output"),
+                        printed.index("unit_math_rev_fun_all_tests output"))
+
+    def test_trailing_slash_selects_distribution_directories(self):
+        commands = []
+
+        def run(command, **kwargs):
+            commands.append(command)
+            return subprocess.CompletedProcess(command, 0, stdout="")
+
+        with tempfile.TemporaryDirectory() as working_dir, \
+                patch.object(runner.subprocess, "run", run), patch.object(sys, "stdout", io.StringIO()):
+            code = runner.main(["--test-only", "--test-jobs", "2", "test/prob/*/"],
+                               ROOT, Path(working_dir), False, io.StringIO())
+        self.assertEqual(code, 0)
+        names = {Path(command[0]).name for command in commands}
+        self.assertIn("prob_math_bernoulli_all_tests", names)
+        self.assertEqual(len(names), len([path for path in (ROOT / "test/prob").iterdir() if path.is_dir()]))
 
     def test_selection_removes_overlap_and_rejects_invalid_paths(self):
         directory = "test/unit/math/prim/fun"

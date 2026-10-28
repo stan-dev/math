@@ -54,7 +54,9 @@ def runCmakeTests(Map config) {
        shellQuote(reportDir)
     if (config.paths) {
       // Directory selections build and run one executable per directory.
-      def arguments = ['--build-dir', buildDir, '-j', jobs.toString(), '--run-all']
+      // Runner arguments go first so --only-functions stops at the next option.
+      def arguments = (config.args ?: []) + ['--build-dir', buildDir, '-j', jobs.toString(),
+                                             '--run-all', '--test-jobs', (config.testJobs ?: 1).toString()]
       if (fileExists(buildDir + '/CMakeCache.txt')) {
         arguments += ['--fresh']
       }
@@ -274,17 +276,16 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
                 sh 'python3 test/statement_types_test.py'
                 sh 'python3 test/varmat_compatibility_summary_test.py'
                 runFrameworkTests(CLANG_CXX)
-                // Bound Clang 10's memory use within the 64 GiB pod.
-                sh 'python3 runTests.py generate-expressions build --batches 24'
-                runCmakeTests(name: 'expressions', filter: '^test/expressions/', optimization: '0',
-                  flags: ["-DCMAKE_C_COMPILER=${CLANG_CC}", "-DCMAKE_CXX_COMPILER=${CLANG_CXX}",
-                          '-DCMAKE_CXX_FLAGS=-Werror', '-DSTAN_BUILD_EXPRESSION_TESTS=ON'])
-                sh 'python3 runTests.py generate-expressions build --functions reduce_sum map_rect'
+                // The runner generates the sources and builds one expressions_all_tests.
+                // 24 batches bound Clang 10's memory use within the 64 GiB pod.
+                def flags = ["-DCMAKE_C_COMPILER=${CLANG_CC}", "-DCMAKE_CXX_COMPILER=${CLANG_CXX}",
+                             '-DCMAKE_CXX_FLAGS=-Werror']
+                runCmakeTests(name: 'expressions', paths: ['test/expressions'], args: ['-e', '24'],
+                  optimization: '0', flags: flags)
                 withEnv(['STAN_NUM_THREADS=4']) {
-                  runCmakeTests(name: 'expressions-threads', filter: '^test/expressions/',
-                    optimization: '0', testJobs: 1,
-                    flags: ["-DCMAKE_C_COMPILER=${CLANG_CC}", "-DCMAKE_CXX_COMPILER=${CLANG_CXX}",
-                            '-DCMAKE_CXX_FLAGS=-Werror', '-DSTAN_BUILD_EXPRESSION_TESTS=ON', '-DSTAN_THREADS=ON'])
+                  runCmakeTests(name: 'expressions-threads', paths: ['test/expressions'],
+                    args: ['--only-functions', 'reduce_sum', 'map_rect', '-e', '6'],
+                    optimization: '0', flags: flags + ['-DSTAN_THREADS=ON'])
                 }
               }
             }
@@ -292,11 +293,16 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
           thread: {
             runPod(image: image, cpus: 6, memory: '128Gi') {
               stage('Threading tests') {
+                def flags = ["-DCMAKE_C_COMPILER=${CLANG_CC}", "-DCMAKE_CXX_COMPILER=${CLANG_CXX}",
+                             '-DCMAKE_CXX_FLAGS=-Werror', '-DSTAN_THREADS=ON']
                 withEnv(['STAN_NUM_THREADS=4']) {
-                  runCmakeTests(name: 'threads', testJobs: 1,
-                    filter: mainBranch ? '^test/unit/' : '^test/unit/.*(thread|map_rect|reduce_sum)',
-                    flags: ["-DCMAKE_C_COMPILER=${CLANG_CC}", "-DCMAKE_CXX_COMPILER=${CLANG_CXX}",
-                            '-DCMAKE_CXX_FLAGS=-Werror', '-DSTAN_THREADS=ON'])
+                  if (mainBranch) {
+                    // Every unit test: link unit_all_tests, not one executable per source.
+                    runCmakeTests(name: 'threads', paths: ['test/unit'], flags: flags)
+                  } else {
+                    runCmakeTests(name: 'threads', testJobs: 1,
+                      filter: '^test/unit/.*(thread|map_rect|reduce_sum)', flags: flags)
+                  }
                 }
               }
             }
@@ -315,8 +321,15 @@ up the autoformatter locally.  (Check console output at ${env.BUILD_URL})
                   if (params.withRowVector || mainBranch) {
                     flags += ['-DSTAN_TEST_ROW_VECTORS=ON', '-DSTAN_PROB_TEST_ALL=ON']
                   }
-                  runCmakeTests(name: 'distributions', filter: filter,
-                    optimization: '0', flags: flags)
+                  if (filter == '^test/prob/') {
+                    // Every distribution: link one executable per distribution
+                    // directory, not one per generated source, and run them in parallel.
+                    runCmakeTests(name: 'distributions', paths: ['test/prob/*/'],
+                      testJobs: containerJobs(), optimization: '0', flags: flags)
+                  } else {
+                    runCmakeTests(name: 'distributions', filter: filter,
+                      optimization: '0', flags: flags)
+                  }
                 } else {
                   echo 'No distribution tests affected by this change.'
                 }
