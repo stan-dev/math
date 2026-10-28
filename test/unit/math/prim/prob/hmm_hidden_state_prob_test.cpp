@@ -237,3 +237,12 @@ TEST(hmm_test_nonstandard, hidden_state_no_states_throws) {
   EXPECT_THROW(hmm_hidden_state_prob(log_omegas, Gamma, rho),
                std::invalid_argument);
 }
+
+TEST_F(hmm_test, hidden_state_no_observations_throws) {
+  using stan::math::hmm_hidden_state_prob;
+  Eigen::MatrixXd log_omegas(n_states_, 0);
+  EXPECT_THROW_MSG(hmm_hidden_state_prob(log_omegas, Gamma_, rho_),
+                   std::invalid_argument,
+                   "hmm_hidden_state_prob: log_omegas has size 0, but must "
+                   "have a non-zero size");
+}

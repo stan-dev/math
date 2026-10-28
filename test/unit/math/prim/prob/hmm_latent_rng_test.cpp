@@ -154,3 +154,13 @@ TEST_F(hmm_test, latent_rng_shifted_log_omegas) {
     }
   }
 }
+
+TEST_F(hmm_test, latent_rng_no_observations_throws) {
+  using stan::math::hmm_latent_rng;
+  Eigen::MatrixXd log_omegas(n_states_, 0);
+  boost::random::mt19937 rng;
+  EXPECT_THROW_MSG(hmm_latent_rng(log_omegas, Gamma_, rho_, rng),
+                   std::invalid_argument,
+                   "hmm_latent_rng: log_omegas has size 0, but must have a "
+                   "non-zero size");
+}
