@@ -37,10 +37,9 @@ struct fixed_covariance {
 }  // namespace
 
 // Solver 3 factorizes B = I + K W with partial pivoting.  Here the rows are
-// swapped and U has a negative diagonal entry although det(B) = 226 > 0.  The
-// log determinant used to be sum(log(diag(U))), which is NaN.  For a normal
-// likelihood the Laplace approximation is exact, so all solvers must return
-// log N(y | 0, K + s^2 I).
+// swapped and U has a negative diagonal entry although det(B) = 226 > 0, so
+// sum(log(diag(U))) is NaN.  For a normal likelihood the Laplace approximation
+// is exact, so all solvers must return log N(y | 0, K + s^2 I).
 TEST(laplace_marginal_tol, all_solvers_exact_with_negative_lu_pivot) {
   Eigen::MatrixXd K(2, 2);
   K << 1.0, 1.5, 1.5, 4.0;
@@ -68,10 +67,9 @@ TEST(laplace_marginal_tol, all_solvers_exact_with_negative_lu_pivot) {
 
 // Started near the saddle point (0, 0) of log p(theta | y), the Newton
 // iteration of solver 3 converges to it.  There Sigma^-1 + W is not positive
-// definite and the Laplace approximation is not defined.  This must be
-// reported as such: laplace_marginal_tol() used to return NaN or a finite
-// value, and laplace_latent_solve_tol() threw from cholesky_decompose().
-// Started away from the saddle point, solver 3 finds a maximum.
+// definite and the Laplace approximation is not defined.  Both calls must
+// throw an error that names this cause.  Started away from the saddle point,
+// solver 3 finds a maximum.
 TEST(laplace_marginal_tol, solver_3_saddle_point_throws) {
   Eigen::MatrixXd K(2, 2);
   K << 4.0, 1.0, 1.0, 1.0;

@@ -294,12 +294,11 @@ auto tumor_size_solve(double tolerance) {
 }
 }  // namespace
 
-// The returned mean is the final Newton iterate.  It used to be
-// K * grad log p(y | theta), which differs from the iterate by
-// K * grad log p(theta | y) before exact convergence.  Here the posterior is
-// much narrower than the prior, and with tolerance 1e-6 the old value was
-// 0.53 posterior sd from the mode, while the final iterate is 0.0012 sd from
-// it.
+// The returned mean must be the final Newton iterate.  Before exact
+// convergence, K * grad log p(y | theta) differs from the iterate by
+// K * grad log p(theta | y).  Here the posterior is much narrower than the
+// prior, and with tolerance 1e-6 the final iterate is 0.0012 posterior sd from
+// the mode, while K * grad log p(y | theta) is 0.53 sd from it.
 TEST(laplace_latent_solve, mean_is_final_iterate_tumor_size) {
   auto [mean_ref, chol_ref] = tumor_size_solve(1e-14);
   const Eigen::VectorXd post_sd
