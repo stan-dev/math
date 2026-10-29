@@ -907,8 +907,9 @@ struct LUSolver {
    *
    * @return log(det(B)) = sum(log(abs(diag(U))))
    * @throws std::domain_error if `det(B)` is not positive. Then
-   * `Sigma^-1 + W` is not positive definite at the final iterate, for example
-   * at a saddle point, and the Laplace approximation is not defined.
+   * `Sigma^-1 + W` is not positive definite at the final iterate (for example
+   * at a saddle point), or `B` is numerically singular and rounding gives a
+   * zero pivot or the wrong sign; the Laplace approximation is not defined.
    */
   double compute_log_determinant() const {
     const auto& u_diag = lu.matrixLU().diagonal();
@@ -916,9 +917,8 @@ struct LUSolver {
                           != ((u_diag.array() < 0.0).count() % 2 == 1);
     if (odd_sign || (u_diag.array() == 0.0).any()) {
       throw std::domain_error(
-          "laplace_marginal_density: det(I + Sigma * W) is not positive at "
-          "the final iterate, so the negative Hessian of the log density is "
-          "not positive definite there (for example at a saddle point).");
+          "laplace_marginal_density: det(I + Sigma * W) <= 0 (saddle point or "
+          "singular)");
     }
     return u_diag.array().abs().log().sum();
   }

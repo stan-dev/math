@@ -78,7 +78,7 @@ TEST(laplace_marginal_tol, solver_3_saddle_point_throws) {
   const double s = 0.3;
   const double z = 0.0;
   const double sz = 0.1;
-  const std::string reason = "det(I + Sigma * W) is not positive";
+  const std::string reason = "det(I + Sigma * W) <= 0";
   Eigen::VectorXd theta_near(2);
   theta_near << 0.01, 3.0;
   auto ops_near = std::make_tuple(theta_near, 1e-10, 100, 3, 100, false);
