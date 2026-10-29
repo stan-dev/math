@@ -1,6 +1,6 @@
 // Arguments: Ints, Doubles, Doubles
 #include <stan/math/prim/prob/neg_binomial_2_ccdf_log.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <boost/math/special_functions/binomial.hpp>
@@ -81,7 +81,7 @@ class AgradCdfLogNegBinomial2 : public AgradCcdfLogTest {
       const T_n& nn, const T_location& mu, const T_precision& phi, const T3&,
       const T4&, const T5&) {
     using stan::math::binomial_coefficient_log;
-    using stan::math::multiply_log;
+    using stan::math::lmultiply;
     using std::exp;
     using std::log;
 
@@ -92,8 +92,7 @@ class AgradCdfLogNegBinomial2 : public AgradCcdfLogTest {
       if (n != 0)
         lp += binomial_coefficient_log<
             typename stan::scalar_type<T_precision>::type>(n + phi - 1.0, n);
-      lp += multiply_log(n, mu) + multiply_log(phi, phi)
-            - (n + phi) * log(mu + phi);
+      lp += lmultiply(n, mu) + lmultiply(phi, phi) - (n + phi) * log(mu + phi);
       ccdf += exp(lp);
     }
 
