@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.16.3)
 include(cmake/MakeLocal.cmake)
+# ReleaseTesting optimizes like Release but keeps assertions on (no NDEBUG),
+# matching make's test builds. runTests.py uses it by default.
+set(CMAKE_C_FLAGS_RELEASETESTING_INIT -O1)
+set(CMAKE_CXX_FLAGS_RELEASETESTING_INIT -O1)
 project(stanmath LANGUAGES C CXX)
 stan_apply_make_local_flags()
 
@@ -52,6 +56,13 @@ if(MSVC)
   endif()
 else()
   set(STAN_TEST_OPTIMIZATION_FLAGS -O${STAN_TEST_OPTIMIZATION})
+endif()
+# Offer ReleaseTesting to multi-config generators such as Visual Studio.
+get_property(multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+if(multi_config AND NOT "ReleaseTesting" IN_LIST CMAKE_CONFIGURATION_TYPES)
+  list(APPEND CMAKE_CONFIGURATION_TYPES ReleaseTesting)
+  set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING
+    "Available build configurations" FORCE)
 endif()
 # Like Make's CXXFLAGS, reach every C++ compile and link, but not the
 # vendored TBB build, which takes its own flags.
@@ -150,11 +161,16 @@ find_package(Python3 COMPONENTS Interpreter)
 if(Python3_FOUND)
   # The same checks as make/cpplint and Make's test-math-dependencies.
   set(cpplint_command "${Python3_EXECUTABLE}" lib/cpplint_2.0.2/cpplint.py
-    --output=vs7 --counting=detailed --root=stan --extensions=hpp,cpp --recursive
+    --output=vs7 --counting=detailed --root=stan --extensions=hpp,cpp
     "--filter=-runtime/indentation_namespace,-build/c++11,-readability/namespace,-legal/copyright,-whitespace/indent,-build/header_guard,-build/include_order,-build/include_what_you_use,-runtime/string,-build/namespaces")
-  add_custom_target(cpplint
-    COMMAND ${cpplint_command} stan
-    COMMAND ${cpplint_command} test/unit
+  # cpplint's --recursive needs Python 3.9, so pass the files as make/cpplint does.
+  set(cpplint_commands "")
+  foreach(directory stan test/unit)
+    file(GLOB_RECURSE lint_sources CONFIGURE_DEPENDS RELATIVE "${PROJECT_SOURCE_DIR}"
+      "${PROJECT_SOURCE_DIR}/${directory}/*.hpp" "${PROJECT_SOURCE_DIR}/${directory}/*.cpp")
+    list(APPEND cpplint_commands COMMAND ${cpplint_command} ${lint_sources})
+  endforeach()
+  add_custom_target(cpplint ${cpplint_commands}
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
     VERBATIM)
   add_custom_target(test-math-dependencies

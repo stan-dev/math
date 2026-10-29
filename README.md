@@ -68,8 +68,11 @@ The build directory contains generated build rules, compiled files, and test res
 ./runTests.py --build-dir .build test/unit/math/prim/fun/sum_test.cpp
 ```
 
-- `--config NAME` selects the build configuration such as `Debug` or `Release`. Setting a configuration changes the default behavior of the build system such as compiler flags and debug information.
-The default is `Release`.
+- `--config NAME` selects the build configuration such as `Debug`, `Release`, or `ReleaseTesting`. Setting a configuration changes the default behavior of the build system such as compiler flags and debug information.
+The default is `ReleaseTesting`.
+`ReleaseTesting` compiles with `-O1` and does not define `NDEBUG`, so assertions stay on as in the make build.
+`Release` defines `NDEBUG`, which disables assertions.
+`STAN_TEST_OPTIMIZATION` still sets the optimization level of the tests in every configuration.
 
 ```sh
 # Use the `Release` configuration.
@@ -261,6 +264,7 @@ CTest runs test executables already built by CMake.
 `-DNAME=VALUE` sets a named cache setting.
 `CMAKE_BUILD_TYPE` selects the configuration for Ninja and Unix Makefiles.
 `Release` enables release compiler settings.
+`ReleaseTesting` is the configuration `runTests.py` uses: `-O1` without `NDEBUG`.
 Direct CMake commands also read `make/local`.
 Example: Configure a release build in `build`.
 

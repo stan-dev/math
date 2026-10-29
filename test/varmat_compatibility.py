@@ -48,9 +48,12 @@ def compile_signature(cpp_path):
     return run_command(["cmake", "--build", str(_compile_worker.build),
                         "--parallel", "1", "--target", "stan_compile_test"])
 
+# Returning the result and external linkage keep -Wall -Werror builds free of
+# unused variable and unused function warnings.
 TEST_TEMPLATE = """
-static void {test_name}() {{
+auto {test_name}() {{
 {code}
+return {result};
 }}
 """
 
@@ -184,11 +187,12 @@ def main(functions_or_sigs, results_file, cores, debug):
                 
                 arg_list.append(arg)
 
-            cg.function_call_assign("stan::math::" + sp.function_name, *arg_list)
+            result = cg.function_call_assign("stan::math::" + sp.function_name, *arg_list)
 
             cpp_code += TEST_TEMPLATE.format(
                 test_name = sp.function_name + repr(m),
                 code=cg.cpp(),
+                result=result.name,
             )
 
         if any_overload_uses_varmat:

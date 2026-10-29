@@ -26,6 +26,8 @@ class CMakeTest(unittest.TestCase):
         configure, build = runner.build_commands(inputs("--fresh", "-j20", "-f", "sum"),
                                                  ["test/unit/math/prim/fun"], Path("source"), Path("build"))
         self.assertNotIn("--fresh", configure)
+        self.assertIn("-DCMAKE_BUILD_TYPE=ReleaseTesting", configure)
+        self.assertEqual(build[build.index("--config") + 1], "ReleaseTesting")
         self.assertIn("-DSTAN_TEST_NAME_FILTERS=sum", configure)
         self.assertEqual(build[build.index("--parallel") + 1], "20")
         self.assertEqual(build[build.index("--target") + 1:], ["unit_math_prim_fun_all_tests"])

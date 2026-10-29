@@ -122,7 +122,8 @@ def processCLIArgs(arguments):
                         help="reset the CMake cache before configuring, like cmake --fresh")
     parser.add_argument("--cmake-arg", action="append", default=[],
                         help="extra configure argument, e.g. --cmake-arg=-DSTAN_THREADS=ON")
-    parser.add_argument("--config", default="Release", help="CMake build configuration")
+    parser.add_argument("--config", default="ReleaseTesting",
+                        help="CMake build configuration (ReleaseTesting: -O1 without NDEBUG)")
     # And parse the command line against those rules
     inputs = parser.parse_args(arguments)
     if inputs.j < 1 or inputs.test_jobs < 1:
@@ -359,7 +360,8 @@ def main(arguments, root, working_dir, windows, error_stream):
                 for source in output.glob("*test.cpp"):
                     source.unlink()
                 functions = inputs.functions if inputs.command else inputs.only_functions
-                batches = inputs.batches if inputs.command else (inputs.e if inputs.e > 0 else inputs.j)
+                # Like develop, four files per job keep each translation unit's memory bounded.
+                batches = inputs.batches if inputs.command else (inputs.e if inputs.e > 0 else inputs.j * 4)
                 generate_expression_tests.src_folder = str(output) + "/"
                 generate_expression_tests.main(functions, batches)
                 if not list(output.glob("*test.cpp")):
