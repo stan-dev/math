@@ -110,6 +110,36 @@ struct AutodiffStackSingleton {
     std::vector<size_t> nested_var_stack_sizes_;
     std::vector<size_t> nested_var_nochain_stack_sizes_;
     std::vector<size_t> nested_var_alloc_stack_starts_;
+
+    STAN_STRONG_INLINE void push_var_stack(ChainableT *vi) {
+      push(var_stack_, vi);
+    }
+    STAN_STRONG_INLINE void push_var_nochain_stack(ChainableT *vi) {
+      push(var_nochain_stack_, vi);
+    }
+
+    /**
+     * Once we create memory in `stack` we do not release it till
+     * the end of the program.
+     * gcc/clang's `vector::push_back` does the same check as below, but here
+     * we force inlining. gcc inlines `push_back` on both sides of our if,
+     * sees we do the capacity check it does, and then removes its capacity
+     * check. So then we get our nice `if(likely(...))`.
+     * This optimization depends on `stack.push_back` being inlined.
+     * Hence why the function is strongly inlined and hot.
+     */
+    STAN_STRONG_INLINE STAN_HOT_PATH static void push(
+        std::vector<ChainableT *> &stack, ChainableT *vi) {
+      if (likely(stack.size() != stack.capacity())) {
+        stack.push_back(vi);
+      } else {
+        grow_and_push(stack, vi);
+      }
+    }
+    STAN_COLD_PATH static void grow_and_push(std::vector<ChainableT *> &stack,
+                                             ChainableT *vi) {
+      stack.push_back(vi);
+    }
   };
 
   explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
