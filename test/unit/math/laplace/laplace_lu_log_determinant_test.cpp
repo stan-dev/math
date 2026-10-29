@@ -86,7 +86,7 @@ TEST(laplace_marginal_tol, solver_3_saddle_point_throws) {
     stan::math::laplace_marginal_tol<false>(
         cauchy_normal_likelihood{}, std::forward_as_tuple(y, s, z, sz), 2,
         fixed_covariance{}, std::make_tuple(K), ops_near, nullptr);
-    FAIL() << "laplace_marginal_tol: expected std::domain_error";
+    ADD_FAILURE() << "laplace_marginal_tol: expected std::domain_error";
   } catch (const std::domain_error& e) {
     EXPECT_NE(std::string(e.what()).find(reason), std::string::npos)
         << e.what();
@@ -95,7 +95,7 @@ TEST(laplace_marginal_tol, solver_3_saddle_point_throws) {
     stan::math::laplace_latent_solve_tol(
         cauchy_normal_likelihood{}, std::forward_as_tuple(y, s, z, sz), 2,
         fixed_covariance{}, std::make_tuple(K), ops_near, nullptr);
-    FAIL() << "laplace_latent_solve_tol: expected std::domain_error";
+    ADD_FAILURE() << "laplace_latent_solve_tol: expected std::domain_error";
   } catch (const std::domain_error& e) {
     EXPECT_NE(std::string(e.what()).find(reason), std::string::npos)
         << e.what();
