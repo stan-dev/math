@@ -5,7 +5,8 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/beta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/digamma_diff.hpp>
+#include <stan/math/prim/fun/log_rising_factorial_ratio.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/hypergeometric_3F2.hpp>
 #include <stan/math/prim/fun/grad_F32.hpp>
@@ -103,18 +104,24 @@ inline return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n,
     const T_partials_return F = hypergeometric_3F2({one, mu, 1 - N_minus_n},
                                                    {n_dbl + 2, 1 - nu}, one);
 
-    T_partials_return C = lbeta(nu, mu) - lbeta(alpha_dbl, beta_dbl)
-                          - lbeta(N_minus_n, n_dbl + 2);
+    // lbeta(nu, mu) - lbeta(alpha, beta) without the cancellation for large
+    // shapes
+    T_partials_return C
+        = internal::log_beta_ratio(
+              alpha_dbl, beta_dbl, n_dbl + 1, N_minus_n - 1,
+              internal::log_beta_ratio_denominator(alpha_dbl, beta_dbl))
+          - lbeta(N_minus_n, n_dbl + 2);
     C = F * exp(C) / (N_dbl + 1);
 
     const T_partials_return Pi = 1 - C;
 
     P *= Pi;
 
+    // digamma(alpha + beta) - digamma(mu + nu), mu + nu = alpha + beta + N
     T_partials_return digammaDiff
         = is_constant_all<T_size1, T_size2>::value
               ? 0
-              : digamma(alpha_dbl + beta_dbl) - digamma(mu + nu);
+              : -digamma_diff(alpha_dbl + beta_dbl, N_dbl);
 
     T_partials_return dF[6];
     if constexpr (is_any_autodiff_v<T_size1, T_size2>) {
@@ -122,12 +129,13 @@ inline return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n,
     }
     if constexpr (is_autodiff_v<T_size1>) {
       const T_partials_return g
-          = -C * (digamma(mu) - digamma(alpha_dbl) + digammaDiff + dF[1] / F);
+          = -C * (digamma_diff(alpha_dbl, n_dbl + 1) + digammaDiff + dF[1] / F);
       partials<0>(ops_partials)[i] += g / Pi;
     }
     if constexpr (is_autodiff_v<T_size2>) {
       const T_partials_return g
-          = -C * (digamma(nu) - digamma(beta_dbl) + digammaDiff - dF[4] / F);
+          = -C
+            * (digamma_diff(beta_dbl, N_minus_n - 1) + digammaDiff - dF[4] / F);
       partials<1>(ops_partials)[i] += g / Pi;
     }
   }

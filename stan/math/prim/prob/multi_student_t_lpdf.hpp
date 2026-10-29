@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
+#include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/max_size_mvt.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
@@ -103,8 +104,10 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
   lp_type lp(0);
 
   if constexpr (include_summand<propto, T_dof>::value) {
-    lp += lgamma(0.5 * (nu + num_dims)) * size_vec;
-    lp -= lgamma(0.5 * nu) * size_vec;
+    // lgamma((nu + p) / 2) - lgamma(nu / 2) is lgamma(p / 2) - lbeta(p / 2,
+    // nu / 2). The direct difference loses eps * nu;
+    // lbeta keeps the digits, and its derivative uses digamma_diff.
+    lp += (lgamma(0.5 * num_dims) - lbeta(0.5 * num_dims, 0.5 * nu)) * size_vec;
     lp -= (0.5 * num_dims) * log(nu) * size_vec;
   }
 

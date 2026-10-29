@@ -5,7 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/digamma_diff.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/as_value_array_or_scalar.hpp>
@@ -89,10 +89,9 @@ inline return_type_t<T_prior_size> dirichlet_multinomial_lpmf(
 
   auto ops_partials = make_partials_propagator(alpha_ref);
   if constexpr (is_autodiff_v<T_prior_size>) {
+    // digamma_diff(x, 0) is 0, so the categories with n = 0 need no select
     partials<0>(ops_partials)
-        = (ns_array > 0)
-              .select(digamma(alpha_val + ns_array) - digamma(alpha_val), 0.0)
-          + digamma(a_sum) - digamma(a_sum + n_sum);
+        = digamma_diff(alpha_val, ns_array) - digamma_diff(a_sum, n_sum);
   }
   return ops_partials.build(lp);
 }

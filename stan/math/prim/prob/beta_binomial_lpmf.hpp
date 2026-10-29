@@ -5,16 +5,20 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
-#include <stan/math/prim/fun/grad_F32.hpp>
+#include <stan/math/prim/fun/digamma_diff.hpp>
 #include <stan/math/prim/fun/lbeta.hpp>
-#include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/lgamma_stirling_diff.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
+#include <stan/math/prim/fun/log_rising_factorial_ratio.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -77,8 +81,6 @@ inline return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n,
   scalar_seq_view<T_N_ref> N_vec(N_ref);
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
   scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
-  size_t size_alpha = stan::math::size(alpha);
-  size_t size_beta = stan::math::size(beta);
   size_t size_n_N = max_size(n, N);
   size_t size_alpha_beta = max_size(alpha, beta);
   size_t max_size_seq_view = max_size(n, N, alpha, beta);
@@ -95,72 +97,46 @@ inline return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n,
     if constexpr (include_summand<propto>::value)
       normalizing_constant[i] = binomial_coefficient_log(N_vec[i], n_vec[i]);
 
+  // The value is lbeta(n + alpha, N - n + beta) - lbeta(alpha, beta). For
+  // large shapes the two lbeta values are of the order of the shapes and
+  // their plain difference keeps no correct digits from shapes near 1e15;
+  // internal::log_beta_ratio forms the difference
+  // without that cancellation. Its shape-only part is computed once per
+  // pair of shapes.
   VectorBuilder<true, T_partials_return, T_size1, T_size2> lbeta_denominator(
       size_alpha_beta);
   for (size_t i = 0; i < size_alpha_beta; i++) {
-    lbeta_denominator[i] = lbeta(alpha_vec.val(i), beta_vec.val(i));
+    lbeta_denominator[i] = internal::log_beta_ratio_denominator(
+        T_partials_return(alpha_vec.val(i)),
+        T_partials_return(beta_vec.val(i)));
   }
-
-  VectorBuilder<true, T_partials_return, T_n, T_N, T_size1, T_size2> lbeta_diff(
-      max_size_seq_view);
-  for (size_t i = 0; i < max_size_seq_view; i++) {
-    lbeta_diff[i] = lbeta(n_vec[i] + alpha_vec.val(i),
-                          N_vec[i] - n_vec[i] + beta_vec.val(i))
-                    - lbeta_denominator[i];
-  }
-
-  VectorBuilder<is_autodiff_v<T_size1>, T_partials_return, T_n, T_size1>
-      digamma_n_plus_alpha(max_size(n, alpha));
-  if constexpr (is_autodiff_v<T_size1>) {
-    for (size_t i = 0; i < max_size(n, alpha); i++) {
-      digamma_n_plus_alpha[i] = digamma(n_vec.val(i) + alpha_vec.val(i));
-    }
-  }
-
-  VectorBuilder<is_any_autodiff_v<T_size1, T_size2>, T_partials_return, T_size1,
-                T_size2>
-      digamma_alpha_plus_beta(size_alpha_beta);
-  if constexpr (is_any_autodiff_v<T_size1, T_size2>) {
-    for (size_t i = 0; i < size_alpha_beta; i++) {
-      digamma_alpha_plus_beta[i] = digamma(alpha_vec.val(i) + beta_vec.val(i));
-    }
-  }
-
-  VectorBuilder<is_any_autodiff_v<T_size1, T_size2>, T_partials_return, T_N,
-                T_size1, T_size2>
-      digamma_diff(max_size(N, alpha, beta));
-  if constexpr (is_any_autodiff_v<T_size1, T_size2>) {
-    for (size_t i = 0; i < max_size(N, alpha, beta); i++) {
-      digamma_diff[i]
-          = digamma_alpha_plus_beta[i]
-            - digamma(N_vec.val(i) + alpha_vec.val(i) + beta_vec.val(i));
-    }
-  }
-
-  VectorBuilder<is_autodiff_v<T_size1>, T_partials_return, T_size1>
-      digamma_alpha(size_alpha);
-  for (size_t i = 0; i < size_alpha; i++)
-    if constexpr (is_autodiff_v<T_size1>)
-      digamma_alpha[i] = digamma(alpha_vec.val(i));
-
-  VectorBuilder<is_autodiff_v<T_size2>, T_partials_return, T_size2>
-      digamma_beta(size_beta);
-  for (size_t i = 0; i < size_beta; i++)
-    if constexpr (is_autodiff_v<T_size2>)
-      digamma_beta[i] = digamma(beta_vec.val(i));
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    if constexpr (include_summand<propto>::value)
+    const T_partials_return alpha_dbl = alpha_vec.val(i);
+    const T_partials_return beta_dbl = beta_vec.val(i);
+    const T_partials_return n_i = n_vec.val(i);
+    const T_partials_return N_i = N_vec.val(i);
+    const T_partials_return m_i = N_i - n_i;
+    if constexpr (include_summand<propto>::value) {
       logp += normalizing_constant[i];
-    logp += lbeta_diff[i];
+    }
+    logp += internal::log_beta_ratio(alpha_dbl, beta_dbl, n_i, m_i,
+                                     lbeta_denominator[i]);
 
-    if constexpr (is_autodiff_v<T_size1>)
-      partials<0>(ops_partials)[i]
-          += digamma_n_plus_alpha[i] + digamma_diff[i] - digamma_alpha[i];
-    if constexpr (is_autodiff_v<T_size2>)
-      partials<1>(ops_partials)[i]
-          += digamma(N_vec.val(i) - n_vec.val(i) + beta_vec.val(i))
-             + digamma_diff[i] - digamma_beta[i];
+    // Each partial is a sum of two digamma differences psi(x + k) - psi(x)
+    // of size k / x; digamma_diff forms them without cancellation.
+    if constexpr (is_any_autodiff_v<T_size1, T_size2>) {
+      const T_partials_return digamma_diff_total
+          = digamma_diff(alpha_dbl + beta_dbl, N_i);
+      if constexpr (is_autodiff_v<T_size1>) {
+        partials<0>(ops_partials)[i]
+            += digamma_diff(alpha_dbl, n_i) - digamma_diff_total;
+      }
+      if constexpr (is_autodiff_v<T_size2>) {
+        partials<1>(ops_partials)[i]
+            += digamma_diff(beta_dbl, m_i) - digamma_diff_total;
+      }
+    }
   }
   return ops_partials.build(logp);
 }
