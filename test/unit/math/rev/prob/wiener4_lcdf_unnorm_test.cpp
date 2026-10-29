@@ -7,8 +7,9 @@
 
 TEST_F(AgradRev, ProbWiener4Lcdf_small_time_gradients) {
   /* Gradients of the 4-parameter lcdf at points where the small-time series
-   * is used. Its derivatives with respect to a and w had sign errors (errors
-   * of 1.4e-4 in d/da and 3.8e-4 in d/dw at the first point). References:
+   * is used. A sign error in its derivatives with respect to a and w gives
+   * errors of 1.4e-4 in d/da and 3.8e-4 in d/dw at the first point.
+   * References:
    * mpmath (50 digits): F = P - Q, P in closed form and Q = P - F by its
    * large-time series (199 terms); gradients by mpmath.diff.
    */
