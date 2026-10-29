@@ -22,8 +22,9 @@
 //
 // For each function the first rows are points where develop was wrong by
 // more than 100 times the tolerance, and the last row is a point at a small
-// shape where develop was correct. The rows marked "small alpha" and
-// "small phi" check lchoose(n + phi - 1, n) where phi is small compared to
+// shape where develop was correct. The row marked "large alpha, beta < 1" is
+// a large shape where develop was correct too. The rows marked "small alpha"
+// and "small phi" check lchoose(n + phi - 1, n) where phi is small compared to
 // n: binomial_coefficient_log(n + phi - 1, n) rounds phi into n + phi - 1
 // (-inf at phi = 1e-17). The rows marked "theta" check the GLM partials at
 // a linear predictor above 709, where exp(theta) overflows. The cdfs of
@@ -46,6 +47,14 @@ std::pair<double, double> tolerances(const std::string& tag) {
     return {1e-6, 1e-4};
   }
   return {1e-12, 1e-11};
+}
+
+// yule_simon_cdf and yule_simon_lcdf are 1 - c and log1p(-c) with
+// c = n B(n, alpha + 1), which is tiny at large alpha. An absolute tolerance
+// cannot see an error in c there, so these tags are compared relative to the
+// reference.
+bool relative_tolerance(const std::string& tag) {
+  return tag == "YSC" || tag == "YSLC";
 }
 
 // for each gradient, the index of the argument it is taken with respect
@@ -214,6 +223,7 @@ const std::vector<TestCase> test_cases = {
     {"NB", {0x1.9000000000000p+5, 0x1.c6bf526340000p+49, 0x1.2309ce5400000p+44}, -2.8766166803657541, {2.4999999999998758e-29, 0.0}},
     {"NB", {0x1.f400000000000p+9, 0x1.5798ee2308c3ap-27, 0x1.5fd7fe1796495p-37}, -2.5328436211374154e+1, {9.9999982156034819e+7, 8.1425591547374411e-14}},  // small alpha
     {"NB", {0x1.0000000000000p+0, 0x1.70ef54646d497p-57, 0x1.70ef54646d497p-57}, -3.9143946580898777e+1, {9.9999999999999954e+16, 0.0}},  // small alpha
+    {"NB", {0x0.0p+0, 0x1.2a05f20080000p+33, 0x1.999999999999ap-1}, -8.1093021629742174e+9, {-8.1093021621632877e-1, 6.9444444451388884e+9}},  // large alpha, beta < 1
     {"NB", {0x0.0p+0, 0x1.9000000000000p+6, 0x1.0aaaaaaaaaaabp+5}, -2.9558802241544401, {-2.9558802241544401e-2, 8.7378640776699017e-2}},
     // neg_binomial_2_lpmf(n | mu, phi): n, mu, phi
     {"NB2", {0x1.c800000000000p+5, 0x1.8000000000000p+1, 0x1.2a05f20000000p+33}, -1.1677494780996510e+2, {1.7999999994600000e+1, -1.4294999940379000e-17}},
@@ -264,7 +274,11 @@ const std::vector<TestCase> test_cases = {
     {"LKJC", {0x0.0p+0, 0x1.0000000000000p+0, 0x0.0p+0, 0x0.0p+0, 0x1.0000000000000p+0, 0x1.802ba9f400000p+41}, 4.1520320547827412e+1, {4.5454545454544307e-13}},
     {"LKJC", {0x1.3333333333333p-2, 0x1.e86ab810ea912p-1, -0x1.999999999999ap-3, 0x1.57808173fc2ddp-3, 0x1.ee40264218109p-1, 0x1.9000000000000p+6}, -1.1177834570568931e+1, {-1.4988714303399185e-1}},
     // yule_simon_{cdf,lcdf,lccdf}(n | alpha): n, alpha
+    {"YSC", {0x1.0000000000000p+0, 0x1.d1a94a2000000p+39}, 9.9999999999900002e-1, {9.9999999999799993e-25}},
+    {"YSC", {0x1.0000000000000p+1, 0x1.7d78400000000p+26}, 9.9999999999999978e-1, {3.9999998200000057e-24}},
     {"YSC", {0x1.0000000000000p+0, 0x1.9000000000000p+6}, 9.9009900990099010e-1, {9.8029604940692089e-5}},
+    {"YSLC", {0x1.0000000000000p+0, 0x1.d1a94a2000000p+39}, -9.9999999999949996e-13, {9.9999999999900002e-25}},
+    {"YSLC", {0x1.0000000000000p+1, 0x1.7d78400000000p+26}, -1.9999999400000015e-16, {3.9999998200000064e-24}},
     {"YSLC", {0x1.0000000000000p+0, 0x1.9000000000000p+6}, -9.9503308531680828e-3, {9.9009900990099010e-5}},
     {"YSLCC", {0x1.0000000000000p+1, 0x1.c6bf526340000p+49}, -6.8384405609261428e+1, {-1.9999999999999970e-15}},
     {"YSLCC", {0x1.0000000000000p+0, 0x1.c6bf526340000p+49}, -3.4538776394910686e+1, {-9.9999999999999900e-16}},
@@ -325,6 +339,7 @@ const std::vector<TestCase> test_cases = {
 TEST_F(AgradRev, ProbDistributions_large_shapes_value_and_log_scale_gradients) {
   using large_shapes_test_internal::eval;
   using large_shapes_test_internal::log_scale_args;
+  using large_shapes_test_internal::relative_tolerance;
   using large_shapes_test_internal::test_cases;
   using large_shapes_test_internal::tolerances;
   for (const auto& t : test_cases) {
@@ -333,7 +348,12 @@ TEST_F(AgradRev, ProbDistributions_large_shapes_value_and_log_scale_gradients) {
     std::vector<double> grads;
     eval(tag, t.args, value, grads);
     const auto tol = tolerances(tag);
-    EXPECT_NEAR(value, t.value, tol.first * std::max(1.0, std::fabs(t.value)))
+    const bool relative = relative_tolerance(tag);
+    auto bound = [relative](double factor, double reference) {
+      const double size = std::fabs(reference);
+      return factor * (relative ? size : std::max(1.0, size));
+    };
+    EXPECT_NEAR(value, t.value, bound(tol.first, t.value))
         << tag << " value, last argument " << t.args.back();
     const std::vector<int> log_args = log_scale_args(tag);
     ASSERT_EQ(grads.size(), t.grads.size()) << tag;
@@ -341,8 +361,7 @@ TEST_F(AgradRev, ProbDistributions_large_shapes_value_and_log_scale_gradients) {
       const double scale = log_args[j] >= 0 ? t.args[log_args[j]] : 1.0;
       const double got = scale * grads[j];
       const double expected = scale * t.grads[j];
-      EXPECT_NEAR(got, expected,
-                  tol.second * std::max(1.0, std::fabs(expected)))
+      EXPECT_NEAR(got, expected, bound(tol.second, expected))
           << tag << " gradient " << j << ", last argument " << t.args.back();
     }
   }
