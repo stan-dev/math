@@ -189,8 +189,8 @@ TEST(ProbDistributionsNegBinomial2Log, opencl_large_shapes_reference) {
   // test/unit/math/rev/prob/large_shapes_test.cpp. The difference
   // digamma(n + phi) - digamma(phi) keeps no correct digits for large phi.
   // The phi partial is compared as phi * d/dphi. At phi = 1e15 the rounding
-  // errors of the develop OpenCL formula cancel to 0 and it passes by
-  // chance; the rows at phi = 1e10 and 1e12 show its error (3.6e-5 and
+  // errors of the plain difference in the OpenCL formula can cancel to 0;
+  // the rows at phi = 1e10 and 1e12 show its error (3.6e-5 and
   // 1.4e-9 in phi * d/dphi). The last row is a small phi where the plain
   // difference is correct.
   using stan::math::var;

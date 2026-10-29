@@ -74,9 +74,9 @@ TEST_F(AgradRev, ProbDistributionsBetaBinomial_log_shape_gradients) {
 
 TEST_F(AgradRev, ProbDistributionsBetaBinomial_log_concentration_gradient) {
   // alpha = beta = exp(lc) / 2, n = 57, N = 117. The
-  // gradient in lc goes to 0 like 27 / exp(lc). develop returned 0 or
-  // noise (-0.14 at lc = 32) from lc = 20 on, which made the log density a
-  // plateau that warmup could not leave.
+  // gradient in lc goes to 0 like 54 / exp(lc). The plain differences give
+  // 0 or noise (-0.14 at lc = 32) from lc = 20 on, which makes the log
+  // density flat for a sampler.
   using stan::math::var;
   const std::vector<double> lcs = {16.0, 18.0, 20.0, 26.0, 30.0, 32.0};
   const std::vector<double> grads = {

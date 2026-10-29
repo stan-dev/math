@@ -136,8 +136,8 @@ static constexpr const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
         if (need_phi_derivative) {
           // 1 - (y + phi) / (mu + phi) = mu / (mu + phi) - (y / phi) phi
           // / (mu + phi) and log(phi) - log(mu + phi) are formed without
-          // cancellation, and digamma_diff replaces
-          // digamma(y + phi) - digamma(phi)
+          // cancellation, and so is digamma(y + phi) - digamma(phi), through
+          // digamma_diff
           phi_derivative = mu_over_mu_p_phi - y / phi * phi_over_mu_p_phi
                            - log1p_exp_theta_m_log_phi + digamma_diff(phi, y);
           if (!need_phi_derivative_sum) {

@@ -72,10 +72,10 @@ struct TestValue {
 // + lbeta(n + alpha, N - n + beta) - lbeta(alpha, beta) with mp.loggamma,
 // and checked at 130 digits. The shapes are written in hex so that they are
 // exact. The first three are n = 57, N = 117, alpha = beta = exp(lc) / 2
-// for lc = 32, 36, 42, where the plain lbeta difference was wrong by
+// for lc = 32, 36, 42, where the plain lbeta difference is wrong by
 // 4.5e-3, 9.8e-2 and 81. The next three are n = 500, N = 1000,
 // alpha = beta = 0.5e10, 0.5e13, 0.5e19, where the plain lbeta difference
-// was wrong by 5.3e-8, 2.8e-4 and 693. In the last two points one or both
+// is wrong by 5.3e-8, 2.8e-4 and 693. In the last two points one or both
 // shapes are small, where the lbeta form is the accurate one.
 std::vector<TestValue> testValues = {
     {57, 117, 0x1.1f43fcc4b662cp+45, 0x1.1f43fcc4b662cp+45,

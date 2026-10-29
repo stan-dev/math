@@ -87,8 +87,8 @@ inline return_type_t<T_n_cl, T_shape_cl, T_inv_scale_cl> neg_binomial_lpmf(
       = colwise_sum(static_select<include_summand<propto, T_shape_cl>::value>(
           logp1 - lbeta(alpha_val, n + 1) - log(n + alpha_val), logp1));
 
-  // digamma_diff replaces digamma(alpha + n) - digamma(alpha), which loses
-  // all accuracy for large alpha
+  // digamma_diff(alpha, n) = digamma(alpha + n) - digamma(alpha) without
+  // the cancellation of the plain difference at large alpha
   auto alpha_deriv = digamma_diff(alpha_val, n) - log1p_inv_beta;
   auto beta_deriv = lambda_m_alpha_over_1p_beta - elt_divide(n, beta_val + 1.0);
 

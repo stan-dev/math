@@ -20,11 +20,12 @@
 // partials of positive parameters are compared as x * d/dx, the gradient in
 // log(x) that a sampler sees; the others are compared as they are.
 //
-// For each function the first rows are points where develop was wrong by
-// more than 100 times the tolerance, and the last row is a point at a small
-// shape where develop was correct. The row marked "large alpha, beta < 1" is
-// a large shape where develop was correct too. The rows marked "small alpha"
-// and "small phi" check lchoose(n + phi - 1, n) where phi is small compared to
+// For each function the first rows are points where the plain differences
+// are wrong by more than 100 times the tolerance, and the last row is a
+// point at a small shape where they are correct. The row marked "large
+// alpha, beta < 1" is a large shape where the plain difference in the alpha
+// partial is 0 and correct. The rows marked "small alpha" and "small phi"
+// check lchoose(n + phi - 1, n) where phi is small compared to
 // n: binomial_coefficient_log(n + phi - 1, n) rounds phi into n + phi - 1
 // (-inf at phi = 1e-17). The rows marked "theta" check the GLM partials at
 // a linear predictor above 709, where exp(theta) overflows. The cdfs of
@@ -40,7 +41,8 @@ struct TestCase {
   std::vector<double> grads;
 };
 
-// (value, gradient) tolerance factors, applied as tol * max(1, |reference|)
+// (value, gradient) tolerance factors, applied as tol * max(1, |reference|),
+// or as tol * |reference| for the tags of relative_tolerance()
 std::pair<double, double> tolerances(const std::string& tag) {
   if (tag == "BBC" || tag == "BBLC" || tag == "BBLCC" || tag == "BNBC"
       || tag == "BNBLCC") {
@@ -351,7 +353,7 @@ TEST_F(AgradRev, ProbDistributions_large_shapes_value_and_log_scale_gradients) {
     const bool relative = relative_tolerance(tag);
     auto bound = [relative](double factor, double reference) {
       const double size = std::fabs(reference);
-      return factor * (relative ? size : std::max(1.0, size));
+      return factor * (relative && size > 0 ? size : std::max(1.0, size));
     };
     EXPECT_NEAR(value, t.value, bound(tol.first, t.value))
         << tag << " value, last argument " << t.args.back();
@@ -368,9 +370,9 @@ TEST_F(AgradRev, ProbDistributions_large_shapes_value_and_log_scale_gradients) {
 }
 
 TEST_F(AgradRev, ProbDistributions_lkj_corr_eta_gradient_at_one) {
-  // At eta == 1.0 exactly, develop returned the constant without its
-  // derivative, so d/deta lost sum_k psi(eta + (K - 1) / 2) - psi(eta +
-  // (K - 1 - k) / 2). eta = exp(0) = 1 is the value at the default
+  // At eta == 1.0 exactly, d/deta must still contain the derivative of the
+  // constant, sum_k psi(eta + (K - 1) / 2) - psi(eta + (K - 1 - k) / 2).
+  // eta = exp(0) = 1 is the value at the default
   // initialization of an unconstrained parameter. Reference from mpmath.
   Eigen::MatrixXd omega(3, 3);
   omega << 1.0, 0.3, -0.2, 0.3, 1.0, 0.1, -0.2, 0.1, 1.0;

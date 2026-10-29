@@ -263,7 +263,7 @@ TEST(ProbDistributionsBetaBinomial, opencl_large_shapes_reference) {
     stan::math::matrix_cl<int> n_cl(n);
     stan::math::matrix_cl<int> N_cl(N);
 
-    // The kernel generator functions run on the device. The scalar-shape
+    // The kernel generator functions run on the OpenCL device. The scalar-shape
     // case is in beta_binomial_lpmf_scalar_shapes_test.cpp.
     Eigen::Matrix<var, Eigen::Dynamic, 1> alpha(1);
     alpha << t.alpha;

@@ -95,8 +95,8 @@ neg_binomial_2_log_lpmf(const T_n_cl& n, const T_log_location_cl& eta,
           logp2 + elt_multiply(n, eta_val), logp2));
 
   auto eta_deriv = n - elt_multiply(n_plus_phi, exp_eta_over_exp_eta_phi);
-  // digamma_diff replaces digamma(n + phi) - digamma(phi), which loses all
-  // accuracy for large phi
+  // digamma_diff(phi, n) = digamma(n + phi) - digamma(phi) without the
+  // cancellation of the plain difference at large phi
   auto phi_deriv = exp_eta_over_exp_eta_phi - elt_divide(n, exp_eta + phi_val)
                    - log1p_exp_eta_m_logphi + digamma_diff(phi_val, n);
 

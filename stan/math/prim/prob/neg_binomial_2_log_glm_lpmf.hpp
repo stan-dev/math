@@ -6,10 +6,8 @@
 #include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
-#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma_diff.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
-#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -327,8 +325,8 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
     if constexpr (is_autodiff_v<T_precision>) {
       // 1 - (y + phi) / (mu + phi) = mu / (mu + phi) - (y / phi) phi
       // / (mu + phi) and log(phi) - log(mu + phi) are formed without
-      // cancellation, and digamma_diff replaces
-      // digamma(y + phi) - digamma(phi)
+      // cancellation, and so is digamma(y + phi) - digamma(phi), through
+      // digamma_diff
       Array<T_partials_return, Dynamic, 1> phi_over_mu_p_phi
           = (u > 0).select(e_over_1p_e, inv_1p_e);
       if constexpr (is_vector<T_precision>::value) {
