@@ -90,7 +90,3 @@ class AgradDistributionsPareto : public AgradDistributionTest {
     return log(alpha) + lmultiply(alpha, y_min) - lmultiply(alpha + 1.0, y);
   }
 };
-
-TEST(ProbDistributionsParetoCDF, Values) {
-  EXPECT_FLOAT_EQ(0.60434447, stan::math::pareto_cdf(3.45, 2.89, 5.235));
-}

@@ -641,6 +641,9 @@ class cvodes_integrator_adjoint_vari : public vari_base {
                      f_y_t_vars.size(), "states", N_);
     f_y_t_vars.adj() = -Eigen::Map<Eigen::VectorXd>(NV_DATA_S(yB), N_);
     grad();
+    // CVODES reuses this output buffer; adjoints must not accumulate into its
+    // previous contents.
+    N_VConst(0.0, qBdot);
     math::apply(
         [&qBdot](auto&&... args) {
           accumulate_adjoints(NV_DATA_S(qBdot), args...);
