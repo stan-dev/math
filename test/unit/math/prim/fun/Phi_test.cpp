@@ -7,6 +7,9 @@ TEST(MathFunctions, Phi) {
   EXPECT_NEAR(0.81593987465324047, stan::math::Phi(0.9), 1e-15);
   EXPECT_NEAR(1, stan::math::Phi(-5.0) / 2.8665157187919391e-07, 1e-14);
   EXPECT_NEAR(1, stan::math::Phi(-3.0) / 0.0013498980316300946, 1e-14);
+  // 1 + erf(x / sqrt(2)) cancels most near x = -5
+  EXPECT_NEAR(1, stan::math::Phi(-4.988500030550561) / 3.0424950967132873e-07,
+              1e-14);
 }
 
 // tests calculating using R 3.0.2 Snow Leopard build (6558)

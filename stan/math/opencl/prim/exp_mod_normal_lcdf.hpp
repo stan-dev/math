@@ -14,7 +14,7 @@ namespace stan {
 namespace math {
 namespace internal {
 
-/** The algorithm of the prim exp_mod_normal_lcdf_impl, on the device. */
+/** The algorithm of the prim exp_mod_normal_lcdf_impl, in OpenCL. */
 template <bool upper, typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
           typename T_inv_scale_cl>
 inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>
@@ -60,7 +60,7 @@ exp_mod_normal_lcdf_opencl_impl(const char* function, const T_y_cl& y,
   auto z = elt_divide(y_val - mu_val, sigma_val);
   auto v = elt_multiply(lambda_val, sigma_val);
   // Value and partials with respect to z, v and sigma d/dsigma at fixed y,
-  // mu and lambda. The four device functions share one implementation.
+  // mu and lambda. The four OpenCL device functions share one implementation.
   auto lp = [&]() {
     if constexpr (upper) {
       return exp_mod_normal_lccdf_value(z, v);

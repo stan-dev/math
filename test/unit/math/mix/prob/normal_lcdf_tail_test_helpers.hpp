@@ -19,9 +19,9 @@
  *
  * References were evaluated at 60 significant digits from
  * `Phi(y) = erfc(-y/sqrt(2))/2` and `phi(y) = exp(-y^2/2)/sqrt(2 pi)`, then
- * rounded to double. The historical approximation cutoffs are retained as
- * regression inputs; the shared kernel now uses erfc and a Cody tail instead
- * of the former Taylor expansions and residual fits.
+ * rounded to double. The test inputs include the ends of the intervals of
+ * approximations that a log normal CDF can use (Taylor expansions, residual
+ * fits, A&S 7.1.26), where a branch error shows first.
  */
 namespace normal_lcdf_tail_test {
 
@@ -120,14 +120,11 @@ inline double mills_dlogphi_dy(double y) {
 }
 
 /**
- * expect_ad on both sides of the historical value and derivative cutoffs,
- * including the current Cody crossover at scaled input -4.
+ * expect_ad on both sides of the interval ends of those approximations,
+ * including the Cody crossover at scaled input -4.
  *
  * The 0.01 offset keeps clear of `finite_diff_grad_hessian_auto`'s stencil,
  * which spans about `1.2e-5 * max(1, |y|)`, so neither side straddles a seam.
- *
- * Keep the former cutoffs as regression inputs even though the Taylor and
- * residual-fit branches have been replaced by the shared normal kernel.
  */
 template <typename F>
 void expect_ad_across_cutoffs(const F& f, double dir) {
@@ -154,7 +151,7 @@ void expect_ad_at_defect_inputs(const F& f, double dir) {
 }
 
 /**
- * Derivative references at inputs covered by the former Taylor branches.
+ * Derivative references at inputs in the intervals of the Taylor expansions.
  * The shared kernel should agree with these references to 12 digits.
  */
 template <typename F>
@@ -241,8 +238,7 @@ void expect_tail_derivatives(const F& f, double dir) {
 /**
  * Sweep for non-finite derivatives across the whole useful range. Cheap at 0.5
  * spacing for two direct fvar evaluations, where expect_ad -- six AD modes plus
- * finite differencing per point -- would not be. This single loop would have
- * caught every tail defect in this function's history at once.
+ * finite differencing per point -- would not be.
  */
 template <typename F>
 void expect_derivatives_finite(const F& f) {

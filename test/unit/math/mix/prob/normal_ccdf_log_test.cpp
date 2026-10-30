@@ -1,6 +1,8 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/mix/prob/normal_lcdf_tail_test_helpers.hpp>
+#include <cmath>
+#include <vector>
 
 TEST_F(AgradRev, mathMixScalFun_normal_lccdf) {
   auto f = [](const auto& y, const auto& mu, const auto& sigma) {
@@ -51,6 +53,35 @@ TEST_F(AgradRev, mathMixScalFun_normal_lccdf_far_tail_gradient) {
 TEST_F(AgradRev, mathMixScalFun_normal_lccdf_branch_accuracy) {
   normal_lcdf_tail_test::expect_branch_accuracy(normal_lccdf_mix_test::fn,
                                                 normal_lccdf_mix_test::dir);
+}
+
+TEST_F(AgradRev, mathMixScalFun_normal_lccdf_infinite_endpoints) {
+  using stan::math::INFTY;
+  using stan::math::NEGATIVE_INFTY;
+  using stan::math::normal_lccdf;
+  using stan::math::var;
+  EXPECT_EQ(0, normal_lccdf(NEGATIVE_INFTY, 0.0, 1.0));
+  EXPECT_EQ(NEGATIVE_INFTY, normal_lccdf(INFTY, 0.0, 1.0));
+  var mu = 0.3;
+  var sigma = 1.7;
+  var lp = normal_lccdf(NEGATIVE_INFTY, mu, sigma);
+  lp.grad();
+  EXPECT_EQ(0, lp.val());
+  EXPECT_EQ(0, mu.adj());
+  EXPECT_EQ(0, sigma.adj());
+  stan::math::set_zero_all_adjoints();
+
+  // a finite element next to the infinite one keeps its own gradient
+  std::vector<double> y{NEGATIVE_INFTY, 1.0};
+  std::vector<var> mu_v{0.3, -2.0};
+  std::vector<var> sigma_v{1.7, 0.5};
+  var lp_v = normal_lccdf(y, mu_v, sigma_v);
+  lp_v.grad();
+  EXPECT_EQ(0, mu_v[0].adj());
+  EXPECT_EQ(0, sigma_v[0].adj());
+  EXPECT_TRUE(std::isfinite(mu_v[1].adj()));
+  EXPECT_TRUE(std::isfinite(sigma_v[1].adj()));
+  EXPECT_LT(0, mu_v[1].adj());
 }
 
 TEST_F(AgradRev, mathMixScalFun_normal_lccdf_varmat) {

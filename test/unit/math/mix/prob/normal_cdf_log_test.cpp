@@ -60,8 +60,11 @@ TEST_F(AgradRev, mathMixScalFun_normal_lcdf_infinite_endpoints) {
   using stan::math::var;
   EXPECT_EQ(0, normal_lcdf(INFTY, 0.0, 1.0));
   EXPECT_EQ(NEGATIVE_INFTY, normal_lcdf(NEGATIVE_INFTY, 0.0, 1.0));
-  var sigma = 1;
-  auto lp = normal_lcdf(INFTY, 0.0, sigma);
+  var mu = 0.3;
+  var sigma = 1.7;
+  var lp = normal_lcdf(INFTY, mu, sigma);
   lp.grad();
+  EXPECT_EQ(0, lp.val());
+  EXPECT_EQ(0, mu.adj());
   EXPECT_EQ(0, sigma.adj());
 }

@@ -14,11 +14,11 @@ void expect_rel(double expected, double actual) {
   EXPECT_NEAR(expected, actual, 1e-12 * std::fabs(expected));
 }
 
-// All reference rows as one call on the device, every argument a vector, so
+// All reference rows as one OpenCL call, every argument a vector, so
 // each element of each adjoint is one partial of one row. Upper selects the
 // log ccdf.
 template <bool Upper>
-void expect_device_matches_reference(
+void expect_opencl_matches_reference(
     const std::vector<std::array<double, 14>>& rows) {
   using stan::math::matrix_cl;
   using stan::math::var;
@@ -58,9 +58,9 @@ void expect_device_matches_reference(
   stan::math::recover_memory();
 }
 
-// Each row alone, as double arguments on the device: the value only.
+// Each row alone, as double arguments in OpenCL: the value only.
 template <bool Upper>
-void expect_device_values_match_reference(
+void expect_opencl_values_match_reference(
     const std::vector<std::array<double, 14>>& rows) {
   using stan::math::matrix_cl;
   for (const auto& r : rows) {
@@ -76,23 +76,23 @@ void expect_device_values_match_reference(
 
 TEST(ProbDistributionsExpModNormalLcdf, opencl_matches_reference) {
   const auto& rows = stan::test::exp_mod_normal_lcdf_reference;
-  expect_device_matches_reference<false>(rows);
-  expect_device_values_match_reference<false>(rows);
+  expect_opencl_matches_reference<false>(rows);
+  expect_opencl_values_match_reference<false>(rows);
 }
 
 TEST(ProbDistributionsExpModNormalLccdf, opencl_matches_reference) {
   const auto& rows = stan::test::exp_mod_normal_lcdf_reference;
-  expect_device_matches_reference<true>(rows);
-  expect_device_values_match_reference<true>(rows);
+  expect_opencl_matches_reference<true>(rows);
+  expect_opencl_values_match_reference<true>(rows);
 }
 
 // Deep lower tail: Delta below 1e-300, or erfcx'(t) underflows.
 TEST(ProbDistributionsExpModNormalLcdf, opencl_matches_deep_tail_reference) {
   const auto& rows = stan::test::exp_mod_normal_lcdf_deep_tail_reference;
-  expect_device_matches_reference<false>(rows);
-  expect_device_values_match_reference<false>(rows);
-  expect_device_matches_reference<true>(rows);
-  expect_device_values_match_reference<true>(rows);
+  expect_opencl_matches_reference<false>(rows);
+  expect_opencl_values_match_reference<false>(rows);
+  expect_opencl_matches_reference<true>(rows);
+  expect_opencl_values_match_reference<true>(rows);
 }
 
 }  // namespace exp_mod_normal_lcdf_reference_test
