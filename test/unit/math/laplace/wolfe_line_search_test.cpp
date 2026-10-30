@@ -877,5 +877,39 @@ TEST(CubicOrBisect, MovesRightWhenRightImproves) {
   EXPECT_GT(alpha2, alpha1);
 }
 
+TEST(WolfeLineSearch, NoImprovingStepFailsInsteadOfZeroStep) {
+  using internal::Eval;
+
+  WolfeInfo info(1);
+  info.prev_.a()(0) = 0.0;
+  info.prev_.theta()(0) = 0.0;
+  info.prev_.theta_grad()(0) = 0.0;
+  info.prev_.obj() = 0.0;
+  info.prev_.alpha() = 0.0;
+  info.curr_.a()(0) = 1.0;
+  info.curr_.theta()(0) = 1.0;
+  info.curr_.theta_grad()(0) = 0.0;
+  info.curr_.obj() = 0.0;
+  info.curr_.alpha() = 0.25;
+  info.p_(0) = 1.0;
+  info.init_dir_ = 1.0;
+
+  laplace_line_search_options opt{};
+  auto decreasing_update
+      = [](auto& proposal, auto&&, auto&&, Eval& eval, auto&&) {
+          proposal.a()(0) = eval.alpha();
+          proposal.theta()(0) = eval.alpha();
+          proposal.theta_grad()(0) = 0.0;
+          eval.obj() = eval.alpha() > 0.0 ? -1.0 : 0.0;
+          eval.dir() = -1.0;
+        };
+
+  auto status = wolfe_line_search(info, decreasing_update, opt,
+                                  static_cast<std::ostream*>(nullptr));
+
+  EXPECT_FALSE(status.accept_);
+  EXPECT_EQ(status.stop_, WolfeReturn::Fail);
+}
+
 }  // namespace
 }  // namespace stan::math
