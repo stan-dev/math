@@ -1,5 +1,6 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/prob/ordered_logistic_test_helpers.hpp>
 
 TEST_F(AgradRev, mathMixScalFun_ordered_logistic_glm_lpmf) {
   auto f = [](const auto y) {
@@ -99,4 +100,13 @@ TEST_F(AgradRev, mathMixScalFun_ordered_logistic_glm_lpmf_x_column_vector) {
   cutpoints << -0.5, 0.8;
 
   stan::test::expect_ad(f, x, beta, cutpoints);
+}
+
+// Against closed forms at and near the cuts, in the tails and for close cuts.
+TEST_F(AgradRev, mathMixScalFun_ordered_logistic_glm_lpmf_derivatives) {
+  auto lpmf
+      = [](const auto& y, const auto& x, const auto& beta, const auto& cuts) {
+          return stan::math::ordered_logistic_glm_lpmf(y, x, beta, cuts);
+        };
+  ordered_logistic_test::expect_all(lpmf, true);
 }
