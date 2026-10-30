@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
+#include <stan/math/prim/fun/inc_beta_ddz.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -73,38 +74,71 @@ inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
   constexpr bool calc_beta = is_autodiff_v<T_scale_fail>;
   for (size_t n = 0; n < N; n++) {
     const auto y_dbl = y_vec.val(n);
+
+    // Explicit results for extreme values
+    // The gradients are technically ill-defined, but treated as zero
+    if (y_dbl >= 1.0) {
+      return ops_partials.build(negative_infinity());
+    }
+
     const auto alpha_dbl = alpha_vec.val(n);
     const auto beta_dbl = beta_vec.val(n);
-    const auto betafunc_dbl = beta(alpha_dbl, beta_dbl);
-    const auto Pn = 1.0 - inc_beta(alpha_dbl, beta_dbl, y_dbl);
+    // The complement 1 - I_y(a, b), evaluated from the smaller of y and
+    // 1 - y. Forming it as a difference loses every digit once I_y(a, b)
+    // rounds to 1, which happens for every complement below eps.
+    const auto Pn = internal::inc_beta_complement(alpha_dbl, beta_dbl, y_dbl,
+                                                  1.0 - y_dbl);
     const auto inv_Pn
         = is_constant_all<T_y, T_scale_succ, T_scale_fail>::value ? 0 : inv(Pn);
 
     ccdf_log += log(Pn);
 
     if constexpr (is_autodiff_v<T_y>) {
-      partials<0>(ops_partials)[n] -= pow(1 - y_dbl, beta_dbl - 1)
-                                      * pow(y_dbl, alpha_dbl - 1) * inv_Pn
-                                      / betafunc_dbl;
+      // inc_beta_ddz is the same density, evaluated without the product of
+      // two powers over a beta function, each of which can underflow on
+      // its own.
+      partials<0>(ops_partials)[n]
+          -= inc_beta_ddz(alpha_dbl, beta_dbl, y_dbl) * inv_Pn;
     }
 
+    // The shape derivatives from the same argument as the value. For
+    // y <= 1/2 they are those of I_y(a, b), which are those of -Pn; on the
+    // reflected arguments they are those of Pn itself, with beta the first
+    // shape and alpha the second.
+    [[maybe_unused]] const bool reflect = y_dbl > 0.5;
     if constexpr (calc_alpha && calc_beta) {
-      const auto [g1, g2] = grad_reg_inc_beta<GRAD_RIB::BOTH>(
-          alpha_dbl, beta_dbl, y_dbl, digamma(alpha_dbl), digamma(beta_dbl),
-          digamma(alpha_dbl + beta_dbl), 0.0);
-      partials<1>(ops_partials)[n] -= g1 * inv_Pn;
-      partials<2>(ops_partials)[n] -= g2 * inv_Pn;
+      if (reflect) {
+        const auto [g1, g2] = grad_reg_inc_beta<GRAD_RIB::BOTH>(
+            beta_dbl, alpha_dbl, 1.0 - y_dbl, digamma(beta_dbl),
+            digamma(alpha_dbl), digamma(alpha_dbl + beta_dbl), 0.0);
+        partials<1>(ops_partials)[n] += g2 * inv_Pn;
+        partials<2>(ops_partials)[n] += g1 * inv_Pn;
+      } else {
+        const auto [g1, g2] = grad_reg_inc_beta<GRAD_RIB::BOTH>(
+            alpha_dbl, beta_dbl, y_dbl, digamma(alpha_dbl), digamma(beta_dbl),
+            digamma(alpha_dbl + beta_dbl), 0.0);
+        partials<1>(ops_partials)[n] -= g1 * inv_Pn;
+        partials<2>(ops_partials)[n] -= g2 * inv_Pn;
+      }
     } else if constexpr (calc_alpha) {
+      const auto digamma_sum = digamma(alpha_dbl + beta_dbl);
       partials<1>(ops_partials)[n]
-          -= grad_reg_inc_beta<GRAD_RIB::G1>(alpha_dbl, beta_dbl, y_dbl,
-                                             digamma(alpha_dbl), 0.0,
-                                             digamma(alpha_dbl + beta_dbl), 0.0)
+          += (reflect ? grad_reg_inc_beta<GRAD_RIB::G2>(
+                            beta_dbl, alpha_dbl, 1.0 - y_dbl, 0.0,
+                            digamma(alpha_dbl), digamma_sum, 0.0)
+                      : -grad_reg_inc_beta<GRAD_RIB::G1>(
+                            alpha_dbl, beta_dbl, y_dbl, digamma(alpha_dbl),
+                            0.0, digamma_sum, 0.0))
              * inv_Pn;
     } else if constexpr (calc_beta) {
+      const auto digamma_sum = digamma(alpha_dbl + beta_dbl);
       partials<2>(ops_partials)[n]
-          -= grad_reg_inc_beta<GRAD_RIB::G2>(alpha_dbl, beta_dbl, y_dbl, 0.0,
-                                             digamma(beta_dbl),
-                                             digamma(alpha_dbl + beta_dbl), 0.0)
+          += (reflect ? grad_reg_inc_beta<GRAD_RIB::G1>(
+                            beta_dbl, alpha_dbl, 1.0 - y_dbl,
+                            digamma(beta_dbl), 0.0, digamma_sum, 0.0)
+                      : -grad_reg_inc_beta<GRAD_RIB::G2>(
+                            alpha_dbl, beta_dbl, y_dbl, 0.0, digamma(beta_dbl),
+                            digamma_sum, 0.0))
              * inv_Pn;
     }
   }
