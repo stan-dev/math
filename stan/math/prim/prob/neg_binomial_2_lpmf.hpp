@@ -8,7 +8,7 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -74,7 +74,7 @@ inline return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     if constexpr (!propto || is_all_autodiff_v<T_location, T_precision>) {
       return ops_partials.build(
           sum(binomial_coefficient_log(n_plus_phi - 1, n_vec)
-              + multiply_log(n_vec, mu_val) - phi_val * log1p(mu_val / phi_val)
+              + lmultiply(n_vec, mu_val) - phi_val * log1p(mu_val / phi_val)
               - value_of(n_vec) * log_mu_plus_phi));
     } else if constexpr (is_autodiff_v<T_precision>) {
       return ops_partials.build(
@@ -82,13 +82,13 @@ inline return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
               - phi_val * log1p(mu_val / phi_val)
               - value_of(n_vec) * log_mu_plus_phi));
     } else {
-      return ops_partials.build(sum(multiply_log(n_vec, mu_val)
+      return ops_partials.build(sum(lmultiply(n_vec, mu_val)
                                     - phi_val * log1p(mu_val / phi_val)
                                     - value_of(n_vec) * log_mu_plus_phi));
     }
   } else if constexpr (!propto) {
     return sum(binomial_coefficient_log(n_plus_phi - 1, n_vec)
-               + multiply_log(n_vec, mu_val) - phi_val * log1p(mu_val / phi_val)
+               + lmultiply(n_vec, mu_val) - phi_val * log1p(mu_val / phi_val)
                - value_of(n_vec) * log_mu_plus_phi);
   } else {
     return 0.0;

@@ -26,7 +26,7 @@ namespace math {
  * @tparam Type of object to which pointer points.
  */
 template <typename T>
-inline bool is_aligned(T* ptr, unsigned int bytes_aligned) {
+STAN_STRONG_INLINE bool is_aligned(T* ptr, unsigned int bytes_aligned) {
   return (reinterpret_cast<uintptr_t>(ptr) % bytes_aligned) == 0U;
 }
 
@@ -35,18 +35,32 @@ const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
 
 // FIXME: enforce alignment
 // big fun to inline, but only called twice
-inline char* eight_byte_aligned_malloc(size_t size) {
+STAN_STRONG_INLINE char* eight_byte_aligned_malloc(size_t size) {
   char* ptr = static_cast<char*>(malloc(size));
-  if (!ptr) {
+  if (unlikely(!ptr)) {
     return ptr;  // malloc failed to alloc
-  }
-  if (!is_aligned(ptr, 8U)) {
+  } else if (unlikely(!is_aligned(ptr, 8U))) {
     std::stringstream s;
     s << "invalid alignment to 8 bytes, ptr="
       << reinterpret_cast<uintptr_t>(ptr) << std::endl;
     throw std::runtime_error(s.str());
+  } else {
+    return ptr;
   }
-  return ptr;
+}
+
+/**
+ * Return the first address at or after `ptr` that is aligned to
+ * `alignment` bytes.
+ *
+ * @param ptr Pointer to align.
+ * @param alignment Alignment in bytes, a power of two.
+ */
+STAN_STRONG_INLINE char* align_up(char* ptr, size_t alignment) {
+  const uintptr_t address = reinterpret_cast<uintptr_t>(ptr);
+  const uintptr_t aligned
+      = (address + alignment - 1) & ~static_cast<uintptr_t>(alignment - 1);
+  return ptr + (aligned - address);
 }
 }  // namespace internal
 
@@ -64,10 +78,8 @@ inline char* eight_byte_aligned_malloc(size_t size) {
  * recovered, with the blocks being reused, or all blocks may be
  * freed, resetting the stack of blocks to its original state.
  *
- * Alignment up to 8 byte boundaries guaranteed for the first malloc,
- * and after that it's up to the caller.  On 64-bit architectures,
- * all struct values should be padded to 8-byte boundaries if they
- * contain an 8-byte member or a virtual function.
+ * Every allocation is at least 8 byte aligned. Larger alignments can be
+ * requested through the `alignment` argument of `alloc()`.
  */
 class stack_alloc {
  private:
@@ -86,24 +98,26 @@ class stack_alloc {
   /**
    * Moves us to the next block of memory, allocating that block
    * if necessary, and allocates len bytes of memory within that
-   * block.
+   * block, aligned to `alignment` bytes.
    *
    * @param len Number of bytes to allocate.
+   * @param alignment Alignment in bytes, a power of two.
    * @return A pointer to the allocated memory.
    */
-  char* move_to_next_block(size_t len) {
-    char* result;
+  STAN_STRONG_INLINE char* move_to_next_block(size_t len, size_t alignment) {
+    // Blocks are 8 byte aligned, so leave room to align the start.
+    const size_t needed = alignment > 8 ? len + alignment - 8 : len;
     ++cur_block_;
-    // Find the next block (if any) containing at least len bytes.
-    while ((cur_block_ < blocks_.size()) && (sizes_[cur_block_] < len)) {
+    // Find the next block (if any) containing at least needed bytes.
+    while ((cur_block_ < blocks_.size()) && (sizes_[cur_block_] < needed)) {
       ++cur_block_;
     }
     // Allocate a new block if necessary.
     if (unlikely(cur_block_ >= blocks_.size())) {
-      // New block should be max(2*size of last block, len) bytes.
+      // New block should be max(2*size of last block, needed) bytes.
       size_t newsize = sizes_.back() * 2;
-      if (newsize < len) {
-        newsize = len;
+      if (newsize < needed) {
+        newsize = needed;
       }
       blocks_.push_back(internal::eight_byte_aligned_malloc(newsize));
       if (!blocks_.back()) {
@@ -111,10 +125,10 @@ class stack_alloc {
       }
       sizes_.push_back(newsize);
     }
-    result = blocks_[cur_block_];
+    char* result = internal::align_up(blocks_[cur_block_], alignment);
     // Get the object's state back in order.
     next_loc_ = result + len;
-    cur_block_end_ = result + sizes_[cur_block_];
+    cur_block_end_ = blocks_[cur_block_] + sizes_[cur_block_];
     return result;
   }
 
@@ -158,25 +172,27 @@ class stack_alloc {
    * Return a newly allocated block of memory of the appropriate
    * size managed by the stack allocator.
    *
-   * The allocated pointer will be 8-byte aligned. If the number
-   * of bytes requested is not a multiple of 8, the reserved space
-   * will be padded up to the next multiple of 8.
+   * The allocated pointer will be aligned to `alignment` bytes, and at
+   * least 8 bytes. If the number of bytes requested is not a multiple of
+   * 8, the reserved space will be padded up to the next multiple of 8.
    *
    * This function may call C++'s <code>malloc()</code> function,
    * with any exceptions percolated through this function.
    *
    * @param len Number of bytes to allocate.
+   * @param alignment Alignment in bytes, a power of two.
    * @return A pointer to the allocated memory.
    */
-  inline void* alloc(size_t len) {
+  STAN_STRONG_INLINE void* alloc(size_t len, size_t alignment = 8) {
     size_t pad = len % 8 == 0 ? 0 : 8 - len % 8;
 
     // Typically, just return and increment the next location.
-    char* result = next_loc_;
-    next_loc_ += len + pad;
+    char* result
+        = alignment <= 8 ? next_loc_ : internal::align_up(next_loc_, alignment);
+    next_loc_ = result + len + pad;
     // Occasionally, we have to switch blocks.
     if (unlikely(next_loc_ >= cur_block_end_)) {
-      result = move_to_next_block(len + pad);
+      result = move_to_next_block(len + pad, alignment);
     }
     return reinterpret_cast<void*>(result);
   }
@@ -190,7 +206,7 @@ class stack_alloc {
    * @return new array allocated on the arena.
    */
   template <typename T>
-  inline T* alloc_array(size_t n) {
+  STAN_STRONG_INLINE T* alloc_array(size_t n) {
     return static_cast<T*>(alloc(n * sizeof(T)));
   }
 
