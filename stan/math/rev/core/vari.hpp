@@ -44,7 +44,7 @@ class vari_base {
    * @param nbytes Number of bytes to allocate.
    * @return Pointer to allocated bytes.
    */
-  static inline void* operator new(size_t nbytes) noexcept {
+  STAN_STRONG_INLINE static void* operator new(size_t nbytes) noexcept {
     return ChainableStack::instance_->memalloc_.alloc(nbytes);
   }
 
@@ -103,8 +103,8 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
    * @param x Value of the constructed variable.
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
-  vari_value(S x) noexcept : val_(x) {  // NOLINT
-    ChainableStack::instance_->var_stack_.push_back(this);
+  STAN_STRONG_INLINE vari_value(S x) noexcept : val_(x) {  // NOLINT
+    ChainableStack::instance_->push_var_stack(this);
   }
 
   /**
@@ -123,11 +123,11 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
    * that its `chain()` method is not called.
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
-  vari_value(S x, bool stacked) noexcept : val_(x) {
+  STAN_STRONG_INLINE vari_value(S x, bool stacked) noexcept : val_(x) {
     if (stacked) {
-      ChainableStack::instance_->var_stack_.push_back(this);
+      ChainableStack::instance_->push_var_stack(this);
     } else {
-      ChainableStack::instance_->var_nochain_stack_.push_back(this);
+      ChainableStack::instance_->push_var_nochain_stack(this);
     }
   }
 

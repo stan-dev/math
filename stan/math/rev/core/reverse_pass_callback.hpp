@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_FUNCTOR_REVERSE_PASS_CALLBACK_HPP
 
 #include <stan/math/rev/core/vari.hpp>
+#include <new>
 
 namespace stan {
 namespace math {
@@ -11,9 +12,10 @@ template <typename F>
 struct reverse_pass_callback_vari : public vari_base {
   F rev_functor_;
 
-  explicit reverse_pass_callback_vari(F&& rev_functor)
+  STAN_STRONG_INLINE STAN_HOT_PATH explicit reverse_pass_callback_vari(
+      F&& rev_functor)
       : rev_functor_(std::forward<F>(rev_functor)) {
-    ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance_->push_var_stack(this);
   }
 
   inline void chain() final { rev_functor_(); }
@@ -35,8 +37,12 @@ struct reverse_pass_callback_vari : public vari_base {
  * @param functor funtor or other callable to call in the reverse pass
  */
 template <typename F>
-inline void reverse_pass_callback(F&& functor) {
-  new internal::reverse_pass_callback_vari<F>(std::forward<F>(functor));
+STAN_STRONG_INLINE STAN_HOT_PATH void reverse_pass_callback(F&& functor) {
+  // Captures such as fixed-size Eigen matrices can need more than the 8 byte
+  // alignment of `vari_base::operator new`.
+  using vari_t = internal::reverse_pass_callback_vari<F>;
+  ::new (ChainableStack::instance_->memalloc_.alloc(
+      sizeof(vari_t), alignof(vari_t))) vari_t(std::forward<F>(functor));
 }
 
 }  // namespace math
