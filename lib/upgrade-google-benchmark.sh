@@ -63,6 +63,7 @@ GIT_ERROR
 fi
 
 version=$1
+gtest_version=1.18.0
 old_version=`expr "$(ls -d benchmark_*/ 2>/dev/null)" : '^benchmark_\(.*\)/' || echo ''`
 
 echo "Old version: $old_version"
@@ -97,8 +98,7 @@ git commit -m "upgrading to google benchmark v${version}; adding google benchmar
 
 
 # 4. Commit the new version of Google Test
-git clone --depth=1 --branch=master https://github.com/google/googletest.git benchmark_${version}/googletest
-gtest_version=$(cd benchmark_${version}/googletest && git log --pretty=tformat:"%h" -n1 .)
+git clone --depth=1 --branch=v${gtest_version} https://github.com/google/googletest.git benchmark_${version}/googletest
 rm -rf benchmark_${version}/googletest/.git
 git add -f benchmark_${version}/googletest
 cp benchmark_${version}/googletest/LICENSE ../licenses/googletest-license.txt
