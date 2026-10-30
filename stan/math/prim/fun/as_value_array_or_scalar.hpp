@@ -18,7 +18,7 @@ namespace math {
  * @return Same value.
  */
 template <typename T>
-inline auto as_value_array_or_scalar(T&& v) {
+inline decltype(auto) as_value_array_or_scalar(T&& v) {
   return value_of(as_array_or_scalar(std::forward<T>(v)));
 }
 

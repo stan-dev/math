@@ -158,4 +158,13 @@ TEST(ProbDistributionsLognormalLcdf, opencl_matches_cpu_big) {
       lognormal_lcdf_functor, y.transpose().eval(), mu.transpose().eval(),
       sigma.transpose().eval());
 }
+
+TEST(ProbDistributionsLognormalLcdf, normal_tail) {
+  for (double y0 : {std::exp(-50.0), 1.0, std::exp(50.0), stan::math::INFTY}) {
+    SCOPED_TRACE(y0);
+    const Eigen::VectorXd y = Eigen::VectorXd::Constant(1, y0);
+    stan::math::test::compare_cpu_opencl_prim_rev(lognormal_lcdf_functor, y,
+                                                  0.0, 1.0);
+  }
+}
 #endif

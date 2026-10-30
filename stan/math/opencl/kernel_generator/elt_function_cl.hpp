@@ -7,6 +7,7 @@
 #include <stan/math/opencl/kernels/device_functions/beta.hpp>
 #include <stan/math/opencl/kernels/device_functions/digamma.hpp>
 #include <stan/math/opencl/kernels/device_functions/erfcx.hpp>
+#include <stan/math/opencl/kernels/device_functions/exp_mod_normal_lcdf.hpp>
 #include <stan/math/opencl/kernels/device_functions/inv_logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/inv_Phi.hpp>
 #include <stan/math/opencl/kernels/device_functions/inv_square.hpp>
@@ -309,17 +310,19 @@ ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_logit,
                                  opencl_kernels::inv_logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(logit, opencl_kernels::log1m_device_function,
                                  opencl_kernels::logit_device_function)
-ADD_UNARY_FUNCTION_WITH_INCLUDES(Phi, opencl_kernels::phi_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(Phi, opencl_kernels::erfcx_device_function,
+                                 opencl_kernels::phi_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(Phi_approx,
                                  opencl_kernels::inv_logit_device_function,
                                  opencl_kernels::phi_approx_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(
-    std_normal_lcdf_scaled_impl,
+    std_normal_lcdf_impl, opencl_kernels::erfcx_device_function,
     opencl_kernels::std_normal_lcdf_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(
-    std_normal_lcdf_dscaled_impl,
+    std_normal_lcdf_derivative, opencl_kernels::erfcx_device_function,
     opencl_kernels::std_normal_lcdf_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_Phi, opencl_kernels::log1m_device_function,
+                                 opencl_kernels::erfcx_device_function,
                                  opencl_kernels::phi_device_function,
                                  opencl_kernels::inv_phi_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(
@@ -351,6 +354,32 @@ ADD_BINARY_FUNCTION_WITH_INCLUDES(copysign)
 
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
     erfcx_derivative, stan::math::opencl_kernels::erfcx_device_function)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(
+    exp_mod_normal_lcdf_value,
+    stan::math::opencl_kernels::erfcx_device_function,
+    stan::math::opencl_kernels::exp_mod_normal_lcdf_device_function)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(
+    exp_mod_normal_lcdf_d_z, stan::math::opencl_kernels::erfcx_device_function,
+    stan::math::opencl_kernels::exp_mod_normal_lcdf_device_function)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(
+    exp_mod_normal_lcdf_d_v, stan::math::opencl_kernels::erfcx_device_function,
+    stan::math::opencl_kernels::exp_mod_normal_lcdf_device_function)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(
+    exp_mod_normal_lcdf_d_s, stan::math::opencl_kernels::erfcx_device_function,
+    stan::math::opencl_kernels::exp_mod_normal_lcdf_device_function)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(
+    exp_mod_normal_lccdf_value,
+    stan::math::opencl_kernels::erfcx_device_function,
+    stan::math::opencl_kernels::exp_mod_normal_lcdf_device_function)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(
+    exp_mod_normal_lccdf_d_z, stan::math::opencl_kernels::erfcx_device_function,
+    stan::math::opencl_kernels::exp_mod_normal_lcdf_device_function)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(
+    exp_mod_normal_lccdf_d_v, stan::math::opencl_kernels::erfcx_device_function,
+    stan::math::opencl_kernels::exp_mod_normal_lcdf_device_function)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(
+    exp_mod_normal_lccdf_d_s, stan::math::opencl_kernels::erfcx_device_function,
+    stan::math::opencl_kernels::exp_mod_normal_lcdf_device_function)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
     beta, stan::math::opencl_kernels::beta_device_function)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
