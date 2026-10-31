@@ -155,6 +155,23 @@ void expect_scalar_edge(const F& f, int edge, const std::vector<double>& p,
   }
 }
 
+// poisson_binomial: element e has the k probabilities p[j * m + e],
+// j = 0, ..., k - 1, with m = p.size() / k elements
+template <typename T>
+std::vector<Eigen::Matrix<T, -1, 1>> make_theta(const std::vector<T>& p,
+                                                size_t k) {
+  const size_t m = p.size() / k;
+  std::vector<Eigen::Matrix<T, -1, 1>> theta;
+  for (size_t e = 0; e < m; ++e) {
+    Eigen::Matrix<T, -1, 1> th(k);
+    for (size_t j = 0; j < k; ++j) {
+      th(j) = p[j * m + e];
+    }
+    theta.push_back(th);
+  }
+  return theta;
+}
+
 constexpr double NEG_INF = -std::numeric_limits<double>::infinity();
 constexpr int INT_MAX_N = std::numeric_limits<int>::max();
 
@@ -421,6 +438,109 @@ TEST(ProbDiscreteCdfsEdgeElements, vector_parameters) {
   expect_scalar_edge(ys_cdf, INT_MAX_N, {1.5, 0.7}, 1.0);
   expect_scalar_edge(ys_lcdf, INT_MAX_N, {1.5, 0.7}, 0.0);
   expect_scalar_edge(ys_lccdf, 0, {1.5, 0.7}, 0.0);
+
+  // The binomial and beta_binomial cdf and lcdf with vector parameters
+  auto bin_cdf = [](const auto& n, const auto& p) {
+    return stan::math::binomial_cdf(n, 10, p);
+  };
+  auto bin_lcdf = [](const auto& n, const auto& p) {
+    return stan::math::binomial_lcdf(n, 10, p);
+  };
+  auto bb_cdf = [](const auto& n, const auto& p) {
+    return stan::math::beta_binomial_cdf(n, 10, part(p, 2, 0), part(p, 2, 1));
+  };
+  auto bb_lcdf = [](const auto& n, const auto& p) {
+    return stan::math::beta_binomial_lcdf(n, 10, part(p, 2, 0), part(p, 2, 1));
+  };
+  expect_probability_one_vec(bin_cdf, 3, 10, t_ord, t_edge);
+  expect_probability_one_vec(bin_lcdf, 3, 10, t_ord, t_edge);
+  expect_probability_one_vec(bb_cdf, 3, 10, ab_ord, ab_edge);
+  expect_probability_one_vec(bb_lcdf, 3, 10, ab_ord, ab_edge);
+  expect_scalar_edge(b_cdf, 1, {0.3, 0.6}, 1.0);
+  expect_scalar_edge(b_lcdf, 1, {0.3, 0.6}, 0.0);
+  expect_scalar_edge(bin_cdf, 10, {0.3, 0.6}, 1.0);
+  expect_scalar_edge(bin_lcdf, 10, {0.3, 0.6}, 0.0);
+  expect_scalar_edge(bb_cdf, 10, ab_both, 1.0);
+  expect_scalar_edge(bb_lcdf, 10, ab_both, 0.0);
+
+  // Probability 0 with vector parameters
+  const std::vector<double> t_both{0.3, 0.6};
+  const std::vector<double> mp_both{4.0, 1.5, 2.0, 3.0};
+  const std::vector<double> a_both{1.5, 0.7};
+  expect_probability_zero(b_cdf, 0, -1, t_both, 0.0);
+  expect_probability_zero(b_lcdf, 0, -1, t_both, NEG_INF);
+  expect_probability_zero(bin_cdf, 3, -1, t_both, 0.0);
+  expect_probability_zero(bin_lcdf, 3, -1, t_both, NEG_INF);
+  expect_probability_zero(bb_cdf, 3, -1, ab_both, 0.0);
+  expect_probability_zero(bb_lcdf, 3, -1, ab_both, NEG_INF);
+  expect_probability_zero(nb_cdf, 3, -1, ab_both, 0.0);
+  expect_probability_zero(nb_lcdf, 3, -1, ab_both, NEG_INF);
+  expect_probability_zero(nb2_cdf, 3, -1, mp_both, 0.0);
+  expect_probability_zero(nb2_lcdf, 3, -1, mp_both, NEG_INF);
+  expect_probability_zero(nb2_lccdf, 3, INT_MAX_N, mp_both, NEG_INF);
+  expect_probability_zero(bnb_cdf, 3, -1, rab_both, 0.0);
+  expect_probability_zero(bnb_lcdf, 3, -1, rab_both, NEG_INF);
+  expect_probability_zero(ys_cdf, 3, 0, a_both, 0.0);
+  expect_probability_zero(ys_lcdf, 3, 0, a_both, NEG_INF);
+  expect_probability_zero(ys_lccdf, 3, INT_MAX_N, a_both, NEG_INF);
+
+  // A scalar edge count with probability 0 and vector parameters
+  expect_scalar_edge(b_cdf, -1, t_both, 0.0);
+  expect_scalar_edge(b_lcdf, -1, t_both, NEG_INF);
+  expect_scalar_edge(b_lccdf, 1, t_both, NEG_INF);
+  expect_scalar_edge(bin_cdf, -1, t_both, 0.0);
+  expect_scalar_edge(bin_lcdf, -1, t_both, NEG_INF);
+  expect_scalar_edge(bin_lccdf, 10, t_both, NEG_INF);
+  expect_scalar_edge(bb_cdf, -1, ab_both, 0.0);
+  expect_scalar_edge(bb_lcdf, -1, ab_both, NEG_INF);
+  expect_scalar_edge(bb_lccdf, 10, ab_both, NEG_INF);
+  expect_scalar_edge(nb_cdf, -1, ab_both, 0.0);
+  expect_scalar_edge(nb_lcdf, -1, ab_both, NEG_INF);
+  expect_scalar_edge(nb_lccdf, INT_MAX_N, ab_both, NEG_INF);
+  expect_scalar_edge(nb2_cdf, -1, mp_both, 0.0);
+  expect_scalar_edge(nb2_lcdf, -1, mp_both, NEG_INF);
+  expect_scalar_edge(nb2_lccdf, INT_MAX_N, mp_both, NEG_INF);
+  expect_scalar_edge(bnb_cdf, -1, rab_both, 0.0);
+  expect_scalar_edge(bnb_lcdf, -1, rab_both, NEG_INF);
+  expect_scalar_edge(bnb_lccdf, INT_MAX_N, rab_both, NEG_INF);
+  expect_scalar_edge(ys_cdf, 0, a_both, 0.0);
+  expect_scalar_edge(ys_lcdf, 0, a_both, NEG_INF);
+  expect_scalar_edge(ys_lccdf, INT_MAX_N, a_both, NEG_INF);
+}
+
+TEST(ProbDiscreteCdfsEdgeElements, poisson_binomial_theta_per_element) {
+  // Three trials per element
+  auto cdf = [](const auto& y, const auto& p) {
+    return stan::math::poisson_binomial_cdf(y, make_theta(p, 3));
+  };
+  auto lcdf = [](const auto& y, const auto& p) {
+    return stan::math::poisson_binomial_lcdf(y, make_theta(p, 3));
+  };
+  auto lccdf = [](const auto& y, const auto& p) {
+    return stan::math::poisson_binomial_lccdf(y, make_theta(p, 3));
+  };
+  const std::vector<double> q_ord{0.3, 0.6, 0.8}, q_edge{0.2, 0.5, 0.9};
+  const std::vector<double> q_both{0.3, 0.2, 0.6, 0.5, 0.8, 0.9};
+  expect_probability_one_vec(cdf, 1, 3, q_ord, q_edge);
+  expect_probability_one_vec(lcdf, 1, 3, q_ord, q_edge);
+  expect_probability_zero(lccdf, 1, 3, q_both, NEG_INF);
+  expect_scalar_edge(cdf, 3, q_both, 1.0);
+  expect_scalar_edge(lcdf, 3, q_both, 0.0);
+  expect_scalar_edge(lccdf, 3, q_both, NEG_INF);
+
+  // One trial per element
+  auto cdf1 = [](const auto& y, const auto& p) {
+    return stan::math::poisson_binomial_cdf(y, make_theta(p, 1));
+  };
+  auto lcdf1 = [](const auto& y, const auto& p) {
+    return stan::math::poisson_binomial_lcdf(y, make_theta(p, 1));
+  };
+  auto lccdf1 = [](const auto& y, const auto& p) {
+    return stan::math::poisson_binomial_lccdf(y, make_theta(p, 1));
+  };
+  expect_probability_one_vec(cdf1, 0, 1, {0.3}, {0.6});
+  expect_probability_one_vec(lcdf1, 0, 1, {0.3}, {0.6});
+  expect_probability_zero(lccdf1, 0, 1, {0.3, 0.6}, NEG_INF);
 }
 
 TEST(ProbDiscreteCdfsEdgeElements, neg_binomial_2_lcdf_expect_ad) {
