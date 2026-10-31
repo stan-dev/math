@@ -1,7 +1,9 @@
+#include <test/unit/math/test_ad.hpp>
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
+#include <type_traits>
 #include <vector>
 
 // In a vector argument of a discrete cdf, lcdf or lccdf, an element with
@@ -91,6 +93,64 @@ void expect_probability_zero(const F& f, int ordinary, int edge,
       for (size_t k = 0; k < p.size(); ++k) {
         EXPECT_EQ(both.grad[k], 0.0) << (mode == 0 ? "rev" : "fwd");
       }
+    }
+  }
+}
+
+// Parameter j of k, with p holding the k parameters one after the other, each
+// as a vector of p.size() / k elements
+template <typename T>
+std::vector<T> part(const std::vector<T>& p, size_t k, size_t j) {
+  const size_t m = p.size() / k;
+  return std::vector<T>(p.begin() + j * m, p.begin() + (j + 1) * m);
+}
+
+// Vector parameters: q_ord and q_edge are the parameters of the ordinary and
+// of the edge element. The derivatives with respect to the parameters of the
+// edge element must be exactly 0.
+template <typename F>
+void expect_probability_one_vec(const F& f, int ordinary, int edge,
+                                const std::vector<double>& q_ord,
+                                const std::vector<double>& q_edge) {
+  const size_t k = q_ord.size();
+  for (int mode = 0; mode < 2; ++mode) {
+    auto eval = [&](const std::vector<int>& n, const std::vector<double>& p) {
+      return mode == 0 ? eval_rev(f, n, p) : eval_fwd(f, n, p);
+    };
+    const value_and_grad alone = eval({ordinary}, q_ord);
+    for (size_t pos_ord = 0; pos_ord < 2; ++pos_ord) {
+      const size_t pos_edge = 1 - pos_ord;
+      std::vector<int> n(2);
+      n[pos_ord] = ordinary;
+      n[pos_edge] = edge;
+      std::vector<double> p(2 * k);
+      for (size_t j = 0; j < k; ++j) {
+        p[2 * j + pos_ord] = q_ord[j];
+        p[2 * j + pos_edge] = q_edge[j];
+      }
+      const value_and_grad both = eval(n, p);
+      const char* what = mode == 0 ? "rev" : "fwd";
+      expect_same(both.value, alone.value, what);
+      for (size_t j = 0; j < k; ++j) {
+        expect_same(both.grad[2 * j + pos_ord], alone.grad[j], what);
+        EXPECT_EQ(both.grad[2 * j + pos_edge], 0.0) << what;
+      }
+    }
+  }
+}
+
+// A scalar edge count with vector parameters: the result is the given value
+// with zero derivatives
+template <typename F>
+void expect_scalar_edge(const F& f, int edge, const std::vector<double>& p,
+                        double result) {
+  auto g = [&](const std::vector<int>& n, const auto& q) { return f(n[0], q); };
+  for (int mode = 0; mode < 2; ++mode) {
+    const value_and_grad res
+        = mode == 0 ? eval_rev(g, {edge}, p) : eval_fwd(g, {edge}, p);
+    EXPECT_EQ(res.value, result) << (mode == 0 ? "rev" : "fwd");
+    for (size_t k = 0; k < p.size(); ++k) {
+      EXPECT_EQ(res.grad[k], 0.0) << (mode == 0 ? "rev" : "fwd");
     }
   }
 }
@@ -231,4 +291,149 @@ TEST(ProbDiscreteCdfsEdgeElements, yule_simon) {
   expect_probability_zero(cdf, 3, 0, p, 0.0);
   expect_probability_zero(lcdf, 3, 0, p, NEG_INF);
   expect_probability_zero(lccdf, 3, INT_MAX_N, p, NEG_INF);
+}
+
+TEST(ProbDiscreteCdfsEdgeElements, poisson_binomial) {
+  auto theta = [](const auto& y, const auto& p) {
+    using T = std::decay_t<decltype(p[0])>;
+    Eigen::Matrix<T, -1, 1> th(3);
+    th << p[0], p[1], p[2];
+    return std::vector<Eigen::Matrix<T, -1, 1>>(y.size(), th);
+  };
+  auto cdf = [&](const auto& y, const auto& p) {
+    return stan::math::poisson_binomial_cdf(y, theta(y, p));
+  };
+  auto lcdf = [&](const auto& y, const auto& p) {
+    return stan::math::poisson_binomial_lcdf(y, theta(y, p));
+  };
+  auto lccdf = [&](const auto& y, const auto& p) {
+    return stan::math::poisson_binomial_lccdf(y, theta(y, p));
+  };
+  const std::vector<double> p{0.3, 0.6, 0.8};
+  expect_probability_one(cdf, 1, 3, p);
+  expect_probability_one(lcdf, 1, 3, p);
+  expect_probability_zero(lccdf, 1, 3, p, NEG_INF);
+}
+
+TEST(ProbDiscreteCdfsEdgeElements, vector_parameters) {
+  using stan::math::bernoulli_cdf;
+  using stan::math::bernoulli_lccdf;
+  using stan::math::bernoulli_lcdf;
+  const std::vector<double> t_ord{0.3}, t_edge{0.6};
+  auto b_cdf = [](const auto& n, const auto& p) { return bernoulli_cdf(n, p); };
+  auto b_lcdf
+      = [](const auto& n, const auto& p) { return bernoulli_lcdf(n, p); };
+  auto b_lccdf
+      = [](const auto& n, const auto& p) { return bernoulli_lccdf(n, p); };
+  expect_probability_one_vec(b_cdf, 0, 1, t_ord, t_edge);
+  expect_probability_one_vec(b_lcdf, 0, 1, t_ord, t_edge);
+  expect_probability_one_vec(b_lccdf, 0, -1, t_ord, t_edge);
+  expect_probability_zero(b_lccdf, 0, 1, {0.3, 0.6}, NEG_INF);
+
+  auto bin_lccdf = [](const auto& n, const auto& p) {
+    return stan::math::binomial_lccdf(n, 10, p);
+  };
+  expect_probability_one_vec(bin_lccdf, 3, -1, t_ord, t_edge);
+  expect_probability_zero(bin_lccdf, 3, 10, {0.3, 0.6}, NEG_INF);
+
+  const std::vector<double> ab_ord{2.5, 1.5}, ab_edge{3.5, 0.8};
+  const std::vector<double> ab_both{2.5, 3.5, 1.5, 0.8};
+  auto bb_lccdf = [](const auto& n, const auto& p) {
+    return stan::math::beta_binomial_lccdf(n, 10, part(p, 2, 0), part(p, 2, 1));
+  };
+  expect_probability_one_vec(bb_lccdf, 3, -1, ab_ord, ab_edge);
+  expect_probability_zero(bb_lccdf, 3, 10, ab_both, NEG_INF);
+
+  auto nb_cdf = [](const auto& n, const auto& p) {
+    return stan::math::neg_binomial_cdf(n, part(p, 2, 0), part(p, 2, 1));
+  };
+  auto nb_lcdf = [](const auto& n, const auto& p) {
+    return stan::math::neg_binomial_lcdf(n, part(p, 2, 0), part(p, 2, 1));
+  };
+  auto nb_lccdf = [](const auto& n, const auto& p) {
+    return stan::math::neg_binomial_lccdf(n, part(p, 2, 0), part(p, 2, 1));
+  };
+  expect_probability_one_vec(nb_cdf, 3, INT_MAX_N, ab_ord, ab_edge);
+  expect_probability_one_vec(nb_lcdf, 3, INT_MAX_N, ab_ord, ab_edge);
+  expect_probability_one_vec(nb_lccdf, 3, -1, ab_ord, ab_edge);
+  expect_probability_zero(nb_lccdf, 3, INT_MAX_N, ab_both, NEG_INF);
+
+  const std::vector<double> mp_ord{4.0, 2.0}, mp_edge{1.5, 3.0};
+  auto nb2_cdf = [](const auto& n, const auto& p) {
+    return stan::math::neg_binomial_2_cdf(n, part(p, 2, 0), part(p, 2, 1));
+  };
+  auto nb2_lcdf = [](const auto& n, const auto& p) {
+    return stan::math::neg_binomial_2_lcdf(n, part(p, 2, 0), part(p, 2, 1));
+  };
+  auto nb2_lccdf = [](const auto& n, const auto& p) {
+    return stan::math::neg_binomial_2_lccdf(n, part(p, 2, 0), part(p, 2, 1));
+  };
+  expect_probability_one_vec(nb2_cdf, 3, INT_MAX_N, mp_ord, mp_edge);
+  expect_probability_one_vec(nb2_lcdf, 3, INT_MAX_N, mp_ord, mp_edge);
+  expect_probability_one_vec(nb2_lccdf, 3, -1, mp_ord, mp_edge);
+
+  const std::vector<double> rab_ord{3.0, 2.5, 1.5}, rab_edge{2.0, 3.5, 1.2};
+  const std::vector<double> rab_both{3.0, 2.0, 2.5, 3.5, 1.5, 1.2};
+  auto bnb_cdf = [](const auto& n, const auto& p) {
+    return stan::math::beta_neg_binomial_cdf(n, part(p, 3, 0), part(p, 3, 1),
+                                             part(p, 3, 2));
+  };
+  auto bnb_lcdf = [](const auto& n, const auto& p) {
+    return stan::math::beta_neg_binomial_lcdf(n, part(p, 3, 0), part(p, 3, 1),
+                                              part(p, 3, 2));
+  };
+  auto bnb_lccdf = [](const auto& n, const auto& p) {
+    return stan::math::beta_neg_binomial_lccdf(n, part(p, 3, 0), part(p, 3, 1),
+                                               part(p, 3, 2));
+  };
+  expect_probability_one_vec(bnb_cdf, 3, INT_MAX_N, rab_ord, rab_edge);
+  expect_probability_one_vec(bnb_lcdf, 3, INT_MAX_N, rab_ord, rab_edge);
+  expect_probability_one_vec(bnb_lccdf, 3, -1, rab_ord, rab_edge);
+  expect_probability_zero(bnb_lccdf, 3, INT_MAX_N, rab_both, NEG_INF);
+
+  const std::vector<double> a_ord{1.5}, a_edge{0.7};
+  auto ys_cdf = [](const auto& n, const auto& p) {
+    return stan::math::yule_simon_cdf(n, p);
+  };
+  auto ys_lcdf = [](const auto& n, const auto& p) {
+    return stan::math::yule_simon_lcdf(n, p);
+  };
+  auto ys_lccdf = [](const auto& n, const auto& p) {
+    return stan::math::yule_simon_lccdf(n, p);
+  };
+  expect_probability_one_vec(ys_cdf, 3, INT_MAX_N, a_ord, a_edge);
+  expect_probability_one_vec(ys_lcdf, 3, INT_MAX_N, a_ord, a_edge);
+  expect_probability_one_vec(ys_lccdf, 3, 0, a_ord, a_edge);
+
+  // A scalar edge count with vector parameters
+  expect_scalar_edge(b_lccdf, -1, {0.3, 0.6}, 0.0);
+  expect_scalar_edge(bin_lccdf, -1, {0.3, 0.6}, 0.0);
+  expect_scalar_edge(bb_lccdf, -1, ab_both, 0.0);
+  expect_scalar_edge(nb_cdf, INT_MAX_N, ab_both, 1.0);
+  expect_scalar_edge(nb_lcdf, INT_MAX_N, ab_both, 0.0);
+  expect_scalar_edge(nb_lccdf, -1, ab_both, 0.0);
+  expect_scalar_edge(nb2_cdf, INT_MAX_N, {4.0, 1.5, 2.0, 3.0}, 1.0);
+  expect_scalar_edge(nb2_lcdf, INT_MAX_N, {4.0, 1.5, 2.0, 3.0}, 0.0);
+  expect_scalar_edge(nb2_lccdf, -1, {4.0, 1.5, 2.0, 3.0}, 0.0);
+  expect_scalar_edge(bnb_cdf, INT_MAX_N, rab_both, 1.0);
+  expect_scalar_edge(bnb_lcdf, INT_MAX_N, rab_both, 0.0);
+  expect_scalar_edge(bnb_lccdf, -1, rab_both, 0.0);
+  expect_scalar_edge(ys_cdf, INT_MAX_N, {1.5, 0.7}, 1.0);
+  expect_scalar_edge(ys_lcdf, INT_MAX_N, {1.5, 0.7}, 0.0);
+  expect_scalar_edge(ys_lccdf, 0, {1.5, 0.7}, 0.0);
+}
+
+TEST(ProbDiscreteCdfsEdgeElements, neg_binomial_2_lcdf_expect_ad) {
+  // The infinite count is removed before the beta lcdf call
+  auto f = [](const auto& mu, const auto& phi) {
+    return stan::math::neg_binomial_2_lcdf(std::vector<int>{3, INT_MAX_N}, mu,
+                                           phi);
+  };
+  Eigen::VectorXd mu(2), phi(2);
+  mu << 4.0, 1.5;
+  phi << 2.0, 3.0;
+  stan::test::expect_ad(f, 4.0, 2.0);
+  stan::test::expect_ad(f, mu, 2.0);
+  stan::test::expect_ad(f, 4.0, phi);
+  stan::test::expect_ad(f, mu, phi);
 }

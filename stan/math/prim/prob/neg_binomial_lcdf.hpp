@@ -74,7 +74,7 @@ inline return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
 
   if constexpr (is_autodiff_v<T_shape>) {
     for (size_t i = 0; i < size_n; i++) {
-      digammaN_vec[i] = digamma(n_vec.val(i) + 1);
+      digammaN_vec[i] = digamma(n_vec.val(i) + 1.0);
     }
     for (size_t i = 0; i < size_alpha; i++) {
       digammaAlpha_vec[i] = digamma(alpha_vec.val(i));

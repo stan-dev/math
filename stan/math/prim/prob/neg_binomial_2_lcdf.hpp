@@ -55,7 +55,9 @@ inline return_type_t<T_location, T_precision> neg_binomial_2_lcdf(
 
   if (any_n_max) {
     // An element with probability 1 (n = INT_MAX, which stands for an
-    // infinite count) contributes nothing
+    // infinite count) contributes nothing. Remove such elements before the
+    // beta lcdf call: the beta lcdf gradient is not accurate when the
+    // second shape is 2^31.
     const size_t max_size_seq_view = max_size(n, mu, phi);
     std::vector<return_type_t<T_location, T_precision>> phi_mu_k;
     std::vector<scalar_type_t<T_precision>> phi_k;

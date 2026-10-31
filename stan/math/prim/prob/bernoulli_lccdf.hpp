@@ -53,7 +53,8 @@ inline return_type_t<T_prob> bernoulli_lccdf(const T_n& n,
     return ops_partials.build(NEGATIVE_INFTY);
   }
 
-  // An element with probability 1 (n < 0) contributes nothing
+  // Only the elements with n = 0 remain to contribute; an element with
+  // probability 1 (n < 0) contributes nothing
   if constexpr (is_autodiff_v<T_prob>) {
     partials<0>(ops_partials) = select(n_arr == 0, inv(theta_arr), 0.0);
   }
