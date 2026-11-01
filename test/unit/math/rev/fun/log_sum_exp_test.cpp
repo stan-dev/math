@@ -61,3 +61,51 @@ TEST_F(AgradRev, log_sum_exp_tests_large_values) {
   output5.grad();
   EXPECT_FLOAT_EQ(a8.adj(), 0.0);
 }
+
+TEST_F(AgradRev, log_sum_exp_negative_infinity_has_zero_adjoint) {
+  using stan::math::log_sum_exp;
+  using stan::math::var_value;
+
+  const double neg_inf = -std::numeric_limits<double>::infinity();
+
+  Eigen::VectorXd v(4);
+  v << neg_inf, 1.0, 2.0, 3.0;
+
+  var_value<Eigen::VectorXd> x(v);
+
+  auto y = log_sum_exp(x);
+  y.grad();
+
+  const double e1 = std::exp(1.0);
+  const double e2 = std::exp(2.0);
+  const double e3 = std::exp(3.0);
+  const double denom = e1 + e2 + e3;
+
+  EXPECT_DOUBLE_EQ(0.0, x.adj()(0));
+  EXPECT_NEAR(e1 / denom, x.adj()(1), 1e-12);
+  EXPECT_NEAR(e2 / denom, x.adj()(2), 1e-12);
+  EXPECT_NEAR(e3 / denom, x.adj()(3), 1e-12);
+}
+
+TEST_F(AgradRev, log_sum_exp_adjoint_uses_stable_softmax) {
+  using stan::math::log_sum_exp;
+  using stan::math::var_value;
+
+  Eigen::VectorXd v(4);
+
+  v << 629.7901581243797, 31.52411463, 608.19720553, 120.94829574;
+
+  var_value<Eigen::VectorXd> x(v);
+
+  auto y = log_sum_exp(x);
+  y.grad();
+
+  // Independent max-shifted softmax calculation
+  Eigen::VectorXd p = (v.array() - v.maxCoeff()).exp();
+  p /= p.sum();
+
+  // The gradient of log_sum_exp is softmax.
+  for (Eigen::Index i = 0; i < v.size(); ++i) {
+    EXPECT_NEAR(p(i), x.adj()(i), 1e-12);
+  }
+}
