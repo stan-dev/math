@@ -31,10 +31,26 @@ TEST(MathFunctions, beta_large_arguments) {
   }
 }
 
-TEST(MathFunctions, beta_small_arguments_unchanged) {
+TEST(MathFunctions, beta_huge_argument_underflow) {
+  using stan::math::beta;
+  // beta(2, b) = 1 / (b (b + 1)) is below the smallest subnormal.
+  EXPECT_EQ(0.0, beta(2.0, 1.7e308));
+  EXPECT_EQ(0.0, beta(1.7e308, 2.0));
+}
+
+TEST(MathFunctions, beta_int_arguments) {
+  using stan::math::beta;
+  const double expected = 9.99999999e-19;  // 1 / (1e9 (1e9 + 1))
+  EXPECT_NEAR(expected, beta(2, 1000000000), 1e-13 * expected);
+  EXPECT_NEAR(expected, beta(1000000000, 2), 1e-13 * expected);
+  EXPECT_NEAR(expected, beta(2.0, 1000000000), 1e-13 * expected);
+  EXPECT_NEAR(expected, beta(1000000000, 2.0), 1e-13 * expected);
+}
+
+TEST(MathFunctions, beta_small_arguments_match_lgamma_formula) {
   using stan::math::beta;
   using stan::math::lgamma;
-  // Below 10, lbeta sums the same three lgamma values.
+  // Both arguments below 10: lbeta is the sum of the three lgamma values.
   const double xs[] = {1e-3, 0.37, 1.0, 2.5, 7.25, 9.99};
   for (double a : xs) {
     for (double b : xs) {

@@ -6,9 +6,10 @@
 
 namespace stan {
 namespace test {
-// Reference values of beta(a, b) from mpmath at 50 digits (mp.beta, checked
-// against exp(loggamma(a) + loggamma(b) - loggamma(a + b))). Columns: a, b,
-// beta(a, b). One argument is large, in both argument orders.
+// Reference values of beta(a, b) from mpmath (mp.beta, checked against
+// exp(loggamma(a) + loggamma(b) - loggamma(a + b)) and, for the argument 2,
+// against 1 / (b (b + 1))). Columns: a, b, beta(a, b). One argument is
+// large, in both argument orders.
 inline const std::vector<std::array<double, 3>> beta_large_reference{{
     {0.5, 1000000.0, 0.0017724540724622611},
     {1000000.0, 0.5, 0.0017724540724622611},
@@ -28,6 +29,8 @@ inline const std::vector<std::array<double, 3>> beta_large_reference{{
     {1000000000.0, 10.0, 3.6287998367040043e-85},
     {10.0, 2147483648.0, 1.7396599603107283e-88},
     {2147483648.0, 10.0, 1.7396599603107283e-88},
+    {0.5, 1.7e+308, 1.3594100479922279e-154},
+    {1.7e+308, 0.5, 1.3594100479922279e-154},
 }};
 }  // namespace test
 }  // namespace stan

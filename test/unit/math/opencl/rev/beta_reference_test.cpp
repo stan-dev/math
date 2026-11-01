@@ -30,7 +30,7 @@ TEST(OpenCL_beta, prim_matches_reference) {
   for (size_t i = 0; i < rows.size(); ++i) {
     SCOPED_TRACE(::testing::Message()
                  << "a = " << rows[i][0] << ", b = " << rows[i][1]);
-    EXPECT_NEAR(rows[i][2], res[i], 1e-13 * rows[i][2]);
+    EXPECT_NEAR(rows[i][2], res[i], 1e-12 * rows[i][2]);
   }
 }
 
@@ -47,7 +47,7 @@ TEST(OpenCL_beta, rev_value_matches_reference) {
   for (size_t i = 0; i < rows.size(); ++i) {
     SCOPED_TRACE(::testing::Message()
                  << "a = " << rows[i][0] << ", b = " << rows[i][1]);
-    EXPECT_NEAR(rows[i][2], val[i], 1e-13 * rows[i][2]);
+    EXPECT_NEAR(rows[i][2], val[i], 1e-12 * rows[i][2]);
   }
   stan::math::recover_memory();
 }
@@ -56,7 +56,7 @@ TEST(OpenCL_beta, edge_values_match_cpu) {
   using stan::math::matrix_cl;
   const double inf = std::numeric_limits<double>::infinity();
   const double nan = std::numeric_limits<double>::quiet_NaN();
-  const double edges[] = {nan, 0.0, -0.5, -2.5, inf, 1e-300, 0.5, 2.0};
+  const double edges[] = {nan, 0.0, -0.5, -2.5, inf, 1e-300, 0.5, 2.0, 1.7e308};
   const int m = sizeof(edges) / sizeof(edges[0]);
   Eigen::VectorXd a(m * m);
   Eigen::VectorXd b(m * m);

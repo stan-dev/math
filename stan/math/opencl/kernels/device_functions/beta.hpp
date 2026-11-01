@@ -21,9 +21,8 @@ static constexpr const char* beta_device_function
            * For finite positive arguments the value is
            * exp(stan_lbeta(a, b)), which keeps its accuracy for large
            * arguments.  Other arguments use the lgamma difference.  The
-           * kernel must
-           * include the lgamma_stirling, lgamma_stirling_diff and lbeta
-           * device functions before this one.
+           * kernel must include the lgamma_stirling, lgamma_stirling_diff
+           * and lbeta device functions before this one.
            *
            * @param a First value
            * @param b Second value
