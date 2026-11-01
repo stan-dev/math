@@ -1,6 +1,7 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 #include <test/unit/math/prim/prob/util.hpp>
+#include <test/unit/util.hpp>
 #include <boost/math/distributions.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
@@ -110,4 +111,83 @@ TEST(ProbDistributionsNormal, chiSquareGoodnessFitTest) {
 
   // Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
+}
+
+TEST(ProbDistributionsNormal, lpdfAllDataChecks) {
+  using stan::math::normal_lpdf;
+  const double nan = std::numeric_limits<double>::quiet_NaN();
+  const double inf = std::numeric_limits<double>::infinity();
+  Eigen::VectorXd y(3);
+  y << 0.5, nan, 1.0;
+  Eigen::VectorXd mu = Eigen::VectorXd::Zero(3);
+  EXPECT_THROW_MSG(normal_lpdf<true>(y, mu, 1.0), std::domain_error,
+                   "Random variable");
+  EXPECT_THROW_MSG(normal_lpdf<false>(y, mu, 1.0), std::domain_error,
+                   "Random variable");
+  y[1] = 0.2;
+  mu[2] = inf;
+  EXPECT_THROW_MSG(normal_lpdf<true>(y, mu, 1.0), std::domain_error,
+                   "Location parameter");
+  EXPECT_THROW_MSG(normal_lpdf<false>(y, mu, 1.0), std::domain_error,
+                   "Location parameter");
+  mu[2] = 0.0;
+  EXPECT_THROW_MSG(normal_lpdf<true>(y, mu, -1.0), std::domain_error,
+                   "Scale parameter");
+  EXPECT_FLOAT_EQ(0.0, normal_lpdf<true>(y, mu, 1.0));
+}
+
+TEST(ProbDistributionsNormal, lpdfFirstInvalidArgumentGivesMessage) {
+  using stan::math::normal_lpdf;
+  const double nan = std::numeric_limits<double>::quiet_NaN();
+  const double inf = std::numeric_limits<double>::infinity();
+  Eigen::VectorXd y(3);
+  y << 0.5, -0.2, 1.0;
+  Eigen::VectorXd mu(3);
+  mu << 0.1, 0.0, -0.3;
+  Eigen::VectorXd sigma(3);
+  sigma << 1.0, -2.0, 1.5;
+
+  Eigen::VectorXd y_nan = y;
+  y_nan[2] = nan;
+  EXPECT_THROW_MSG(normal_lpdf(y_nan, mu, -1.0), std::domain_error,
+                   "Random variable");
+  EXPECT_THROW_MSG(normal_lpdf(y_nan, mu, sigma), std::domain_error,
+                   "Random variable");
+  Eigen::VectorXd mu_inf = mu;
+  mu_inf[0] = -inf;
+  EXPECT_THROW_MSG(normal_lpdf(y, mu_inf, -1.0), std::domain_error,
+                   "Location parameter");
+  EXPECT_THROW_MSG(normal_lpdf(y, mu_inf, sigma), std::domain_error,
+                   "Location parameter");
+  EXPECT_THROW_MSG(normal_lpdf(y, mu, sigma), std::domain_error,
+                   "Scale parameter");
+  EXPECT_THROW_MSG(normal_lpdf(y, mu, nan), std::domain_error,
+                   "Scale parameter");
+}
+
+TEST(ProbDistributionsNormal, lpdfInfiniteY) {
+  using stan::math::normal_lpdf;
+  const double inf = std::numeric_limits<double>::infinity();
+  Eigen::VectorXd y(3);
+  y << 0.5, inf, 1.0;
+  Eigen::VectorXd mu = Eigen::VectorXd::Zero(3);
+  double lp = 0;
+  EXPECT_NO_THROW(lp = normal_lpdf(y, mu, 1.0));
+  EXPECT_EQ(-inf, lp);
+  y[1] = -inf;
+  EXPECT_NO_THROW(lp = normal_lpdf(y, mu, 2.0));
+  EXPECT_EQ(-inf, lp);
+}
+
+TEST(ProbDistributionsNormal, lpdfSizeZeroChecksScalars) {
+  using stan::math::normal_lpdf;
+  const double nan = std::numeric_limits<double>::quiet_NaN();
+  Eigen::VectorXd y(0);
+  EXPECT_FLOAT_EQ(0.0, normal_lpdf(y, 0.0, 1.0));
+  EXPECT_THROW_MSG(normal_lpdf(y, nan, 1.0), std::domain_error,
+                   "Location parameter");
+  EXPECT_THROW_MSG(normal_lpdf(y, 0.0, -1.0), std::domain_error,
+                   "Scale parameter");
+  EXPECT_THROW_MSG(normal_lpdf<true>(y, nan, 1.0), std::domain_error,
+                   "Location parameter");
 }
