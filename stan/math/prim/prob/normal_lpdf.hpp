@@ -58,6 +58,7 @@ inline auto partials_column_array(T& p) {
  * @return The log of the product of the densities.
  * @throw std::domain_error if y is NaN, the location is not finite, or the
  * scale is not positive.
+ * @throw std::invalid_argument if container sizes mismatch.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
@@ -81,7 +82,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
   T_mu_ref mu_ref = std::forward<T_loc>(mu);
   T_sigma_ref sigma_ref = std::forward<T_scale>(sigma);
 
-  // The values of autodiff containers are views.
+  // The values of autodiff containers are views, not copies.
   decltype(auto) y_val
       = to_ref_if<!is_autodiff_v<T_y>>(as_value_column_array_or_scalar(y_ref));
   decltype(auto) mu_val = to_ref_if<!is_autodiff_v<T_loc>>(

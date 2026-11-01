@@ -95,6 +95,8 @@ const std::vector<double> d_sigma_vector_sigma{
     -0.72000000000000004, 0.3959945380063722, -0.43106686701728021,
     -0.43895747599451314};
 
+// The references are correctly rounded; the rounding error of the function
+// is a few ulp, and the tolerance is about 70 ulp of the value.
 inline void expect_near_rel(const std::vector<double>& x,
                             const std::vector<double>& ref) {
   ASSERT_EQ(x.size(), ref.size());
@@ -251,8 +253,11 @@ TEST_F(AgradRev, mathMixScalFun_normal_lpdf_messages) {
   Eigen::Matrix<fd, -1, 1> mu_fd = mu.cast<fd>();
   EXPECT_THROW_MSG(normal_lpdf(y_nan, mu_fd, fd(1.0)), std::domain_error,
                    y_msg);
-  Eigen::Matrix<fd, -1, 1> sigma_fd = sigma_neg.cast<fd>();
+  Eigen::Matrix<fd, -1, 1> sigma_fd = sigma.cast<fd>();
   EXPECT_THROW_MSG(normal_lpdf(y, mu_inf, sigma_fd), std::domain_error, mu_msg);
+  Eigen::Matrix<fd, -1, 1> sigma_neg_fd = sigma_neg.cast<fd>();
+  EXPECT_THROW_MSG(normal_lpdf(y, mu_inf, sigma_neg_fd), std::domain_error,
+                   mu_msg);
 }
 
 TEST_F(AgradRev, mathMixScalFun_normal_lpdf_infinite_y) {
