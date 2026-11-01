@@ -1,5 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/math/prim/fun/binary_scalar_tester.hpp>
+#include <test/unit/math/prim/fun/beta_reference.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 
@@ -17,9 +18,42 @@ TEST(MathFunctions, beta_nan) {
 
   EXPECT_TRUE(std::isnan(beta(NOT_A_NUMBER, 2.16)));
   EXPECT_TRUE(std::isnan(beta(1.65, NOT_A_NUMBER)));
+  EXPECT_TRUE(std::isnan(beta(NOT_A_NUMBER, INFTY)));
+  EXPECT_TRUE(std::isnan(beta(0.0, NOT_A_NUMBER)));
+}
 
-  EXPECT_TRUE(std::isnan(beta(INFTY, 2.16)));
-  EXPECT_TRUE(std::isnan(beta(1.65, INFTY)));
+TEST(MathFunctions, beta_limits) {
+  using stan::math::beta;
+  using stan::math::INFTY;
+
+  EXPECT_EQ(0.0, beta(INFTY, 2.16));
+  EXPECT_EQ(0.0, beta(1.65, INFTY));
+  EXPECT_EQ(0.0, beta(INFTY, INFTY));
+  EXPECT_EQ(0.0, beta(1e-300, INFTY));
+  EXPECT_EQ(INFTY, beta(0.0, 2.16));
+  EXPECT_EQ(INFTY, beta(0.0, 0.0));
+  EXPECT_EQ(INFTY, beta(0.0, INFTY));
+  EXPECT_EQ(INFTY, beta(INFTY, 0.0));
+}
+
+TEST(MathFunctions, beta_large_arguments) {
+  using stan::math::beta;
+  for (const auto& r : stan::test::beta_large_reference) {
+    SCOPED_TRACE(::testing::Message() << "a = " << r[0] << ", b = " << r[1]);
+    EXPECT_NEAR(r[2], beta(r[0], r[1]), 1e-13 * r[2]);
+  }
+}
+
+TEST(MathFunctions, beta_small_arguments_unchanged) {
+  using stan::math::beta;
+  using stan::math::lgamma;
+  // Below 10, lbeta sums the same three lgamma values.
+  const double xs[] = {1e-3, 0.37, 1.0, 2.5, 7.25, 9.99};
+  for (double a : xs) {
+    for (double b : xs) {
+      EXPECT_EQ(std::exp(lgamma(a) + lgamma(b) - lgamma(a + b)), beta(a, b));
+    }
+  }
 }
 
 TEST(MathFunctions, beta_vec) {
