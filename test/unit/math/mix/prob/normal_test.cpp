@@ -30,6 +30,28 @@ TEST_F(AgradRev, mathMixScalFun_normal_lpdf_vectors) {
 }
 
 namespace normal_lpdf_test {
+inline void append_adjoints(std::vector<double>& out,
+                            const stan::math::var& x) {
+  out.push_back(x.adj());
+}
+
+template <typename T, stan::require_var_matrix_t<T>* = nullptr>
+void append_adjoints(std::vector<double>& out, const T& x) {
+  for (Eigen::Index i = 0; i < x.size(); ++i) {
+    out.push_back(x.adj().coeff(i));
+  }
+}
+
+template <typename T, stan::require_eigen_vt<stan::is_var, T>* = nullptr>
+void append_adjoints(std::vector<double>& out, const T& x) {
+  for (Eigen::Index i = 0; i < x.size(); ++i) {
+    out.push_back(x.coeff(i).adj());
+  }
+}
+
+template <typename T, stan::require_st_arithmetic<T>* = nullptr>
+void append_adjoints(std::vector<double>& out, const T& /* x */) {}
+
 // Value and adjoints of normal_lpdf<propto>(y, mu, sigma) with the
 // arguments made by make_y, make_mu and make_sigma.
 template <bool propto, typename MakeY, typename MakeMu, typename MakeSigma>
@@ -42,23 +64,9 @@ std::vector<double> value_and_adjoints(const MakeY& make_y,
   stan::math::var lp = stan::math::normal_lpdf<propto>(y, mu, sigma);
   lp.grad();
   std::vector<double> out{lp.val()};
-  auto append = [&out](const auto& x) {
-    if constexpr (stan::is_var<std::decay_t<decltype(x)>>::value) {
-      out.push_back(x.adj());
-    } else if constexpr (stan::is_var_matrix<
-                             std::decay_t<decltype(x)>>::value) {
-      for (Eigen::Index i = 0; i < x.size(); ++i) {
-        out.push_back(x.adj().coeff(i));
-      }
-    } else if constexpr (stan::is_eigen<std::decay_t<decltype(x)>>::value) {
-      for (Eigen::Index i = 0; i < x.size(); ++i) {
-        out.push_back(x.coeff(i).adj());
-      }
-    }
-  };
-  append(y);
-  append(mu);
-  append(sigma);
+  append_adjoints(out, y);
+  append_adjoints(out, mu);
+  append_adjoints(out, sigma);
   stan::math::recover_memory();
   return out;
 }
