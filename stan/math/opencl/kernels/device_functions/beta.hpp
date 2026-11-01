@@ -18,9 +18,10 @@ static constexpr const char* beta_device_function
            * Return the beta function applied to the specified
            * arguments.
            *
-           * For nonnegative arguments the value is exp(stan_lbeta(a, b)),
-           * which keeps its accuracy for large arguments.  Negative and
-           * NaN arguments use the lgamma difference.  The kernel must
+           * For finite positive arguments the value is
+           * exp(stan_lbeta(a, b)), which keeps its accuracy for large
+           * arguments.  Other arguments use the lgamma difference.  The
+           * kernel must
            * include the lgamma_stirling, lgamma_stirling_diff and lbeta
            * device functions before this one.
            *
@@ -29,7 +30,7 @@ static constexpr const char* beta_device_function
            * @return beta(a, b)
            */
           double beta(double a, double b) {
-            if (a >= 0 && b >= 0) {
+            if (a > 0 && b > 0 && a < INFINITY && b < INFINITY) {
               return exp(stan_lbeta(a, b));
             }
             return exp(lgamma(a) + lgamma(b) - lgamma(a + b));

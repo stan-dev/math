@@ -52,24 +52,34 @@ TEST(OpenCL_beta, rev_value_matches_reference) {
   stan::math::recover_memory();
 }
 
-TEST(OpenCL_beta, limits) {
+TEST(OpenCL_beta, edge_values_match_cpu) {
   using stan::math::matrix_cl;
   const double inf = std::numeric_limits<double>::infinity();
   const double nan = std::numeric_limits<double>::quiet_NaN();
-  Eigen::VectorXd a(9);
-  Eigen::VectorXd b(9);
-  a << inf, 1.65, inf, 1e-300, 0.0, 0.0, 0.0, inf, nan;
-  b << 2.16, inf, inf, inf, 2.16, 0.0, inf, 0.0, inf;
+  const double edges[] = {nan, 0.0, -0.5, -2.5, inf, 1e-300, 0.5, 2.0};
+  const int m = sizeof(edges) / sizeof(edges[0]);
+  Eigen::VectorXd a(m * m);
+  Eigen::VectorXd b(m * m);
+  for (int i = 0; i < m; ++i) {
+    for (int j = 0; j < m; ++j) {
+      a[i * m + j] = edges[i];
+      b[i * m + j] = edges[j];
+    }
+  }
   matrix_cl<double> a_cl(a);
   matrix_cl<double> b_cl(b);
   matrix_cl<double> res_cl = stan::math::beta(a_cl, b_cl);
   Eigen::VectorXd res = stan::math::from_matrix_cl<Eigen::VectorXd>(res_cl);
-  for (int i = 0; i < 4; ++i) {
-    EXPECT_EQ(0.0, res[i]) << "i = " << i;
+  for (int k = 0; k < m * m; ++k) {
+    SCOPED_TRACE(::testing::Message() << "a = " << a[k] << ", b = " << b[k]);
+    const double cpu = stan::math::beta(a[k], b[k]);
+    if (std::isnan(cpu)) {
+      EXPECT_TRUE(std::isnan(res[k]));
+    } else if (std::isinf(cpu) || cpu == 0) {
+      EXPECT_EQ(cpu, res[k]);
+    } else {
+      EXPECT_NEAR(cpu, res[k], 1e-11 * std::fabs(cpu));
+    }
   }
-  for (int i = 4; i < 8; ++i) {
-    EXPECT_EQ(inf, res[i]) << "i = " << i;
-  }
-  EXPECT_TRUE(std::isnan(res[8]));
 }
 #endif

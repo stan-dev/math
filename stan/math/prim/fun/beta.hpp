@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_BETA_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
@@ -44,10 +45,10 @@ namespace math {
    \end{cases}
    \f]
  *
- * For nonnegative arguments the value is exp(lbeta(a, b)).  The
+ * For finite positive arguments the value is exp(lbeta(a, b)).  The
  * difference lgamma(a) + lgamma(b) - lgamma(a + b) has a relative error
  * of about b log(b) times the machine epsilon for large b; lbeta does
- * not.  Negative and NaN arguments use the lgamma difference.
+ * not.  Other arguments use the lgamma difference.
  *
  * @tparam T1 type of first value
  * @tparam T2 type of second value
@@ -58,7 +59,7 @@ namespace math {
 template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 inline return_type_t<T1, T2> beta(const T1 a, const T2 b) {
   using std::exp;
-  if (a >= 0 && b >= 0) {
+  if (a > 0 && b > 0 && a < INFTY && b < INFTY) {
     return exp(lbeta(a, b));
   }
   return exp(lgamma(a) + lgamma(b) - lgamma(a + b));
