@@ -122,10 +122,10 @@ TEST(ProbDistributionsNormal, lpdfAllDataChecks) {
   Eigen::VectorXd mu = Eigen::VectorXd::Zero(3);
   EXPECT_THROW_MSG(
       normal_lpdf<true>(y, mu, 1.0), std::domain_error,
-      "normal_lpdf: Random variable[2] is nan, but must not be nan!");
+      "normal_lpdf: Random variable[2] is nan, but must be not nan!");
   EXPECT_THROW_MSG(
       normal_lpdf<false>(y, mu, 1.0), std::domain_error,
-      "normal_lpdf: Random variable[2] is nan, but must not be nan!");
+      "normal_lpdf: Random variable[2] is nan, but must be not nan!");
   y[1] = 0.2;
   mu[2] = inf;
   EXPECT_THROW_MSG(
@@ -155,10 +155,10 @@ TEST(ProbDistributionsNormal, lpdfFirstInvalidArgumentGivesMessage) {
   y_nan[2] = nan;
   EXPECT_THROW_MSG(
       normal_lpdf(y_nan, mu, -1.0), std::domain_error,
-      "normal_lpdf: Random variable[3] is nan, but must not be nan!");
+      "normal_lpdf: Random variable[3] is nan, but must be not nan!");
   EXPECT_THROW_MSG(
       normal_lpdf(y_nan, mu, sigma), std::domain_error,
-      "normal_lpdf: Random variable[3] is nan, but must not be nan!");
+      "normal_lpdf: Random variable[3] is nan, but must be not nan!");
   Eigen::VectorXd mu_inf = mu;
   mu_inf[0] = -inf;
   EXPECT_THROW_MSG(

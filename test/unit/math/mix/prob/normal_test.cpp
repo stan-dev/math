@@ -206,7 +206,7 @@ TEST_F(AgradRev, mathMixScalFun_normal_lpdf_messages) {
   Eigen::VectorXd sigma_neg = sigma;
   sigma_neg[2] = -1.0;
   const char* y_msg
-      = "normal_lpdf: Random variable[2] is nan, but must not be nan!";
+      = "normal_lpdf: Random variable[2] is nan, but must be not nan!";
   const char* mu_msg
       = "normal_lpdf: Location parameter[1] is -inf, but must be finite!";
   const char* sigma_msg
