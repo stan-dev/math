@@ -24,11 +24,13 @@ namespace math {
 
 namespace internal {
 /**
- * Return a column array view of the partials of a vector edge.
+ * Return a writable column array view of the partials of a vector edge.
+ * Writes through the view change `p`.
  *
- * @tparam T type of the partials (an Eigen vector)
+ * @tparam T type of the partials (an Eigen column or row vector with
+ * contiguous storage, such as an `arena_matrix`)
  * @param p partials
- * @return writable column array view of `p`
+ * @return column array view of `p`
  */
 template <typename T>
 inline auto partials_column_array(T& p) {
@@ -54,7 +56,8 @@ inline auto partials_column_array(T& p) {
  * for the normal distribution.
  * @param sigma (Sequence of) scale parameters for the normal distribution.
  * @return The log of the product of the densities.
- * @throw std::domain_error if the scale is not positive.
+ * @throw std::domain_error if y is NaN, the location is not finite, or the
+ * scale is not positive.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
@@ -78,7 +81,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
   T_mu_ref mu_ref = std::forward<T_loc>(mu);
   T_sigma_ref sigma_ref = std::forward<T_scale>(sigma);
 
-  // The values of autodiff containers are read through views, not copied.
+  // The values of autodiff containers are views.
   decltype(auto) y_val
       = to_ref_if<!is_autodiff_v<T_y>>(as_value_column_array_or_scalar(y_ref));
   decltype(auto) mu_val = to_ref_if<!is_autodiff_v<T_loc>>(

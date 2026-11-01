@@ -120,19 +120,23 @@ TEST(ProbDistributionsNormal, lpdfAllDataChecks) {
   Eigen::VectorXd y(3);
   y << 0.5, nan, 1.0;
   Eigen::VectorXd mu = Eigen::VectorXd::Zero(3);
-  EXPECT_THROW_MSG(normal_lpdf<true>(y, mu, 1.0), std::domain_error,
-                   "Random variable");
-  EXPECT_THROW_MSG(normal_lpdf<false>(y, mu, 1.0), std::domain_error,
-                   "Random variable");
+  EXPECT_THROW_MSG(
+      normal_lpdf<true>(y, mu, 1.0), std::domain_error,
+      "normal_lpdf: Random variable[2] is nan, but must not be nan!");
+  EXPECT_THROW_MSG(
+      normal_lpdf<false>(y, mu, 1.0), std::domain_error,
+      "normal_lpdf: Random variable[2] is nan, but must not be nan!");
   y[1] = 0.2;
   mu[2] = inf;
-  EXPECT_THROW_MSG(normal_lpdf<true>(y, mu, 1.0), std::domain_error,
-                   "Location parameter");
-  EXPECT_THROW_MSG(normal_lpdf<false>(y, mu, 1.0), std::domain_error,
-                   "Location parameter");
+  EXPECT_THROW_MSG(
+      normal_lpdf<true>(y, mu, 1.0), std::domain_error,
+      "normal_lpdf: Location parameter[3] is inf, but must be finite!");
+  EXPECT_THROW_MSG(
+      normal_lpdf<false>(y, mu, 1.0), std::domain_error,
+      "normal_lpdf: Location parameter[3] is inf, but must be finite!");
   mu[2] = 0.0;
   EXPECT_THROW_MSG(normal_lpdf<true>(y, mu, -1.0), std::domain_error,
-                   "Scale parameter");
+                   "normal_lpdf: Scale parameter is -1, but must be positive!");
   EXPECT_FLOAT_EQ(0.0, normal_lpdf<true>(y, mu, 1.0));
 }
 
@@ -149,20 +153,26 @@ TEST(ProbDistributionsNormal, lpdfFirstInvalidArgumentGivesMessage) {
 
   Eigen::VectorXd y_nan = y;
   y_nan[2] = nan;
-  EXPECT_THROW_MSG(normal_lpdf(y_nan, mu, -1.0), std::domain_error,
-                   "Random variable");
-  EXPECT_THROW_MSG(normal_lpdf(y_nan, mu, sigma), std::domain_error,
-                   "Random variable");
+  EXPECT_THROW_MSG(
+      normal_lpdf(y_nan, mu, -1.0), std::domain_error,
+      "normal_lpdf: Random variable[3] is nan, but must not be nan!");
+  EXPECT_THROW_MSG(
+      normal_lpdf(y_nan, mu, sigma), std::domain_error,
+      "normal_lpdf: Random variable[3] is nan, but must not be nan!");
   Eigen::VectorXd mu_inf = mu;
   mu_inf[0] = -inf;
-  EXPECT_THROW_MSG(normal_lpdf(y, mu_inf, -1.0), std::domain_error,
-                   "Location parameter");
-  EXPECT_THROW_MSG(normal_lpdf(y, mu_inf, sigma), std::domain_error,
-                   "Location parameter");
-  EXPECT_THROW_MSG(normal_lpdf(y, mu, sigma), std::domain_error,
-                   "Scale parameter");
-  EXPECT_THROW_MSG(normal_lpdf(y, mu, nan), std::domain_error,
-                   "Scale parameter");
+  EXPECT_THROW_MSG(
+      normal_lpdf(y, mu_inf, -1.0), std::domain_error,
+      "normal_lpdf: Location parameter[1] is -inf, but must be finite!");
+  EXPECT_THROW_MSG(
+      normal_lpdf(y, mu_inf, sigma), std::domain_error,
+      "normal_lpdf: Location parameter[1] is -inf, but must be finite!");
+  EXPECT_THROW_MSG(
+      normal_lpdf(y, mu, sigma), std::domain_error,
+      "normal_lpdf: Scale parameter[2] is -2, but must be positive!");
+  EXPECT_THROW_MSG(
+      normal_lpdf(y, mu, nan), std::domain_error,
+      "normal_lpdf: Scale parameter is nan, but must be positive!");
 }
 
 TEST(ProbDistributionsNormal, lpdfInfiniteY) {
@@ -184,10 +194,12 @@ TEST(ProbDistributionsNormal, lpdfSizeZeroChecksScalars) {
   const double nan = std::numeric_limits<double>::quiet_NaN();
   Eigen::VectorXd y(0);
   EXPECT_FLOAT_EQ(0.0, normal_lpdf(y, 0.0, 1.0));
-  EXPECT_THROW_MSG(normal_lpdf(y, nan, 1.0), std::domain_error,
-                   "Location parameter");
+  EXPECT_THROW_MSG(
+      normal_lpdf(y, nan, 1.0), std::domain_error,
+      "normal_lpdf: Location parameter is nan, but must be finite!");
   EXPECT_THROW_MSG(normal_lpdf(y, 0.0, -1.0), std::domain_error,
-                   "Scale parameter");
-  EXPECT_THROW_MSG(normal_lpdf<true>(y, nan, 1.0), std::domain_error,
-                   "Location parameter");
+                   "normal_lpdf: Scale parameter is -1, but must be positive!");
+  EXPECT_THROW_MSG(
+      normal_lpdf<true>(y, nan, 1.0), std::domain_error,
+      "normal_lpdf: Location parameter is nan, but must be finite!");
 }
