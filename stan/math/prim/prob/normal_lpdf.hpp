@@ -90,17 +90,13 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
   decltype(auto) sigma_val = to_ref_if<!is_autodiff_v<T_scale>>(
       as_value_column_array_or_scalar(sigma_ref));
 
+  check_positive(function, "Scale parameter", sigma_val);
   // y and mu are checked only if the sum of squares is not finite: a NaN y
-  // or a non-finite mu makes it NaN or infinite. The checks run in this
-  // order so that the first invalid argument gives the message.
+  // or a non-finite mu makes it NaN or infinite.
   const auto check_y_mu = [&]() {
     check_not_nan(function, "Random variable", y_val);
     check_finite(function, "Location parameter", mu_val);
   };
-  if (unlikely(!is_positive(sigma_val))) {
-    check_y_mu();
-    check_positive(function, "Scale parameter", sigma_val);
-  }
   if (size_zero(y_ref, mu_ref, sigma_ref)) {
     check_y_mu();
     return 0.0;

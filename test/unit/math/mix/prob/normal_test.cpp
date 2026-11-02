@@ -242,11 +242,7 @@ TEST_F(AgradRev, mathMixScalFun_normal_lpdf_messages) {
   EXPECT_THROW_MSG(normal_lpdf(y_nan, mu, to_var(sigma)), std::domain_error,
                    y_msg);
   EXPECT_THROW_MSG(normal_lpdf(y, mu_inf, var(1.0)), std::domain_error, mu_msg);
-  // an invalid sigma: the first invalid argument gives the message
-  EXPECT_THROW_MSG(normal_lpdf(to_var(y_nan), to_var(mu), to_var(sigma_neg)),
-                   std::domain_error, y_msg);
-  EXPECT_THROW_MSG(normal_lpdf(y, vm(mu_inf), var(-1.0)), std::domain_error,
-                   mu_msg);
+  // an invalid scalar sigma
   EXPECT_THROW_MSG(normal_lpdf(y, vm(mu), var(-1.0)), std::domain_error,
                    "normal_lpdf: Scale parameter is -1, but must be positive!");
   // forward mode
@@ -256,8 +252,8 @@ TEST_F(AgradRev, mathMixScalFun_normal_lpdf_messages) {
   Eigen::Matrix<fd, -1, 1> sigma_fd = sigma.cast<fd>();
   EXPECT_THROW_MSG(normal_lpdf(y, mu_inf, sigma_fd), std::domain_error, mu_msg);
   Eigen::Matrix<fd, -1, 1> sigma_neg_fd = sigma_neg.cast<fd>();
-  EXPECT_THROW_MSG(normal_lpdf(y, mu_inf, sigma_neg_fd), std::domain_error,
-                   mu_msg);
+  EXPECT_THROW_MSG(normal_lpdf(y, mu, sigma_neg_fd), std::domain_error,
+                   sigma_msg);
 }
 
 TEST_F(AgradRev, mathMixScalFun_normal_lpdf_infinite_y) {
