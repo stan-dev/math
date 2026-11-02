@@ -140,7 +140,7 @@ TEST(ProbDistributionsNormal, lpdfAllDataChecks) {
   EXPECT_FLOAT_EQ(0.0, normal_lpdf<true>(y, mu, 1.0));
 }
 
-TEST(ProbDistributionsNormal, lpdfVectorScaleChecks) {
+TEST(ProbDistributionsNormal, lpdfVectorArgumentMessages) {
   using stan::math::normal_lpdf;
   const double nan = std::numeric_limits<double>::quiet_NaN();
   const double inf = std::numeric_limits<double>::infinity();
