@@ -37,7 +37,6 @@ class AgradDistributionTest {
   }
 };
 
-using boost::mpl::at_c;
 template <class T>
 class AgradDistributionTestFixture : public ::testing::Test {
  public:

@@ -3,20 +3,16 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/sum.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
@@ -66,7 +62,7 @@ inline return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
 
   auto ops_partials = make_partials_propagator(lambda_ref);
 
-  T_partials_return logp = stan::math::sum(multiply_log(n_val, lambda_val));
+  T_partials_return logp = stan::math::sum(lmultiply(n_val, lambda_val));
   if constexpr (include_summand<propto, T_rate>::value) {
     logp -= sum(lambda_val) * N / math::size(lambda);
   }

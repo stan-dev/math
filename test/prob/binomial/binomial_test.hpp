@@ -63,11 +63,11 @@ class AgradDistributionsBinomial : public AgradDistributionTest {
                                                 const T_prob& theta, const T3&,
                                                 const T4&, const T5&) {
     using stan::math::binomial_coefficient_log;
+    using stan::math::lmultiply;
     using stan::math::log1m;
-    using stan::math::multiply_log;
     using std::log;
 
-    return binomial_coefficient_log(N, n) + multiply_log(n, theta)
+    return binomial_coefficient_log(N, n) + lmultiply(n, theta)
            + (N - n) * log1m(theta);
   }
 };
