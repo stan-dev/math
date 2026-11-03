@@ -16,10 +16,9 @@ TEST_F(AgradRev, ProbDistributionsBeta_lcdf_large_beta_d_y) {
       {2.3283064365386963e-10, 2.0, 2147483648.0, -2.40568139077329,
        7219826854.641048},
   }};
-  // beta() computed as exp(lgamma(a) + lgamma(b) - lgamma(a + b)) gives
-  // relative derivative errors of 2e-6 to 3e-6 here.  With the math library
-  // of some platforms (Windows x64), inc_beta and the density give relative
-  // errors of about 2e-8 here.
+  // The lgamma-difference formula for beta() gives relative derivative
+  // errors of 2e-6 to 3e-6 at these points.  Windows x64 (MinGW) gives
+  // relative errors up to about 2e-8 in the value and the derivative.
   const double tol = 1e-7;
   for (const auto& r : rows) {
     SCOPED_TRACE(::testing::Message() << "beta = " << r[2]);
