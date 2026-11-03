@@ -29,7 +29,7 @@ static constexpr const char* beta_device_function
            * @return beta(a, b)
            */
           double beta(double a, double b) {
-            if (a > 0 && b > 0 && a < INFINITY && b < INFINITY) {
+            if (a > 0 && b > 0 && isfinite(a) && isfinite(b)) {
               return exp(stan_lbeta(a, b));
             }
             return exp(lgamma(a) + lgamma(b) - lgamma(a + b));

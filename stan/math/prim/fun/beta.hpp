@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_FUN_BETA_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
@@ -59,7 +58,7 @@ namespace math {
 template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 inline return_type_t<T1, T2> beta(const T1 a, const T2 b) {
   using std::exp;
-  if (a > 0 && b > 0 && a < INFTY && b < INFTY) {
+  if (a > 0 && b > 0 && std::isfinite(a) && std::isfinite(b)) {
     return exp(lbeta(a, b));
   }
   return exp(lgamma(a) + lgamma(b) - lgamma(a + b));
