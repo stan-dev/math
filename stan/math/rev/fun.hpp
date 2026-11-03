@@ -156,13 +156,13 @@
 #include <stan/math/rev/fun/svd_V.hpp>
 #include <stan/math/rev/fun/sinh.hpp>
 #include <stan/math/rev/fun/softmax.hpp>
+#include <stan/math/rev/fun/solve_sylvester.hpp>
 #include <stan/math/rev/fun/sqrt.hpp>
 #include <stan/math/rev/fun/square.hpp>
 #include <stan/math/rev/fun/squared_distance.hpp>
 #include <stan/math/rev/fun/stan_print.hpp>
 #include <stan/math/rev/fun/step.hpp>
 #include <stan/math/rev/fun/sum.hpp>
-#include <stan/math/rev/fun/sylvester_solver.hpp>
 #include <stan/math/rev/fun/tan.hpp>
 #include <stan/math/rev/fun/tanh.hpp>
 #include <stan/math/rev/fun/tcrossprod.hpp>
