@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -56,7 +57,7 @@ inline auto softmax(Container&& x) {
             std::forward<decltype(a)>(a),
             [](auto&& v) -> plain_type_t<decltype(v)> {
               if (v.size() == 0) {
-                return v;
+                return std::forward<decltype(v)>(v);
               }
               const auto theta = (v.array() - v.maxCoeff()).exp();
               return (theta / theta.sum()).matrix();

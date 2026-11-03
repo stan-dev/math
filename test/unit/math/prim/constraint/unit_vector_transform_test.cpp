@@ -3,6 +3,20 @@
 #include <gtest/gtest.h>
 #include <limits>
 
+TEST(prob_transform, unit_vector_free_owns_evaluated_result) {
+  Eigen::VectorXd x(2);
+  x << 0.6, 0.8;
+  const Eigen::VectorXd expected = x;
+
+  auto from_lvalue = stan::math::unit_vector_free(x);
+  EXPECT_MATRIX_EQ(expected, x);
+  auto from_expression
+      = stan::math::unit_vector_free(x + Eigen::VectorXd::Zero(2));
+  x.setZero();
+  EXPECT_MATRIX_EQ(expected, from_lvalue);
+  EXPECT_MATRIX_EQ(expected, from_expression);
+}
+
 TEST(prob_transform, unit_vector_rt0) {
   using Eigen::Dynamic;
   using Eigen::Matrix;

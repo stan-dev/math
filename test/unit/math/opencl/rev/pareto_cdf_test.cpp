@@ -63,7 +63,6 @@ auto pareto_cdf_functor
 
 TEST(ProbDistributionsParetoCdf, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << 0.35, 0.9, 1.5;
@@ -81,7 +80,6 @@ TEST(ProbDistributionsParetoCdf, opencl_matches_cpu_small) {
 
 TEST(ProbDistributionsParetoCdf, opencl_matches_cpu_small_y_lower_than_y_min) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << 0.35, 0.7, 1.3;

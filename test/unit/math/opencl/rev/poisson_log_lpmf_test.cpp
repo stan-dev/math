@@ -47,7 +47,6 @@ auto poisson_log_lpmf_functor_propto = [](const auto& n, const auto& alpha) {
 
 TEST(ProbDistributionsPoissonLog, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   std::vector<int> n{0, 1, 6};
   Eigen::VectorXd alpha(N);
@@ -77,8 +76,6 @@ TEST(ProbDistributionsPoissonLog, opencl_broadcast_n) {
 }
 
 TEST(ProbDistributionsPoissonLog, opencl_broadcast_alpha) {
-  int N = 3;
-
   std::vector<int> n{0, 1, 5};
   double alpha_scal = 0.4;
 
