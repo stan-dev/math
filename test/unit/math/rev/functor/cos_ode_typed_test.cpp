@@ -98,6 +98,7 @@ REGISTER_TYPED_TEST_SUITE_P(cos_arg_test, y0_error, t0_error, ts_error,
                             error_name, tol_error, value, grad, tol_grad);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, cos_arg_test, cos_arg_test_types);
 
+// CVODES buffer reuse: SUNDIALS 6.1.1, src/cvodes/cvodes.c:6522-6536.
 TEST_F(AgradRev, adjoint_quadrature_buffer_reuse) {
   const std::vector<double> times{0.45, 1.1};
   constexpr double rate = 1.5;
