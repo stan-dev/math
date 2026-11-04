@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_FUN_SYLVESTER_SOLVER_HPP
-#define STAN_MATH_REV_FUN_SYLVESTER_SOLVER_HPP
+#ifndef STAN_MATH_REV_FUN_SOLVE_SYLVESTER_HPP
+#define STAN_MATH_REV_FUN_SOLVE_SYLVESTER_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
@@ -36,16 +36,16 @@ namespace math {
 template <typename MatA, typename MatB, typename MatC,
           require_all_matrix_t<MatA, MatB, MatC>* = nullptr,
           require_any_bt_var<MatA, MatB, MatC>* = nullptr>
-inline auto sylvester_solver(MatA&& A, MatB&& B, MatC&& C) {
+inline auto solve_sylvester(MatA&& A, MatB&& B, MatC&& C) {
   using cdouble = std::complex<double>;
   using ret_type
       = Eigen::Matrix<std::complex<var>, Eigen::Dynamic, Eigen::Dynamic>;
 
-  check_square("sylvester_solver", "A", A);
-  check_square("sylvester_solver", "B", B);
-  check_size_match("sylvester_solver", "rows of A", A.rows(), "rows of C",
+  check_square("solve_sylvester", "A", A);
+  check_square("solve_sylvester", "B", B);
+  check_size_match("solve_sylvester", "rows of A", A.rows(), "rows of C",
                    C.rows());
-  check_size_match("sylvester_solver", "rows of B", B.rows(), "cols of C",
+  check_size_match("solve_sylvester", "rows of B", B.rows(), "cols of C",
                    C.cols());
   if (unlikely(A.rows() == 0 || B.rows() == 0)) {
     return ret_type(A.rows(), B.rows());

@@ -109,10 +109,10 @@
 #include <stan/math/fwd/fun/sin.hpp>
 #include <stan/math/fwd/fun/sinh.hpp>
 #include <stan/math/fwd/fun/softmax.hpp>
+#include <stan/math/fwd/fun/solve_sylvester.hpp>
 #include <stan/math/fwd/fun/sqrt.hpp>
 #include <stan/math/fwd/fun/square.hpp>
 #include <stan/math/fwd/fun/sum.hpp>
-#include <stan/math/fwd/fun/sylvester_solver.hpp>
 #include <stan/math/fwd/fun/tan.hpp>
 #include <stan/math/fwd/fun/tanh.hpp>
 #include <stan/math/fwd/fun/tcrossprod.hpp>

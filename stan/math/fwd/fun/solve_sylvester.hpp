@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_FWD_FUN_SYLVESTER_SOLVER_HPP
-#define STAN_MATH_FWD_FUN_SYLVESTER_SOLVER_HPP
+#ifndef STAN_MATH_FWD_FUN_SOLVE_SYLVESTER_HPP
+#define STAN_MATH_FWD_FUN_SOLVE_SYLVESTER_HPP
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
@@ -7,7 +7,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/fun/sylvester_solver.hpp>
+#include <stan/math/prim/fun/solve_sylvester.hpp>
 #include <complex>
 #include <type_traits>
 
@@ -37,17 +37,17 @@ namespace math {
 template <typename MatA, typename MatB, typename MatC,
           require_all_matrix_t<MatA, MatB, MatC>* = nullptr,
           require_any_bt_fvar<MatA, MatB, MatC>* = nullptr>
-inline auto sylvester_solver(const MatA& A, const MatB& B, const MatC& C) {
+inline auto solve_sylvester(const MatA& A, const MatB& B, const MatC& C) {
   using fvar_t
       = return_type_t<base_type_t<MatA>, base_type_t<MatB>, base_type_t<MatC>>;
   using ret_type
       = Eigen::Matrix<std::complex<fvar_t>, Eigen::Dynamic, Eigen::Dynamic>;
 
-  check_square("sylvester_solver", "A", A);
-  check_square("sylvester_solver", "B", B);
-  check_size_match("sylvester_solver", "rows of A", A.rows(), "rows of C",
+  check_square("solve_sylvester", "A", A);
+  check_square("solve_sylvester", "B", B);
+  check_size_match("solve_sylvester", "rows of A", A.rows(), "rows of C",
                    C.rows());
-  check_size_match("sylvester_solver", "rows of B", B.rows(), "cols of C",
+  check_size_match("solve_sylvester", "rows of B", B.rows(), "cols of C",
                    C.cols());
   if (unlikely(A.rows() == 0 || B.rows() == 0)) {
     return ret_type(A.rows(), B.rows());
@@ -77,7 +77,7 @@ inline auto sylvester_solver(const MatA& A, const MatB& B, const MatC& C) {
   using inner_mat_t
       = Eigen::Matrix<complex_inner_t, Eigen::Dynamic, Eigen::Dynamic>;
 
-  auto X = sylvester_solver(A_val, B_val, value_of(C_ref));
+  auto X = solve_sylvester(A_val, B_val, value_of(C_ref));
 
   inner_mat_t rhs = inner_mat_t::Zero(X.rows(), X.cols());
   if constexpr (is_fvar<base_type_t<MatC>>::value) {
@@ -89,7 +89,7 @@ inline auto sylvester_solver(const MatA& A, const MatB& B, const MatC& C) {
   if constexpr (is_fvar<base_type_t<MatB>>::value) {
     rhs -= X * tangent(B_ref);
   }
-  inner_mat_t X_d = sylvester_solver(A_val, B_val, rhs);
+  inner_mat_t X_d = solve_sylvester(A_val, B_val, rhs);
   const Eigen::Index X_rows = X.rows();
   const Eigen::Index X_cols = X.cols();
   ret_type res(X_rows, X_cols);
