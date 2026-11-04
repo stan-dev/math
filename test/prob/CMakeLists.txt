@@ -1,0 +1,88 @@
+# Use the existing Make test generator without importing the branch's C++
+# generator/fixture changes or its large generated typedef headers.
+set(STAN_PROB_TEST_BATCH_SIZE 100 CACHE STRING "Distribution test cases per generated source")
+if(NOT STAN_PROB_TEST_BATCH_SIZE MATCHES "^[1-9][0-9]*$")
+  message(FATAL_ERROR "STAN_PROB_TEST_BATCH_SIZE must be a positive integer")
+endif()
+add_executable(generate_tests generate_tests.cpp)
+foreach(feature STAN_TEST_ROW_VECTORS STAN_PROB_TEST_ALL)
+  if(${feature})
+    target_compile_definitions(generate_tests PRIVATE ${feature})
+  endif()
+endforeach()
+if(STAN_USE_SYSTEM_BOOST)
+  target_link_libraries(generate_tests PRIVATE Boost::boost)
+else()
+  target_include_directories(generate_tests SYSTEM PRIVATE "${STAN_BOOST_ROOT}")
+endif()
+# The fixtures stay out of the PCH: their TYPED_TEST_P and
+# REGISTER_TYPED_TEST_SUITE_P statics must initialize in definition order, and
+# Clang 7 reorders static initializers that come from a PCH. The PCH holds
+# their dependencies instead.
+stan_add_pch(prob_pch stan_test_options <gtest/gtest.h> <tuple> <type_traits> <stdexcept>
+  <stan/math/mix.hpp> <test/prob/utility.hpp> <test/unit/math/expect_near_rel.hpp>)
+
+# These are the argument combinations used by generate_tests.cpp with its
+# selected row-vector setting. Non-reverse modes omit all-constant combinations.
+set(vector_types 3)
+if(STAN_TEST_ROW_VECTORS)
+  set(vector_types 4)
+endif()
+set(modes v ffv vv)
+if(STAN_PROB_TEST_ALL)
+  list(APPEND modes fd fv ffd)
+endif()
+file(GLOB_RECURSE fixtures CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*_test.hpp")
+set(generated_sources "")
+add_custom_target(run_generate_tests)
+foreach(fixture IN LISTS fixtures)
+  file(RELATIVE_PATH relative_fixture "${PROJECT_SOURCE_DIR}" "${fixture}")
+  string(REGEX REPLACE "_test\\.hpp$" "" base "${relative_fixture}")
+  configure_file("${fixture}" "${PROJECT_BINARY_DIR}/${relative_fixture}" COPYONLY)
+  file(STRINGS "${fixture}" arguments REGEX "^// Arguments:")
+  string(REGEX REPLACE "^// Arguments: *" "" arguments "${arguments}")
+  string(REGEX REPLACE ", *" ";" arguments "${arguments}")
+  set(combinations 1)
+  set(constants 1)
+  foreach(argument IN LISTS arguments)
+    if(argument STREQUAL "Ints")
+      math(EXPR combinations "${combinations} * ${vector_types}")
+      math(EXPR constants "${constants} * ${vector_types}")
+    elseif(argument STREQUAL "Doubles")
+      math(EXPR combinations "${combinations} * 2 * ${vector_types}")
+      math(EXPR constants "${constants} * ${vector_types}")
+    else()
+      message(FATAL_ERROR "Unsupported distribution argument '${argument}' in ${fixture}")
+    endif()
+  endforeach()
+  set(outputs "")
+  foreach(mode IN LISTS modes)
+    set(count ${combinations})
+    if(NOT mode STREQUAL "v")
+      math(EXPR count "${count} - ${constants}")
+    endif()
+    # The existing generator deliberately emits one extra (possibly empty)
+    # batch when the case count is a multiple of the batch size.
+    math(EXPR last_batch "${count} / ${STAN_PROB_TEST_BATCH_SIZE}")
+    foreach(batch RANGE 0 ${last_batch})
+      math(EXPR padded "100000 + ${batch}")
+      string(SUBSTRING "${padded}" 1 5 padded)
+      list(APPEND outputs "${PROJECT_BINARY_DIR}/${base}_${padded}_generated_${mode}_test.cpp")
+    endforeach()
+  endforeach()
+  add_custom_command(OUTPUT ${outputs}
+    COMMAND generate_tests "${relative_fixture}" ${STAN_PROB_TEST_BATCH_SIZE}
+    DEPENDS generate_tests "${fixture}" "${PROJECT_BINARY_DIR}/${relative_fixture}"
+    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
+    COMMENT "Generating distribution tests for ${relative_fixture}"
+    VERBATIM)
+  string(REPLACE "/" "_" generation_target "generate_${base}")
+  add_custom_target(${generation_target} DEPENDS ${outputs})
+  add_dependencies(run_generate_tests ${generation_target})
+  set_source_files_properties(${outputs} PROPERTIES STAN_GENERATOR_TARGET ${generation_target})
+  list(APPEND generated_sources ${outputs})
+endforeach()
+if(generated_sources)
+  add_gtest_grouped_test(PREFIX prob_math REPO_PATH test/prob
+    DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}" PCH prob_pch SOURCES ${generated_sources})
+endif()
