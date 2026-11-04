@@ -1,76 +1,19 @@
 #!/usr/bin/env python3
+"""Build and run Stan Math tests with CMake."""
 
-"""
-Replacement for runtest target in Makefile.
-
-Call script with '-h' as an option to see a helpful message.
-"""
-
-from __future__ import print_function
-
+from concurrent.futures import ThreadPoolExecutor
 import glob
+import json
 import os
-import os.path
-import platform
+from pathlib import Path
 import re
+import shlex
+import shutil
 import subprocess
 import sys
-import time
 from argparse import ArgumentParser, RawTextHelpFormatter
 
-winsfx = ".exe"
-testsfx = "_test.cpp"
-
-allowed_paths_with_jumbo = [
-    "test/unit/math/prim/",
-    "test/unit/math/prim/constraint",
-    "test/unit/math/",
-    "test/unit/math/rev/",
-     "test/unit/math/rev/constraint",
-    "test/unit/math/fwd/",
-    "test/unit/math/fwd/constraint",
-    "test/unit/math/mix/",
-    "test/unit/math/mix/fun/",
-    "test/unit/math/opencl/",
-    "test/unit/",
-]
-
-jumbo_folders = [
-    "test/unit/math/prim/constraint",
-    "test/unit/math/prim/core",
-    "test/unit/math/prim/err",
-    "test/unit/math/prim/fun",
-    "test/unit/math/prim/functor",
-    "test/unit/math/prim/meta",
-    "test/unit/math/prim/prob",
-     "test/unit/math/rev/constraint",
-    "test/unit/math/rev/core",
-    "test/unit/math/rev/err",
-    "test/unit/math/rev/fun",
-    "test/unit/math/rev/functor",
-    "test/unit/math/rev/meta",
-    "test/unit/math/rev/prob",
-    "test/unit/math/fwd/constraint",
-    "test/unit/math/fwd/core",
-    "test/unit/math/fwd/fun",
-    "test/unit/math/fwd/functor",
-    "test/unit/math/fwd/meta",
-    "test/unit/math/fwd/prob",
-    "test/unit/math/mix/core",
-    "test/unit/math/mix/fun",
-    "test/unit/math/mix/functor",
-    "test/unit/math/mix/meta",
-    "test/unit/math/mix/prob",
-    "test/unit/math/opencl/device_functions",
-    "test/unit/math/opencl/kernel_generator",
-    "test/unit/math/opencl/prim",
-    "test/unit/math/opencl/prim/constraint",
-    "test/unit/math/opencl/rev",
-    "test/unit/math/opencl/rev/constraint",
-]
-
-
-def processCLIArgs():
+def processCLIArgs(arguments):
     """
     Define and process the command line interface to the runTests.py script.
     """
@@ -83,9 +26,29 @@ def processCLIArgs():
         formatter_class=RawTextHelpFormatter,
     )
 
-    # Now define all the rules of the command line args and opts
+    parser.set_defaults(command=None)
+    if arguments and arguments[0] in ("changed-unit-filter", "generate-expressions", "build-tests"):
+        commands = parser.add_subparsers(dest="command", required=True)
+        commands.add_parser("changed-unit-filter")
+        expressions = commands.add_parser("generate-expressions")
+        expressions.add_argument("build_dir")
+        expressions.add_argument("--functions", nargs="*", default=[])
+        expressions.add_argument("--batches", type=int, default=6)
+        build = commands.add_parser("build-tests")
+        build.add_argument("build_dir")
+        build.add_argument("--source-regex", required=True)
+        build.add_argument("--jobs", type=int, default=1)
+        inputs = parser.parse_args(arguments)
+        if getattr(inputs, "jobs", 1) < 1 or getattr(inputs, "batches", 1) < 1:
+            parser.error("job and batch counts must be positive")
+        return inputs
+
     parser.add_argument(
-        "-j", metavar="N", type=int, default=1, help="number of cores for make to use"
+        "-j", metavar="N", type=int, default=1, help="parallel build jobs (default: 1)"
+    )
+    parser.add_argument(
+        "--test-jobs", metavar="N", type=int, default=1,
+        help="test executables run at once (default: 1)"
     )
 
     parser.add_argument(
@@ -124,6 +87,12 @@ def processCLIArgs():
         help="Don't make tests, just try to run them (must already be made).",
     )
     parser.add_argument(
+        "--configure-only",
+        dest="configure_only",
+        action="store_true",
+        help="Only configure the CMake build directory.",
+    )
+    parser.add_argument(
         "--run-all",
         dest="run_all",
         action="store_true",
@@ -140,323 +109,313 @@ def processCLIArgs():
         "--jumbo-test",
         dest="do_jumbo",
         action="store_true",
-        help="Build/run jumbo tests.",
+        help="accepted for compatibility, directory tests already use one executable",
     )
 
     tests_help_msg = "The path(s) to the test case(s) to run.\n"
     tests_help_msg += "Example: 'test/unit', 'test/prob', and/or\n"
-    tests_help_msg += "         'test/unit/math/prim/fun/abs_test.cpp'"
+    tests_help_msg += "         'test/unit/math/prim/fun/abs_test.cpp', and/or\n"
+    tests_help_msg += "         'test/prob/normal/normal_test.hpp' (a distribution fixture)"
     parser.add_argument("tests", nargs="*", type=str, help=tests_help_msg)
+    parser.add_argument("--build-dir", default="build", help="CMake build directory")
+    parser.add_argument("--fresh", action="store_true",
+                        help="reset the CMake cache before configuring, like cmake --fresh")
+    parser.add_argument("--cmake-arg", action="append", default=[],
+                        help="extra configure argument, e.g. --cmake-arg=-DSTAN_THREADS=ON")
+    parser.add_argument("--config", default="ReleaseTesting",
+                        help="CMake build configuration (ReleaseTesting: -O1 without NDEBUG)")
     # And parse the command line against those rules
-    return parser.parse_args()
+    inputs = parser.parse_args(arguments)
+    if inputs.j < 1 or inputs.test_jobs < 1:
+        parser.error("-j and --test-jobs must be positive")
+    if inputs.test_only and (inputs.make_only or inputs.configure_only):
+        parser.error("--test-only cannot be combined with --make-only or --configure-only")
+    if inputs.fresh and inputs.test_only:
+        parser.error("--fresh cannot be combined with --test-only")
+    return inputs
 
 
-def stopErr(msg, returncode):
-    """Report an error message to stderr and exit with a given code."""
-    sys.stderr.write("%s\n" % msg)
-    sys.stderr.write("exit now (%s)\n" % time.strftime("%x %X %Z"))
-    sys.exit(returncode)
+def findChangedTests(files, existing_tests, limit=20):
+    """Select priority tests from supplied changes and existing test paths."""
+    dependencies = {"prim": ("prim", "rev", "mix", "fwd"),
+                    "rev": ("rev", "mix"), "fwd": ("fwd", "mix")}
+    selected = set()
+    for path in files:
+        if "opencl" in path:
+            continue
+        if path.endswith("_test.cpp"):
+            selected.add(path)
+        elif path.startswith("stan/") and path.endswith(".hpp"):
+            candidate = path.replace("stan/", "test/unit/", 1)[:-4] + "_test.cpp"
+            layer = candidate.split("/")[3]
+            for replacement in dependencies.get(layer, (layer,)):
+                test = candidate.replace("/" + layer + "/", "/" + replacement + "/", 1)
+                if test in existing_tests:
+                    selected.add(test)
+    return sorted(selected) if len(selected) <= limit else []
 
 
-def isWin():
-    return platform.system().lower().startswith(
-        "windows"
-    ) or os.name.lower().startswith("windows")
+def is_fixture(path):
+    return re.fullmatch(r"test/prob/[^/]+/[^/]+_test\.hpp", path) is not None
 
 
-batchSize = 20 if isWin() else 200
-jumboSize = 5 if isWin() else 12
-maxChangedTests = 20
+def cmake_escape(text):
+    return re.sub(r"([.+*?^$()\[\]{}|\\])", r"\\\1", text)
 
 
-def mungeName(name):
-    """Set up the makefile target name"""
-    if name.endswith(testsfx):
-        name = name.replace(testsfx, "_test")
-
-        if isWin():
-            name += winsfx
-            name = name.replace("\\", "/")
-    return name
+def selection_regex(paths):
+    """Match the source paths of the selected files and fixtures' generated tests."""
+    patterns = [cmake_escape(path[:-len("_test.hpp")]) + "_[0-9]+_generated_.*" if is_fixture(path)
+                else cmake_escape(path) for path in sorted(paths)
+                if is_fixture(path) or path.endswith(".cpp")]
+    return "^(" + "|".join(patterns) + ")$" if patterns else ""
 
 
-def doCommand(command, exit_on_failure=True):
-    """Run command as a shell command and report/exit on errors."""
-    print("------------------------------------------------------------")
-    print("%s" % command)
-    p1 = subprocess.Popen(command, shell=True)
-    p1.wait()
-    if exit_on_failure and (not (p1.returncode is None) and not (p1.returncode == 0)):
-        stopErr("%s failed" % command, p1.returncode)
+def fixture_tests(inventory, fixtures):
+    """Expand fixtures to the generated sources CMake registered for them."""
+    prefixes = tuple(fixture[:-len("_test.hpp")] + "_" for fixture in fixtures)
+    sources = set()
+    for test in inventory["tests"]:
+        for entry in test.get("properties", []):
+            if entry["name"] != "LABELS":
+                continue
+            for label in entry["value"]:
+                for prefix in prefixes:
+                    if label.startswith(prefix) and re.match(
+                            r"[0-9]+_generated_.*_test\.cpp$", label[len(prefix):]):
+                        sources.add(label)
+    return sorted(sources)
 
 
-def generateTests(j):
-    """Generate all tests and pass along the j parameter to make."""
-    doCommand("make -j%d generate-tests -s" % (j or 1))
+def select_paths(matches, directories):
+    """Validate expanded paths and remove selections covered by a directory."""
+    paths = set()
+    for argument, expanded in matches.items():
+        if not expanded:
+            raise ValueError("No matching tests: " + argument)
+        for path in expanded:
+            if not any(path == base or path.startswith(base + "/")
+                       for base in ("test/unit", "test/prob", "test/expressions")):
+                raise ValueError("Unsupported test path: " + path)
+            if path not in directories and not path.endswith("_test.cpp") and not is_fixture(path):
+                raise ValueError("Expected a test directory, *_test.cpp, or "
+                                 "test/prob/*/*_test.hpp: " + path)
+            paths.add(path)
+    return [path for path in sorted(paths)
+            if not any(path.startswith(parent + "/") for parent in directories)]
 
 
-def divide_chunks(l, n):
-    # looping till length l
-    for i in range(0, len(l), n):
-        yield l[i : i + n]
-
-include_pattern = re.compile(r'^\s*#include\s+<.*>$')
-
-def generateJumboTests(paths, debug=False):
-    jumbo_files_to_create = []
-    jumbo_files = []
-    for p in paths:
-        if not p.endswith(testsfx) and not p.endswith("/"):
-            p = p + "/"
-        if p in allowed_paths_with_jumbo:
-            jumbo_files_to_create.extend([x for x in jumbo_folders if x.startswith(p)])
-        else:
-            stopErr("The --jumbo flag is only allowed with top level folders.", 10)
-    for jf in jumbo_files_to_create:
-        tests_in_subfolder = sorted(os.path.join(jf, x) for x in os.listdir(jf) if x.endswith(testsfx))
-        for i, tests in enumerate(divide_chunks(tests_in_subfolder, jumboSize)):
-
-            includes = []
-            jumbo_contents = []
-            for t in tests:
-                with open(t, "r") as test_file:
-                    contents_raw = test_file.read()
-
-                test_contents = []
-                for l in contents_raw.splitlines():
-                    if include_pattern.fullmatch(l.strip()):
-                        includes.append(l.strip())
-                        continue
-                    test_contents.append(l)
-
-                jumbo_contents.append('\n'.join(test_contents))
-
-            jumbo_file_path = jf + "_" + str(i) + testsfx
-            jumbo_files.append(jumbo_file_path)
-            if debug:
-                print("Generating jumbo test file '{}' with tests: {}".format( jumbo_file_path, ', '.join(tests)))
-            with open(jumbo_file_path, "w") as jumbo_file:
-                jumbo_file.write('\n'.join(list(dict.fromkeys(includes))))
-                jumbo_file.write('\n')
-                jumbo_file.write('\n'.join(jumbo_contents))
-    return jumbo_files
-
-
-def cleanupJumboTests(paths):
-    for f in paths:
-        if os.path.exists(f):
-            os.remove(f)
-
-
-def makeTest(name, j):
-    """Run the make command for a given single test."""
-    doCommand("make -j%d %s" % (j or 1, name))
-
-
-def commandExists(command):
-    p = subprocess.Popen(
-        command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-    )
-    p.wait()
-    return p.returncode != 127
-
-
-def runTest(name, run_all=False, mpi=False, j=1):
-    executable = mungeName(name).replace("/", os.sep)
-    xml = mungeName(name).replace(winsfx, "")
-    command = '%s --gtest_output="xml:%s.xml"' % (executable, xml)
-    if mpi:
-        if not commandExists("mpirun"):
-            stopErr(
-                "Error: need to have mpi (and mpirun) installed to run mpi tests",
-                -1,
-            )
-        if "mpi_" in name:
-            j = j > 2 and j or 2
-        else:
-            j = 1
-        command = "mpirun -np {} {}".format(j, command)
-    doCommand(command, not run_all)
-
-
-def test_files_in_folder(folder):
-    """Returns a list of test files (*_test.cpp) in the folder and all
-    its subfolders recursively. The folder can be written with
-    wildcards as with the Unix find command.
-    """
-    files = []
-    for f in glob.glob(folder):
-        if os.path.isdir(f):
-            files.extend(test_files_in_folder(f + os.sep + "**"))
-        else:
-            if f.endswith(testsfx):
-                files.append(f)
-    return files
-
-
-def findTests(base_path, filter_names, do_jumbo=False):
-    tests = []
-    for path in base_path:
-        if (not os.path.isdir(path)) and path.endswith("_test"):
-            tests.append(path + ".cpp")
-        else:
-            tests.extend(test_files_in_folder(path))
-    tests = map(mungeName, tests)
-    tests = [
-        test
-        for test in tests
-        if all(filter_name in test for filter_name in filter_names)
-    ]
-    if do_jumbo:
-        filtered_jumbo_tests = []
-        for t in tests:
-            add = True
-            for k in jumbo_folders:
-                k = k + "/"
-                if t.startswith(k):
-                    add = False
-                    break
-            if add:
-                filtered_jumbo_tests.append(t)
-        tests = filtered_jumbo_tests
-    return tests
-
-
-def findChangedTests(debug):
-    import subprocess
-
-    changed_files = subprocess.run(
-        ["git", "diff", "--name-only", "--diff-filter=d", "origin/develop...HEAD"],
-        text=True, capture_output=True
-    ).stdout.splitlines()
-    if debug:
-        print("Changed files:", changed_files)
-
-    # changes in prim should also test other non-prim signatures
-    test_deps = {"prim/": ["prim/", "rev/", "mix/", "fwd/"], "rev/": ["rev/", "mix/"], "fwd/": ["fwd/", "mix/"]}
-
-    changed_tests = set()
-    for f in changed_files:
-        if 'stan/' in f and f.endswith('.hpp') and 'opencl' not in f: # changed fn
-            maybe_test = f.replace('stan/', 'test/unit/').replace('.hpp', testsfx)
-            for (path, replacements) in test_deps.items():
-                if path in maybe_test:
-                    for rep in replacements:
-                        maybe_test = maybe_test.replace(path, rep)
-                        if os.path.exists(maybe_test):
-                            changed_tests.add(maybe_test)
-
-        if f.endswith(testsfx) and 'opencl' not in f:
-            changed_tests.add(f)
-
-    if len(changed_tests) > maxChangedTests:
-        stopErr("Number of changed tests excluded maximum, not running priority tests", 0)
-
-    return list(map(mungeName, changed_tests))
-
-
-def batched(tests):
-    return [tests[i : i + batchSize] for i in range(0, len(tests), batchSize)]
-
-
-def handleExpressionTests(tests, only_functions, n_test_files):
-    expression_tests = False
-    for n, i in list(enumerate(tests))[::-1]:
-        if "test/expressions" in i or "test\\expressions" in i:
-            del tests[n]
-            expression_tests = True
-    if expression_tests:
-        HERE = os.path.dirname(os.path.realpath(__file__))
-        sys.path.append(os.path.join(HERE, "test"))
-        sys.path.append(os.path.join(HERE, "test/expressions"))
-        import generate_expression_tests
-
-        generate_expression_tests.main(only_functions, n_test_files)
-        for i in range(n_test_files):
-            tests.append("test/expressions/tests%d_test.cpp" % i)
-    elif only_functions:
-        stopErr(
-            "--only-functions can only be specified if running expression tests (test/expressions)",
-            -1,
-        )
-
-
-def checkToolchainPathWindows():
-    if isWin():
-        p1 = subprocess.Popen(
-            "where.exe make",
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True,
-        )
-        out, err = p1.communicate()
-        if re.search(r" |\(|\)", out):
-            stopErr(
-                "The RTools toolchain is installed in a path with spaces or bracket. Please reinstall to a valid path.",
-                -1,
-            )
-
-
-def main():
-    inputs = processCLIArgs()
-    checkToolchainPathWindows()
-
-    try:
-        with open("make/local") as f:
-            stan_mpi = "STAN_MPI" in f.read()
-    except IOError:
-        stan_mpi = False
-
-    jumboFiles = []
-
-    if inputs.changed:
-        tests = findChangedTests(inputs.debug)
+def target_for(path):
+    if path.endswith(".cpp"):
+        target = path[:-4].replace("/", "_")
     else:
-        if not inputs.test_only:
-            # pass 0: generate all auto-generated tests
-            if any("test/prob" in arg for arg in inputs.tests):
-                generateTests(inputs.j)
+        prefix = path.replace("test/unit/math", "unit_math", 1)
+        prefix = prefix.replace("test/unit", "unit", 1)
+        prefix = prefix.replace("test/prob", "prob_math", 1)
+        prefix = prefix.replace("test/expressions", "expressions", 1)
+        target = prefix.replace("/", "_") + "_all_tests"
+    folder = "test/unit" if path.startswith("test/unit") else (
+        "test/prob" if path.startswith("test/prob") else "test")
+    return target, folder
 
-            if inputs.do_jumbo:
-                jumboFiles = generateJumboTests(inputs.tests)
-            if inputs.e == -1:
-                if inputs.j == 1:
-                    num_expr_test_files = 1
-                else:
-                    num_expr_test_files = inputs.j * 4
-            else:
-                num_expr_test_files = inputs.e
-            handleExpressionTests(inputs.tests, inputs.only_functions, num_expr_test_files)
 
-        tests = findTests(inputs.tests, inputs.f, inputs.do_jumbo)
+def build_commands(inputs, paths, root, build_dir):
+    """Plan configuration and builds for the CMake targets selected by the user."""
+    if inputs.test_only:
+        return []
+    expressions = any(path.startswith("test/expressions") for path in paths)
+    regex = selection_regex(paths)
+    configure = ["cmake", "-S", str(root), "-B", str(build_dir),
+                 "-DCMAKE_BUILD_TYPE=" + inputs.config, "-DBUILD_TESTING=ON",
+                 "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON", "-DSTAN_TEST_HEADERS=OFF",
+                 "-DSTAN_BUILD_PROB_TESTS=" + ("ON" if any(path.startswith("test/prob") for path in paths) else "OFF"),
+                 "-DSTAN_BUILD_EXPRESSION_TESTS=" + ("ON" if expressions else "OFF"),
+                 "-DSTAN_TEST_NAME_FILTERS=" + ";".join(inputs.f),
+                 "-DSTAN_SELECTED_TEST_REGEX=" + regex]
+    if expressions:
+        configure.append("-DSTAN_EXPRESSION_TEST_DIR=" + str(build_dir / "expression-sources"))
+    if inputs.configure_only:
+        return [configure + inputs.cmake_arg]
+    # Individual files and fixtures build through one aggregate target.
+    targets = [target_for(path)[0] for path in paths if not path.endswith(".cpp") and not is_fixture(path)]
+    if regex:
+        targets.append("stan_selected_tests")
+    build = ["cmake", "--build", str(build_dir), "--config", inputs.config,
+             "--parallel", str(inputs.j), "--target"] + targets
+    return [configure + inputs.cmake_arg, build]
 
-    if not tests:
-        if inputs.changed:
-            stopErr("No changed tests were found!", 0)
-        stopErr(
-            "No matching tests found. Check the path passed on the command line", -1
-        )
 
+def parse_cache(text):
+    cache = {}
+    for line in text.splitlines():
+        if not line.startswith(("//", "#")) and "=" in line and ":" in line.split("=", 1)[0]:
+            key, value = line.split("=", 1)
+            cache[key.split(":", 1)[0]] = value
+    return cache
+
+
+def test_command(path, build_dir, config, cache, windows):
+    """Plan an executable invocation using supplied CMake settings."""
+    target, folder = target_for(path)
+    executable = build_dir / folder / target
+    if cache.get("CMAKE_CONFIGURATION_TYPES"):
+        executable = executable.parent / config / executable.name
+    if cache.get("CMAKE_SYSTEM_NAME") == "Windows" or windows:
+        executable = executable.with_suffix(".exe")
+    args = [str(executable), "--gtest_output=xml:" + str(build_dir / "test-results" / (target + ".xml"))]
+    if cache.get("STAN_EFFECTIVE_MPI", cache.get("STAN_MPI")) in ("ON", "TRUE", "1"):
+        ranks = "2" if not path.endswith(".cpp") or "mpi_" in path else "1"
+        args = [cache.get("MPIEXEC_EXECUTABLE", "mpirun"),
+                cache.get("MPIEXEC_NUMPROC_FLAG", "-np"), ranks] + [
+                    flag for flag in cache.get("MPIEXEC_PREFLAGS", "").split(";") if flag] + args + [
+                    flag for flag in cache.get("MPIEXEC_POSTFLAGS", "").split(";") if flag]
+    return args
+
+
+def source_filter(paths):
+    return "^(" + "|".join(re.escape(path) for path in sorted(set(paths))) + ")$" if paths else ""
+
+
+def build_tests(inventory, source_pattern, build_dir, jobs, batch_size):
+    """Plan builds using the source labels registered by CMake."""
+    pattern = re.compile(source_pattern)
+    selected, groups = [], {}
+    for test in inventory["tests"]:
+        labels = [label for entry in test.get("properties", [])
+                  if entry["name"] == "LABELS" for label in entry["value"]]
+        if any(pattern.search(label) for label in labels if not label.startswith("stan_build:")):
+            selected.append(test["name"])
+        for label in labels:
+            if label.startswith("stan_build:"):
+                groups.setdefault(label[len("stan_build:"):], set()).add(test["name"])
+    if not selected:
+        raise ValueError("No registered tests match: " + source_pattern)
+    # Makefile generators serialize separate top-level targets. An existing
+    # aggregate shares one dependency graph and honors the requested job count.
+    remaining, targets = set(selected), []
+    for target, members in sorted(groups.items(), key=lambda item: (-len(item[1]), item[0])):
+        if len(members) > 1 and members <= remaining:
+            targets.append(target)
+            remaining.difference_update(members)
+    targets.extend(name for name in selected if name in remaining)
+    return [["cmake", "--build", str(build_dir), "--parallel", str(jobs), "--target"]
+            + targets[offset:offset + batch_size] for offset in range(0, len(targets), batch_size)]
+
+
+def main(arguments, root, working_dir, windows, error_stream):
+    """Perform command-line I/O. Helpers above only transform explicit inputs."""
+    inputs = processCLIArgs(arguments)
     try:
-        # pass 1: make test executables
-        if not inputs.test_only:
-            for batch in batched(tests):
-                if inputs.debug:
-                    print("Test batch: ", batch)
-                makeTest(" ".join(batch), inputs.j)
-        if not inputs.make_only:
-            # pass 2: run test targets
-            for t in tests:
-                if inputs.debug:
-                    print("run single test: %s" % t)
-                runTest(t, inputs.run_all, mpi=stan_mpi, j=inputs.j)
-    except BaseException as e:
-       print(e, file=sys.stderr)
-       sys.exit(1)
-    finally:
-        cleanupJumboTests(jumboFiles)
-        pass
+        if getattr(inputs, "changed", False) or inputs.command == "changed-unit-filter":
+            files = subprocess.run(["git", "diff", "--name-only", "--diff-filter=d",
+                                    "origin/develop...HEAD"], cwd=root, check=True,
+                                   text=True, capture_output=True).stdout.splitlines()
+            if getattr(inputs, "debug", False):
+                print("Changed files:", files)
+            existing = {path.relative_to(root).as_posix()
+                        for path in (root / "test/unit").rglob("*_test.cpp")}
+            paths = findChangedTests(files, existing)
+            if inputs.command == "changed-unit-filter":
+                print(source_filter(paths))
+                return 0
+            if not paths:
+                print("No changed tests were found!")
+                return 0
+        elif inputs.command is None:
+            matches = {}
+            for argument in inputs.tests:
+                # os.path.join keeps a trailing slash, so "test/prob/*/" matches directories.
+                expanded = glob.glob(os.path.join(str(root), argument))
+                if not expanded and argument.replace("\\", "/").lstrip("./").startswith(
+                        ("test/prob/", "test/expressions/")) and argument.endswith("_test.cpp"):
+                    expanded = [str(root / argument)]
+                matches[argument] = [Path(path).resolve().relative_to(root).as_posix()
+                                     for path in expanded]
+            directories = {path for expanded in matches.values() for path in expanded
+                           if (root / path).is_dir()}
+            paths = select_paths(matches, directories)
+        build_dir = (working_dir / inputs.build_dir).resolve()
+        if inputs.command == "build-tests":
+            inventory = subprocess.run(["ctest", "--show-only=json-v1"],
+                                       cwd=build_dir, check=True, text=True, capture_output=True)
+            commands = build_tests(json.loads(inventory.stdout), inputs.source_regex,
+                                   build_dir, inputs.jobs, 50 if windows else 500)
+        else:
+            generate = inputs.command == "generate-expressions"
+            if not generate:
+                paths = [path for path in paths if not path.endswith(".cpp")
+                         or all(value in path for value in inputs.f)]
+                if not paths and not inputs.configure_only:
+                    raise ValueError("No matching tests found")
+                expressions = any(path.startswith("test/expressions") for path in paths)
+                if inputs.only_functions and not expressions:
+                    raise ValueError("--only-functions requires test/expressions")
+                generate = expressions and not inputs.test_only
+            if generate:
+                # Keep the legacy generator's output setting inside the I/O boundary.
+                sys.path.insert(0, str(root / "test"))
+                import generate_expression_tests
+                output = build_dir / "expression-sources"
+                output.mkdir(parents=True, exist_ok=True)
+                for source in output.glob("*test.cpp"):
+                    source.unlink()
+                functions = inputs.functions if inputs.command else inputs.only_functions
+                # Like develop, four files per job keep each translation unit's memory bounded.
+                batches = inputs.batches if inputs.command else (inputs.e if inputs.e > 0 else inputs.j * 4)
+                generate_expression_tests.src_folder = str(output) + "/"
+                generate_expression_tests.main(functions, batches)
+                if not list(output.glob("*test.cpp")):
+                    raise RuntimeError("Expression generator produced no tests")
+            if inputs.command == "generate-expressions":
+                return 0
+            commands = build_commands(inputs, paths, root, build_dir)
+            if inputs.fresh:
+                # cmake --fresh (CMake 3.24+) deletes the same two paths.
+                (build_dir / "CMakeCache.txt").unlink(missing_ok=True)
+                shutil.rmtree(build_dir / "CMakeFiles", ignore_errors=True)
+        for command in commands:
+            print(" ".join(shlex.quote(str(arg)) for arg in command), flush=True)
+            subprocess.run(command, cwd=root, check=True)
+        if inputs.command == "build-tests" or inputs.make_only or inputs.configure_only:
+            return 0
+        fixtures = [path for path in paths if is_fixture(path)]
+        if fixtures:
+            inventory = subprocess.run(["ctest", "--show-only=json-v1"],
+                                       cwd=build_dir, check=True, text=True, capture_output=True)
+            generated =fixture_tests(json.loads(inventory.stdout), fixtures)
+            if not generated:
+                raise ValueError("No generated tests found for: " + " ".join(fixtures))
+            paths = [path for path in paths if not is_fixture(path)] + generated
+        cache_file = build_dir / "CMakeCache.txt"
+        cache = parse_cache(cache_file.read_text() if cache_file.exists() else "")
+        (build_dir / "test-results").mkdir(parents=True, exist_ok=True)
+        failed = False
+        commands = [test_command(path, build_dir, inputs.config, cache, windows) for path in paths]
+        if inputs.test_jobs > 1:
+            # Concurrent executables print their output in order once each finishes.
+            def run(command):
+                return subprocess.run(command, cwd=root, text=True,
+                                      stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            with ThreadPoolExecutor(inputs.test_jobs) as pool:
+                for command, result in zip(commands, pool.map(run, commands)):
+                    print(" ".join(shlex.quote(arg) for arg in command), flush=True)
+                    print(result.stdout, end="", flush=True)
+                    failed = failed or result.returncode != 0
+            return int(failed)
+        for command in commands:
+            print(" ".join(shlex.quote(arg) for arg in command), flush=True)
+            try:
+                subprocess.run(command, cwd=root, check=True)
+            except subprocess.CalledProcessError:
+                if not inputs.run_all:
+                    raise
+                failed = True
+        return int(failed)
+    except (ValueError, OSError, RuntimeError, subprocess.CalledProcessError) as error:
+        print(error, file=error_stream)
+        return 1
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main(sys.argv[1:], Path(__file__).resolve().parent,
+                  Path.cwd(), os.name == "nt", sys.stderr))
