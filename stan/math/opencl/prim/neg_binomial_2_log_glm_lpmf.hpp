@@ -6,21 +6,15 @@
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/prim/multiply.hpp>
-#include <stan/math/opencl/plain_type.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/kernels/neg_binomial_2_log_glm_lpmf.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/eval.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/sum.hpp>
-#include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/fun/value_of_rec.hpp>
-#include <vector>
 #include <cmath>
 
 namespace stan {
@@ -124,9 +118,8 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
   const bool need_theta_derivative_sum
       = need_theta_derivative && !is_alpha_vector;
   matrix_cl<double> theta_derivative_sum_cl(wgs, 1);
-  const bool need_phi_derivative_sum = !is_alpha_vector;
-  const bool need_phi_derivative
-      = is_autodiff_v<T_phi_cl> || need_phi_derivative_sum;
+  const bool need_phi_derivative = is_autodiff_v<T_phi_cl>;
+  const bool need_phi_derivative_sum = need_phi_derivative && !is_phi_vector;
   matrix_cl<double> phi_derivative_cl(
       need_phi_derivative ? (need_phi_derivative_sum ? wgs : N) : 0, 1);
   const bool need_logp1 = include_summand<propto>::value;
@@ -168,7 +161,7 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
   }
 
   if constexpr (include_summand<propto, T_phi_cl>::value && !is_phi_vector) {
-    logp += N * (multiply_log(phi_val, phi_val) - lgamma(phi_val));
+    logp += N * (lmultiply(phi_val, phi_val) - lgamma(phi_val));
   }
   if constexpr (include_summand<propto, T_phi_cl>::value && !is_y_vector
                 && !is_phi_vector) {

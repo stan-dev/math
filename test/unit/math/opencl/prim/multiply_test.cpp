@@ -239,6 +239,22 @@ TEST(MathMatrixOpenCLPrim, row_vector_matrix_tri_small) {
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 }
 
+TEST(MathMatrixOpenCLPrim, row_vector_matrix_upper_wide) {
+  // rv_cl and m_cl are heads of the longer buffer buf_cl, so that a read past
+  // the end of either one changes the result
+  stan::math::vector_d buf(3);
+  buf << 2, 3, 5;
+  stan::math::matrix_cl<double> buf_cl(buf);
+  buf_cl.wait_for_write_events();
+  stan::math::matrix_cl<double> rv_cl(buf_cl.buffer(), 1, 1);
+  stan::math::matrix_cl<double> m_cl(buf_cl.buffer(), 1, 2,
+                                     stan::math::matrix_cl_view::Upper);
+
+  stan::math::matrix_d expected(1, 2);
+  expected << 4, 6;
+  EXPECT_MATRIX_EQ(expected, stan::math::from_matrix_cl(rv_cl * m_cl));
+}
+
 TEST(MathMatrixOpenCLPrim, row_vector_matrix_tri_big) {
   auto m = stan::math::matrix_d::Random(600, 400).eval();
   auto rv = stan::math::row_vector_d::Random(600).eval();

@@ -20,6 +20,8 @@ TEST(ProbDistributionsCategoricalLogitGLM, error_checking) {
   vector<int> y{1, 3, 2};
   vector<int> y_size{1, 3, 2, 3};
   vector<int> y_value{1, 2, -23};
+  vector<int> y_value_low{0, 1, 2};
+  vector<int> y_value_high{1, 2, C + 1};
   Matrix<double, Dynamic, Dynamic> x(N, M);
   x << -12, 46, -42, 24, 25, 27;
   Matrix<double, Dynamic, Dynamic> x_size1(N - 1, M);
@@ -50,6 +52,8 @@ TEST(ProbDistributionsCategoricalLogitGLM, error_checking) {
   matrix_cl<int> y_cl(y);
   matrix_cl<int> y_size_cl(y_size);
   matrix_cl<int> y_value_cl(y_value);
+  matrix_cl<int> y_value_low_cl(y_value_low);
+  matrix_cl<int> y_value_high_cl(y_value_high);
   matrix_cl<double> beta_cl(beta);
   matrix_cl<double> beta_size1_cl(beta_size1);
   matrix_cl<double> beta_size2_cl(beta_size2);
@@ -83,6 +87,12 @@ TEST(ProbDistributionsCategoricalLogitGLM, error_checking) {
   EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y_value_cl, x_cl,
                                                       alpha_cl, beta_cl),
                std::domain_error);
+  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y_value_low_cl, x_cl,
+                                                      alpha_cl, beta_cl),
+               std::domain_error);
+  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y_value_high_cl, x_cl,
+                                                      alpha_cl, beta_cl),
+               std::domain_error);
   EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y_cl, x_value_cl,
                                                       alpha_cl, beta_cl),
                std::domain_error);
@@ -91,6 +101,29 @@ TEST(ProbDistributionsCategoricalLogitGLM, error_checking) {
                std::domain_error);
   EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y_cl, x_cl, alpha_cl,
                                                       beta_value_cl),
+               std::domain_error);
+}
+
+TEST(ProbDistributionsCategoricalLogitGLM, error_checking_y_fewer_classes) {
+  int N = 3;
+  int M = 2;
+  int C = 2;
+
+  vector<int> y_value{0, 1, 2};
+  Matrix<double, Dynamic, Dynamic> x(N, M);
+  x << -12, 46, -42, 24, 25, 27;
+  Matrix<double, Dynamic, Dynamic> beta(M, C);
+  beta << 0.3, 2, 0.4, -0.1;
+  Matrix<double, Dynamic, 1> alpha(C, 1);
+  alpha << 0.3, -0.8;
+
+  matrix_cl<int> y_value_cl(y_value);
+  matrix_cl<double> x_cl(x);
+  matrix_cl<double> beta_cl(beta);
+  matrix_cl<double> alpha_cl(alpha);
+
+  EXPECT_THROW(stan::math::categorical_logit_glm_lpmf(y_value_cl, x_cl,
+                                                      alpha_cl, beta_cl),
                std::domain_error);
 }
 

@@ -5,10 +5,6 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/log.hpp>
 #include <stan/math/rev/fun/elt_multiply.hpp>
-#include <stan/math/rev/fun/multiply.hpp>
-#include <stan/math/rev/fun/multiply_log.hpp>
-#include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/is_any_nan.hpp>
 #include <stan/math/prim/fun/lmultiply.hpp>
 #include <cmath>
 

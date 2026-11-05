@@ -25,7 +25,7 @@ inline auto unit_vector_free(EigVec&& x) {
   auto&& x_ref = to_ref(std::forward<EigVec>(x));
   check_unit_vector("stan::math::unit_vector_free", "Unit vector variable",
                     x_ref);
-  return x_ref;
+  return std::forward<decltype(x_ref)>(x_ref);
 }
 
 /**

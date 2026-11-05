@@ -1,6 +1,6 @@
 // Arguments: Doubles, Doubles
 #include <stan/math/prim/prob/chi_square_lpdf.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 
 using stan::math::var;
@@ -62,8 +62,8 @@ class AgradDistributionsChiSquare : public AgradDistributionTest {
                                                     const T5&) {
     using stan::math::HALF_LOG_TWO;
     using stan::math::lgamma;
-    using stan::math::multiply_log;
-    return -nu * HALF_LOG_TWO - lgamma(0.5 * nu)
-           + multiply_log(0.5 * nu - 1.0, y) - 0.5 * y;
+    using stan::math::lmultiply;
+    return -nu * HALF_LOG_TWO - lgamma(0.5 * nu) + lmultiply(0.5 * nu - 1.0, y)
+           - 0.5 * y;
   }
 };

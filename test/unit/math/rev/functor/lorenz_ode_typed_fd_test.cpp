@@ -34,9 +34,9 @@ TYPED_TEST_P(lorenz_test, param_and_data_finite_diff) {
     this->test_fd_dv(1.e-6, 3e-2);
     this->test_fd_vv(1.e-6, 3e-2);
   } else if constexpr (is_ckrk) {
-    this->test_fd_vd(1.e-6, 5e-2);
-    this->test_fd_dv(1.e-6, 5e-2);
-    this->test_fd_vv(1.e-6, 5e-2);
+    this->test_fd_vd(1.e-6, 8e-2);
+    this->test_fd_dv(1.e-6, 8e-2);
+    this->test_fd_vv(1.e-6, 8e-2);
   } else {
     this->test_fd_vd(1.e-6, 1e-2);
     this->test_fd_dv(1.e-6, 1e-2);

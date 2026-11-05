@@ -25,9 +25,14 @@ inline int categorical_rng(
 
   index = cumulative_sum(theta);
 
+  // index may sum to just below 1, so stop at the last nonzero entry
+  int last = theta.size() - 1;
+  while (theta(last) == 0) {
+    last--;
+  }
   double c = uniform01_rng();
   int b = 0;
-  while (c > index(b, 0)) {
+  while (b < last && c >= index(b)) {
     b++;
   }
   return b + 1;

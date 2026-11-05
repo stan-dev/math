@@ -127,7 +127,6 @@
 #include <stan/math/rev/fun/modified_bessel_first_kind.hpp>
 #include <stan/math/rev/fun/modified_bessel_second_kind.hpp>
 #include <stan/math/rev/fun/multiply.hpp>
-#include <stan/math/rev/fun/multiply_log.hpp>
 #include <stan/math/rev/fun/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/rev/fun/norm.hpp>
 #include <stan/math/rev/fun/norm1.hpp>
@@ -158,6 +157,7 @@
 #include <stan/math/rev/fun/svd_V.hpp>
 #include <stan/math/rev/fun/sinh.hpp>
 #include <stan/math/rev/fun/softmax.hpp>
+#include <stan/math/rev/fun/solve_sylvester.hpp>
 #include <stan/math/rev/fun/sqrt.hpp>
 #include <stan/math/rev/fun/square.hpp>
 #include <stan/math/rev/fun/squared_distance.hpp>

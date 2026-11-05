@@ -34,7 +34,6 @@ inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> binomial_logit_glm_lpmf(
     const T_beta_cl& beta) {
   static const char* function = "binomial_logit_glm_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_x_cl, T_alpha_cl, T_beta_cl>;
-  constexpr bool is_y_vector = !is_stan_scalar<T_n_cl>::value;
   constexpr bool is_alpha_vector = !is_stan_scalar<T_alpha_cl>::value;
 
   const size_t N_instances
