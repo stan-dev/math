@@ -45,7 +45,7 @@ inline var_value<matrix_cl<double>> append_col(T_a&& a, T_b&& b) {
 
   return make_callback_var(
       append_col(value_of(a_arena), value_of(b_arena)),
-      [a_arena, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
+      [=](const vari_value<matrix_cl<double>>& res) mutable {
         if constexpr (is_autodiff_v<T_a>) {
           adjoint_of(a_arena) += block_zero_based(
               res.adj(), 0, 0, a_arena.rows(), a_arena.cols());

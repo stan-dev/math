@@ -90,7 +90,7 @@ TEST(prob_transform, sum_to_zero_mat_rt) {
 
   EXPECT_EQ(x.rows() + 1, y.rows());
   EXPECT_EQ(x.cols() + 1, y.cols());
-  EXPECT_FLOAT_EQ(y.sum(), 0.0);
+  EXPECT_NEAR(y.sum(), 0.0, 1E-15);
   EXPECT_MATRIX_NEAR(y.rowwise().sum(), Eigen::VectorXd::Zero(4), 1E-15);
   EXPECT_MATRIX_NEAR(y.colwise().sum(), Eigen::RowVectorXd::Zero(5), 1E-15);
   EXPECT_NO_THROW(stan::math::check_sum_to_zero("checkSumToZero", "y", y));

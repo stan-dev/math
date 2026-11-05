@@ -342,11 +342,10 @@ class results_cl {
     index_apply<sizeof...(T_expressions)>([this, &exprs](auto... Is) {
       auto tmp = std::tuple_cat(make_assignment_pair<AssignOp>(
           std::get<Is>(results_), std::get<Is>(exprs.expressions_))...);
-      index_apply<std::tuple_size<decltype(tmp)>::value>(
-          [this, &tmp](auto... Is2) {
-            assignment_impl(std::make_tuple(std::make_pair(
-                std::get<Is2>(tmp).first, std::get<Is2>(tmp).second)...));
-          });
+      index_apply<std::tuple_size<decltype(tmp)>::value>([&tmp](auto... Is2) {
+        assignment_impl(std::make_tuple(std::make_pair(
+            std::get<Is2>(tmp).first, std::get<Is2>(tmp).second)...));
+      });
     });
   }
 

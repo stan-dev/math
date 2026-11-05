@@ -48,3 +48,20 @@ TEST(MathMixMatFunctor, FiniteDiffGradientAuto) {
   w << 1, 2, 3, 4, 5;
   expect_match_autodiff(log_fun, w);
 }
+
+TEST(MathMixMatFunctor, FiniteDiffGradientAutoConstant) {
+  // Keep the evaluations observable so the compiler cannot fold the stencil.
+  const volatile double constant = -937.6;
+  auto f = [&constant](const auto&) { return constant; };
+  Eigen::VectorXd x(3);
+  x << 0, 1.7, -1000;
+  double fx;
+  Eigen::VectorXd grad;
+  stan::math::finite_diff_gradient_auto(f, x, fx, grad);
+
+  EXPECT_DOUBLE_EQ(-937.6, fx);
+  ASSERT_EQ(x.size(), grad.size());
+  for (int i = 0; i < grad.size(); ++i) {
+    EXPECT_DOUBLE_EQ(0, grad(i));
+  }
+}

@@ -9,7 +9,7 @@ using stan::math::square;
 using std::numeric_limits;
 using std::vector;
 
-class AgradCdfLogNormal : public AgradCdfLogTest {
+class AgradCdfLogStdNormal : public AgradCdfLogTest {
  public:
   void valid_values(vector<vector<double> >& parameters,
                     vector<double>& cdf_log) {

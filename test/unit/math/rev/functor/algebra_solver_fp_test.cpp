@@ -471,7 +471,10 @@ TEST_F(FP_degenerated_func_test, algebra_solver_fp) {
     auto f_fd = fd_functor(i);
     finite_diff_gradient_auto(f_fd, y, fx, grad_fx);
     for (int j = 0; j < M; ++j) {
-      EXPECT_FLOAT_EQ(grad_fx(j), yp(j).adj());
+      // This solution is (y(0), y(0)), independent of y(1).
+      EXPECT_NEAR(j == 0 ? 1.0 : 0.0, yp(j).adj(), 1e-12);
+      // Differencing amplifies the numerical solver's convergence error.
+      EXPECT_NEAR(grad_fx(j), yp(j).adj(), 1e-8);
     }
   }
 }
