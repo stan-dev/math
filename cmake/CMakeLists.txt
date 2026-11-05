@@ -166,17 +166,8 @@ endif()
 if(BUILD_TESTING)
   set(BUILD_GMOCK OFF CACHE BOOL "Build Google Mock")
   set(INSTALL_GTEST OFF CACHE BOOL "Install Google Test")
-  function(stan_add_googletest)
-    # CMake 4 removed policies older than 3.5. Limit the compatibility setting
-    # to this old dependency, preserving a higher caller-provided minimum.
-    if(NOT DEFINED CMAKE_POLICY_VERSION_MINIMUM
-        OR CMAKE_POLICY_VERSION_MINIMUM VERSION_LESS "3.5")
-      set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
-    endif()
-    add_subdirectory("${STAN_BENCHMARK_ROOT}/googletest"
-      "${CMAKE_CURRENT_BINARY_DIR}/googletest" EXCLUDE_FROM_ALL)
-  endfunction()
-  stan_add_googletest()
+  add_subdirectory("${STAN_BENCHMARK_ROOT}/googletest"
+    "${CMAKE_CURRENT_BINARY_DIR}/googletest" EXCLUDE_FROM_ALL)
   if(WIN32)
     target_compile_definitions(gtest PUBLIC GTEST_HAS_PTHREAD=0)
   endif()

@@ -11,8 +11,10 @@ namespace internal {
 namespace gmockpp {
 
 static_assert(GMOCK_PP_CAT(1, 4) == 14, "");
-static_assert(GMOCK_PP_INTERNAL_INTERNAL_16TH(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-                                              12, 13, 14, 15, 16, 17, 18) == 16,
+static_assert(GMOCK_PP_INTERNAL_INTERNAL_32ND(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+                                              12, 13, 14, 15, 16, 17, 18, 19,
+                                              20, 21, 22, 23, 24, 25, 26, 27,
+                                              28, 29, 30, 31, 32, 33, 34) == 32,
               "");
 static_assert(GMOCK_PP_NARG() == 1, "");
 static_assert(GMOCK_PP_NARG(x) == 1, "");
@@ -70,7 +72,7 @@ static_assert(GMOCK_PP_INTERNAL_VAR_TEST(x, y) == 2, "");
 static_assert(GMOCK_PP_INTERNAL_VAR_TEST(silly) == 1, "");
 static_assert(GMOCK_PP_INTERNAL_VAR_TEST(x, y, z) == 3, "");
 
-// TODO(iserna): The following asserts fail in --config=lexan.
+// TODO(iserna): The following asserts fail in --config=windows.
 #define GMOCK_PP_INTERNAL_IS_EMPTY_TEST_1
 static_assert(GMOCK_PP_IS_EMPTY(GMOCK_PP_INTERNAL_IS_EMPTY_TEST_1), "");
 static_assert(GMOCK_PP_IS_EMPTY(), "");
