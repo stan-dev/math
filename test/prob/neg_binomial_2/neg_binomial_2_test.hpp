@@ -1,7 +1,7 @@
 // Arguments: Ints, Doubles, Doubles
 #include <stan/math/prim/prob/neg_binomial_2_lpmf.hpp>
 #include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 #include <boost/math/special_functions/binomial.hpp>
 
 using stan::math::var;
@@ -73,14 +73,14 @@ class AgradDistributionsNegBinomial2 : public AgradDistributionTest {
       const T_n& n, const T_location& mu, const T_inv_scale& phi, const T3&,
       const T4&, const T5&) {
     using stan::math::binomial_coefficient_log;
-    using stan::math::multiply_log;
+    using stan::math::lmultiply;
     using std::log;
 
     if (n != 0)
       return binomial_coefficient_log<
                  typename stan::scalar_type<T_inv_scale>::type>(n + phi - 1.0,
                                                                 n)
-             + multiply_log(n, mu) + multiply_log(phi, phi)
+             + lmultiply(n, mu) + lmultiply(phi, phi)
              - (n + phi) * log(mu + phi);
     return log(0.0);
   }
