@@ -85,7 +85,6 @@ auto lognormal_lpdf_functor_propto
 
 TEST(ProbDistributionsLognormal, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << 0.1, 0.5, 1;
@@ -107,7 +106,6 @@ TEST(ProbDistributionsLognormal, opencl_matches_cpu_small) {
 }
 TEST(ProbDistributionsLognormal, opencl_matches_cpu_small_zero_y) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << 0, 0.5, 1;

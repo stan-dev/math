@@ -88,7 +88,6 @@ auto skew_double_exponential_lcdf_functor
 
 TEST(ProbDistributionsSkewDoubleExponentialLcdf, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << -0.3, 1.8, 1.4;
@@ -109,7 +108,6 @@ TEST(ProbDistributionsSkewDoubleExponentialLcdf, opencl_matches_cpu_small) {
 TEST(ProbDistributionsSkewDoubleExponentialLcdf,
      opencl_matches_cpu_small_y_neg_inf) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << -INFINITY, 1.8, 1.4;
