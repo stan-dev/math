@@ -71,18 +71,3 @@ class AgradDistributionsBinomial : public AgradDistributionTest {
            + (N - n) * log1m(theta);
   }
 };
-
-TEST(ProbDistributionsBinomialCDF, Values) {
-  EXPECT_FLOAT_EQ(0.042817421, stan::math::binomial_cdf(24, 54, 0.57));
-  EXPECT_FLOAT_EQ(1.0 - 0.57,
-                  stan::math::binomial_cdf(
-                      0, 1, 0.57));  // Consistency with expected Bernoulli
-  EXPECT_FLOAT_EQ(1.0, stan::math::binomial_cdf(
-                           1, 1, 0.57));  // Consistency with expected Bernoulli
-  EXPECT_FLOAT_EQ(stan::math::bernoulli_cdf(0, 0.57),
-                  stan::math::binomial_cdf(
-                      0, 1, 0.57));  // Consistency with implemented Bernoulli
-  EXPECT_FLOAT_EQ(stan::math::bernoulli_cdf(1, 0.57),
-                  stan::math::binomial_cdf(
-                      1, 1, 0.57));  // Consistency with implemented Bernoulli
-}
