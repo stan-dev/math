@@ -57,7 +57,11 @@ struct laplace_options_base {
    */
   double tolerance{internal::laplace_default_tolerance};  // 2
   /* Maximum number of steps*/
-  int max_num_steps{internal::laplace_default_max_num_steps};          // 3
+  int max_num_steps{internal::laplace_default_max_num_steps};  // 3
+  /**
+   * If true, a failure of the requested solver falls through to the next
+   * one (1 to 2 to 3). The requested solver always runs first.
+   */
   int allow_fallthrough{internal::laplace_default_allow_fallthrough};  // 4
   laplace_line_search_options line_search{
       internal::laplace_default_max_steps_line_search};  // 5
@@ -1260,7 +1264,8 @@ inline auto laplace_marginal_density_est(
         "solver 2 (Covariance-root Cholesky)", e);
   }
   try {
-    if (options.solver == 2 || options.allow_fallthrough) {
+    if (options.solver == 2
+        || (options.allow_fallthrough && options.solver == 1)) {
       CholeskyKSolver solver(state, covariance);
       return run_newton_loop(solver, state, options, step_iter, ll_fun, ll_args,
                              covariance, update_fun, msgs);
