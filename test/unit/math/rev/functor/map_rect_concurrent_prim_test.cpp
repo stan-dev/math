@@ -19,6 +19,7 @@ STAN_REGISTER_MAP_RECT(0, hard_work)
 STAN_REGISTER_MAP_RECT(1, hard_work)
 
 struct map_rect_con_prim : public ::testing::Test {
+  scoped_stan_num_threads restore_environment;
   Eigen::VectorXd shared_params_d;
   std::vector<Eigen::VectorXd> job_params_d;
   std::vector<std::vector<double> > x_r;
