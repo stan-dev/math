@@ -40,7 +40,7 @@ TEST_F(AgradRev, bernoulli_logit_glm_upper_tail_gradient) {
       std::vector<int>{1}, x, alpha, beta);
   logp.grad();
 
-  const double expected_theta_derivative = std::exp(-25.0);
+  const double expected_theta_derivative = stan::math::inv_logit(-25.0);
   EXPECT_DOUBLE_EQ(expected_theta_derivative, alpha.adj());
   EXPECT_DOUBLE_EQ(expected_theta_derivative, beta.adj()(0));
   EXPECT_DOUBLE_EQ(25.0 * expected_theta_derivative, x.adj()(0, 0));
@@ -57,7 +57,7 @@ TEST_F(AgradRev, bernoulli_logit_glm_upper_tail_gradient_broadcast_x) {
       std::vector<int>{1, 1}, x, alpha, beta);
   logp.grad();
 
-  const double expected_theta_derivative = std::exp(-25.0);
+  const double expected_theta_derivative = stan::math::inv_logit(-25.0);
   EXPECT_DOUBLE_EQ(2.0 * expected_theta_derivative, alpha.adj());
   EXPECT_DOUBLE_EQ(2.0 * expected_theta_derivative, beta.adj()(0));
   EXPECT_DOUBLE_EQ(50.0 * expected_theta_derivative, x.adj()(0, 0));

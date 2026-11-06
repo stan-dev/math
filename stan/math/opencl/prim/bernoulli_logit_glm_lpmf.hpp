@@ -92,21 +92,18 @@ inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
   auto ytheta_expr = matrix_vector_multiply(x_val, beta_val) + alpha_val;
   auto signs_expr = 2 * y_val - 1;
   auto ytheta_signs_expr = elt_multiply(ytheta_expr, signs_expr);
-  auto exp_m_ytheta_expr = exp(-ytheta_signs_expr);
-  const double cutoff = 20.0;
-  auto high_bound_expr = ytheta_signs_expr > cutoff;
-  auto low_bound_expr = ytheta_signs_expr < -cutoff;
+  auto positive_expr = ytheta_signs_expr > 0;
+  auto exp_m_abs_ytheta_expr
+      = exp(select(positive_expr, -ytheta_signs_expr, ytheta_signs_expr));
   auto err_cond_expr = y_val < 0 || y_val > 1;
   auto logp_expr
       = colwise_sum(select(err_cond_expr, NOT_A_NUMBER,
-                           select(high_bound_expr, -exp_m_ytheta_expr,
-                                  select(low_bound_expr, ytheta_signs_expr,
-                                         -log1p(exp_m_ytheta_expr)))));
-  auto theta_derivative_expr
-      = select(high_bound_expr, elt_multiply(signs_expr, exp_m_ytheta_expr),
-               select(low_bound_expr, signs_expr,
-                      elt_divide(elt_multiply(signs_expr, exp_m_ytheta_expr),
-                                 (exp_m_ytheta_expr + 1))));
+                           select(positive_expr, 0.0, ytheta_signs_expr)
+                               - log1p(exp_m_abs_ytheta_expr)));
+  auto theta_derivative_expr = elt_divide(
+      elt_multiply(signs_expr,
+                   select(positive_expr, exp_m_abs_ytheta_expr, 1.0)),
+      exp_m_abs_ytheta_expr + 1);
 
   const int wgs = logp_expr.rows();
   matrix_cl<double> logp_cl(wgs, 1);
