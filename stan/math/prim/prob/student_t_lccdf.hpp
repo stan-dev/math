@@ -62,26 +62,6 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lccdf(
     }
   }
 
-  T_partials_return digammaHalf = 0;
-
-  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof> digamma_vec(
-      math::size(nu));
-  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof> digammaNu_vec(
-      math::size(nu));
-  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof>
-      digammaNuPlusHalf_vec(math::size(nu));
-
-  if constexpr (is_autodiff_v<T_dof>) {
-    digammaHalf = digamma(0.5);
-
-    for (size_t i = 0; i < stan::math::size(nu); i++) {
-      const T_partials_return nu_dbl = nu_vec.val(i);
-
-      digammaNu_vec[i] = digamma(0.5 * nu_dbl);
-      digammaNuPlusHalf_vec[i] = digamma(0.5 + 0.5 * nu_dbl);
-    }
-  }
-
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
@@ -89,20 +69,19 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lccdf(
       return ops_partials.build(negative_infinity());
     }
 
-    const T_partials_return sigma_inv = 1.0 / sigma_vec.val(n);
-    const T_partials_return t = (y_vec.val(n) - mu_vec.val(n)) * sigma_inv;
-    const T_partials_return nu_dbl = nu_vec.val(n);
-    const T_partials_return q = nu_dbl / (t * t);
-    const T_partials_return r = 1.0 / (1.0 + q);
-    const T_partials_return J = 2 * r * r * q / t;
-    const T_partials_return betaNuHalf = beta(0.5, 0.5 * nu_dbl);
-    T_partials_return zJacobian = t > 0 ? -0.5 : 0.5;
+    const auto sigma_inv = 1.0 / sigma_vec.val(n);
+    const auto t = (y_vec.val(n) - mu_vec.val(n)) * sigma_inv;
+    const auto nu_dbl = nu_vec.val(n);
+    const auto q = nu_dbl / (t * t);
+    const auto r = 1.0 / (1.0 + q);
+    const auto J = 2 * r * r * q / t;
+    const auto betaNuHalf = beta(0.5, 0.5 * nu_dbl);
+    auto zJacobian = t > 0 ? -0.5 : 0.5;
 
     if (q < 2) {
-      T_partials_return z
-          = inc_beta(0.5 * nu_dbl, (T_partials_return)0.5, 1.0 - r);
-      const T_partials_return Pn = t > 0 ? 0.5 * z : 1.0 - 0.5 * z;
-      const T_partials_return d_ibeta
+      auto z = inc_beta(0.5 * nu_dbl, 0.5, 1.0 - r);
+      const auto Pn = t > 0 ? 0.5 * z : 1.0 - 0.5 * z;
+      const auto d_ibeta
           = pow(r, -0.5) * pow(1.0 - r, 0.5 * nu_dbl - 1) / betaNuHalf;
 
       P += log(Pn);
@@ -113,12 +92,10 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lccdf(
       }
 
       if constexpr (is_autodiff_v<T_dof>) {
-        T_partials_return g1 = 0;
-        T_partials_return g2 = 0;
-
-        grad_reg_inc_beta(g1, g2, 0.5 * nu_dbl, (T_partials_return)0.5, 1.0 - r,
-                          digammaNu_vec[n], digammaHalf,
-                          digammaNuPlusHalf_vec[n], betaNuHalf);
+        // nu / 2 is the first shape of inc_beta here and 1 / 2 the second
+        const auto g1 = grad_reg_inc_beta<GRAD_RIB::G1>(
+            0.5 * nu_dbl, 0.5, 1.0 - r, digamma(0.5 * nu_dbl), 0.0,
+            digamma(0.5 + 0.5 * nu_dbl), 0.0);
 
         partials<1>(ops_partials)[n]
             -= zJacobian * (d_ibeta * (r / t) * (r / t) + 0.5 * g1) / Pn;
@@ -134,14 +111,12 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lccdf(
       }
 
     } else {
-      T_partials_return z
-          = 1.0 - inc_beta((T_partials_return)0.5, 0.5 * nu_dbl, r);
+      auto z = 1.0 - inc_beta(0.5, 0.5 * nu_dbl, r);
       zJacobian *= -1;
 
-      const T_partials_return Pn = t > 0 ? 0.5 * z : 1.0 - 0.5 * z;
+      const auto Pn = t > 0 ? 0.5 * z : 1.0 - 0.5 * z;
 
-      T_partials_return d_ibeta
-          = pow(1.0 - r, 0.5 * nu_dbl - 1) * pow(r, -0.5) / betaNuHalf;
+      auto d_ibeta = pow(1.0 - r, 0.5 * nu_dbl - 1) * pow(r, -0.5) / betaNuHalf;
 
       P += log(Pn);
 
@@ -151,12 +126,10 @@ inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lccdf(
       }
 
       if constexpr (is_autodiff_v<T_dof>) {
-        T_partials_return g1 = 0;
-        T_partials_return g2 = 0;
-
-        grad_reg_inc_beta(g1, g2, (T_partials_return)0.5, 0.5 * nu_dbl, r,
-                          digammaHalf, digammaNu_vec[n],
-                          digammaNuPlusHalf_vec[n], betaNuHalf);
+        // nu / 2 is the second shape of inc_beta here and 1 / 2 the first
+        const auto g2 = grad_reg_inc_beta<GRAD_RIB::G2>(
+            0.5, 0.5 * nu_dbl, r, 0.0, digamma(0.5 * nu_dbl),
+            digamma(0.5 + 0.5 * nu_dbl), 0.0);
 
         partials<1>(ops_partials)[n]
             -= zJacobian * (-d_ibeta * (r / t) * (r / t) + 0.5 * g2) / Pn;

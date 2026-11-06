@@ -4,9 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
-#include <stan/math/prim/fun/inc_beta_dda.hpp>
-#include <stan/math/prim/fun/inc_beta_ddb.hpp>
 #include <stan/math/prim/fun/inc_beta_ddz.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -59,9 +58,6 @@ inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
   scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
-  size_t size_alpha = stan::math::size(alpha);
-  size_t size_beta = stan::math::size(beta);
-  size_t size_alpha_beta = max_size(alpha, beta);
   size_t N = max_size(y, alpha, beta);
 
   // Explicit return for extreme values
@@ -72,33 +68,10 @@ inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
     }
   }
 
-  VectorBuilder<is_autodiff_v<T_scale_succ>, T_partials_return, T_scale_succ>
-      digamma_alpha(size_alpha);
-  if constexpr (is_autodiff_v<T_scale_succ>) {
-    for (size_t n = 0; n < size_alpha; n++) {
-      digamma_alpha[n] = digamma(alpha_vec.val(n));
-    }
-  }
-
-  VectorBuilder<is_autodiff_v<T_scale_fail>, T_partials_return, T_scale_fail>
-      digamma_beta(size_beta);
-  if constexpr (is_autodiff_v<T_scale_fail>) {
-    for (size_t n = 0; n < size_beta; n++) {
-      digamma_beta[n] = digamma(beta_vec.val(n));
-    }
-  }
-
-  VectorBuilder<is_any_autodiff_v<T_scale_succ, T_scale_fail>,
-                T_partials_return, T_scale_succ, T_scale_fail>
-      digamma_sum(size_alpha_beta);
-  if constexpr (is_any_autodiff_v<T_scale_succ, T_scale_fail>) {
-    for (size_t n = 0; n < size_alpha_beta; n++) {
-      digamma_sum[n] = digamma(alpha_vec.val(n) + beta_vec.val(n));
-    }
-  }
-
+  constexpr bool calc_alpha = is_autodiff_v<T_scale_succ>;
+  constexpr bool calc_beta = is_autodiff_v<T_scale_fail>;
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = y_vec.val(n);
+    const auto y_dbl = y_vec.val(n);
 
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
@@ -106,30 +79,37 @@ inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
       continue;
     }
 
-    const T_partials_return alpha_dbl = alpha_vec.val(n);
-    const T_partials_return beta_dbl = beta_vec.val(n);
-    const T_partials_return Pn = inc_beta(alpha_dbl, beta_dbl, y_dbl);
-    const T_partials_return inv_Pn
-        = is_constant_all<T_y, T_scale_succ, T_scale_fail>::value ? 0 : inv(Pn);
+    const auto alpha_dbl = alpha_vec.val(n);
+    const auto beta_dbl = beta_vec.val(n);
+    const auto Pn = inc_beta(alpha_dbl, beta_dbl, y_dbl);
 
     P *= Pn;
+    if constexpr (is_any_autodiff_v<T_y, T_scale_succ, T_scale_fail>) {
+      const auto inv_Pn = inv(Pn);
+      if constexpr (is_autodiff_v<T_y>) {
+        partials<0>(ops_partials)[n]
+            += inc_beta_ddz(alpha_dbl, beta_dbl, y_dbl) * inv_Pn;
+      }
 
-    if constexpr (is_autodiff_v<T_y>) {
-      partials<0>(ops_partials)[n]
-          += inc_beta_ddz(alpha_dbl, beta_dbl, y_dbl) * inv_Pn;
-    }
-
-    if constexpr (is_autodiff_v<T_scale_succ>) {
-      partials<1>(ops_partials)[n]
-          += inc_beta_dda(alpha_dbl, beta_dbl, y_dbl, digamma_alpha[n],
-                          digamma_sum[n])
-             * inv_Pn;
-    }
-    if constexpr (is_autodiff_v<T_scale_fail>) {
-      partials<2>(ops_partials)[n]
-          += inc_beta_ddb(alpha_dbl, beta_dbl, y_dbl, digamma_beta[n],
-                          digamma_sum[n])
-             * inv_Pn;
+      if constexpr (calc_alpha && calc_beta) {
+        const auto [g1, g2] = grad_reg_inc_beta<GRAD_RIB::BOTH>(
+            alpha_dbl, beta_dbl, y_dbl, digamma(alpha_dbl), digamma(beta_dbl),
+            digamma(alpha_dbl + beta_dbl), 0.0);
+        partials<1>(ops_partials)[n] += g1 * inv_Pn;
+        partials<2>(ops_partials)[n] += g2 * inv_Pn;
+      } else if constexpr (calc_alpha) {
+        partials<1>(ops_partials)[n]
+            += grad_reg_inc_beta<GRAD_RIB::G1>(
+                   alpha_dbl, beta_dbl, y_dbl, digamma(alpha_dbl), 0.0,
+                   digamma(alpha_dbl + beta_dbl), 0.0)
+               * inv_Pn;
+      } else if constexpr (calc_beta) {
+        partials<2>(ops_partials)[n]
+            += grad_reg_inc_beta<GRAD_RIB::G2>(
+                   alpha_dbl, beta_dbl, y_dbl, 0.0, digamma(beta_dbl),
+                   digamma(alpha_dbl + beta_dbl), 0.0)
+               * inv_Pn;
+      }
     }
   }
 

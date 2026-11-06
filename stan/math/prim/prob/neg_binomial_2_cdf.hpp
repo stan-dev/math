@@ -84,30 +84,28 @@ inline return_type_t<T_location, T_precision> neg_binomial_2_cdf(
       return ops_partials.build(1.0);
     }
 
-    const T_partials_return n_dbl_p1 = n_vec.val(i) + 1;
-    const T_partials_return mu_dbl = mu_vec.val(i);
-    const T_partials_return phi_dbl = phi_vec.val(i);
-    const T_partials_return inv_mu_plus_phi = inv(mu_dbl + phi_dbl);
-    const T_partials_return p_dbl = phi_dbl * inv_mu_plus_phi;
-    const T_partials_return d_dbl = square(inv_mu_plus_phi);
-    const T_partials_return P_i = inc_beta(phi_dbl, n_dbl_p1, p_dbl);
-    const T_partials_return inc_beta_ddz_i
-        = is_constant_all<T_location, T_precision>::value
-              ? 0
-              : inc_beta_ddz(phi_dbl, n_dbl_p1, p_dbl) * d_dbl / P_i;
+    const auto n_dbl_p1 = n_vec.val(i) + 1;
+    const auto mu_dbl = mu_vec.val(i);
+    const auto phi_dbl = phi_vec.val(i);
+    const auto inv_mu_plus_phi = inv(mu_dbl + phi_dbl);
+    const auto p_dbl = phi_dbl * inv_mu_plus_phi;
+    const auto P_i = inc_beta(phi_dbl, n_dbl_p1, p_dbl);
 
     P *= P_i;
-
-    if constexpr (is_autodiff_v<T_location>) {
-      partials<0>(ops_partials)[i] -= inc_beta_ddz_i * phi_dbl;
-    }
-
-    if constexpr (is_autodiff_v<T_precision>) {
-      partials<1>(ops_partials)[i]
-          += inc_beta_dda(phi_dbl, n_dbl_p1, p_dbl, digamma_phi_vec[i],
-                          digamma_sum_vec[i])
-                 / P_i
-             + inc_beta_ddz_i * mu_dbl;
+    if constexpr (is_any_autodiff_v<T_location, T_precision>) {
+      const auto d_dbl = square(inv_mu_plus_phi);
+      const auto inc_beta_ddz_i
+          = inc_beta_ddz(phi_dbl, n_dbl_p1, p_dbl) * d_dbl / P_i;
+      if constexpr (is_autodiff_v<T_location>) {
+        partials<0>(ops_partials)[i] -= inc_beta_ddz_i * phi_dbl;
+      }
+      if constexpr (is_autodiff_v<T_precision>) {
+        partials<1>(ops_partials)[i]
+            += inc_beta_dda(phi_dbl, n_dbl_p1, p_dbl, digamma_phi_vec[i],
+                            digamma_sum_vec[i])
+                   / P_i
+               + inc_beta_ddz_i * mu_dbl;
+      }
     }
   }
 

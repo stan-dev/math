@@ -71,31 +71,7 @@ inline return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
   scalar_seq_view<T_kappa_ref> kappa_vec(kappa_ref);
-  size_t size_kappa = stan::math::size(kappa);
-  size_t size_mu_kappa = max_size(mu, kappa);
   size_t N = max_size(y, mu, kappa);
-
-  VectorBuilder<is_any_autodiff_v<T_loc, T_prec>, T_partials_return, T_loc,
-                T_prec>
-      digamma_mukappa(size_mu_kappa);
-  VectorBuilder<is_any_autodiff_v<T_loc, T_prec>, T_partials_return, T_loc,
-                T_prec>
-      digamma_kappa_mukappa(size_mu_kappa);
-  VectorBuilder<is_any_autodiff_v<T_loc, T_prec>, T_partials_return, T_prec>
-      digamma_kappa(size_kappa);
-
-  if constexpr (is_any_autodiff_v<T_loc, T_prec>) {
-    for (size_t i = 0; i < size_mu_kappa; i++) {
-      const T_partials_return kappa_dbl = kappa_vec.val(i);
-      const T_partials_return mukappa_dbl = mu_vec.val(i) * kappa_dbl;
-      digamma_mukappa[i] = digamma(mukappa_dbl);
-      digamma_kappa_mukappa[i] = digamma(kappa_dbl - mukappa_dbl);
-    }
-
-    for (size_t i = 0; i < size_kappa; i++) {
-      digamma_kappa[i] = digamma(kappa_vec.val(i));
-    }
-  }
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = y_vec.val(n);
@@ -118,20 +94,18 @@ inline return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(
                                       / betafunc_dbl;
     }
 
-    T_partials_return g1 = 0;
-    T_partials_return g2 = 0;
-
+    // the mu and kappa partials each need both shape partials
     if constexpr (is_any_autodiff_v<T_loc, T_prec>) {
-      grad_reg_inc_beta(g1, g2, mukappa_dbl, kappa_mukappa_dbl, y_dbl,
-                        digamma_mukappa[n], digamma_kappa_mukappa[n],
-                        digamma_kappa[n], betafunc_dbl);
-    }
-    if constexpr (is_autodiff_v<T_loc>) {
-      partials<1>(ops_partials)[n] -= kappa_dbl * (g1 - g2) * inv_Pn;
-    }
-    if constexpr (is_autodiff_v<T_prec>) {
-      partials<2>(ops_partials)[n]
-          -= (g1 * mu_dbl + g2 * (1 - mu_dbl)) * inv_Pn;
+      const auto [g1, g2] = grad_reg_inc_beta<GRAD_RIB::BOTH>(
+          mukappa_dbl, kappa_mukappa_dbl, y_dbl, digamma(mukappa_dbl),
+          digamma(kappa_mukappa_dbl), digamma(kappa_dbl), 0.0);
+      if constexpr (is_autodiff_v<T_loc>) {
+        partials<1>(ops_partials)[n] -= kappa_dbl * (g1 - g2) * inv_Pn;
+      }
+      if constexpr (is_autodiff_v<T_prec>) {
+        partials<2>(ops_partials)[n]
+            -= (g1 * mu_dbl + g2 * (1 - mu_dbl)) * inv_Pn;
+      }
     }
   }
   return ops_partials.build(ccdf_log);
