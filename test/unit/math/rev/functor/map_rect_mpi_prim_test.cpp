@@ -13,12 +13,13 @@
 #include <iostream>
 #include <vector>
 
-STAN_REGISTER_MAP_RECT(0, hard_work)
-STAN_REGISTER_MAP_RECT(1, hard_work)
-STAN_REGISTER_MAP_RECT(2, faulty_functor)
-STAN_REGISTER_MAP_RECT(3, faulty_functor)
+// Keep call IDs unique across the grouped functor executable.
+STAN_REGISTER_MAP_RECT(10, hard_work)
+STAN_REGISTER_MAP_RECT(11, hard_work)
+STAN_REGISTER_MAP_RECT(12, faulty_functor)
+STAN_REGISTER_MAP_RECT(13, faulty_functor)
 
-struct MpiJob : public ::testing::Test {
+struct MpiPrimJob : public ::testing::Test {
   Eigen::VectorXd shared_params_d;
   std::vector<Eigen::VectorXd> job_params_d;
   const std::size_t N = 10;
@@ -64,11 +65,11 @@ struct MpiJobSmallWorld : public ::testing::Test {
   }
 };
 
-TEST_F(MpiJob, hard_work_dd) {
-  Eigen::VectorXd result_mpi = stan::math::map_rect<0, hard_work>(
+TEST_F(MpiPrimJob, hard_work_dd) {
+  Eigen::VectorXd result_mpi = stan::math::map_rect<10, hard_work>(
       shared_params_d, job_params_d, x_r, x_i);
   Eigen::VectorXd result_concurrent
-      = stan::math::internal::map_rect_concurrent<0, hard_work>(
+      = stan::math::internal::map_rect_concurrent<10, hard_work>(
           shared_params_d, job_params_d, x_r, x_i);
 
   EXPECT_EQ(result_mpi.rows(), result_concurrent.rows());
@@ -80,10 +81,10 @@ TEST_F(MpiJob, hard_work_dd) {
 
 // execute fewer jobs than the cluster size
 TEST_F(MpiJobSmallWorld, hard_work_dd) {
-  Eigen::VectorXd result_mpi = stan::math::map_rect<1, hard_work>(
+  Eigen::VectorXd result_mpi = stan::math::map_rect<11, hard_work>(
       shared_params_d, job_params_d, x_r, x_i);
   Eigen::VectorXd result_concurrent
-      = stan::math::internal::map_rect_concurrent<1, hard_work>(
+      = stan::math::internal::map_rect_concurrent<11, hard_work>(
           shared_params_d, job_params_d, x_r, x_i);
 
   EXPECT_EQ(result_mpi.rows(), result_concurrent.rows());
@@ -93,10 +94,10 @@ TEST_F(MpiJobSmallWorld, hard_work_dd) {
   }
 }
 
-TEST_F(MpiJob, always_faulty_functor) {
+TEST_F(MpiPrimJob, always_faulty_functor) {
   Eigen::VectorXd result;
 
-  EXPECT_NO_THROW((result = stan::math::map_rect<2, faulty_functor>(
+  EXPECT_NO_THROW((result = stan::math::map_rect<12, faulty_functor>(
                        shared_params_d, job_params_d, x_r, x_i)));
 
   // faulty functor throws on theta(0) being -1.0
@@ -106,16 +107,16 @@ TEST_F(MpiJob, always_faulty_functor) {
 
   // upon the second evaluation throwing is handled internally
   // different
-  EXPECT_THROW_MSG((result = stan::math::map_rect<2, faulty_functor>(
+  EXPECT_THROW_MSG((result = stan::math::map_rect<12, faulty_functor>(
                         shared_params_d, job_params_d, x_r, x_i)),
                    std::domain_error, "Error during MPI evaluation.");
 
   // throwing on the very first evaluation
-  EXPECT_THROW_MSG((result = stan::math::map_rect<3, faulty_functor>(
+  EXPECT_THROW_MSG((result = stan::math::map_rect<13, faulty_functor>(
                         shared_params_d, job_params_d, x_r, x_i)),
                    std::domain_error, "MPI error on first evaluation.");
   // things don't get better if we repeat
-  EXPECT_THROW_MSG((result = stan::math::map_rect<3, faulty_functor>(
+  EXPECT_THROW_MSG((result = stan::math::map_rect<13, faulty_functor>(
                         shared_params_d, job_params_d, x_r, x_i)),
                    std::domain_error, "MPI error on first evaluation.");
 }
