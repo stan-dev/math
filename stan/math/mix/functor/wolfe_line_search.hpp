@@ -728,7 +728,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
     const bool over_budget = total_updates > opt.max_iterations;
     if (over_budget) {
       // Soft budget: stop evaluating new trial points once exceeded.
-      if (check_armijo(best, prev, opt)) {
+      if (best.alpha() > 0 && check_armijo(best, prev, opt)) {
         update_fun(proposal, curr, prev, best, p);
         curr.update(proposal, best);
         if (check_wolfe(best, prev, opt)) {
@@ -935,8 +935,8 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
     }
   }
   // On failure, use the best point we have found so far that at least satisfies
-  // armijo
-  const bool armijo_ok_best = check_armijo(best, prev, opt);
+  // armijo. best starts at alpha = 0, which satisfies it trivially.
+  const bool armijo_ok_best = best.alpha() > 0 && check_armijo(best, prev, opt);
   if (armijo_ok_best) {
     wolfe_check = update_with_tick(scratch, curr, prev, best, p);
     curr.update(scratch, best);
