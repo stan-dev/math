@@ -31,3 +31,13 @@ TEST_F(AgradRev, ProbDistributionsNegBinomial_derivatives_lcdf) {
                       / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff2, gradients[1]);
 }
+
+TEST_F(AgradRev, ProbDistributionsNegBinomial_lcdf_alpha_lower_tail) {
+  // lower tail: I = 1e-262 and B(a, b) I = 2e-381 underflows; the reference
+  // is (d/da I) / I from mpmath at 80 digits
+  using stan::math::var;
+  var alpha = 313;
+  var lp = stan::math::neg_binomial_lcdf(132, alpha, 0.068);
+  lp.grad();
+  EXPECT_NEAR(-2.402731289220054, alpha.adj(), 1e-12 * 2.402731289220054);
+}
