@@ -199,8 +199,10 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
   // derivatives (controllable by user)
   const auto log_error_derivatives = log(error_bound);
   const T_partials_return absolute_error_hcubature = 0.0;
+  // eps_rel(Integration), at most 0.9e-6: the partials for sw and st0 have
+  // the form f / (sw cdf) - 1 / sw, which magnifies the integration error
   const T_partials_return relative_error_hcubature
-      = .9 * error_bound;  // eps_rel(Integration)
+      = .9 * fmin(error_bound, 1e-6);
   const T_partials_return log_error_absolute = log(1e-12);
   const int maximal_evaluations_hcubature = 6000;
   T_partials_return lccdf = 0.0;
@@ -241,9 +243,10 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
       xmin[0] = -1;
       xmax[0] = 1;
     }
-    if (st0_value != 0) {
-      xmax[dim - 1] = fmin(1.0, (y_value - t0_value) / st0_value);
-    }
+    // The st0 variable runs over [0, 1] also if st0 > y - t0: a trial whose
+    // non-decision time ends after y contributes P to the ccdf
+    // (wiener7_integrate_cdf with Ccdf). The integrand is smooth there, as
+    // the ccdf tends to P with all its derivatives in t.
 
     T_partials_return hcubature_err
         = log_error_absolute - log_error_cdf + LOG_TWO + 1;
@@ -255,12 +258,19 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
     const T_partials_return ccdf
         = internal::wiener7_integrate_cdf<GradientCalc::OFF, GradientCalc::OFF,
                                           GradientCalc::OFF, GradientCalc::OFF,
-                                          GradientCalc::OFF, GradientCalc::OFF>(
+                                          GradientCalc::OFF, GradientCalc::OFF,
+                                          GradientCalc::ON>(
             [&](auto&&... args) { return internal::wiener4_ccdf(args...); },
             hcubature_err, params, dim, xmin, xmax,
             maximal_evaluations_hcubature, absolute_error_hcubature,
             relative_error_hcubature / 2);
     lccdf += log(ccdf);
+    if (!(ccdf > 0)) {
+      // The ccdf underflows: the log ccdf is -inf. The series tolerances of
+      // the gradient integrals below are relative to the ccdf and would have
+      // no lower bound, so skip them.
+      continue;
+    }
 
     hcubature_err = log_error_absolute - log_error_derivatives + log(fabs(ccdf))
                     + LOG_TWO + 1;
@@ -271,6 +281,11 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
     // computation of derivatives and precision checks
     if constexpr (!is_constant_all<T_y>::value
                   || !is_constant_all<T_t0>::value) {
+      // series tolerance of the density relative to the ccdf, which divides
+      // the integral
+      const auto params_t = std::make_tuple(
+          y_value, a_value, v_value, w_value, t0_value, sv_value, sw_value,
+          st0_value, log_error_absolute - LOG_TWO + fmin(0.0, log(ccdf)));
       const T_partials_return deriv_t_7
           = -internal::wiener7_integrate_cdf<
                 GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF,
@@ -278,7 +293,7 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
                 [&](auto&&... args) {
                   return internal::wiener5_density<GradientCalc::ON>(args...);
                 },
-                hcubature_err, params, dim, xmin, xmax,
+                hcubature_err, params_t, dim, xmin, xmax,
                 maximal_evaluations_hcubature, absolute_error_hcubature,
                 relative_error_hcubature / 2)
             / ccdf;
@@ -292,7 +307,10 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
     T_partials_return deriv;
     if constexpr (!is_constant_all<T_a>::value) {
       partials<1>(ops_partials)[i]
-          = internal::wiener7_integrate_cdf(
+          = internal::wiener7_integrate_cdf<
+                GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF,
+                GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON,
+                GradientCalc::ON>(
                 [&](auto&&... args) {
                   return internal::wiener4_ccdf_grad_a(args...);
                 },
@@ -303,8 +321,10 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
     }
     if constexpr (!is_constant_all<T_w>::value) {
       partials<3>(ops_partials)[i]
-          = internal::wiener7_integrate_cdf<GradientCalc::OFF,
-                                            GradientCalc::ON>(
+          = internal::wiener7_integrate_cdf<
+                GradientCalc::OFF, GradientCalc::ON, GradientCalc::OFF,
+                GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON,
+                GradientCalc::ON>(
                 [&](auto&&... args) {
                   return internal::wiener4_ccdf_grad_w(args...);
                 },
@@ -315,7 +335,10 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
     }
     if constexpr (!is_constant_all<T_v>::value) {
       partials<4>(ops_partials)[i]
-          = internal::wiener7_integrate_cdf(
+          = internal::wiener7_integrate_cdf<
+                GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF,
+                GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON,
+                GradientCalc::ON>(
                 [&](auto&&... args) {
                   return internal::wiener4_ccdf_grad_v(args...);
                 },
@@ -330,7 +353,9 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
       } else {
         partials<5>(ops_partials)[i]
             = internal::wiener7_integrate_cdf<
-                  GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON>(
+                  GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON,
+                  GradientCalc::OFF, GradientCalc::OFF, GradientCalc::ON,
+                  GradientCalc::ON>(
                   [&](auto&&... args) {
                     return internal::wiener4_ccdf_grad_v(args...);
                   },
@@ -356,6 +381,7 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
         } else {
           deriv = internal::wiener7_integrate_cdf<
                       GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF,
+                      GradientCalc::ON, GradientCalc::OFF, GradientCalc::ON,
                       GradientCalc::ON>(
                       [&](auto&&... args) {
                         return internal::wiener4_ccdf_grad_w(args...);
@@ -371,9 +397,9 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
     if constexpr (!is_constant_all<T_st0>::value) {
       if (st0_value == 0) {
         partials<7>(ops_partials)[i] = 0.0;
-      } else if (y_value - (t0_value + st0_value) <= 0) {
-        partials<7>(ops_partials)[i] = -1 / st0_value;
       } else {
+        // -1/st0 + ccdf(y - t0 - st0) / (st0 ccdf), also if y - t0 - st0 <= 0,
+        // where the ccdf is P
         const auto t0_st0 = t0_value + st0_value;
         if (sw_value == 0 && sv_value == 0) {
           deriv = internal::estimate_with_err_check<4, 0>(
@@ -389,7 +415,8 @@ inline auto wiener_lccdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
                                 sv_value, sw_value, 0.0, new_error);
           deriv = internal::wiener7_integrate_cdf<
               GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF,
-              GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF>(
+              GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF,
+              GradientCalc::ON>(
               [&](auto&&... args) { return internal::wiener4_ccdf(args...); },
               hcubature_err, params_st, dim_st, xmin, xmax,
               maximal_evaluations_hcubature, absolute_error_hcubature,

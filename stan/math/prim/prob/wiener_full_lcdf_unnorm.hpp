@@ -135,7 +135,8 @@ template <GradientCalc Distribution = GradientCalc::OFF,
           GradientCalc GradSW = GradientCalc::OFF,
           GradientCalc GradT = GradientCalc::OFF,
           GradientCalc Conditionally_cdf = GradientCalc::ON,
-          typename Wiener7FunctorT, typename T_err, typename... TArgs>
+          GradientCalc Ccdf = GradientCalc::OFF, typename Wiener7FunctorT,
+          typename T_err, typename... TArgs>
 inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
                                   T_err&& hcubature_err, TArgs&&... args) {
   const auto functor = [&wiener7_functor](auto&&... integration_args) {
@@ -156,16 +157,27 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
           const auto idx
               = (sv == 0 && sw == 0) ? 0 : (sv != 0 && sw != 0) ? 2 : 1;
           const auto new_t0 = (st0 == 0) ? t0 : t0 + st0 * x_vec[idx];
-          if (y - new_t0 <= 0) {
-            return ret_t(0.0);
-          }
-          const auto dist = GradT ? 0
-                                  : wiener4_distribution<true>(
-                                      y - new_t0, a, new_v, new_w, lerr);
           const auto temp2 = (sv == 0) ? 0
                                        : -0.5 * square(factor) - LOG_SQRT_PI
                                              - 0.5 * LOG_TWO + log1p(temp)
                                              - 2.0 * log1m(temp);
+          // Near x = +-1 the drift new_v is huge and its weight exp(temp2)
+          // is 0; the functors can return NaN there, and 0 * NaN is NaN.
+          if (exp(temp2) == 0) {
+            return ret_t(0.0);
+          }
+          // A trial whose non-decision time ends after y has cdf 0. For the
+          // ccdf (Ccdf), it contributes P, so the ccdf functors are called
+          // with y_diff = 0, where they return P or its derivatives.
+          const bool before_start = y - new_t0 <= 0;
+          if (before_start && (!Ccdf || GradT || Distribution)) {
+            return ret_t(0.0);
+          }
+          const ret_t y_diff = before_start ? ret_t(0.0) : ret_t(y - new_t0);
+          const auto dist = (GradT || before_start)
+                                ? ret_t(0.0)
+                                : ret_t(wiener4_distribution<true>(
+                                    y_diff, a, new_v, new_w, lerr));
           const auto factor_sv = GradSV ? factor : 1;
           const auto factor_sw
               = GradSW ? ((sv == 0) ? (x_vec[0] - 0.5) : (x_vec[1] - 0.5)) : 1;
@@ -174,12 +186,12 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
                     ? dist
                     : GradT
                           ? conditionally_grad_sw_cdf<Conditionally_cdf>(
-                              wiener7_functor, y - new_t0, a, v, new_w, sv, sw,
+                              wiener7_functor, y_diff, a, v, new_w, sv, sw,
                               lerr)
                           : factor_sv * factor_sw
                                 * conditionally_grad_sw_cdf<Conditionally_cdf>(
-                                    wiener7_functor, y - new_t0, a, new_v,
-                                    new_w, dist, sw, lerr);
+                                    wiener7_functor, y_diff, a, new_v, new_w,
+                                    dist, sw, lerr);
           return ret_t(integrand * exp(temp2));
         },
         integration_args...);
@@ -375,8 +387,10 @@ inline auto wiener_lcdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
   // derivatives (controllable by user)
   const auto lerror_bound = log(error_bound);
   const T_partials_return absolute_error_hcubature = 0.0;
+  // eps_rel(Integration), at most 0.9e-6: the partials for sw and st0 have
+  // the form f / (sw cdf) - 1 / sw, which magnifies the integration error
   const T_partials_return relative_error_hcubature
-      = .9 * error_bound;  // eps_rel(Integration)
+      = .9 * fmin(error_bound, 1e-6);
   const T_partials_return log_error_absolute = log(1e-12);
   const int maximal_evaluations_hcubature = 6000;
   T_partials_return lcdf = 0.0;
@@ -439,6 +453,12 @@ inline auto wiener_lcdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
             maximal_evaluations_hcubature, absolute_error_hcubature,
             relative_error_hcubature / 2);
     lcdf += log(cdf);
+    if (!(cdf > 0)) {
+      // The cdf underflows: the log cdf is -inf. The series tolerances of
+      // the gradient integrals below are relative to the cdf and would have
+      // no lower bound, so skip them.
+      continue;
+    }
 
     hcubature_err
         = log_error_absolute - lerror_bound + log(fabs(cdf)) + LOG_TWO + 1;
@@ -448,6 +468,11 @@ inline auto wiener_lcdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
 
     if constexpr (!is_constant_all<T_y>::value
                   || !is_constant_all<T_t0>::value) {
+      // series tolerance of the density relative to the cdf, which divides
+      // the integral
+      const auto params_t = std::make_tuple(
+          y_value, a_value, v_value, w_value, t0_value, sv_value, sw_value,
+          st0_value, log_error_absolute - LOG_TWO + fmin(0.0, log(cdf)));
       T_partials_return deriv_t_7
           = internal::wiener7_integrate_cdf<
                 GradientCalc::OFF, GradientCalc::OFF, GradientCalc::OFF,
@@ -455,7 +480,7 @@ inline auto wiener_lcdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
                 [&](auto&&... args) {
                   return internal::wiener5_density<GradientCalc::ON>(args...);
                 },
-                hcubature_err, params, dim, xmin, xmax,
+                hcubature_err, params_t, dim, xmin, xmax,
                 maximal_evaluations_hcubature, absolute_error_hcubature,
                 relative_error_hcubature / 2)
             / cdf;
