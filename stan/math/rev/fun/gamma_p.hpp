@@ -19,10 +19,6 @@ class gamma_p_vv_vari : public op_vv_vari {
   gamma_p_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(gamma_p(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
-    using std::exp;
-    using std::fabs;
-    using std::log;
-
     if (is_inf(avi_->val_)) {
       avi_->adj_ = NOT_A_NUMBER;
       bvi_->adj_ = NOT_A_NUMBER;
@@ -31,12 +27,6 @@ class gamma_p_vv_vari : public op_vv_vari {
     if (is_inf(bvi_->val_)) {
       avi_->adj_ = NOT_A_NUMBER;
       bvi_->adj_ = NOT_A_NUMBER;
-      return;
-    }
-
-    // return zero derivative as gamma_p is flat
-    // to machine precision for b / a > 10
-    if (std::fabs(bvi_->val_ / avi_->val_) > 10) {
       return;
     }
 
@@ -62,12 +52,6 @@ class gamma_p_vd_vari : public op_vd_vari {
       return;
     }
 
-    // return zero derivative as gamma_p is flat
-    // to machine precision for b / a > 10
-    if (std::fabs(bd_ / avi_->val_) > 10) {
-      return;
-    }
-
     avi_->adj_ += adj_ * grad_reg_lower_inc_gamma(avi_->val_, bd_);
   }
 };
@@ -83,12 +67,6 @@ class gamma_p_dv_vari : public op_dv_vari {
     }
     if (is_inf(bvi_->val_)) {
       bvi_->adj_ = NOT_A_NUMBER;
-      return;
-    }
-
-    // return zero derivative as gamma_p is flat to
-    // machine precision for b / a > 10
-    if (std::fabs(bvi_->val_ / ad_) > 10) {
       return;
     }
 

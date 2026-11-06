@@ -4,17 +4,14 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/gamma_q.hpp>
-#include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
-#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log_gamma_q_dgamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
-#include <stan/math/prim/fun/tgamma.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
@@ -22,33 +19,31 @@ namespace stan {
 namespace math {
 
 /** \ingroup prob_dists
- * Returns the inverse chi square log cumulative distribution function for
- * the given variate and degrees of freedom. If given containers of
- * matching sizes, returns the log sum of probabilities.
+ * The log cumulative distribution function of the inverse chi-square
+ * distribution.
+ * It is computed from the log of the regularized upper
+ * incomplete gamma function, so it stays finite where the probability
+ * underflows.
  *
- * @tparam T_y type of scalar parameter
- * @tparam T_dof type of degrees of freedom parameter
- * @param y scalar parameter
+ * @tparam T_y type of y
+ * @tparam T_dof type of nu
+ * @param y random variable
  * @param nu degrees of freedom parameter
- * @return log probability or log sum of probabilities
- * @throw std::domain_error if y is negative or nu is nonpositive
+ * @return log probability, or sum of log probabilities for containers
+ * @throw std::domain_error if a parameter is out of its support
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_dof>
 inline return_type_t<T_y, T_dof> inv_chi_square_lcdf(const T_y& y,
                                                      const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
-  using std::exp;
-  using std::log;
-  using std::pow;
   using T_y_ref = ref_type_t<T_y>;
-  using T_nu_ref = ref_type_t<T_dof>;
+  using T_dof_ref = ref_type_t<T_dof>;
   static constexpr const char* function = "inv_chi_square_lcdf";
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu);
-
   T_y_ref y_ref = y;
-  T_nu_ref nu_ref = nu;
+  T_dof_ref nu_ref = nu;
   check_positive_finite(function, "Degrees of freedom parameter", nu_ref);
   check_nonnegative(function, "Random variable", y_ref);
 
@@ -56,64 +51,44 @@ inline return_type_t<T_y, T_dof> inv_chi_square_lcdf(const T_y& y,
     return 0;
   }
 
-  T_partials_return P(0.0);
+  T_partials_return log_P(0.0);
   auto ops_partials = make_partials_propagator(y_ref, nu_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
-  scalar_seq_view<T_nu_ref> nu_vec(nu_ref);
-  size_t N = max_size(y, nu);
+  scalar_seq_view<T_dof_ref> nu_vec(nu_ref);
+  const size_t N = max_size(y, nu);
 
-  // Explicit return for extreme values
-  // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (y_vec.val(i) == 0) {
+  // An element with probability 0 (z = inf) makes the
+  // result -inf; the gradients are treated as zero
+  for (size_t n = 0; n < N; n++) {
+    const double y_rec = value_of_rec(y_vec.val(n));
+    if (0.5 / y_rec == INFTY) {
       return ops_partials.build(negative_infinity());
     }
   }
 
-  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof> gamma_vec(
-      math::size(nu));
-  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof> digamma_vec(
-      math::size(nu));
-
-  if constexpr (is_autodiff_v<T_dof>) {
-    for (size_t i = 0; i < stan::math::size(nu); i++) {
-      const T_partials_return nu_dbl = nu_vec.val(i);
-      gamma_vec[i] = tgamma(0.5 * nu_dbl);
-      digamma_vec[i] = digamma(0.5 * nu_dbl);
-    }
-  }
-
+  constexpr bool need_d_a = is_autodiff_v<T_dof>;
+  constexpr bool need_d_z = is_autodiff_v<T_y>;
   for (size_t n = 0; n < N; n++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
-    if (y_vec.val(n) == INFTY) {
+    const T_partials_return y_val = y_vec.val(n);
+    const T_partials_return nu_val = nu_vec.val(n);
+    const T_partials_return z = 0.5 / y_val;
+    const double z_rec = value_of_rec(z);
+    // An element with probability 1 contributes nothing
+    if (z_rec == 0) {
       continue;
     }
-
-    const T_partials_return y_dbl = y_vec.val(n);
-    const T_partials_return y_inv_dbl = 1.0 / y_dbl;
-    const T_partials_return nu_dbl = nu_vec.val(n);
-
-    const T_partials_return Pn = gamma_q(0.5 * nu_dbl, 0.5 * y_inv_dbl);
-
-    P += log(Pn);
-
+    const auto tail
+        = internal::log_gamma_tail<true, need_d_a, need_d_z>(0.5 * nu_val, z);
+    log_P += tail.log_prob;
     if constexpr (is_autodiff_v<T_y>) {
-      partials<0>(ops_partials)[n] += 0.5 * y_inv_dbl * y_inv_dbl
-                                      * exp(-0.5 * y_inv_dbl)
-                                      * pow(0.5 * y_inv_dbl, 0.5 * nu_dbl - 1)
-                                      / tgamma(0.5 * nu_dbl) / Pn;
+      partials<0>(ops_partials)[n] += -z / y_val * tail.d_z;
     }
     if constexpr (is_autodiff_v<T_dof>) {
-      partials<1>(ops_partials)[n]
-          += 0.5
-             * grad_reg_inc_gamma(0.5 * nu_dbl, 0.5 * y_inv_dbl, gamma_vec[n],
-                                  digamma_vec[n])
-             / Pn;
+      partials<1>(ops_partials)[n] += 0.5 * tail.d_a;
     }
   }
-  return ops_partials.build(P);
+  return ops_partials.build(log_P);
 }
 
 }  // namespace math

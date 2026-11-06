@@ -3,20 +3,17 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/gamma_q.hpp>
-#include <stan/math/prim/fun/lgamma.hpp>
-#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log_gamma_q_dgamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/promote_scalar.hpp>
-#include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 #include <limits>
@@ -24,6 +21,20 @@
 namespace stan {
 namespace math {
 
+/** \ingroup prob_dists
+ * The log cumulative distribution function of the Poisson distribution,
+ * log Q(n + 1, lambda) with the regularized upper incomplete gamma
+ * function Q. It is computed in log space, so it stays finite where the
+ * probability underflows.
+ *
+ * @tparam T_n type of n
+ * @tparam T_rate type of lambda
+ * @param n random variable
+ * @param lambda rate parameter
+ * @return log probability, or sum of log probabilities for containers
+ * @throw std::domain_error if lambda is negative
+ * @throw std::invalid_argument if container sizes mismatch
+ */
 template <typename T_n, typename T_rate>
 inline return_type_t<T_rate> poisson_lcdf(const T_n& n, const T_rate& lambda) {
   using T_partials_return = partials_return_t<T_n, T_rate>;
@@ -52,16 +63,35 @@ inline return_type_t<T_rate> poisson_lcdf(const T_n& n, const T_rate& lambda) {
     return ops_partials.build(negative_infinity());
   }
 
-  const auto& log_Pi
-      = to_ref_if<is_autodiff_v<T_rate>>(log(gamma_q(n_val + 1.0, lambda_val)));
-  T_partials_return P = sum(log_Pi);
+  scalar_seq_view<T_n_ref> n_vec(n_ref);
+  scalar_seq_view<T_lambda_ref> lambda_vec(lambda_ref);
+  const size_t N = max_size(n, lambda);
 
-  if constexpr (is_autodiff_v<T_rate>) {
-    partials<0>(ops_partials) = -exp(n_val * log(lambda_val) - lambda_val
-                                     - lgamma(n_val + 1.0) - log_Pi);
+  // An element with probability 0 (lambda = inf) makes the result -inf;
+  // the gradients are treated as zero
+  for (size_t i = 0; i < N; i++) {
+    if (value_of_rec(lambda_vec.val(i)) == INFTY) {
+      return ops_partials.build(negative_infinity());
+    }
   }
 
-  return ops_partials.build(P);
+  T_partials_return log_P(0.0);
+  for (size_t i = 0; i < N; i++) {
+    // An element with probability 1 (n = INT_MAX, which stands for an
+    // infinite count) contributes nothing
+    if (n_vec.val(i) == std::numeric_limits<int>::max()) {
+      continue;
+    }
+    const T_partials_return lambda_dbl = lambda_vec.val(i);
+    const auto tail
+        = internal::log_gamma_tail<true, false, is_autodiff_v<T_rate>>(
+            n_vec.val(i) + 1.0, lambda_dbl);
+    log_P += tail.log_prob;
+    if constexpr (is_autodiff_v<T_rate>) {
+      partials<0>(ops_partials)[i] += tail.d_z;
+    }
+  }
+  return ops_partials.build(log_P);
 }
 
 }  // namespace math
