@@ -4,13 +4,44 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/constraint/cholesky_corr_constrain.hpp>
 #include <stan/math/prim/constraint/corr_constrain.hpp>
+#include <stan/math/prim/fun/dot_product.hpp>
+#include <stan/math/prim/fun/log_cosh.hpp>
+#include <stan/math/prim/fun/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/prim/fun/read_corr_matrix.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stdexcept>
 
 namespace stan {
 namespace math {
+
+namespace internal {
+/**
+ * Return the coefficients `c` for which the log absolute Jacobian
+ * determinant of `corr_matrix_constrain(x, K)` is
+ * `-sum_n c_n log(cosh(x_n))`.
+ *
+ * The transform is `tanh` to canonical partial correlations, with
+ * `log(1 - tanh(x)^2) = -2 log(cosh(x))`, then `read_corr_matrix`, whose
+ * log Jacobian is `(K - j - 2) / 2 log(1 - z^2)` for a partial correlation
+ * `z` of column `j` (equation 11 of Lewandowski, Kurowicka and Joe, 2009).
+ * Column `j` holds `K - 1 - j` values, each with the coefficient
+ * `2 + (K - j - 2) = K - j`.
+ *
+ * @param K number of rows of the correlation matrix
+ * @return coefficients in the order of the unconstrained vector
+ */
+inline Eigen::VectorXd corr_matrix_log_jacobian_coefficients(Eigen::Index K) {
+  Eigen::VectorXd c((K * (K - 1)) / 2);
+  Eigen::Index pos = 0;
+  for (Eigen::Index j = 0; j < K - 1; ++j) {
+    c.segment(pos, K - 1 - j).setConstant(K - j);
+    pos += K - 1 - j;
+  }
+  return c;
+}
+}  // namespace internal
 
 /**
  * Return the correlation matrix of the specified dimensionality
@@ -44,9 +75,11 @@ corr_matrix_constrain(T&& x, Eigen::Index k) {
   decltype(auto) x_ref = to_ref(std::forward<T>(x));
   check_size_match("cov_matrix_constrain", "x.size()", x_ref.size(),
                    "k_choose_2", k_choose_2);
-  decltype(auto) cpc_ref
-      = to_ref(corr_constrain(std::forward<decltype(x_ref)>(x_ref)));
-  return read_corr_matrix(cpc_ref, k);
+  if (k == 0) {
+    return {};
+  }
+  return multiply_lower_tri_self_transpose(
+      internal::cholesky_corr_factor<true>(x_ref, k));
 }
 
 /**
@@ -79,9 +112,13 @@ corr_matrix_constrain(T&& x, Eigen::Index k, Lp& lp) {
   decltype(auto) x_ref = to_ref(std::forward<T>(x));
   check_size_match("cov_matrix_constrain", "x.size()", x_ref.size(),
                    "k_choose_2", k_choose_2);
-  decltype(auto) cpc_ref
-      = to_ref(corr_constrain(std::forward<decltype(x_ref)>(x_ref), lp));
-  return read_corr_matrix(cpc_ref, k, lp);
+  if (k == 0) {
+    return {};
+  }
+  lp -= dot_product(internal::corr_matrix_log_jacobian_coefficients(k),
+                    log_cosh(x_ref));
+  return multiply_lower_tri_self_transpose(
+      internal::cholesky_corr_factor<true>(x_ref, k));
 }
 
 /**
