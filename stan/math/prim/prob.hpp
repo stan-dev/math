@@ -17,6 +17,7 @@
 #include <stan/math/prim/prob/beta_binomial_cdf_log.hpp>
 #include <stan/math/prim/prob/beta_binomial_lccdf.hpp>
 #include <stan/math/prim/prob/beta_binomial_lcdf.hpp>
+#include <stan/math/prim/prob/beta_binomial_log_cdfs.hpp>
 #include <stan/math/prim/prob/beta_binomial_lpmf.hpp>
 #include <stan/math/prim/prob/beta_binomial_rng.hpp>
 #include <stan/math/prim/prob/beta_ccdf_log.hpp>
