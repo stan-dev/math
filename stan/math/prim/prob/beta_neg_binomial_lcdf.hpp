@@ -4,18 +4,13 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/digamma_diff.hpp>
-#include <stan/math/prim/fun/log_rising_factorial_ratio.hpp>
-#include <stan/math/prim/fun/hypergeometric_3F2.hpp>
-#include <stan/math/prim/fun/grad_F32.hpp>
-#include <stan/math/prim/fun/lbeta.hpp>
-#include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
-#include <cmath>
+#include <stan/math/prim/prob/beta_neg_binomial_log_cdfs.hpp>
+#include <limits>
 
 namespace stan {
 namespace math {
@@ -24,6 +19,9 @@ namespace math {
  * Returns the log CDF of the Beta-Negative Binomial distribution with given
  * number of successes, prior success, and prior failure parameters.
  * Given containers of matching sizes, returns the log sum of probabilities.
+ *
+ * The lower or the upper tail is summed directly, and the other one is its
+ * complement; see internal::beta_neg_binomial_log_cdfs().
  *
  * @tparam T_n type of failure parameter
  * @tparam T_r type of number of successes parameter
@@ -34,10 +32,12 @@ namespace math {
  * @param r Number of successes parameter
  * @param alpha prior success parameter
  * @param beta prior failure parameter
- * @param precision precision for `grad_F32`, default \f$10^{-8}\f$
- * @param max_steps max iteration allowed for `grad_F32`, default \f$10^{8}\f$
+ * @param precision not used; the sums stop when their remaining terms are
+ *   below 1e-17 of the partial sums
+ * @param max_steps largest number of terms of a sum, default \f$10^{8}\f$
  * @return log probability or log sum of probabilities
- * @throw std::domain_error if r, alpha, or beta fails to be positive
+ * @throw std::domain_error if r, alpha, or beta fails to be positive, or if
+ *   a sum needs more than max_steps terms
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_n, typename T_r, typename T_alpha, typename T_beta>
@@ -78,67 +78,27 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_lcdf(
   }
 
   using T_partials_return = partials_return_t<T_n, T_r, T_alpha, T_beta>;
+  constexpr bool any_autodiff = is_any_autodiff_v<T_r, T_alpha, T_beta>;
   T_partials_return log_cdf(0.0);
   auto ops_partials = make_partials_propagator(r_ref, alpha_ref, beta_ref);
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    // Explicit return for extreme values
-    // The gradients are technically ill-defined, but treated as zero
+    // The largest int stands for infinity: its term is log(1) = 0
     if (n_vec.val(i) == std::numeric_limits<int>::max()) {
-      return 0.0;
+      continue;
     }
-    auto n_dbl = n_vec.val(i);
-    auto r_dbl = r_vec.val(i);
-    auto alpha_dbl = alpha_vec.val(i);
-    auto beta_dbl = beta_vec.val(i);
-    auto b_plus_n = beta_dbl + n_dbl;
-    auto r_plus_n = r_dbl + n_dbl;
-    auto a_plus_r = alpha_dbl + r_dbl;
-    using a_t = return_type_t<decltype(b_plus_n), decltype(r_plus_n)>;
-    using b_t = return_type_t<decltype(n_dbl), decltype(a_plus_r),
-                              decltype(b_plus_n)>;
-    auto F = hypergeometric_3F2(
-        std::initializer_list<a_t>{1.0, b_plus_n + 1.0, r_plus_n + 1.0},
-        std::initializer_list<b_t>{n_dbl + 2.0, a_plus_r + b_plus_n + 1.0},
-        1.0);
-    // C is the log pmf at n + 1; formed from lgamma and lbeta directly it
-    // cancels for large parameters
-    const T_partials_return k = n_dbl + 1.0;
-    const T_partials_return C = internal::beta_neg_binomial_log_pmf(
-        k, T_partials_return(r_dbl), T_partials_return(alpha_dbl),
-        T_partials_return(beta_dbl));
-    auto ccdf = stan::math::exp(C) * F;
-    log_cdf += log1m(ccdf);
-
-    if constexpr (is_any_autodiff_v<T_r, T_alpha, T_beta>) {
-      auto chain_rule_term = -ccdf / (1.0 - ccdf);
-      T_partials_return dF[6];
-      grad_F32<false, is_autodiff_v<T_beta>, is_autodiff_v<T_r>, false, true,
-               false>(dF, 1.0, b_plus_n + 1.0, r_plus_n + 1.0, n_dbl + 2.0,
-                      a_plus_r + b_plus_n + 1.0, 1.0, precision, max_steps);
-      // the partials of C as differences digamma(x + d) - digamma(x)
-      const T_partials_return alpha_plus_beta = alpha_dbl + beta_dbl;
-      const T_partials_return dpsi_r_plus_ab_k
-          = digamma_diff(r_dbl + alpha_plus_beta, k);
-      if constexpr (is_autodiff_v<T_r>) {
-        auto partial_lccdf = digamma_diff(r_dbl, k) - dpsi_r_plus_ab_k
-                             - digamma_diff(a_plus_r, beta_dbl)
-                             + (dF[2] + dF[4]) / F;
-        partials<0>(ops_partials)[i] += partial_lccdf * chain_rule_term;
-      }
-      if constexpr (is_any_autodiff_v<T_alpha, T_beta>) {
-        const T_partials_return dpsi_ab_r
-            = digamma_diff(alpha_plus_beta, r_dbl);
-        if constexpr (is_autodiff_v<T_alpha>) {
-          auto partial_lccdf = digamma_diff(alpha_dbl, r_dbl) - dpsi_ab_r
-                               - dpsi_r_plus_ab_k + dF[4] / F;
-          partials<1>(ops_partials)[i] += partial_lccdf * chain_rule_term;
-        }
-        if constexpr (is_autodiff_v<T_beta>) {
-          auto partial_lccdf = digamma_diff(beta_dbl, k) - dpsi_r_plus_ab_k
-                               - dpsi_ab_r + (dF[1] + dF[4]) / F;
-          partials<2>(ops_partials)[i] += partial_lccdf * chain_rule_term;
-        }
-      }
+    const auto res = internal::beta_neg_binomial_log_cdfs<any_autodiff>(
+        n_vec.val(i), T_partials_return(r_vec.val(i)),
+        T_partials_return(alpha_vec.val(i)), T_partials_return(beta_vec.val(i)),
+        max_steps, function);
+    log_cdf += res.lcdf;
+    if constexpr (is_autodiff_v<T_r>) {
+      partials<0>(ops_partials)[i] += res.dlcdf[0];
+    }
+    if constexpr (is_autodiff_v<T_alpha>) {
+      partials<1>(ops_partials)[i] += res.dlcdf[1];
+    }
+    if constexpr (is_autodiff_v<T_beta>) {
+      partials<2>(ops_partials)[i] += res.dlcdf[2];
     }
   }
 

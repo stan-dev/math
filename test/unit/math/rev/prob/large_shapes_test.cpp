@@ -44,8 +44,7 @@ struct TestCase {
 // (value, gradient) tolerance factors, applied as tol * max(1, |reference|),
 // or as tol * |reference| for the tags of relative_tolerance()
 std::pair<double, double> tolerances(const std::string& tag) {
-  if (tag == "BBC" || tag == "BBLC" || tag == "BBLCC" || tag == "BNBC"
-      || tag == "BNBLCC") {
+  if (tag == "BBC" || tag == "BBLC" || tag == "BBLCC") {
     return {1e-6, 1e-4};
   }
   return {1e-12, 1e-11};
