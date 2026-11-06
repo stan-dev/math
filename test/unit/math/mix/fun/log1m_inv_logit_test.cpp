@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/fun/inv_logit_tail_refs.hpp>
 
 TEST(mathMixMatFun, log1mInvLogit) {
   auto f = [](const auto& x1) { return stan::math::log1m_inv_logit(x1); };
@@ -24,4 +25,12 @@ TEST(mathMixMatFun, log1minvlogit_varmat) {
     A(i) = all_args[i];
   }
   expect_ad_vector_matvar(f, A);
+}
+
+TEST(mathMixMatFun, log1mInvLogitFwdDerivativeTails) {
+  using inv_logit_tail_refs::ref;
+  // d/dx = -inv_logit(x), d^2/dx^2 = -inv_logit'(x)
+  inv_logit_tail_refs::expect_fwd_derivatives(
+      [](const auto& x) { return stan::math::log1m_inv_logit(x); },
+      [](const ref& r) { return -r.s; }, [](const ref& r) { return -r.d1; });
 }

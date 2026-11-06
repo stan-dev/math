@@ -101,6 +101,7 @@
 
 #include <stan/math/opencl/prim_constraint.hpp>
 
+#include <stan/math/opencl/prim/Phi_approx.hpp>
 #include <stan/math/opencl/prim/add_diag.hpp>
 #include <stan/math/opencl/prim/append_array.hpp>
 #include <stan/math/opencl/prim/bernoulli_cdf.hpp>

@@ -18,8 +18,9 @@ namespace math {
  */
 template <typename T, require_fvar_t<T>* = nullptr>
 inline auto inv_logit(T&& x) {
-  return std::decay_t<T>(inv_logit(x.val_),
-                         x.d_ * inv_logit(x.val_) * (1 - inv_logit(x.val_)));
+  const auto val = inv_logit(x.val_);
+  // inv_logit(-x) rather than 1 - inv_logit(x), which cancels for x >> 0
+  return std::decay_t<T>(val, x.d_ * val * inv_logit(-x.val_));
 }
 
 }  // namespace math
