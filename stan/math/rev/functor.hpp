@@ -4,6 +4,7 @@
 #include <stan/math/rev/functor/algebra_solver_fp.hpp>
 #include <stan/math/rev/functor/solve_powell.hpp>
 #include <stan/math/rev/functor/solve_newton.hpp>
+#include <stan/math/rev/functor/solve_itp.hpp>
 #include <stan/math/rev/functor/algebra_system.hpp>
 #include <stan/math/rev/functor/apply_scalar_unary.hpp>
 #include <stan/math/rev/functor/apply_scalar_binary.hpp>

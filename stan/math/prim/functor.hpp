@@ -37,6 +37,7 @@
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/functor/reduce_sum.hpp>
 #include <stan/math/prim/functor/reduce_sum_static.hpp>
+#include <stan/math/prim/functor/solve_itp.hpp>
 #include <stan/math/prim/functor/tuple_concat.hpp>
 
 #endif
