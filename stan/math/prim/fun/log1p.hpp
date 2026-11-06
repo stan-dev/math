@@ -5,7 +5,9 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -79,9 +81,41 @@ struct log1p_fun {
 template <typename T,
           require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
           require_container_t<T>* = nullptr,
+          require_not_container_st<std::is_floating_point, T>* = nullptr,
           require_not_var_matrix_t<T>* = nullptr>
 inline auto log1p(T&& x) {
   return apply_scalar_unary<log1p_fun, T>::apply(std::forward<T>(x));
+}
+
+/**
+ * Version of `log1p()` for containers of floating point values that uses
+ * Eigen's vectorized `log1p`. As in the scalar version, NaN passes through
+ * and any value below -1 throws.
+ *
+ * @tparam T type of container
+ * @param x container
+ * @return Elementwise log1p of members of container.
+ * @throw std::domain_error If any value is less than -1.
+ */
+template <typename T,
+          require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
+          require_container_st<std::is_floating_point, T>* = nullptr>
+inline auto log1p(T&& x) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& v) {
+    return make_holder(
+        [](const auto& v_ref) {
+          // Not check_greater_or_equal on the container: it rejects NaN.
+          if ((v_ref.array() < -1.0).any()) {
+            for (Eigen::Index i = 0; i < v_ref.size(); ++i) {
+              if (v_ref.coeff(i) < -1.0) {
+                check_greater_or_equal("log1p", "x", v_ref.coeff(i), -1.0);
+              }
+            }
+          }
+          return v_ref.array().log1p();
+        },
+        to_ref(std::forward<decltype(v)>(v)));
+  });
 }
 
 }  // namespace math

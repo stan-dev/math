@@ -86,6 +86,7 @@
 #include <stan/math/prim/prob/exp_mod_normal_ccdf_log.hpp>
 #include <stan/math/prim/prob/exp_mod_normal_cdf.hpp>
 #include <stan/math/prim/prob/exp_mod_normal_cdf_log.hpp>
+#include <stan/math/prim/prob/exp_mod_normal_check_args.hpp>
 #include <stan/math/prim/prob/exp_mod_normal_lccdf.hpp>
 #include <stan/math/prim/prob/exp_mod_normal_lcdf.hpp>
 #include <stan/math/prim/prob/exp_mod_normal_lpdf.hpp>

@@ -17,8 +17,12 @@ namespace math {
  **/
 template <typename T,
           require_same_t<std::decay_t<T>, plain_type_t<T>>* = nullptr>
-inline T eval(T&& arg) {
-  return std::forward<T>(arg);
+inline decltype(auto) eval(T&& arg) {
+  if constexpr (std::is_rvalue_reference_v<T&&>) {
+    return T(std::forward<T>(arg));
+  } else {
+    return std::forward<T>(arg);
+  }
 }
 
 /**
@@ -31,8 +35,8 @@ inline T eval(T&& arg) {
  **/
 template <typename T,
           require_not_same_t<std::decay_t<T>, plain_type_t<T>>* = nullptr>
-inline decltype(auto) eval(const T& arg) {
-  return arg.eval();
+inline decltype(auto) eval(T&& arg) {
+  return std::forward<T>(arg).eval();
 }
 
 }  // namespace math

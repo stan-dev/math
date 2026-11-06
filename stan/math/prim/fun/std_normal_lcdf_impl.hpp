@@ -1,0 +1,314 @@
+#ifndef STAN_MATH_PRIM_FUN_STD_NORMAL_LCDF_IMPL_HPP
+#define STAN_MATH_PRIM_FUN_STD_NORMAL_LCDF_IMPL_HPP
+
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err/check_not_nan.hpp>
+#include <stan/math/prim/fun/Phi.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/erfcx.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <cmath>
+#include <type_traits>
+#include <utility>
+
+namespace stan {
+namespace math {
+namespace internal {
+
+// The erfcx pieces (Cody 1969 rationals and the small-argument polynomial)
+// come from erfcx.hpp.
+
+/** Tail factor in inv_x_sq = 1/x^2:
+ * erfcx(x) = (1 + inv_x_sq * correction) / (sqrt(pi) x).
+ */
+template <typename T>
+inline auto std_normal_tail_correction(const T& inv_x_sq) {
+  // The arrays ascend in 1/x^2; reversed, they are Horner order.
+  const auto pq = erfcx_tail_polynomials<erfcx_tail_p.size()>(
+      erfcx_tail_p.crbegin(), erfcx_tail_q.crbegin(), inv_x_sq);
+  return (pq.first / pq.second) * SQRT_PI;
+}
+
+/** Scalar log Phi(z) and its slope phi(z) / Phi(z).
+ * For z < 0.46875 sqrt(2) both come from erfcx with no exp; larger z needs
+ * one exp for the complement. Infinite z gives -inf/0 values and inf/0
+ * slopes.
+ * For autodiff types the lower tail keeps log1p, inv_x_sq = 2 (1/neg_z)^2 and
+ * neg_z / (1 + tail_term) so nested autodiff neither overflows nor loses the
+ * 2 / neg_z^3 third derivative; doubles take the z < 0 branch there, with one
+ * log and no log1p. The z > 40 return keeps derivatives finite when x^2
+ * overflows.
+ */
+template <bool calc_grad, typename T, require_stan_scalar_t<T>* = nullptr>
+inline auto std_normal_lcdf_value_grad(const T& z_in) {
+  using T_return = return_type_t<T>;
+  const auto z = z_in;
+  if (z > 8.5) {
+    if (z > 40) {
+      if constexpr (calc_grad) {
+        return std::pair<T_return, T_return>{0, 0};
+      } else {
+        return T_return(0);
+      }
+    }
+    // Past z = 8.3, tail < 2^-54, so log1p(-tail) == -tail and 1 - tail == 1
+    // exactly; 8.5 leaves a margin. Nesting the z > 40 check here keeps
+    // smaller z to one comparison.
+    const auto pq = erfcx_cody_tail_fraction(z * INV_SQRT_TWO);
+    const auto density = exp(-(0.5 * z) * z);
+    const auto tail = 0.5 * density * (pq.first / pq.second);
+    if constexpr (calc_grad) {
+      return std::pair<T_return, T_return>{-tail, INV_SQRT_TWO_PI * density};
+    } else {
+      return T_return(-tail);
+    }
+  }
+  if constexpr (!std::is_arithmetic_v<T>) {
+    if (z <= -4 * SQRT_TWO) {
+      const auto neg_z = -z;
+      const auto inv_x_sq = 2 * square(inv(neg_z));
+      const auto tail_term = inv_x_sq * std_normal_tail_correction(inv_x_sq);
+      const auto value
+          = -(0.5 * z) * z - HALF_LOG_TWO_PI - log(neg_z) + log1p(tail_term);
+      if constexpr (calc_grad) {
+        return std::pair<T_return, T_return>{value, neg_z / (1.0 + tail_term)};
+      } else {
+        return T_return(value);
+      }
+    }
+  }
+  // Not abs(z) for autodiff types: its tangent is 0 at z == 0, which the
+  // slope needs. For doubles fabs avoids a branch on the sign of z, which
+  // mispredicts when the signs are mixed.
+  T x;
+  if constexpr (std::is_arithmetic_v<T>) {
+    x = std::fabs(z) * INV_SQRT_TWO;
+  } else {
+    x = (z < 0 ? -z : z) * INV_SQRT_TWO;
+  }
+  if (x < 0.46875) {
+    // Phi(z) = exp(-z^2 / 2) erfcx(-z / sqrt(2)) / 2 for either sign.
+    const auto erfcx_neg = erfcx_small(-z * INV_SQRT_TWO);
+    const auto value = LOG_HALF - (0.5 * z) * z + log(erfcx_neg);
+    if constexpr (calc_grad) {
+      return std::pair<T_return, T_return>{value,
+                                           SQRT_TWO_OVER_SQRT_PI / erfcx_neg};
+    } else {
+      return T_return(value);
+    }
+  }
+  // The slope divides by the denominator over the numerator rather than by
+  // erfcx_x, so its division does not wait on the one forming erfcx_x.
+  const auto erfcx_pq
+      = x >= 4 ? erfcx_cody_tail_fraction(x) : erfcx_cody_middle_fraction(x);
+  const auto erfcx_x = erfcx_pq.first / erfcx_pq.second;
+  if (z < 0) {
+    const auto value = -(0.5 * z) * z + LOG_HALF + log(erfcx_x);
+    if constexpr (calc_grad) {
+      return std::pair<T_return, T_return>{
+          value, SQRT_TWO_OVER_SQRT_PI * erfcx_pq.second / erfcx_pq.first};
+    } else {
+      return T_return(value);
+    }
+  }
+  const auto density = exp(-(0.5 * z) * z);
+  const auto tail = 0.5 * density * erfcx_x;
+  // Not log1m(tail): its domain check costs ~3 ns per element here.
+  const auto value = log1p(-tail);
+  if constexpr (calc_grad) {
+    return std::pair<T_return, T_return>{
+        value, INV_SQRT_TWO_PI * density / (1.0 - tail)};
+  } else {
+    return T_return(value);
+  }
+}
+
+/**
+ * Elementwise values and slopes; only the values when the gradient is off.
+ * One pass over values, which holds z on entry and log Phi(z) on return.
+ */
+template <bool calc_grad, typename T, require_eigen_t<T>* = nullptr>
+inline auto std_normal_lcdf_value_grad(T&& z) {
+  using T_return = return_type_t<scalar_type_t<T>>;
+  using Array = Eigen::Array<T_return, Eigen::Dynamic, 1>;
+  Array values(std::forward<T>(z));
+  const Eigen::Index N = values.size();
+  // coeff and coeffRef: i is in range, and operator[]'s range assert costs
+  // about 20 instructions per element.
+  if constexpr (calc_grad) {
+    Array slopes(N);
+    for (Eigen::Index i = 0; i < N; ++i) {
+      auto [value, grad] = std_normal_lcdf_value_grad<true>(values.coeff(i));
+      values.coeffRef(i) = value;
+      slopes.coeffRef(i) = grad;
+    }
+    return std::make_pair(std::move(values), std::move(slopes));
+  } else {
+    for (Eigen::Index i = 0; i < N; ++i) {
+      values.coeffRef(i) = std_normal_lcdf_value_grad<false>(values.coeff(i));
+    }
+    return values;
+  }
+}
+
+/** Scalar Phi(z) and the ratio phi(z) / Phi(z), without a log and without
+ * the C-library erf and erfc. With u = z / sqrt(2) and
+ * g = exp(-z^2 / 2) / 2:
+ * - |u| < 0.46875: Phi = (1 + erf(u)) / 2, ratio = sqrt(2 / pi) / erfcx(-u);
+ * - z < 0: Phi = g erfcx(-u), ratio = sqrt(2 / pi) / erfcx(-u);
+ * - z > 0: Phi = 1 - g erfcx(u) (no cancellation, Phi >= 1/2),
+ *   ratio = sqrt(2 / pi) g / Phi.
+ * The values equal those of Phi(double). At z = -infinity erfcx(-u) is 0;
+ * the ratio is then 0, as the cdf is.
+ */
+template <bool calc_grad, typename T, require_stan_scalar_t<T>* = nullptr>
+inline auto std_normal_cdf_value_ratio(const T& z) {
+  using T_return = return_type_t<T>;
+  const T_return u = INV_SQRT_TWO * z;
+  // Not abs(u): its autodiff tangent is 0 at u == 0.
+  const T_return a = u < 0 ? T_return(-u) : u;
+  if (a < 0.46875) {
+    const T_return cdf = 0.5 + 0.5 * erf_cody_small(u);
+    if constexpr (calc_grad) {
+      return std::pair<T_return, T_return>{
+          cdf, SQRT_TWO_OVER_SQRT_PI / erfcx_small(T_return(-u))};
+    } else {
+      return cdf;
+    }
+  }
+  const T_return g = 0.5 * exp(-(0.5 * z) * z);
+  const T_return c = a >= 4 ? erfcx_cody_tail(a) : erfcx_cody_middle(a);
+  if (z < 0) {
+    const T_return cdf = g * c;
+    if constexpr (calc_grad) {
+      return std::pair<T_return, T_return>{
+          cdf, c > 0 ? T_return(SQRT_TWO_OVER_SQRT_PI / c) : T_return(0)};
+    } else {
+      return cdf;
+    }
+  }
+  const T_return cdf = 1.0 - g * c;
+  if constexpr (calc_grad) {
+    return std::pair<T_return, T_return>{cdf, SQRT_TWO_OVER_SQRT_PI * g / cdf};
+  } else {
+    return cdf;
+  }
+}
+
+/** Elementwise Phi and ratios; only Phi when the gradient is off.
+ * For doubles g = exp(-z^2 / 2) / 2 comes from one vectorized exp over the
+ * array before the loop, which is cheaper than a libm call per element.
+ * Above |z| = 37.5 that exp loses relative accuracy as Phi or g goes
+ * subnormal, so those elements take the libm exp. Elsewhere the values can
+ * differ from Phi(double) in the last bit.
+ */
+template <bool calc_grad, typename T, require_eigen_t<T>* = nullptr>
+inline auto std_normal_cdf_value_ratio(T&& z) {
+  using T_return = return_type_t<scalar_type_t<T>>;
+  using Array = Eigen::Array<T_return, Eigen::Dynamic, 1>;
+  Array values(std::forward<T>(z));
+  if constexpr (std::is_arithmetic_v<T_return>) {
+    const Eigen::Index N = values.size();
+    // Skipped when every |u| < 0.46875; the test matches the loop's.
+    Array gs;
+    if (!((INV_SQRT_TWO * values).abs() < 0.46875).all()) {
+      gs = 0.5 * exp(-0.5 * values.square());
+    }
+    Array ratios(calc_grad ? N : 0);
+    // coeff and coeffRef: i is in range, and operator[]'s range assert costs
+    // about 20 instructions per element.
+    for (Eigen::Index i = 0; i < N; ++i) {
+      const double z_i = values.coeff(i);
+      const double u = INV_SQRT_TWO * z_i;
+      const double a = std::fabs(u);
+      if (a < 0.46875) {
+        values.coeffRef(i) = 0.5 + 0.5 * erf_cody_small(u);
+        if constexpr (calc_grad) {
+          ratios.coeffRef(i) = SQRT_TWO_OVER_SQRT_PI / erfcx_small(-u);
+        }
+        continue;
+      }
+      // |u| > 26.5 is |z| > 37.5.
+      const double g = a > 26.5 ? 0.5 * exp(-(0.5 * z_i) * z_i) : gs.coeff(i);
+      // The ratios divide by the numerator p or by q - g p rather than by
+      // c = p / q, so their division does not wait on the one forming c.
+      const auto pq = a >= 4 ? erfcx_cody_tail_fraction(a)
+                             : erfcx_cody_middle_fraction(a);
+      const double c = pq.first / pq.second;
+      if (z_i < 0) {
+        values.coeffRef(i) = g * c;
+        if constexpr (calc_grad) {
+          ratios.coeffRef(i)
+              = c > 0 ? SQRT_TWO_OVER_SQRT_PI * pq.second / pq.first : 0.0;
+        }
+      } else {
+        values.coeffRef(i) = 1.0 - g * c;
+        if constexpr (calc_grad) {
+          // Above z = 38.6 g is 0 and so is the ratio; at infinity q is too.
+          ratios.coeffRef(i) = g > 0 ? SQRT_TWO_OVER_SQRT_PI * g * pq.second
+                                           / (pq.second - g * pq.first)
+                                     : 0.0;
+        }
+      }
+    }
+    if constexpr (calc_grad) {
+      return std::make_pair(std::move(values), std::move(ratios));
+    } else {
+      return values;
+    }
+  } else if constexpr (calc_grad) {
+    Array ratios(values.size());
+    for (Eigen::Index i = 0; i < values.size(); ++i) {
+      auto [value, ratio] = std_normal_cdf_value_ratio<true>(values[i]);
+      values[i] = value;
+      ratios[i] = ratio;
+    }
+    return std::make_pair(std::move(values), std::move(ratios));
+  } else {
+    for (Eigen::Index i = 0; i < values.size(); ++i) {
+      values[i] = std_normal_cdf_value_ratio<false>(values[i]);
+    }
+    return values;
+  }
+}
+
+/** Log of the standard normal cdf, or of its complement when `reflect` is
+ * set: the input is negated so no negated autodiff operands are built.
+ */
+template <bool reflect, typename T_y>
+inline return_type_t<T_y> std_normal_lcdf_impl(const char* function, T_y&& y) {
+  using T_y_ref = ref_type_if_not_constant_t<T_y>;
+  constexpr double sign = reflect ? -1.0 : 1.0;
+  T_y_ref y_ref = std::forward<T_y>(y);
+  // to_ref evaluates an expression argument once for the check and kernel.
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  check_not_nan(function, "Random variable", y_val);
+
+  if (size_zero(y_ref)) {
+    return 0;
+  }
+  if constexpr (is_autodiff_v<T_y>) {
+    const auto [values, slopes]
+        = std_normal_lcdf_value_grad<true>(sign * y_val);
+    auto ops_partials = make_partials_propagator(y_ref);
+    partials<0>(ops_partials) = sign * slopes;
+    return ops_partials.build(sum(values));
+  } else {
+    const auto values = std_normal_lcdf_value_grad<false>(sign * y_val);
+    return sum(values);
+  }
+}
+
+}  // namespace internal
+}  // namespace math
+}  // namespace stan
+#endif

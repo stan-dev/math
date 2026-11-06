@@ -3,6 +3,7 @@
 #include <cmath>
 #include <limits>
 #include <stdexcept>
+#include <vector>
 
 TEST(MathFunctions, log1p) {
   double x;
@@ -39,4 +40,39 @@ TEST(MathFunctions, log1p_exception) {
 TEST(MathFunctions, log1p_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   EXPECT_TRUE(std::isnan(stan::math::log1p(nan)));
+}
+
+TEST(MathFunctions, log1p_double_containers) {
+  using stan::math::log1p;
+  const double nan = std::numeric_limits<double>::quiet_NaN();
+  const double inf = std::numeric_limits<double>::infinity();
+  std::vector<double> v{nan, -1.0, -0.5, 1e-10, 3.0};
+  Eigen::VectorXd ev = Eigen::Map<Eigen::VectorXd>(v.data(), v.size());
+  Eigen::RowVectorXd rv = ev.transpose();
+
+  std::vector<double> lv = log1p(v);
+  Eigen::VectorXd lev = log1p(ev);
+  Eigen::RowVectorXd lrv = log1p(rv);
+  Eigen::VectorXd lexpr = log1p(ev * 1.0);
+  for (size_t i = 0; i < v.size(); ++i) {
+    const double expected = stan::math::log1p(v[i]);
+    if (std::isnan(expected)) {
+      EXPECT_TRUE(std::isnan(lv[i]));
+      EXPECT_TRUE(std::isnan(lev(i)));
+      EXPECT_TRUE(std::isnan(lrv(i)));
+      EXPECT_TRUE(std::isnan(lexpr(i)));
+    } else {
+      EXPECT_DOUBLE_EQ(expected, lv[i]);
+      EXPECT_DOUBLE_EQ(expected, lev(i));
+      EXPECT_DOUBLE_EQ(expected, lrv(i));
+      EXPECT_DOUBLE_EQ(expected, lexpr(i));
+    }
+  }
+  EXPECT_EQ(-inf, lev(1));
+
+  std::vector<double> bad{0.5, -2.0};
+  EXPECT_THROW(log1p(bad), std::domain_error);
+  Eigen::VectorXd bad_e(2);
+  bad_e << 0.5, -2.0;
+  EXPECT_THROW(Eigen::VectorXd r = log1p(bad_e), std::domain_error);
 }
