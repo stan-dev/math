@@ -8,19 +8,44 @@
 #include <stan/math/prim/fun/to_vector.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/fabs.hpp>
+#include <stan/math/prim/fun/hypergeometric_3F2_tail_bound.hpp>
 #include <stan/math/prim/fun/hypergeometric_pFq.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/sign.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
+#include <array>
+#include <cmath>
 
 namespace stan {
 namespace math {
 namespace internal {
+/**
+ * Sum the power series of the hypergeometric function 3F2 term by term.
+ *
+ * `hypergeometric_3F2` calls this function at z = 1 with sum(b) <= sum(a).
+ * There `check_3F2_converges` accepts only a terminating series (a
+ * polynomial), so the sum stops at the first zero term. It stops earlier
+ * when a bound of the sum of all remaining terms is below `precision` times
+ * the absolute value of the partial sum.
+ *
+ * @tparam Ta type of Eigen/Std vector 'a' arguments
+ * @tparam Tb type of Eigen/Std vector 'b' arguments
+ * @tparam Tz type of z argument
+ * @param[in] a numerator parameters
+ * @param[in] b denominator parameters
+ * @param[in] z argument
+ * @param[in] precision relative precision of the sum. The default 1e-17 is
+ *   below half an ulp of the sum.
+ * @param[in] max_steps number of steps to take
+ * @return the sum of the series
+ * @throw std::domain_error if the sum overflows or needs more than
+ *   max_steps steps
+ */
 template <typename Ta, typename Tb, typename Tz,
           require_all_vector_t<Ta, Tb>* = nullptr,
           require_stan_scalar_t<Tz>* = nullptr>
 inline return_type_t<Ta, Tb, Tz> hypergeometric_3F2_infsum(
-    const Ta& a, const Tb& b, const Tz& z, double precision = 1e-6,
+    const Ta& a, const Tb& b, const Tz& z, double precision = 1e-17,
     int max_steps = 1e5) {
   using T_return = return_type_t<Ta, Tb, Tz>;
   Eigen::Array<scalar_type_t<Ta>, 3, 1> a_array = as_array_or_scalar(a);
@@ -37,9 +62,46 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_3F2_infsum(
   int z_sign = sign(value_of_rec(z));
   int t_sign = z_sign * a_signs.prod() * b_signs.prod();
 
+  // For the bound of the remaining terms: the parameters, and the index of
+  // the last term that can be nonzero (the first zero numerator ends the
+  // series, otherwise the steps end the sum)
+  const std::array<double, 3> a_val{value_of_rec(a_array[0]),
+                                    value_of_rec(a_array[1]),
+                                    value_of_rec(a_array[2])};
+  const std::array<double, 2> b_val{value_of_rec(b_array[0]),
+                                    value_of_rec(b_array[1])};
+  const double abs_z = std::fabs(value_of_rec(z));
+  double last = max_steps + 1.0;
+  for (double a_i : a_val) {
+    if (a_i <= 0.0 && a_i == std::floor(a_i)) {
+      last = std::fmin(last, -a_i);
+    }
+  }
+
   int k = 0;
-  const double log_precision = log(precision);
-  while (k <= max_steps && log_t >= log_precision) {
+  double abs_term = 1.0;
+  while (k <= max_steps) {
+    // A numerator parameter that has reached zero makes this term and every
+    // later term zero: the series is a polynomial and has ended. Without
+    // this stop the sign below is 0 while the magnitude keeps growing, and
+    // 0 * inf gives NaN.
+    if ((value_of_rec(a_array) == 0.0).any()) {
+      return t_acc;
+    }
+    // Stop when the last term t_k and a bound of the sum of the remaining
+    // terms t_{k + 1}, ..., t_last are negligible against the partial sum.
+    // The ratios of the remaining terms are r_j for j = k, ..., last - 1.
+    const double abs_sum = std::fabs(value_of_rec(t_acc));
+    if (abs_term <= precision * abs_sum) {
+      const double ratio_bound
+          = hypergeometric_3F2_ratio_bound(a_val, b_val, abs_z, k, last - 1);
+      const double tail
+          = abs_term
+            * hypergeometric_3F2_tail_sums(ratio_bound, last - k).first;
+      if (tail <= precision * abs_sum) {
+        return t_acc;
+      }
+    }
     // Replace zero values with 1 prior to taking the log so that we accumulate
     // 0.0 rather than -inf
     const auto& abs_apk = math::fabs((a_array == 0).select(1.0, a_array));
@@ -50,7 +112,9 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_3F2_infsum(
     }
 
     log_t += p + log_z;
-    t_acc += t_sign * exp(log_t);
+    const auto term = exp(log_t);
+    t_acc += t_sign * term;
+    abs_term = value_of_rec(term);
 
     if (is_inf(t_acc)) {
       throw_domain_error("hypergeometric_3F2", "sum (output)", t_acc,
@@ -61,9 +125,10 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_3F2_infsum(
     b_array += 1.0;
     a_signs = sign(value_of_rec(a_array));
     b_signs = sign(value_of_rec(b_array));
-    t_sign = a_signs.prod() * b_signs.prod() * t_sign;
+    t_sign = z_sign * a_signs.prod() * b_signs.prod() * t_sign;
   }
-  if (k == max_steps) {
+  // The loop ends with k = max_steps + 1 when the steps run out
+  if (k > max_steps) {
     throw_domain_error("hypergeometric_3F2", "k (internal counter)", max_steps,
                        "exceeded  iterations, hypergeometric function did not ",
                        "converge.");
@@ -123,8 +188,9 @@ inline auto hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z) {
   check_3F2_converges("hypergeometric_3F2", a_ref[0], a_ref[1], a_ref[2],
                       b_ref[0], b_ref[1], z);
   // Boost's pFq throws convergence errors in some cases, fallback to naive
-  // infinite-sum approach (tests pass for these)
-  if (z == 1.0 && (sum(b_ref) - sum(a_ref)) < 0.0) {
+  // infinite-sum approach (tests pass for these). At z = 1 Boost also throws
+  // when sum(b) == sum(a), also for a terminating series.
+  if (z == 1.0 && (sum(b_ref) - sum(a_ref)) <= 0.0) {
     return internal::hypergeometric_3F2_infsum(a_ref, b_ref, z);
   }
   return hypergeometric_pFq(a_ref, b_ref, z);

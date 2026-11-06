@@ -115,3 +115,30 @@ TEST(passesOnConvergentArgs, Check3F2Converges) {
   EXPECT_NO_THROW(check_3F2_converges(function, a1, a2, a3, b1, b2, z));
   EXPECT_NO_THROW(check_3F2_converges(function, a1, a2, a3, b1, b2, z));
 }
+
+TEST(Check3F2Converges, polynomial_ends_at_smallest_numerator) {
+  using stan::math::check_3F2_converges;
+  const char* function = "check_3F2_converges";
+  // a1 = -1 (or a3 = -1) ends the series at k = 1, before (b1)_k is zero
+  // from k = 3 on
+  EXPECT_NO_THROW(
+      check_3F2_converges(function, -1.0, -5.0, 1.0, -2.0, 1.0, 1.0));
+  EXPECT_NO_THROW(
+      check_3F2_converges(function, -5.0, 1.0, -1.0, -2.0, 1.0, 1.0));
+  // a1 = -3 ends the series at k = 3, and (b1)_3 is zero
+  EXPECT_THROW(check_3F2_converges(function, -3.0, -5.0, 1.0, -2.0, 1.0, 1.0),
+               std::domain_error);
+}
+
+TEST(Check3F2Converges, infinite_series_pole) {
+  using stan::math::check_3F2_converges;
+  const char* function = "check_3F2_converges";
+  // no numerator parameter ends the series, so a non-positive integer
+  // denominator parameter is a pole
+  EXPECT_THROW(check_3F2_converges(function, 1.0, 1.0, 1.0, -1.0, 1.0, 0.5),
+               std::domain_error);
+  EXPECT_THROW(check_3F2_converges(function, 1.0, 1.0, 1.0, 1.0, -2.0, 0.5),
+               std::domain_error);
+  EXPECT_THROW(check_3F2_converges(function, 1.0, 1.0, 1.0, 0.0, 1.0, 0.5),
+               std::domain_error);
+}

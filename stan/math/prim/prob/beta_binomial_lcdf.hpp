@@ -115,14 +115,12 @@ inline return_type_t<T_size1, T_size2> beta_binomial_lcdf(const T_n& n,
           - lbeta(N_minus_n, n_dbl + 2);
     C = F * exp(C) / (N_dbl + 1);
 
-    if (C > 0.5 && alpha_dbl != 1.0) {
+    if (C > 0.5) {
       // The cdf is below 1/2, and log(1 - C) loses its digits; C can even
       // round to 1 or above. Use the mirror: X <= n if and only if
       // N - X > N - n - 1, and N - X is beta_binomial(N, beta, alpha). Its
       // ccdf is the same series with the shapes swapped and needs no
-      // complement. For alpha = 1 the mirrored series has the parameters
-      // -n and 1 - alpha - n = -n, whose terms are 0 / 0 at k = n + 1, so
-      // that case keeps log(1 - C).
+      // complement.
       const T_partials_return n_m = N_minus_n - 1;
       const T_partials_return mu_m = beta_dbl + N_minus_n;
       const T_partials_return nu_m = alpha_dbl + n_dbl;
@@ -134,7 +132,8 @@ inline return_type_t<T_size1, T_size2> beta_binomial_lcdf(const T_n& n,
            - lbeta(n_dbl + 1, N_minus_n + 1) + log(F_m) - log(N_dbl + 1);
       if constexpr (is_any_autodiff_v<T_size1, T_size2>) {
         T_partials_return dF_m[6];
-        grad_F32(dF_m, one, mu_m, -n_dbl, n_m + 2, 1 - nu_m, one);
+        grad_F32<false, true, false, false, true, false>(
+            dF_m, one, mu_m, -n_dbl, n_m + 2, 1 - nu_m, one);
         const T_partials_return dpsi_total
             = digamma_diff(alpha_dbl + beta_dbl, N_dbl);
         if constexpr (is_autodiff_v<T_size1>) {
@@ -161,7 +160,8 @@ inline return_type_t<T_size1, T_size2> beta_binomial_lcdf(const T_n& n,
 
     T_partials_return dF[6];
     if constexpr (is_any_autodiff_v<T_size1, T_size2>) {
-      grad_F32(dF, one, mu, 1 - N_minus_n, n_dbl + 2, 1 - nu, one);
+      grad_F32<false, true, false, false, true, false>(
+          dF, one, mu, 1 - N_minus_n, n_dbl + 2, 1 - nu, one);
     }
     if constexpr (is_autodiff_v<T_size1>) {
       const T_partials_return g

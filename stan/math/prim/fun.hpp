@@ -128,6 +128,7 @@
 #include <stan/math/prim/fun/hypergeometric_2F1.hpp>
 #include <stan/math/prim/fun/hypergeometric_2F2.hpp>
 #include <stan/math/prim/fun/hypergeometric_3F2.hpp>
+#include <stan/math/prim/fun/hypergeometric_3F2_tail_bound.hpp>
 #include <stan/math/prim/fun/hypergeometric_pFq.hpp>
 #include <stan/math/prim/fun/hypot.hpp>
 #include <stan/math/prim/fun/identity_matrix.hpp>
