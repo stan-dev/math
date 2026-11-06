@@ -3,6 +3,10 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
+#include <test/unit/math/opencl/rev/beta_binomial_lpmf_reference.hpp>
+#include <algorithm>
+#include <cmath>
+#include <string>
 #include <vector>
 
 TEST(ProbDistributionsBetaBinomial, error_checking) {
@@ -75,6 +79,39 @@ TEST(ProbDistributionsBetaBinomial, error_checking) {
   EXPECT_THROW(
       stan::math::beta_binomial_lpmf(n_cl, N_cl, alpha_cl, beta_value2_cl),
       std::domain_error);
+}
+
+TEST(ProbDistributionsBetaBinomial, opencl_n_outside_support) {
+  // n < 0 or n > N has probability 0: LOG_ZERO, also under propto, and no
+  // gradient, as on the CPU
+  std::vector<int> N{5, 5, 5};
+  Eigen::VectorXd alpha(3);
+  alpha << 0.3, 1.8, 1.3;
+  Eigen::VectorXd beta(3);
+  beta << 0.3, 1.8, 1.2;
+  stan::math::matrix_cl<int> N_cl(N);
+  stan::math::matrix_cl<double> alpha_cl(alpha);
+  stan::math::matrix_cl<double> beta_cl(beta);
+  for (const std::vector<int>& n :
+       {std::vector<int>{2, 6, 1}, std::vector<int>{2, -1, 1}}) {
+    stan::math::matrix_cl<int> n_cl(n);
+    EXPECT_EQ(stan::math::beta_binomial_lpmf(n, N, alpha, beta),
+              stan::math::LOG_ZERO);
+    EXPECT_EQ(stan::math::beta_binomial_lpmf(n_cl, N_cl, alpha_cl, beta_cl),
+              stan::math::LOG_ZERO);
+    stan::math::var_value<stan::math::matrix_cl<double>> alpha_v
+        = stan::math::to_matrix_cl(alpha);
+    stan::math::var lp
+        = stan::math::beta_binomial_lpmf(n_cl, N_cl, alpha_v, beta_cl);
+    stan::math::var lp_propto
+        = stan::math::beta_binomial_lpmf<true>(n_cl, N_cl, alpha_v, beta_cl);
+    EXPECT_EQ(lp.val(), stan::math::LOG_ZERO);
+    EXPECT_EQ(lp_propto.val(), stan::math::LOG_ZERO);
+    (lp + lp_propto).grad();
+    Eigen::VectorXd alpha_adj = stan::math::from_matrix_cl(alpha_v.adj());
+    EXPECT_TRUE((alpha_adj.array() == 0).all()) << alpha_adj.transpose();
+    stan::math::recover_memory();
+  }
 }
 
 auto beta_binomial_lpmf_functor
@@ -214,6 +251,31 @@ TEST(ProbDistributionsBetaBinomial, opencl_matches_cpu_big) {
   stan::math::test::compare_cpu_opencl_prim_rev(
       beta_binomial_lpmf_functor_propto, n, N, alpha.transpose().eval(),
       beta.transpose().eval());
+}
+
+TEST(ProbDistributionsBetaBinomial, opencl_large_shapes_reference) {
+  using beta_binomial_opencl_test_internal::expect_reference;
+  using beta_binomial_opencl_test_internal::test_values;
+  using stan::math::var;
+  for (const auto& t : test_values) {
+    const std::vector<int> n{t.n};
+    const std::vector<int> N{t.N};
+    stan::math::matrix_cl<int> n_cl(n);
+    stan::math::matrix_cl<int> N_cl(N);
+
+    // The kernel generator functions run on the OpenCL device. The scalar-shape
+    // case is in beta_binomial_lpmf_scalar_shapes_test.cpp.
+    Eigen::Matrix<var, Eigen::Dynamic, 1> alpha(1);
+    alpha << t.alpha;
+    Eigen::Matrix<var, Eigen::Dynamic, 1> beta(1);
+    beta << t.beta;
+    auto alpha_cl = stan::math::to_matrix_cl(alpha);
+    auto beta_cl = stan::math::to_matrix_cl(beta);
+    var lp = stan::math::beta_binomial_lpmf(n_cl, N_cl, alpha_cl, beta_cl);
+    lp.grad();
+    expect_reference(t, lp, alpha(0).adj(), beta(0).adj(), "vector shapes");
+    stan::math::recover_memory();
+  }
 }
 
 #endif

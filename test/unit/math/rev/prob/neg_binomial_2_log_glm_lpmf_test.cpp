@@ -2,6 +2,7 @@
 #include <test/unit/math/rev/util.hpp>
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
+#include <algorithm>
 #include <vector>
 #include <cmath>
 
@@ -632,4 +633,70 @@ TEST_F(AgradRev,
   EXPECT_THROW(
       stan::math::neg_binomial_2_log_glm_lpmf(y, x, alpha, beta, sigmaw3),
       std::domain_error);
+}
+
+namespace neg_binomial_2_log_glm_test_internal {
+
+// Value and partials in alpha, beta(0), beta(1) and phi of a vector call,
+// and of the sum of one call per instance with a scalar y.
+template <bool propto>
+void expect_vector_matches_instances(const std::vector<int>& y,
+                                     const Eigen::MatrixXd& x) {
+  using stan::math::var;
+  const Eigen::Index N = x.rows();
+  const double alpha_d = 0.4;
+  const double phi_d = 3.7;
+  Eigen::VectorXd beta_d(2);
+  beta_d << 0.3, -0.6;
+
+  var alpha = alpha_d;
+  var phi = phi_d;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> beta = beta_d.cast<var>();
+  var lp
+      = stan::math::neg_binomial_2_log_glm_lpmf<propto>(y, x, alpha, beta, phi);
+  lp.grad();
+  const std::vector<double> vec{lp.val(), alpha.adj(), beta(0).adj(),
+                                beta(1).adj(), phi.adj()};
+  stan::math::recover_memory();
+
+  std::vector<double> sum(5, 0.0);
+  for (Eigen::Index n = 0; n < N; ++n) {
+    var alpha_n = alpha_d;
+    var phi_n = phi_d;
+    Eigen::Matrix<var, Eigen::Dynamic, 1> beta_n = beta_d.cast<var>();
+    Eigen::MatrixXd x_n = x.row(n);
+    var lp_n = stan::math::neg_binomial_2_log_glm_lpmf<propto>(
+        y[n], x_n, alpha_n, beta_n, phi_n);
+    lp_n.grad();
+    sum[0] += lp_n.val();
+    sum[1] += alpha_n.adj();
+    sum[2] += beta_n(0).adj();
+    sum[3] += beta_n(1).adj();
+    sum[4] += phi_n.adj();
+    stan::math::recover_memory();
+  }
+  for (int i = 0; i < 5; ++i) {
+    EXPECT_NEAR(vec[i], sum[i], 1e-12 * std::max(1.0, std::fabs(sum[i])))
+        << "propto " << propto << ", element " << i;
+  }
+}
+
+}  // namespace neg_binomial_2_log_glm_test_internal
+
+// With a scalar phi, the terms that depend on y only are evaluated once per
+// distinct count when the largest count is at most 4 N + 64, and per
+// instance otherwise. Both must match single-instance calls.
+TEST_F(AgradRev, NegBinomial2LogGLM_vector_matches_instances) {
+  using neg_binomial_2_log_glm_test_internal::expect_vector_matches_instances;
+  Eigen::MatrixXd x(8, 2);
+  x << 0.1, -0.3, 0.7, 0.2, -0.5, 0.4, 0.0, 0.0, 1.2, -0.8, 0.3, 0.3, -1.1, 0.6,
+      0.9, -0.2;
+  // repeated counts: the table is used
+  const std::vector<int> y_repeat{0, 3, 3, 0, 7, 3, 1, 7};
+  expect_vector_matches_instances<false>(y_repeat, x);
+  expect_vector_matches_instances<true>(y_repeat, x);
+  // a count above 4 N + 64 = 96: no table
+  const std::vector<int> y_large{0, 3, 3, 1000, 7, 3, 1, 7};
+  expect_vector_matches_instances<false>(y_large, x);
+  expect_vector_matches_instances<true>(y_large, x);
 }

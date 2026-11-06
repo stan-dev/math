@@ -4,21 +4,43 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/digamma.hpp>
+#include <stan/math/prim/fun/digamma_diff.hpp>
 #include <stan/math/prim/fun/lbeta.hpp>
 
 namespace stan {
 namespace math {
 
 namespace internal {
+/**
+ * Return digamma(x) - digamma(x + y), the partial derivative of
+ * lbeta(x, y) in x. For large x the plain difference loses all digits,
+ * so from x = digamma_diff_min_x on it is formed by
+ * digamma_diff. Below that value (and for NaN) the plain difference is
+ * accurate enough for a gradient and cheaper.
+ */
+inline double lbeta_partial(double x, double y) {
+  if (x >= digamma_diff_min_x) {
+    return -digamma_diff(x, y);
+  }
+  return digamma(x) - digamma(x + y);
+}
+
 class lbeta_vv_vari : public op_vv_vari {
  public:
   lbeta_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(lbeta(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
-    const double digamma_ab = digamma(avi_->val_ + bvi_->val_);
-    avi_->adj_ += adj_ * (digamma(avi_->val_) - digamma_ab);
-
-    bvi_->adj_ += adj_ * (digamma(bvi_->val_) - digamma_ab);
+    const double a = avi_->val_;
+    const double b = bvi_->val_;
+    if (a >= digamma_diff_min_x || b >= digamma_diff_min_x) {
+      avi_->adj_ += adj_ * lbeta_partial(a, b);
+      bvi_->adj_ += adj_ * lbeta_partial(b, a);
+    } else {
+      // both arguments small: the plain differences share digamma(a + b)
+      const double digamma_ab = digamma(a + b);
+      avi_->adj_ += adj_ * (digamma(a) - digamma_ab);
+      bvi_->adj_ += adj_ * (digamma(b) - digamma_ab);
+    }
   }
 };
 
@@ -26,18 +48,14 @@ class lbeta_vd_vari : public op_vd_vari {
  public:
   lbeta_vd_vari(vari* avi, double b)
       : op_vd_vari(lbeta(avi->val_, b), avi, b) {}
-  void chain() {
-    avi_->adj_ += adj_ * (digamma(avi_->val_) - digamma(avi_->val_ + bd_));
-  }
+  void chain() { avi_->adj_ += adj_ * lbeta_partial(avi_->val_, bd_); }
 };
 
 class lbeta_dv_vari : public op_dv_vari {
  public:
   lbeta_dv_vari(double a, vari* bvi)
       : op_dv_vari(lbeta(a, bvi->val_), a, bvi) {}
-  void chain() {
-    bvi_->adj_ += adj_ * (digamma(bvi_->val_) - digamma(ad_ + bvi_->val_));
-  }
+  void chain() { bvi_->adj_ += adj_ * lbeta_partial(bvi_->val_, ad_); }
 };
 }  // namespace internal
 
