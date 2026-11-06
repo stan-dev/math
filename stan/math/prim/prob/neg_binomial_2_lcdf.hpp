@@ -10,6 +10,8 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/prob/beta_cdf_log.hpp>
 #include <cmath>
+#include <limits>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -43,10 +45,32 @@ inline return_type_t<T_location, T_precision> neg_binomial_2_lcdf(
   size_t size_n = stan::math::size(n);
   size_t size_phi_mu = max_size(mu, phi);
 
+  bool any_n_max = false;
   for (size_t i = 0; i < size_n; i++) {
     if (n_vec[i] < 0) {
       return LOG_ZERO;
     }
+    any_n_max = any_n_max || n_vec[i] == std::numeric_limits<int>::max();
+  }
+
+  if (any_n_max) {
+    // An element with probability 1 (n = INT_MAX, which stands for an
+    // infinite count) contributes nothing. Remove such elements before the
+    // beta lcdf call: the beta lcdf gradient is not accurate when the
+    // second shape is 2^31.
+    const size_t max_size_seq_view = max_size(n, mu, phi);
+    std::vector<return_type_t<T_location, T_precision>> phi_mu_k;
+    std::vector<scalar_type_t<T_precision>> phi_k;
+    std::vector<double> np1_k;
+    for (size_t i = 0; i < max_size_seq_view; i++) {
+      if (n_vec[i] == std::numeric_limits<int>::max()) {
+        continue;
+      }
+      phi_mu_k.push_back(phi_vec[i] / (phi_vec[i] + mu_vec[i]));
+      phi_k.push_back(phi_vec[i]);
+      np1_k.push_back(n_vec[i] + 1.0);
+    }
+    return beta_cdf_log(phi_mu_k, phi_k, np1_k);
   }
 
   VectorBuilder<true, return_type_t<T_location, T_precision>, T_location,
