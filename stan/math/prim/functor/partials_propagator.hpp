@@ -134,13 +134,13 @@ struct is_scalar_or_vector_operand<T, require_var_matrix_t<T>>
 }  // namespace internal
 
 /**
- * Write values into the partials of an edge of a `partials_propagator`.
+ * Write values into the partials of an edge of a `partials_propagator`. Use
+ * it to set the partials of a scalar, vector or data argument with one call
+ * and without new memory.
  *
  * For an edge of a vector operand, the values are written in place into the
- * partials that the edge holds, through a column array view. No new memory is
- * allocated, unlike an assignment to `partials<I>(ops)`. For an edge of a
- * scalar operand, the sum of the elements of `x` is written. For an edge of
- * an arithmetic operand, nothing is written.
+ * partials that the edge holds, through a column array view. For an edge of a
+ * scalar operand, the sum of the elements of `x` is written.
  *
  * @tparam I index of the edge; its operand is a scalar, an Eigen vector, a
  * `std::vector` of scalars or a `var_value` of an Eigen vector
