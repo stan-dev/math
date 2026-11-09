@@ -5,9 +5,12 @@
 #include <cmath>
 
 namespace {
-const Eigen::VectorXd kTestX = (Eigen::VectorXd(4) << 0.0, 1.0, 2.5, 4.0).finished();
-const Eigen::VectorXd kTestY = (Eigen::VectorXd(4) << 10.0, 12.0, 9.0, 11.0).finished();
-const Eigen::VectorXd kTestDydx = (Eigen::VectorXd(4) << 1.0, 0.5, -0.5, 1.5).finished();
+const Eigen::VectorXd kTestX
+    = (Eigen::VectorXd(4) << 0.0, 1.0, 2.5, 4.0).finished();
+const Eigen::VectorXd kTestY
+    = (Eigen::VectorXd(4) << 10.0, 12.0, 9.0, 11.0).finished();
+const Eigen::VectorXd kTestDydx
+    = (Eigen::VectorXd(4) << 1.0, 0.5, -0.5, 1.5).finished();
 }  // namespace
 
 // ============================================================================
@@ -15,7 +18,8 @@ const Eigen::VectorXd kTestDydx = (Eigen::VectorXd(4) << 1.0, 0.5, -0.5, 1.5).fi
 // ============================================================================
 
 TEST(MathPrimFun, interpolate1DCubicHermiteSetupStorage) {
-  auto W = stan::math::interpolate_1d_cubic_hermite_setup(kTestX, kTestY, kTestDydx);
+  auto W = stan::math::interpolate_1d_cubic_hermite_setup(kTestX, kTestY,
+                                                          kTestDydx);
   const auto& xk = std::get<0>(W);
   const auto& yk = std::get<1>(W);
   const auto& dydxk = std::get<2>(W);
@@ -35,7 +39,8 @@ TEST(MathPrimFun, interpolate1DCubicHermiteSetupStorage) {
 // ============================================================================
 
 TEST(MathPrimFun, interpolate1DCubicHermiteEvalAtKnots) {
-  auto W = stan::math::interpolate_1d_cubic_hermite_setup(kTestX, kTestY, kTestDydx);
+  auto W = stan::math::interpolate_1d_cubic_hermite_setup(kTestX, kTestY,
+                                                          kTestDydx);
   for (Eigen::Index i = 0; i < kTestX.size(); ++i) {
     double expected_y = kTestY(i);
     double computed_y = stan::math::interpolate_1d_cubic_spline(kTestX(i), W);
@@ -50,16 +55,20 @@ TEST(MathPrimFun, interpolate1DCubicHermiteEvalAtKnots) {
 TEST(MathPrimFun, interpolate1DCubicHermiteSetupThrowsInvalidArgument) {
   {
     Eigen::VectorXd x_bad = (Eigen::VectorXd(3) << 0.0, 1.0, 2.5).finished();
-    Eigen::VectorXd y_bad = (Eigen::VectorXd(4) << 10.0, 12.0, 9.0, 11.0).finished();
+    Eigen::VectorXd y_bad
+        = (Eigen::VectorXd(4) << 10.0, 12.0, 9.0, 11.0).finished();
     Eigen::VectorXd dydx_good = kTestDydx;
-    EXPECT_THROW(stan::math::interpolate_1d_cubic_hermite_setup(x_bad, y_bad, dydx_good),
-                 std::invalid_argument);
+    EXPECT_THROW(
+        stan::math::interpolate_1d_cubic_hermite_setup(x_bad, y_bad, dydx_good),
+        std::invalid_argument);
   }
   {
     Eigen::VectorXd x_good = kTestX;
     Eigen::VectorXd y_good = kTestY;
-    Eigen::VectorXd dydx_bad = (Eigen::VectorXd(3) << 1.0, 0.5, -0.5).finished();
-    EXPECT_THROW(stan::math::interpolate_1d_cubic_hermite_setup(x_good, y_good, dydx_bad),
+    Eigen::VectorXd dydx_bad
+        = (Eigen::VectorXd(3) << 1.0, 0.5, -0.5).finished();
+    EXPECT_THROW(stan::math::interpolate_1d_cubic_hermite_setup(x_good, y_good,
+                                                                dydx_bad),
                  std::invalid_argument);
   }
 }
@@ -69,28 +78,38 @@ TEST(MathPrimFun, interpolate1DCubicHermiteSetupThrowsDomainErrors) {
     Eigen::VectorXd x_bad = (Eigen::VectorXd(1) << 0.0).finished();
     Eigen::VectorXd y_bad = (Eigen::VectorXd(1) << 10.0).finished();
     Eigen::VectorXd dydx_bad = (Eigen::VectorXd(1) << 1.0).finished();
-    EXPECT_THROW(stan::math::interpolate_1d_cubic_hermite_setup(x_bad, y_bad, dydx_bad),
+    EXPECT_THROW(
+        stan::math::interpolate_1d_cubic_hermite_setup(x_bad, y_bad, dydx_bad),
+        std::domain_error);
+  }
+  {
+    Eigen::VectorXd x_nan
+        = (Eigen::VectorXd(4) << 0.0, std::nan(""), 2.5, 4.0).finished();
+    EXPECT_THROW(stan::math::interpolate_1d_cubic_hermite_setup(x_nan, kTestY,
+                                                                kTestDydx),
                  std::domain_error);
   }
   {
-    Eigen::VectorXd x_nan = (Eigen::VectorXd(4) << 0.0, std::nan(""), 2.5, 4.0).finished();
-    EXPECT_THROW(stan::math::interpolate_1d_cubic_hermite_setup(x_nan, kTestY, kTestDydx),
+    Eigen::VectorXd x_bad
+        = (Eigen::VectorXd(4) << 0.0, 1.0, 1.0, 4.0).finished();
+    EXPECT_THROW(stan::math::interpolate_1d_cubic_hermite_setup(x_bad, kTestY,
+                                                                kTestDydx),
                  std::domain_error);
   }
   {
-    Eigen::VectorXd x_bad = (Eigen::VectorXd(4) << 0.0, 1.0, 1.0, 4.0).finished();
-    EXPECT_THROW(stan::math::interpolate_1d_cubic_hermite_setup(x_bad, kTestY, kTestDydx),
+    Eigen::VectorXd y_nan
+        = (Eigen::VectorXd(4) << 10.0, std::nan(""), 9.0, 11.0).finished();
+    EXPECT_THROW(stan::math::interpolate_1d_cubic_hermite_setup(kTestX, y_nan,
+                                                                kTestDydx),
                  std::domain_error);
   }
   {
-    Eigen::VectorXd y_nan = (Eigen::VectorXd(4) << 10.0, std::nan(""), 9.0, 11.0).finished();
-    EXPECT_THROW(stan::math::interpolate_1d_cubic_hermite_setup(kTestX, y_nan, kTestDydx),
-                 std::domain_error);
-  }
-  {
-    Eigen::VectorXd dydx_inf = (Eigen::VectorXd(4) << 1.0,
-        std::numeric_limits<double>::infinity(), -0.5, 1.5).finished();
-    EXPECT_THROW(stan::math::interpolate_1d_cubic_hermite_setup(kTestX, kTestY, dydx_inf),
+    Eigen::VectorXd dydx_inf
+        = (Eigen::VectorXd(4) << 1.0, std::numeric_limits<double>::infinity(),
+           -0.5, 1.5)
+              .finished();
+    EXPECT_THROW(stan::math::interpolate_1d_cubic_hermite_setup(kTestX, kTestY,
+                                                                dydx_inf),
                  std::domain_error);
   }
 }
@@ -100,12 +119,17 @@ TEST(MathPrimFun, interpolate1DCubicHermiteSetupThrowsDomainErrors) {
 // ============================================================================
 
 TEST(MathPrimFun, interpolate1DCubicHermiteEvalThrows) {
-  auto W = stan::math::interpolate_1d_cubic_hermite_setup(kTestX, kTestY, kTestDydx);
-  EXPECT_THROW(stan::math::interpolate_1d_cubic_spline(-1.0, W), std::domain_error);
-  EXPECT_THROW(stan::math::interpolate_1d_cubic_spline(5.0, W), std::domain_error);
-  EXPECT_THROW(stan::math::interpolate_1d_cubic_spline(std::nan(""), W), std::domain_error);
+  auto W = stan::math::interpolate_1d_cubic_hermite_setup(kTestX, kTestY,
+                                                          kTestDydx);
+  EXPECT_THROW(stan::math::interpolate_1d_cubic_spline(-1.0, W),
+               std::domain_error);
+  EXPECT_THROW(stan::math::interpolate_1d_cubic_spline(5.0, W),
+               std::domain_error);
+  EXPECT_THROW(stan::math::interpolate_1d_cubic_spline(std::nan(""), W),
+               std::domain_error);
   EXPECT_THROW(stan::math::interpolate_1d_cubic_spline(
-      std::numeric_limits<double>::infinity(), W), std::domain_error);
+                   std::numeric_limits<double>::infinity(), W),
+               std::domain_error);
 }
 
 // ============================================================================
@@ -157,7 +181,8 @@ namespace {
 template <typename W_t>
 double numerical_deriv(double x, const W_t& W, double h = 1e-6) {
   return (stan::math::interpolate_1d_cubic_spline(x + h, W)
-          - stan::math::interpolate_1d_cubic_spline(x - h, W)) / (2 * h);
+          - stan::math::interpolate_1d_cubic_spline(x - h, W))
+         / (2 * h);
 }
 }  // namespace
 
@@ -169,7 +194,8 @@ double numerical_deriv(double x, const W_t& W, double h = 1e-6) {
  * right must both match the specified derivative.
  */
 TEST(MathPrimFun, interpolate1DCubicContinuityValueAndSlope) {
-  auto W = stan::math::interpolate_1d_cubic_hermite_setup(kTestX, kTestY, kTestDydx);
+  auto W = stan::math::interpolate_1d_cubic_hermite_setup(kTestX, kTestY,
+                                                          kTestDydx);
 
   const double eps = 1e-6;
   for (Eigen::Index i = 1; i < kTestX.size() - 1; ++i) {
@@ -210,7 +236,8 @@ TEST(MathPrimFun, interpolate1DCubicContinuityValueAndSlope) {
  */
 TEST(MathPrimFun, interpolate1DPCHIPMonotone) {
   const int N = 6;
-  Eigen::VectorXd xk = (Eigen::VectorXd(N) << 0.0, 1.0, 2.5, 4.0, 6.0, 8.0).finished();
+  Eigen::VectorXd xk
+      = (Eigen::VectorXd(N) << 0.0, 1.0, 2.5, 4.0, 6.0, 8.0).finished();
   // Strictly increasing: y = x²
   Eigen::VectorXd yk(N);
   for (int i = 0; i < N; ++i)
@@ -269,8 +296,10 @@ TEST(MathPrimFun, interpolate1DCubicScaleInvariance) {
   Eigen::VectorXd yk_scaled = gamma * kTestY.array() + delta;
   Eigen::VectorXd dydx_scaled = (gamma / alpha) * kTestDydx.array();
 
-  auto W_base = stan::math::interpolate_1d_cubic_hermite_setup(kTestX, kTestY, kTestDydx);
-  auto W_scaled = stan::math::interpolate_1d_cubic_hermite_setup(xk_scaled, yk_scaled, dydx_scaled);
+  auto W_base = stan::math::interpolate_1d_cubic_hermite_setup(kTestX, kTestY,
+                                                               kTestDydx);
+  auto W_scaled = stan::math::interpolate_1d_cubic_hermite_setup(
+      xk_scaled, yk_scaled, dydx_scaled);
 
   // Check at dense points in every interval of the base data
   const int N = kTestX.size();
@@ -281,7 +310,8 @@ TEST(MathPrimFun, interpolate1DCubicScaleInvariance) {
       double x_scaled = alpha * x_base + beta;
 
       double val_base = stan::math::interpolate_1d_cubic_spline(x_base, W_base);
-      double val_scaled = stan::math::interpolate_1d_cubic_spline(x_scaled, W_scaled);
+      double val_scaled
+          = stan::math::interpolate_1d_cubic_spline(x_scaled, W_scaled);
       double expected = gamma * val_base + delta;
 
       EXPECT_NEAR(expected, val_scaled, 5e-13)
