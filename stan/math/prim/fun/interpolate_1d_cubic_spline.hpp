@@ -57,13 +57,13 @@ using interpolate_1d_cubic_spline_store_t
  * @throw std::domain_error if there are fewer than two knots, any input is
  *   not finite, or `xk` is not strictly increasing
  */
-template <typename EigVecX, typename EigVecY, typename EigVecDyDx,
-          require_all_eigen_col_vector_t<EigVecX, EigVecY, EigVecDyDx>* = nullptr>
-inline interpolate_1d_cubic_spline_store_t<return_type_t<EigVecX>,
-                                           return_type_t<EigVecY>,
-                                           return_type_t<EigVecDyDx>>
+template <
+    typename EigVecX, typename EigVecY, typename EigVecDyDx,
+    require_all_eigen_col_vector_t<EigVecX, EigVecY, EigVecDyDx>* = nullptr>
+inline interpolate_1d_cubic_spline_store_t<
+    return_type_t<EigVecX>, return_type_t<EigVecY>, return_type_t<EigVecDyDx>>
 interpolate_1d_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
-                            const EigVecDyDx& dydxk) {
+                                   const EigVecDyDx& dydxk) {
   static constexpr const char* function = "interpolate_1d_cubic_hermite_setup";
   const auto& xk_ref = to_ref(xk);
   const auto& yk_ref = to_ref(yk);
@@ -85,7 +85,8 @@ interpolate_1d_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
   Eigen::Matrix<yk_t, Eigen::Dynamic, 1> yk_out = yk_ref;
   Eigen::Matrix<dydxk_t, Eigen::Dynamic, 1> dydxk_out = dydxk_ref;
 
-  return std::make_tuple(std::move(xk_out), std::move(yk_out), std::move(dydxk_out));
+  return std::make_tuple(std::move(xk_out), std::move(yk_out),
+                         std::move(dydxk_out));
 }
 /**
  * Evaluate cubic Hermite interpolation.
@@ -107,7 +108,7 @@ interpolate_1d_cubic_hermite_setup(const EigVecX& xk, const EigVecY& yk,
  * @throw std::domain_error if `x` is not finite or is outside of the range
  *   spanned by the knots
  */
- template <typename T, typename XkType, typename YkType, typename DydxkType,
+template <typename T, typename XkType, typename YkType, typename DydxkType,
           require_stan_scalar_t<T>* = nullptr>
 inline return_type_t<T, XkType, YkType, DydxkType> interpolate_1d_cubic_spline(
     const T& x, const std::tuple<XkType, YkType, DydxkType>& W) {
@@ -283,4 +284,3 @@ interpolate_1d_makima_setup(const EigVecX& xk, const EigVecY& yk) {
 }  // namespace stan
 
 #endif
-
