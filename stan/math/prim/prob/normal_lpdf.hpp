@@ -5,7 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
-#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar_ref.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -13,7 +13,6 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/sum.hpp>
-#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
@@ -21,23 +20,6 @@
 
 namespace stan {
 namespace math {
-
-namespace internal {
-/**
- * Return a writable column array view of the partials of a vector edge.
- * Writes through the view change `p`.
- *
- * @tparam T type of the partials (an Eigen column or row vector with
- * contiguous storage, such as an `arena_matrix`)
- * @param p partials
- * @return column array view of `p`
- */
-template <typename T>
-inline auto partials_column_array(T& p) {
-  return Eigen::Map<Eigen::Array<value_type_t<T>, Eigen::Dynamic, 1>>(p.data(),
-                                                                      p.size());
-}
-}  // namespace internal
 
 /** \ingroup prob_dists
  * The log of the normal density for the specified scalar(s) given
@@ -82,13 +64,9 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
   T_mu_ref mu_ref = std::forward<T_loc>(mu);
   T_sigma_ref sigma_ref = std::forward<T_scale>(sigma);
 
-  // The values of autodiff containers are views, not copies.
-  decltype(auto) y_val
-      = to_ref_if<!is_autodiff_v<T_y>>(as_value_column_array_or_scalar(y_ref));
-  decltype(auto) mu_val = to_ref_if<!is_autodiff_v<T_loc>>(
-      as_value_column_array_or_scalar(mu_ref));
-  decltype(auto) sigma_val = to_ref_if<!is_autodiff_v<T_scale>>(
-      as_value_column_array_or_scalar(sigma_ref));
+  decltype(auto) y_val = as_value_column_array_or_scalar_ref(y_ref);
+  decltype(auto) mu_val = as_value_column_array_or_scalar_ref(mu_ref);
+  decltype(auto) sigma_val = as_value_column_array_or_scalar_ref(sigma_ref);
 
   check_positive(function, "Scale parameter", sigma_val);
 
@@ -114,8 +92,8 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
   // sigma until they are computed.
   auto inv_sigma = [&]() {
     if constexpr (sigma_vec_ad) {
-      auto inv_sigma_map
-          = internal::partials_column_array(partials<2>(ops_partials));
+      auto inv_sigma_map = as_array_or_scalar(
+          as_column_vector_or_scalar(partials<2>(ops_partials)));
       inv_sigma_map = inv(sigma_val);
       return inv_sigma_map;
     } else {
@@ -126,8 +104,8 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
   T_partials_return sum_sq;
   if constexpr (y_vec_ad || mu_vec_ad) {
     // The partials of mu (or of y) first hold (y - mu) / sigma.
-    auto d = internal::partials_column_array(
-        partials<(mu_vec_ad ? 1 : 0)>(ops_partials));
+    auto d = as_array_or_scalar(as_column_vector_or_scalar(
+        partials<(mu_vec_ad ? 1 : 0)>(ops_partials)));
     d = (y_val - mu_val) * inv_sigma;
     sum_sq = sum(d * d);
     if (unlikely(!std::isfinite(value_of_rec(sum_sq)))) {
@@ -146,13 +124,8 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
     } else {
       d = sign * (inv_sigma * d);
     }
-    if constexpr (mu_vec_ad && y_vec_ad) {
-      internal::partials_column_array(partials<0>(ops_partials)) = -d;
-    } else if constexpr (mu_vec_ad && is_autodiff_v<T_y>) {
-      partials<0>(ops_partials) = -d;
-    } else if constexpr (y_vec_ad && is_autodiff_v<T_loc>) {
-      partials<1>(ops_partials) = -d;
-    }
+    // d holds the partials of mu (else of y); write -d to the other one.
+    assign_partials<(mu_vec_ad ? 0 : 1)>(ops_partials, -d);
   } else {
     // No partial of size N other than that of sigma.
     const auto& y_scaled = (y_val - mu_val) * inv_sigma;
