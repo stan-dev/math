@@ -352,3 +352,48 @@ TEST_F(AgradRev, PartialsVari_PartialsPropagatorStdVectorVarValueMat) {
   EXPECT_MATRIX_EQ(av[0].adj(), Eigen::MatrixXd::Constant(2, 2, -4));
   EXPECT_MATRIX_EQ(av[1].adj(), Eigen::MatrixXd::Constant(2, 2, -6));
 }
+
+TEST_F(AgradRev, PartialsPropagatorAssignPartials) {
+  using stan::math::assign_partials;
+  using stan::math::make_partials_propagator;
+  using stan::math::partials;
+  using stan::math::var;
+  Eigen::Matrix<var, -1, 1> a = Eigen::VectorXd::Ones(3);
+  Eigen::Matrix<var, 1, -1> b = Eigen::RowVectorXd::Ones(3);
+  std::vector<var> c{var(1.0), var(1.0), var(1.0)};
+  stan::math::var_value<Eigen::VectorXd> d = Eigen::VectorXd::Ones(3);
+  var s = 1.0;
+  Eigen::VectorXd e = Eigen::VectorXd::Ones(3);
+  auto ops = make_partials_propagator(a, b, c, d, s, e);
+  const double* a_partials = partials<0>(ops).data();
+  const double* b_partials = partials<1>(ops).data();
+  Eigen::ArrayXd g(3);
+  g << 1, -2, 4;
+
+  assign_partials<0>(ops, g);
+  // a column array into the partials of a row vector
+  assign_partials<1>(ops, g);
+  assign_partials<2>(ops, 2 * g);
+  // a row vector into the partials of a column vector
+  assign_partials<3>(ops, g.matrix().transpose());
+  // a scalar operand gets the sum
+  assign_partials<4>(ops, g);
+  // an arithmetic operand gets nothing
+  assign_partials<5>(ops, g);
+  // the values must have the size of a vector operand
+  Eigen::ArrayXd g_short = Eigen::ArrayXd::Ones(2);
+  EXPECT_THROW(assign_partials<0>(ops, g_short), std::invalid_argument);
+  // the partials are written in place
+  EXPECT_EQ(a_partials, partials<0>(ops).data());
+  EXPECT_EQ(b_partials, partials<1>(ops).data());
+
+  var lp = ops.build(0.0);
+  lp.grad();
+  for (int i = 0; i < 3; ++i) {
+    EXPECT_FLOAT_EQ(g[i], a[i].adj());
+    EXPECT_FLOAT_EQ(g[i], b[i].adj());
+    EXPECT_FLOAT_EQ(2 * g[i], c[i].adj());
+    EXPECT_FLOAT_EQ(g[i], d.adj()[i]);
+  }
+  EXPECT_FLOAT_EQ(g.sum(), s.adj());
+}
