@@ -105,3 +105,51 @@ TEST(mathMixScalFun, gammaP_vec) {
   in2 << 0.5, 3.4;
   stan::test::expect_ad_vectorized_binary(f, in1, in2);
 }
+
+// Reverse-mode derivatives far in the upper tail, z / a > 10, where both
+// derivatives are about 1e-13. References from mpmath at 50 digits.
+TEST(mathMixScalFun, gammaP_rev_far_upper_tail) {
+  using stan::math::gamma_p;
+  using stan::math::var;
+  const double d_a = -4.2728631691092249555e-13;
+  const double d_z = 1.5030507939978329636e-13;
+  {
+    var a = 3.0;
+    var z = 36.0;
+    var p = gamma_p(a, z);
+    p.grad();
+    stan::test::expect_near_rel("vv d/da", d_a, a.adj(), 1e-10);
+    stan::test::expect_near_rel("vv d/dz", d_z, z.adj(), 1e-10);
+    stan::math::recover_memory();
+  }
+  {
+    var a = 3.0;
+    var p = gamma_p(a, 36.0);
+    p.grad();
+    stan::test::expect_near_rel("vd d/da", d_a, a.adj(), 1e-10);
+    stan::math::recover_memory();
+  }
+  {
+    var z = 36.0;
+    var p = gamma_p(3.0, z);
+    p.grad();
+    stan::test::expect_near_rel("dv d/dz", d_z, z.adj(), 1e-10);
+    stan::math::recover_memory();
+  }
+  // log1m(gamma_p(alpha, beta * y)) = log Q at y = 12, alpha = 3, beta = 3.
+  // 1 - P is about 1.6e-13 and keeps only about three digits in double.
+  {
+    var y = 12.0;
+    var alpha = 3.0;
+    var beta = 3.0;
+    var lp = stan::math::log1m(gamma_p(alpha, beta * y));
+    lp.grad();
+    stan::test::expect_near_rel("log1m d/dy", -2.8379562043795620438, y.adj(),
+                                1e-2);
+    stan::test::expect_near_rel("log1m d/dalpha", 2.6892412395869051037,
+                                alpha.adj(), 1e-2);
+    stan::test::expect_near_rel("log1m d/dbeta", -11.351824817518248175,
+                                beta.adj(), 1e-2);
+    stan::math::recover_memory();
+  }
+}
