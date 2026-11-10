@@ -197,17 +197,13 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
         ll_fun, ll_args_vals, covariance_val, options, msgs);
     auto ll_args_filter = internal::filter_var_scalar_types(ll_args_copy);
     // tuple of references to var types
-    // Solver 1, 2
-    const bool solver_1_or_2
-        = md_est.solver_used == 1 || md_est.solver_used == 2;
-    arena_t<Eigen::MatrixXd> R(md_est.theta.size() * solver_1_or_2,
-                               md_est.theta.size() * solver_1_or_2);
-    // Solver 3
-    arena_t<Eigen::MatrixXd> LU_solve_covariance(
-        covariance.rows() * (md_est.solver_used == 3),
-        covariance.cols() * (md_est.solver_used == 3));
+    const Eigen::Index theta_size = md_est.theta.size();
+    // Every solver writes R in place; no right-hand side below aliases it
+    arena_t<Eigen::MatrixXd> R(theta_size, theta_size);
+    // Solver 3 assigns it
+    arena_t<Eigen::MatrixXd> LU_solve_covariance;
     // Solver 1, 2, 3
-    arena_t<Eigen::VectorXd> s2(md_est.theta.size());
+    arena_t<Eigen::VectorXd> s2(theta_size);
     using stan::math::internal::ZeroOut;
     if (md_est.solver_used == 1) {
       if (options.hessian_block_size == 1) {
@@ -247,13 +243,14 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
         internal::copy_compute_s2<ZeroOut>(partial_parm, ll_args_filter);
       }
     } else if (md_est.solver_used == 2) {
-      R = md_est.W_r
-          - md_est.W_r * md_est.K_root
-                * md_est.L.transpose()
-                      .template triangularView<Eigen::Upper>()
-                      .solve(
-                          md_est.L.template triangularView<Eigen::Lower>()
-                              .solve(md_est.K_root.transpose() * md_est.W_r));
+      R.deep_copy(md_est.W_r);
+      R.noalias()
+          -= md_est.W_r * md_est.K_root
+             * md_est.L.transpose()
+                   .template triangularView<Eigen::Upper>()
+                   .solve(
+                       md_est.L.template triangularView<Eigen::Lower>().solve(
+                           md_est.K_root.transpose() * md_est.W_r));
 
       arena_t<Eigen::MatrixXd> C
           = md_est.L.template triangularView<Eigen::Lower>().solve(
@@ -268,7 +265,7 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       auto I_minus_BinvKW
           = Eigen::MatrixXd::Identity(md_est.W_r.rows(), md_est.W_r.cols())
             - LU_solve_covariance * md_est.W_r;
-      R = md_est.W_r * I_minus_BinvKW;  // == W - W B^{-1} K W
+      R.noalias() = md_est.W_r * I_minus_BinvKW;  // == W - W B^{-1} K W
       arena_t<Eigen::MatrixXd> A
           = covariance_val - covariance_val * md_est.W_r * LU_solve_covariance;
       auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
