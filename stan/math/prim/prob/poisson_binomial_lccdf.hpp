@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/log1m_exp.hpp>
@@ -50,14 +51,18 @@ inline return_type_t<T_theta> poisson_binomial_lccdf(const T_y& y,
                   1.0);
   }
 
+  // An element with probability 0 (y equal to the number of trials) makes the
+  // result -inf; the gradients are treated as zero
+  for (size_t i = 0; i < max_sz; ++i) {
+    if (y_vec[i] == static_cast<int>(stan::math::size(theta_vec[i]))) {
+      return negative_infinity();
+    }
+  }
+
   return_type_t<T_theta> lccdf = 0.0;
   for (size_t i = 0; i < max_sz; ++i) {
     if (stan::math::size(theta_vec[i]) == 1) {
-      if (y_vec[i] == 0) {
-        lccdf += log(theta_vec[i][0]);
-      } else {
-        lccdf -= stan::math::INFTY;
-      }
+      lccdf += log(theta_vec[i][0]);
     } else {
       auto x = log1m_exp(
           log_sum_exp(poisson_binomial_log_probs(y_vec[i], theta_vec[i])));

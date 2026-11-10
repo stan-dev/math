@@ -9,6 +9,7 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/select.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
@@ -46,23 +47,19 @@ inline return_type_t<T_prob> bernoulli_lccdf(const T_n& n,
 
   auto ops_partials = make_partials_propagator(theta_ref);
 
-  // Explicit return for extreme values
-  // The gradients are technically ill-defined, but treated as zero
-  if (any(n_arr < 0)) {
-    return ops_partials.build(0.0);
-  } else if (any(n_arr >= 1)) {
+  // An element with probability 0 (n >= 1) makes the result -inf; the
+  // gradients are treated as zero
+  if (any(n_arr >= 1)) {
     return ops_partials.build(NEGATIVE_INFTY);
   }
 
-  size_t theta_size = math::size(theta_arr);
-  size_t n_size = math::size(n_arr);
-  double broadcast_n = theta_size == n_size ? 1 : n_size;
-
+  // Only the elements with n = 0 remain to contribute; an element with
+  // probability 1 (n < 0) contributes nothing
   if constexpr (is_autodiff_v<T_prob>) {
-    partials<0>(ops_partials) = inv(theta_arr) * broadcast_n;
+    partials<0>(ops_partials) = select(n_arr == 0, inv(theta_arr), 0.0);
   }
 
-  return ops_partials.build(sum(log(theta_arr)) * broadcast_n);
+  return ops_partials.build(sum(select(n_arr == 0, log(theta_arr), 0.0)));
 }
 
 }  // namespace math
