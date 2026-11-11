@@ -1,8 +1,32 @@
 #ifndef TEST_UNIT_MATH_PRIM_FUNCTOR_UTILS_THREADS_HPP
 #define TEST_UNIT_MATH_PRIM_FUNCTOR_UTILS_THREADS_HPP
 
-#include <stdlib.h>
+#include <cstdlib>
+#include <cstdio>
 #include <string>
+
+// Restore the caller's environment, including an originally absent variable.
+class scoped_stan_num_threads {
+  const bool was_set_;
+  const std::string previous_;
+
+ public:
+  scoped_stan_num_threads()
+      : was_set_(std::getenv("STAN_NUM_THREADS") != nullptr),
+        previous_(was_set_ ? std::getenv("STAN_NUM_THREADS") : "") {}
+
+  ~scoped_stan_num_threads() {
+#ifdef _WIN32
+    _putenv_s("STAN_NUM_THREADS", previous_.c_str());
+#else
+    if (was_set_) {
+      setenv("STAN_NUM_THREADS", previous_.c_str(), 1);
+    } else {
+      unsetenv("STAN_NUM_THREADS");
+    }
+#endif
+  }
+};
 
 // utility to set number of threads to use
 inline void set_n_threads(int num_threads) {
