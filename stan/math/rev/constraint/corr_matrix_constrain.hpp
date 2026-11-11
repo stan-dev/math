@@ -9,10 +9,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/constraint/corr_constrain.hpp>
 #include <stan/math/prim/constraint/corr_matrix_constrain.hpp>
-#include <stan/math/prim/fun/read_corr_matrix.hpp>
-#include <stdexcept>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -43,16 +41,13 @@ namespace math {
  * matrix.
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
-inline var_value<Eigen::MatrixXd> corr_matrix_constrain(const T& x,
-                                                        Eigen::Index k) {
+inline var_value<Eigen::MatrixXd> corr_matrix_constrain(T&& x, Eigen::Index k) {
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);
-  if (k == 0) {
-    return Eigen::MatrixXd();
-  }
   return multiply_lower_tri_self_transpose(
-      internal::cholesky_corr_factor<true>(x, k));
+      internal::cholesky_corr_factor<internal::CorrOrder::column>(
+          std::forward<T>(x), k));
 }
 
 /**
@@ -76,19 +71,16 @@ inline var_value<Eigen::MatrixXd> corr_matrix_constrain(const T& x,
  * @param lp Log probability reference to increment.
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
-inline var_value<Eigen::MatrixXd> corr_matrix_constrain(const T& x,
-                                                        Eigen::Index k,
+inline var_value<Eigen::MatrixXd> corr_matrix_constrain(T&& x, Eigen::Index k,
                                                         scalar_type_t<T>& lp) {
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);
-  if (k == 0) {
-    return Eigen::MatrixXd();
-  }
   lp -= dot_product(internal::corr_matrix_log_jacobian_coefficients(k),
                     log_cosh(x));
   return multiply_lower_tri_self_transpose(
-      internal::cholesky_corr_factor<true>(x, k));
+      internal::cholesky_corr_factor<internal::CorrOrder::column>(
+          std::forward<T>(x), k));
 }
 
 }  // namespace math

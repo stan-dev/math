@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_CONSTRAINT_CHOLESKY_CORR_CONSTRAIN_HPP
 #define STAN_MATH_PRIM_CONSTRAINT_CHOLESKY_CORR_CONSTRAIN_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
@@ -8,7 +9,7 @@
 #include <stan/math/prim/fun/log_cosh.hpp>
 #include <stan/math/prim/fun/tanh.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <cmath>
+#include <cstdint>
 #include <utility>
 
 namespace stan {
@@ -16,75 +17,27 @@ namespace math {
 
 namespace internal {
 /**
- * Return the coefficients `c` for which the log absolute Jacobian
- * determinant of `cholesky_corr_constrain(y, K)` is
- * `-sum_n c_n log(cosh(y_n))`.
- *
- * With `z = tanh(y)`, row `i` holds `z_m sqrt(prod_{l < m} (1 - z_l^2))` in
- * column `m < i`. The Jacobian has a factor `1 - z_m^2` for each element
- * and a factor `sqrt(prod_{l < j} (1 - z_l^2))` for each column
- * `0 < j < i`. With `log(1 - z_m^2) = -2 log(cosh(y_m))`, the coefficient
- * of element `m` of row `i` is `2 + (i - 1 - m) = i + 1 - m`.
- *
- * @param K number of rows of the Cholesky factor
- * @return coefficients in the order of the unconstrained vector
+ * Order of the partial correlations in the unconstrained vector: `row` for
+ * `cholesky_corr_constrain` (row 1, then row 2, ...), `column` for
+ * `corr_matrix_constrain` and `cov_matrix_constrain_lkj` (column 0, then
+ * column 1, ...).
  */
-inline Eigen::VectorXd cholesky_corr_log_jacobian_coefficients(int K) {
-  Eigen::VectorXd c((K * (K - 1)) / 2);
-  int k = 0;
-  for (int i = 1; i < K; ++i) {
-    for (int m = 0; m < i; ++m) {
-      c.coeffRef(k++) = i + 1 - m;
-    }
-  }
-  return c;
-}
-
-/**
- * Return `tanh(y)` and `sech(y) = 1 / cosh(y)` from one call of `expm1` or
- * `exp`, with a relative error of a few ulp each.
- *
- * For `|y| < 1`, with `u = expm1(|y|)`, `cosh = 1 + u^2 / (2 (1 + u))` and
- * `sinh = u (u + 2) / (2 (1 + u))`. For `|y| >= 1`, with `e = exp(-|y|)`,
- * `tanh = (1 - e^2) / (1 + e^2)` and `sech = 2 e / (1 + e^2)`.
- *
- * @param y argument
- * @return pair of `tanh(y)` and `sech(y)`
- */
-inline std::pair<double, double> tanh_and_sech(double y) {
-  const double a = std::fabs(y);
-  double tanh_a;
-  double sech;
-  if (a < 1.0) {
-    const double u = std::expm1(a);
-    const double cosh = 1.0 + u * u / (2.0 * (1.0 + u));
-    tanh_a = u * (u + 2.0) / (2.0 * (1.0 + u)) / cosh;
-    sech = 1.0 / cosh;
-  } else {
-    const double e = std::exp(-a);
-    const double e2 = e * e;
-    tanh_a = (1.0 - e2) / (1.0 + e2);
-    sech = 2.0 * e / (1.0 + e2);
-  }
-  return {std::copysign(tanh_a, y), sech};
-}
+enum class CorrOrder : uint8_t { row = 0, column = 1 };
 
 /**
  * Return the position in the unconstrained vector of the partial
  * correlation for element `(r, c)`, `c < r`, of the Cholesky factor.
  *
- * @tparam ColumnOrder `false` for the row order of
- * `cholesky_corr_constrain` (row 1, then row 2, ...), `true` for the column
- * order of `corr_matrix_constrain` (column 0, then column 1, ...)
+ * @tparam Order order of the partial correlations in the vector
  * @param r row
  * @param c column
  * @param K number of rows
  * @return position in the unconstrained vector
  */
-template <bool ColumnOrder>
+template <CorrOrder Order>
 inline Eigen::Index cholesky_corr_position(Eigen::Index r, Eigen::Index c,
                                            Eigen::Index K) {
-  if constexpr (ColumnOrder) {
+  if constexpr (Order == CorrOrder::column) {
     return c * (K - 1) - (c * (c - 1)) / 2 + (r - c - 1);
   } else {
     return (r * (r - 1)) / 2 + c;
@@ -92,44 +45,79 @@ inline Eigen::Index cholesky_corr_position(Eigen::Index r, Eigen::Index c,
 }
 
 /**
+ * Return a lazy expression of the coefficients `c` for which the log
+ * absolute Jacobian determinant of `cholesky_corr_constrain` is
+ * `-sum_n c_n log(cosh(y_n))`, in row order. The coefficient of element
+ * `(r, c)` is `r + 1 - c`, with `r` recovered from the position by
+ * inverting `cholesky_corr_position<CorrOrder::row>`.
+ *
+ * @param K number of rows
+ * @return coefficients in the order of the unconstrained vector
+ */
+inline auto cholesky_corr_log_jacobian_coefficients(Eigen::Index K) {
+  const Eigen::Index n = (K * (K - 1)) / 2;
+  return make_holder(
+      [](const auto& i) {
+        const auto r = (0.5 * (1.0 + (1.0 + 8.0 * i).sqrt())).floor();
+        return (r + 1.0 - (i - 0.5 * r * (r - 1.0))).matrix();
+      },
+      Eigen::ArrayXd::LinSpaced(n, 0.0, n - 1.0));
+}
+
+/**
+ * Return a lazy expression of the coefficients `c` for which the log
+ * absolute Jacobian determinant of `corr_matrix_constrain` is
+ * `-sum_n c_n log(cosh(y_n))`, in column order. The coefficient of every
+ * element of column `c` is `K - c` (equation 11 of Lewandowski, Kurowicka
+ * and Joe, 2009), with `c` recovered from the position by inverting
+ * `cholesky_corr_position<CorrOrder::column>`.
+ *
+ * @param K number of rows
+ * @return coefficients in the order of the unconstrained vector
+ */
+inline auto corr_matrix_log_jacobian_coefficients(Eigen::Index K) {
+  const Eigen::Index n = (K * (K - 1)) / 2;
+  const double b = 2.0 * K - 1.0;
+  return make_holder(
+      [K = static_cast<double>(K), b](const auto& i) {
+        return (K - (0.5 * (b - (b * b - 8.0 * i).sqrt())).floor()).matrix();
+      },
+      Eigen::ArrayXd::LinSpaced(n, 0.0, n - 1.0));
+}
+
+/**
  * Return the Cholesky factor of a correlation matrix from unconstrained
- * values `y`, whose partial correlations are `tanh(y)`.
+ * values `y`, whose partial correlations are `tanh(y)`. Each element is
+ * `L(r, c) = tanh(y_c) exp(-a)` with `a` the sum of `log(cosh(y))` over the
+ * earlier columns of the row, which has no cancellation.
  *
- * In row `r`, `1 - sum` of the squares of the elements before column `c`
- * is `prod_{m < c} (1 - tanh(y_m)^2) = exp(-2 a)` with
- * `a = sum_{m < c} log(cosh(y_m))`, so
- * `L(r, c) = tanh(y_c) exp(-a)` and `L(r, r) = exp(-a)` over the whole
- * row. Unlike `sqrt(1 - sum)`, this has no subtraction: the elements keep
- * a small relative error when partial correlations are close to ±1 or a
- * row is long, and the diagonal stays positive unless `a` exceeds about
- * 745.
- *
- * @tparam ColumnOrder order of the partial correlations in `y`, see
- * `cholesky_corr_position`
+ * @tparam Order order of the partial correlations in `y`
  * @tparam EigVec type of the vector
+ * @tparam LogCoshVec type of the vector of `log(cosh(y))`
  * @param y unconstrained values, `K (K - 1) / 2` of them
+ * @param log_cosh_y `log_cosh(y)`, shared with the log Jacobian
  * @param K number of rows
  * @return Cholesky factor of a correlation matrix
  */
-template <bool ColumnOrder, typename EigVec,
-          require_eigen_vector_t<EigVec>* = nullptr>
+template <CorrOrder Order, typename EigVec, typename LogCoshVec,
+          require_all_eigen_vector_t<EigVec, LogCoshVec>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_corr_factor(const EigVec& y, Eigen::Index K) {
+cholesky_corr_factor(EigVec&& y, LogCoshVec&& log_cosh_y, Eigen::Index K) {
   using T_scalar = value_type_t<EigVec>;
   Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic> L
       = Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic>::Zero(K, K);
   if (K == 0) {
     return L;
   }
-  const auto& y_ref = to_ref(y);
+  decltype(auto) y_ref = to_ref(std::forward<EigVec>(y));
+  decltype(auto) log_cosh_y_ref = to_ref(std::forward<LogCoshVec>(log_cosh_y));
   L.coeffRef(0, 0) = 1;
   for (Eigen::Index r = 1; r < K; ++r) {
     T_scalar a = 0;
     for (Eigen::Index c = 0; c < r; ++c) {
-      const auto& y_rc
-          = y_ref.coeff(cholesky_corr_position<ColumnOrder>(r, c, K));
-      L.coeffRef(r, c) = tanh(y_rc) * exp(-a);
-      a += log_cosh(y_rc);
+      const Eigen::Index k = cholesky_corr_position<Order>(r, c, K);
+      L.coeffRef(r, c) = tanh(y_ref.coeff(k)) * exp(-a);
+      a += log_cosh_y_ref.coeff(k);
     }
     L.coeffRef(r, r) = exp(-a);
   }
@@ -149,11 +137,13 @@ cholesky_corr_factor(const EigVec& y, Eigen::Index K) {
  */
 template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_corr_constrain(const EigVec& y, int K) {
+cholesky_corr_constrain(EigVec&& y, int K) {
   int k_choose_2 = (K * (K - 1)) / 2;
   check_size_match("cholesky_corr_constrain", "constrain size", y.size(),
                    "k_choose_2", k_choose_2);
-  return internal::cholesky_corr_factor<false>(y, K);
+  decltype(auto) y_ref = to_ref(std::forward<EigVec>(y));
+  return internal::cholesky_corr_factor<internal::CorrOrder::row>(
+      y_ref, log_cosh(y_ref), K);
 }
 
 /**
@@ -169,21 +159,19 @@ cholesky_corr_constrain(const EigVec& y, int K) {
  * @return Cholesky factor of a correlation matrix
  */
 template <typename EigVec, typename Lp,
-          require_eigen_vector_t<EigVec>* = nullptr,
+          require_eigen_col_vector_t<EigVec>* = nullptr,
           require_convertible_t<return_type_t<EigVec>, Lp>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_corr_constrain(const EigVec& y, int K, Lp& lp) {
+cholesky_corr_constrain(EigVec&& y, int K, Lp& lp) {
   int k_choose_2 = (K * (K - 1)) / 2;
   check_size_match("cholesky_corr_constrain", "y.size()", y.size(),
                    "k_choose_2", k_choose_2);
-  if (K == 0) {
-    return Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>(
-        0, 0);
-  }
-  const auto& y_ref = to_ref(y);
+  decltype(auto) y_ref = to_ref(std::forward<EigVec>(y));
+  const auto& log_cosh_y = to_ref(log_cosh(y_ref));
   lp -= dot_product(internal::cholesky_corr_log_jacobian_coefficients(K),
-                    log_cosh(y_ref));
-  return internal::cholesky_corr_factor<false>(y_ref, K);
+                    log_cosh_y);
+  return internal::cholesky_corr_factor<internal::CorrOrder::row>(
+      y_ref, log_cosh_y, K);
 }
 
 /**

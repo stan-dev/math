@@ -2,8 +2,12 @@
 #define STAN_MATH_PRIM_FUN_LOG_COSH_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/copysign.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/expm1.hpp>
+#include <stan/math/prim/fun/fabs.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
-#include <cmath>
 #include <utility>
 
 namespace stan {
@@ -11,40 +15,40 @@ namespace math {
 
 namespace internal {
 /**
- * Return `log(cosh(x))` and its derivative `tanh(x)`.
- *
- * For `|x| < 1`, with `u = expm1(|x|)`, `cosh(x) - 1 = u^2 / (2 (1 + u))`
- * and `tanh(|x|) = u (u + 2) / (u (u + 2) + 2)`. For `|x| >= 1`, with
- * `t = expm1(-2 |x|)`, `log(cosh(x)) = |x| + log1p(t / 2)` and
- * `tanh(|x|) = -t / (2 + t)`. No branch subtracts two nearly equal numbers
- * or overflows, so both results have a small relative error for every `x`.
+ * `log(cosh(x))`, `tanh(x)` and `sech(x) = 1 / cosh(x)` of one argument.
+ */
+struct log_cosh_parts {
+  double log_cosh;
+  double tanh;
+  double sech;
+};
+
+/**
+ * Return `log(cosh(x))`, its derivative `tanh(x)`, and `sech(x)` from one
+ * call of `expm1` (`|x| < 1`) or `exp` (`|x| >= 1`). Neither branch
+ * subtracts two nearly equal numbers or overflows.
  *
  * @param x argument
- * @return pair of `log(cosh(x))` and `tanh(x)`
+ * @return `log(cosh(x))`, `tanh(x)` and `sech(x)`
  */
-inline std::pair<double, double> log_cosh_and_tanh(double x) {
-  const double a = std::fabs(x);
-  double value;
-  double tanh_a;
+inline log_cosh_parts log_cosh_tanh_sech(double x) {
+  const double a = fabs(x);
   if (a < 1.0) {
-    const double u = std::expm1(a);
+    const double u = expm1(a);
+    const double d = u * u / (2.0 * (1.0 + u));
     const double w = u * (u + 2.0);
-    value = std::log1p(u * u / (2.0 * (1.0 + u)));
-    tanh_a = w / (w + 2.0);
-  } else {
-    const double t = std::expm1(-2.0 * a);
-    value = a + std::log1p(0.5 * t);
-    tanh_a = -t / (2.0 + t);
+    return {log1p(d), copysign(w / (w + 2.0), x), 1.0 / (1.0 + d)};
   }
-  return {value, std::copysign(tanh_a, x)};
+  const double e = exp(-a);
+  const double e2 = e * e;
+  return {a + log1p(0.5 * (e2 - 1.0)), copysign((1.0 - e2) / (1.0 + e2), x),
+          2.0 * e / (1.0 + e2)};
 }
 }  // namespace internal
 
 /**
- * Return the natural logarithm of the hyperbolic cosine of the argument.
- *
- * The result does not overflow for large `|x|` and has a small relative
- * error for small `|x|`. The derivative is `tanh(x)`.
+ * Return the natural logarithm of the hyperbolic cosine of the argument,
+ * without overflow for large `|x|`. The derivative is `tanh(x)`.
  *
  * @tparam T arithmetic type
  * @param x argument
@@ -52,7 +56,7 @@ inline std::pair<double, double> log_cosh_and_tanh(double x) {
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
 inline double log_cosh(T x) {
-  return internal::log_cosh_and_tanh(static_cast<double>(x)).first;
+  return internal::log_cosh_tanh_sech(static_cast<double>(x)).log_cosh;
 }
 
 /**
@@ -82,8 +86,8 @@ struct log_cosh_fun {
 template <typename T, require_container_t<T>* = nullptr,
           require_not_var_matrix_t<T>* = nullptr,
           require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
-inline auto log_cosh(const T& x) {
-  return apply_scalar_unary<log_cosh_fun, T>::apply(x);
+inline auto log_cosh(T&& x) {
+  return apply_scalar_unary<log_cosh_fun, T>::apply(std::forward<T>(x));
 }
 
 }  // namespace math

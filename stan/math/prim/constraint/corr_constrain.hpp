@@ -5,7 +5,8 @@
 #include <stan/math/prim/fun/log_cosh.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/tanh.hpp>
-#include <cmath>
+#include <stan/math/prim/fun/to_ref.hpp>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -38,17 +39,15 @@ inline plain_type_t<T> corr_constrain(T&& x) {
  * <p>\f$\log | \frac{d}{dx} \tanh x  | = \log (1 - \tanh^2 x)
  * = -2 \log \cosh x\f$.
  *
- * The difference \f$1 - \tanh^2 x\f$ has no correct digits from
- * \f$|x| = 19\f$; `log_cosh` has a small relative error for every `x`.
- *
  * @tparam T_x Type of scalar or container
  * @param[in] x value or container
  * @param[in,out] lp log density accumulator
  */
 template <typename T_x, typename T_lp>
 inline auto corr_constrain(T_x&& x, T_lp& lp) {
-  lp -= 2.0 * sum(log_cosh(x));
-  return corr_constrain(std::forward<T_x>(x));
+  decltype(auto) x_ref = to_ref(std::forward<T_x>(x));
+  lp -= 2.0 * sum(log_cosh(x_ref));
+  return corr_constrain(x_ref);
 }
 
 /**
