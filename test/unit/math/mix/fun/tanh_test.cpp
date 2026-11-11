@@ -16,9 +16,8 @@ TEST(mathMixMatFun, tanh) {
   stan::test::expect_complex_common(f);
 }
 
-// First and second derivatives at large |x| against mpmath. 1 - tanh(x)^2
-// is 0 in double from |x| = 19.06, and 1 / cosh(x)^2 makes the second
-// derivative NaN once cosh(x)^2 overflows (|x| > 355).
+// The old forward-mode derivative 1 - u * u rounds to exactly 0 once
+// |x| > 19; the derivatives must stay accurate down to their underflow.
 TEST(mathMixMatFun, tanh_derivatives_large_argument) {
   using stan::math::fvar;
   using stan::math::var;
@@ -29,7 +28,7 @@ TEST(mathMixMatFun, tanh_derivatives_large_argument) {
          {20.0, 1.6993417021166356e-17, -3.3986834042332711e-17},
          {300.0, 1.0601586212017243e-260, -2.1203172424034487e-260},
          {1000.0, 0.0, 0.0}};
-  for (const auto& c : cases) {
+  for (auto&& c : cases) {
     const double x = c[0];
     const double d1 = c[1];
     const double d2 = c[2];
@@ -51,9 +50,8 @@ TEST(mathMixMatFun, tanh_derivatives_large_argument) {
   }
 }
 
-// First, second and third derivatives in fvar<fvar<var>> against mpmath,
-// at 0 (where an fabs(x) in the derivative would make the third derivative
-// 0), on both sides of 0.5, and in the tail.
+// The 4 e / (1 + e)^2 branch starts at |x| = 0.5 so that the zero derivative
+// of fabs at 0 cannot zero the third derivative; guard x = 0 and both edges.
 TEST(mathMixMatFun, tanh_third_derivative) {
   using stan::math::fvar;
   using stan::math::var;
@@ -67,7 +65,7 @@ TEST(mathMixMatFun, tanh_third_derivative) {
       {3.0, 0.0098660371654401913, -0.019634494363042436, 0.038880116525661682},
       {-20.0, 1.6993417021166356e-17, 3.3986834042332711e-17,
        6.7973668084665422e-17}};
-  for (const auto& c : cases) {
+  for (auto&& c : cases) {
     const double x = c[0];
     var x_v = x;
     fvar<fvar<var>> x_ffv(fvar<var>(x_v, 1.0), fvar<var>(1.0, 0.0));

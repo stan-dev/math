@@ -81,7 +81,7 @@ corr_matrix_constrain(T&& x, Eigen::Index k, Lp& lp) {
   decltype(auto) x_ref = to_ref(std::forward<T>(x));
   check_size_match("cov_matrix_constrain", "x.size()", x_ref.size(),
                    "k_choose_2", k_choose_2);
-  const auto& log_cosh_x = to_ref(log_cosh(x_ref));
+  decltype(auto) log_cosh_x = to_ref(log_cosh(x_ref));
   lp -= dot_product(internal::corr_matrix_log_jacobian_coefficients(k),
                     log_cosh_x);
   return multiply_lower_tri_self_transpose(

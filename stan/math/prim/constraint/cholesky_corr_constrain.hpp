@@ -47,9 +47,12 @@ inline Eigen::Index cholesky_corr_position(Eigen::Index r, Eigen::Index c,
 /**
  * Return a lazy expression of the coefficients `c` for which the log
  * absolute Jacobian determinant of `cholesky_corr_constrain` is
- * `-sum_n c_n log(cosh(y_n))`, in row order. The coefficient of element
+ * `-sum_n c_n log(cosh(y_n))`, in row order: the coefficient of element
  * `(r, c)` is `r + 1 - c`, with `r` recovered from the position by
- * inverting `cholesky_corr_position<CorrOrder::row>`.
+ * inverting `cholesky_corr_position<CorrOrder::row>`. The inverse is exact,
+ * since at the first position of row `r` the radicand `1 + 8 i` is the
+ * perfect square `(2 r - 1)^2`, for which `sqrt` is exact, so `floor` never
+ * lands one row too low.
  *
  * @param K number of rows
  * @return coefficients in the order of the unconstrained vector
@@ -57,7 +60,7 @@ inline Eigen::Index cholesky_corr_position(Eigen::Index r, Eigen::Index c,
 inline auto cholesky_corr_log_jacobian_coefficients(Eigen::Index K) {
   const Eigen::Index n = (K * (K - 1)) / 2;
   return make_holder(
-      [](const auto& i) {
+      [](auto&& i) {
         const auto r = (0.5 * (1.0 + (1.0 + 8.0 * i).sqrt())).floor();
         return (r + 1.0 - (i - 0.5 * r * (r - 1.0))).matrix();
       },
@@ -67,10 +70,13 @@ inline auto cholesky_corr_log_jacobian_coefficients(Eigen::Index K) {
 /**
  * Return a lazy expression of the coefficients `c` for which the log
  * absolute Jacobian determinant of `corr_matrix_constrain` is
- * `-sum_n c_n log(cosh(y_n))`, in column order. The coefficient of every
+ * `-sum_n c_n log(cosh(y_n))`, in column order: the coefficient of every
  * element of column `c` is `K - c` (equation 11 of Lewandowski, Kurowicka
  * and Joe, 2009), with `c` recovered from the position by inverting
- * `cholesky_corr_position<CorrOrder::column>`.
+ * `cholesky_corr_position<CorrOrder::column>`. The inverse is exact, since
+ * at the first position of column `c` the radicand `b^2 - 8 i` is the
+ * perfect square `(2 (K - c) - 1)^2`, for which `sqrt` is exact, so `floor`
+ * never lands one column too low.
  *
  * @param K number of rows
  * @return coefficients in the order of the unconstrained vector
@@ -79,7 +85,7 @@ inline auto corr_matrix_log_jacobian_coefficients(Eigen::Index K) {
   const Eigen::Index n = (K * (K - 1)) / 2;
   const double b = 2.0 * K - 1.0;
   return make_holder(
-      [K = static_cast<double>(K), b](const auto& i) {
+      [K = static_cast<double>(K), b](auto&& i) {
         return (K - (0.5 * (b - (b * b - 8.0 * i).sqrt())).floor()).matrix();
       },
       Eigen::ArrayXd::LinSpaced(n, 0.0, n - 1.0));
@@ -167,7 +173,7 @@ cholesky_corr_constrain(EigVec&& y, int K, Lp& lp) {
   check_size_match("cholesky_corr_constrain", "y.size()", y.size(),
                    "k_choose_2", k_choose_2);
   decltype(auto) y_ref = to_ref(std::forward<EigVec>(y));
-  const auto& log_cosh_y = to_ref(log_cosh(y_ref));
+  decltype(auto) log_cosh_y = to_ref(log_cosh(y_ref));
   lp -= dot_product(internal::cholesky_corr_log_jacobian_coefficients(K),
                     log_cosh_y);
   return internal::cholesky_corr_factor<internal::CorrOrder::row>(

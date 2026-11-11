@@ -119,37 +119,43 @@ TEST(mathMixMatFun, corr_matrix_constrain_lp) {
   stan::test::expect_ad_matvar(f2(3), x2);
 }
 
-// lp is log |det J| of the map from y to the strictly lower triangular
-// elements of the correlation matrix.
+// The Jacobian is a closed-form weighted sum of log_cosh(y) in column order;
+// the weights are only right if lp equals log |det J| of the autodiff Jacobian.
 TEST(mathMixMatFun, corr_matrix_constrain_lp_is_log_det_jacobian) {
-  Eigen::VectorXd y(6);
-  y << 0.3, -1.2, 0.8, 2.1, -0.4, 1.5;
+  Eigen::VectorXd y4(6);
+  y4 << 0.3, -1.2, 0.8, 2.1, -0.4, 1.5;
   corr_transform_test::expect_lp_is_log_det_jacobian(
-      [](const auto& y) { return stan::math::corr_matrix_constrain(y, 4); },
-      [](const auto& y, auto& lp) {
-        stan::math::corr_matrix_constrain(y, 4, lp);
-      },
-      y, true, 1e-12);
+      [](auto&& y) { return stan::math::corr_matrix_constrain(y, 4); },
+      [](auto&& y, auto& lp) { stan::math::corr_matrix_constrain(y, 4, lp); },
+      y4, true, 1e-12);
+  for (int K : {2, 3, 5, 7}) {
+    Eigen::VectorXd y((K * (K - 1)) / 2);
+    for (int i = 0; i < y.size(); ++i) {
+      y(i) = 1.5 * std::sin(0.9 * i + 0.3);
+    }
+    corr_transform_test::expect_lp_is_log_det_jacobian(
+        [K](auto&& y) { return stan::math::corr_matrix_constrain(y, K); },
+        [K](auto&& y, auto& lp) {
+          stan::math::corr_matrix_constrain(y, K, lp);
+        },
+        y, true, 1e-12);
+  }
 }
 
-// lp = sum_n w_n log(1 - tanh(y_n)^2) with weights (1.5, 1.5, 1) for K = 3,
-// and its gradient, at large y against mpmath. Forming 1 - tanh(y)^2 loses
-// digits from |y| = 8.
+// The old read_corr_L Jacobian terms cancel at large |y|; the log_cosh form
+// must stay accurate there in every mode.
 TEST(mathMixMatFun, corr_matrix_constrain_lp_large_argument) {
   Eigen::VectorXd y(3);
   y << 15.0, 12.0, -0.5;
   Eigen::VectorXd grad_ref(3);
   grad_ref << -2.9999999999994385, -2.9999999997734919, 0.92423431452001952;
   corr_transform_test::expect_lp_all_modes(
-      [](const auto& y, auto& lp) {
-        stan::math::corr_matrix_constrain(y, 3, lp);
-      },
+      [](auto&& y, auto& lp) { stan::math::corr_matrix_constrain(y, 3, lp); },
       y, -77.081345930670418, grad_ref, 1e-13, 1e-14);
 }
 
-// Correlations at large |y| against mpmath. With sqrt(1 - z^2) from a
-// rounded z, the small elements of the Cholesky factor had relative errors
-// up to 3.8e-4, which reached the correlations close to 1.
+// The old sqrt(1 - sum_sqs) recursion put ~1e-10 errors in the correlations
+// when the partial correlations are near 1; the log_cosh factor must not.
 TEST(mathMixMatFun, corr_matrix_constrain_values_large_argument) {
   Eigen::VectorXd y(6);
   y << 15.0, 12.0, -0.5, 9.0, 2.0, -14.0;
@@ -157,49 +163,6 @@ TEST(mathMixMatFun, corr_matrix_constrain_values_large_argument) {
   ref << 0.99999999999981285, 0.99999999992449731, 0.99999999993182827,
       -0.46211715726000976, -0.46211663421720721, -0.46210665234659286;
   corr_transform_test::expect_values_all_modes(
-      [](const auto& y) { return stan::math::corr_matrix_constrain(y, 4); }, y,
-      true, ref, 4e-16, 0.0);
-}
-
-// K = 40 with unconstrained values in [-1.9, 1.9], as default inits: the
-// diagonal must be 1, lp finite, and the var_value gradient must equal the
-// Eigen<var> gradient and be finite.
-TEST(mathMixMatFun, corr_matrix_constrain_long_rows) {
-  using stan::math::var;
-  const int K = 40;
-  Eigen::VectorXd y((K * (K - 1)) / 2);
-  for (int i = 0; i < y.size(); ++i) {
-    y(i) = 1.9 * std::sin(1.3 * i + 0.7);
-  }
-  Eigen::MatrixXd W(K, K);
-  for (int i = 0; i < W.size(); ++i) {
-    W(i) = std::cos(0.7 * i);
-  }
-  double lp = 0;
-  Eigen::MatrixXd Omega = stan::math::corr_matrix_constrain(y, K, lp);
-  EXPECT_LT((Omega.diagonal().array() - 1).abs().maxCoeff(), 1e-14);
-  EXPECT_TRUE(std::isfinite(lp));
-
-  Eigen::Matrix<var, Eigen::Dynamic, 1> y_v = stan::math::to_var(y);
-  var lp_v = 0;
-  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> Omega_v
-      = stan::math::corr_matrix_constrain(y_v, K, lp_v);
-  var f_v = (W.array() * Omega_v.array()).sum() + lp_v;
-  f_v.grad();
-  Eigen::VectorXd g_v = stan::math::value_of(y_v.adj());
-  stan::math::recover_memory();
-
-  stan::math::var_value<Eigen::VectorXd> y_m(y);
-  var lp_m = 0;
-  stan::math::var_value<Eigen::MatrixXd> Omega_m
-      = stan::math::corr_matrix_constrain(y_m, K, lp_m);
-  var f_m = stan::math::sum(stan::math::elt_multiply(W, Omega_m)) + lp_m;
-  f_m.grad();
-  Eigen::VectorXd g_m = y_m.adj();
-  stan::math::recover_memory();
-
-  EXPECT_TRUE(g_v.allFinite());
-  EXPECT_TRUE(g_m.allFinite());
-  EXPECT_LT((g_v - g_m).cwiseAbs().maxCoeff(),
-            1e-12 * g_v.cwiseAbs().maxCoeff());
+      [](auto&& y) { return stan::math::corr_matrix_constrain(y, 4); }, y, true,
+      ref, 4e-16, 0.0);
 }

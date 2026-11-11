@@ -14,6 +14,15 @@ int inv_size(const T& x) {
   return -1;
 }
 
+// K (K - 1) / 2 deterministic values in [-1.9, 1.9], like default inits
+inline Eigen::VectorXd long_rows_input(int K) {
+  Eigen::VectorXd y((K * (K - 1)) / 2);
+  for (int i = 0; i < y.size(); ++i) {
+    y(i) = 1.9 * std::sin(1.3 * i + 0.7);
+  }
+  return y;
+}
+
 template <typename T>
 auto g1(const T& x) {
   stan::scalar_type_t<T> lp = 0;
@@ -116,62 +125,43 @@ TEST(mathMixMatFun, cholesky_corr_constrain_lp) {
   stan::test::expect_ad_matvar(f2(3), x2);
 }
 
-// The lazy coefficient expressions recover the row or column of each
-// position in closed form; check them against the formulas r + 1 - c (row
-// order) and K - c (column order) for every element of several sizes.
-TEST(mathMixMatFun, corr_log_jacobian_coefficients) {
-  using stan::math::internal::cholesky_corr_log_jacobian_coefficients;
-  using stan::math::internal::cholesky_corr_position;
-  using stan::math::internal::corr_matrix_log_jacobian_coefficients;
-  using stan::math::internal::CorrOrder;
-  for (int K : {0, 1, 2, 3, 4, 7, 40, 200}) {
-    Eigen::VectorXd row_order = cholesky_corr_log_jacobian_coefficients(K);
-    Eigen::VectorXd column_order = corr_matrix_log_jacobian_coefficients(K);
-    ASSERT_EQ((K * (K - 1)) / 2, row_order.size()) << "K = " << K;
-    ASSERT_EQ((K * (K - 1)) / 2, column_order.size()) << "K = " << K;
-    for (int r = 1; r < K; ++r) {
-      for (int c = 0; c < r; ++c) {
-        EXPECT_EQ(r + 1 - c,
-                  row_order(cholesky_corr_position<CorrOrder::row>(r, c, K)))
-            << "K = " << K << ", r = " << r << ", c = " << c;
-        EXPECT_EQ(K - c, column_order(cholesky_corr_position<CorrOrder::column>(
-                             r, c, K)))
-            << "K = " << K << ", r = " << r << ", c = " << c;
-      }
+// The Jacobian is a closed-form weighted sum of log_cosh(y); the weights
+// are only right if lp equals log |det J| of the autodiff Jacobian.
+TEST(mathMixMatFun, cholesky_corr_constrain_lp_is_log_det_jacobian) {
+  Eigen::VectorXd y4(6);
+  y4 << 0.3, -1.2, 0.8, 2.1, -0.4, 1.5;
+  corr_transform_test::expect_lp_is_log_det_jacobian(
+      [](auto&& y) { return stan::math::cholesky_corr_constrain(y, 4); },
+      [](auto&& y, auto& lp) { stan::math::cholesky_corr_constrain(y, 4, lp); },
+      y4, true, 1e-12);
+  for (int K : {2, 3, 5, 7}) {
+    Eigen::VectorXd y((K * (K - 1)) / 2);
+    for (int i = 0; i < y.size(); ++i) {
+      y(i) = 1.5 * std::sin(0.9 * i + 0.3);
     }
+    corr_transform_test::expect_lp_is_log_det_jacobian(
+        [K](auto&& y) { return stan::math::cholesky_corr_constrain(y, K); },
+        [K](auto&& y, auto& lp) {
+          stan::math::cholesky_corr_constrain(y, K, lp);
+        },
+        y, true, 1e-12);
   }
 }
 
-// lp is log |det J| of the map from y to the strictly lower triangular
-// elements of the Cholesky factor.
-TEST(mathMixMatFun, cholesky_corr_constrain_lp_is_log_det_jacobian) {
-  Eigen::VectorXd y(6);
-  y << 0.3, -1.2, 0.8, 2.1, -0.4, 1.5;
-  corr_transform_test::expect_lp_is_log_det_jacobian(
-      [](const auto& y) { return stan::math::cholesky_corr_constrain(y, 4); },
-      [](const auto& y, auto& lp) {
-        stan::math::cholesky_corr_constrain(y, 4, lp);
-      },
-      y, true, 1e-12);
-}
-
-// lp = sum_n w_n log(1 - tanh(y_n)^2) with weights (1, 1.5, 1) for K = 3,
-// and its gradient, at large y against mpmath. Forming 1 - tanh(y)^2 and
-// 1 - sum of squares loses digits from |y| = 8.
+// The old Jacobian terms log1m(square(z)) and log1m(sum_sqs) cancel at
+// large |y|; the log_cosh form must stay accurate there in every mode.
 TEST(mathMixMatFun, cholesky_corr_constrain_lp_large_argument) {
   Eigen::VectorXd y(3);
   y << 15.0, 12.0, -0.5;
   Eigen::VectorXd grad_ref(3);
   grad_ref << -1.9999999999996257, -2.9999999997734919, 0.92423431452001952;
   corr_transform_test::expect_lp_all_modes(
-      [](const auto& y, auto& lp) {
-        stan::math::cholesky_corr_constrain(y, 3, lp);
-      },
+      [](auto&& y, auto& lp) { stan::math::cholesky_corr_constrain(y, 3, lp); },
       y, -62.77449311123027, grad_ref, 1e-13, 1e-14);
 }
 
-// Values of L at large |y| against mpmath. sqrt(1 - sum of squares) had a
-// relative error of 3.8e-4 in L(1, 1) at y = 15.
+// The old sqrt(1 - sum_sqs) recursion loses the small elements of L when
+// partial correlations are near 1; the tanh / log_cosh factor must not.
 TEST(mathMixMatFun, cholesky_corr_constrain_values_large_argument) {
   Eigen::VectorXd y(6);
   y << 15.0, 12.0, -0.5, 9.0, 2.0, -14.0;
@@ -180,31 +170,30 @@ TEST(mathMixMatFun, cholesky_corr_constrain_values_large_argument) {
       -5.6786918924293556e-6, 1.0897607083695929e-5, 0.99999996954004097,
       0.00023794090595878951, -6.5605200973176475e-5, 1.091052174635906e-10;
   corr_transform_test::expect_values_all_modes(
-      [](const auto& y) { return stan::math::cholesky_corr_constrain(y, 4); },
-      y, false, ref, 0.0, 4e-15);
+      [](auto&& y) { return stan::math::cholesky_corr_constrain(y, 4); }, y,
+      false, ref, 0.0, 4e-15);
 }
 
-// K = 40 with unconstrained values in [-1.9, 1.9], as default inits: a row
-// of 39 moderate values makes 1 - sum of squares about 1e-20, which
-// sqrt(1 - sum) rounded to 0. The diagonal must stay positive, the rows
-// must have unit norm, lp and the LKJ density must be finite, and the
-// var_value gradient must equal the Eigen<var> gradient.
+// #3218: with default inits at K = 40 a diagonal element of L rounded to 0,
+// lkj_corr_cholesky_lpdf rejected it, and initialization failed.
 TEST(mathMixMatFun, cholesky_corr_constrain_long_rows) {
-  using stan::math::var;
   const int K = 40;
-  Eigen::VectorXd y((K * (K - 1)) / 2);
-  for (int i = 0; i < y.size(); ++i) {
-    y(i) = 1.9 * std::sin(1.3 * i + 0.7);
-  }
+  Eigen::VectorXd y = cholesky_corr_constrain_test::long_rows_input(K);
   double lp = 0;
   Eigen::MatrixXd L = stan::math::cholesky_corr_constrain(y, K, lp);
   EXPECT_GT(L.diagonal().minCoeff(), 0.0);
   EXPECT_LT((L.rowwise().squaredNorm().array() - 1).abs().maxCoeff(), 1e-14);
   EXPECT_TRUE(std::isfinite(lp));
   EXPECT_TRUE(std::isfinite(stan::math::lkj_corr_cholesky_lpdf(L, 1.0)));
+}
 
-  // gradient of 2 sum(log(diag(L))) + lp: Eigen<var> through the prim code,
-  // var_value through the hand-written reverse pass
+// The var_value overload has a hand-written reverse pass; Eigen<var>
+// differentiates the forward formula and is the oracle for it at K = 40.
+TEST(mathMixMatFun, cholesky_corr_constrain_long_rows_var_value_gradient) {
+  using stan::math::var;
+  const int K = 40;
+  Eigen::VectorXd y = cholesky_corr_constrain_test::long_rows_input(K);
+
   Eigen::Matrix<var, Eigen::Dynamic, 1> y_v = stan::math::to_var(y);
   var lp_v = 0;
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> L_v

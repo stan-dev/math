@@ -1,14 +1,14 @@
 #include <test/unit/math/mix/constraint/corr_transform_helpers.hpp>
 
-// log(1 - tanh(x)^2) and its derivative -2 tanh(x) at large |x|, against
-// mpmath. Forming 1 - tanh(x)^2 loses all digits from |x| = 19.06.
+// The old Jacobian log1m(square(tanh(x))) loses accuracy past |x| = 10 and
+// is -inf past 19; the log_cosh form must stay exact and finite there.
 TEST(mathMixMatFun, corr_constrain_lp_large_argument) {
   Eigen::VectorXd x(3);
   x << 15.0, -19.5, 30.0;
   Eigen::VectorXd grad_ref(3);
   grad_ref << -1.9999999999996257, 2.0, -2.0;
   corr_transform_test::expect_lp_all_modes(
-      [](const auto& x, auto& lp) { stan::math::corr_constrain(x, lp); }, x,
+      [](auto&& x, auto& lp) { stan::math::corr_constrain(x, lp); }, x,
       -124.84111691664052, grad_ref, 1e-13, 1e-14);
 }
 
