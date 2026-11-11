@@ -39,7 +39,7 @@ cov_matrix_constrain_lkj(T&& x, size_t k) {
   decltype(auto) x_ref = to_ref(std::forward<T>(x));
   check_size_match("cov_matrix_constrain_lkj", "x.size()", x_ref.size(),
                    "k_choose_2 + k", k_choose_2 + k);
-  auto&& cpcs = x_ref.head(k_choose_2);
+  auto cpcs = x_ref.head(k_choose_2);
   return multiply_lower_tri_self_transpose(diag_pre_multiply(
       to_ref(positive_constrain(x_ref.tail(k))),
       internal::cholesky_corr_factor<internal::CorrOrder::column>(
@@ -67,8 +67,8 @@ cov_matrix_constrain_lkj(T&& x, size_t k, return_type_t<T>& lp) {
   decltype(auto) x_ref = to_ref(std::forward<T>(x));
   check_size_match("cov_matrix_constrain_lkj", "x.size()", x_ref.size(),
                    "k_choose_2 + k", k_choose_2 + k);
-  auto&& cpcs = x_ref.head(k_choose_2);
-  auto&& log_sds = x_ref.tail(k);
+  auto cpcs = x_ref.head(k_choose_2);
+  auto log_sds = x_ref.tail(k);
   decltype(auto) log_cosh_cpcs = to_ref(log_cosh(cpcs));
   lp -= dot_product(internal::corr_matrix_log_jacobian_coefficients(k),
                     log_cosh_cpcs);

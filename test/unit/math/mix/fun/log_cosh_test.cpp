@@ -65,28 +65,23 @@ TEST(mathMixMatFun, logCoshReference) {
   }
 }
 
-// The var_value Cholesky factor takes tanh and sech from this helper; all
-// three outputs must stay accurate through the underflow of sech at 800.
-TEST(mathMixMatFun, logCoshTanhSech) {
+// The var_value Cholesky factor builds exp(-a) as a product of sech; it must
+// stay accurate through its underflow at 800.
+TEST(mathMixMatFun, sechReference) {
   const double eps = std::numeric_limits<double>::epsilon();
-  // x, log(cosh(x)), tanh(x), sech(x)
-  std::vector<std::array<double, 4>> cases
-      = {{0.0, 0.0, 0.0, 1.0},
-         {1e-10, 5.0e-21, 1.0e-10, 1.0},
-         {0.5, 0.12011450695827752, 0.46211715726000976, 0.88681888397007391},
-         {0.999, 0.43301944642088479, 0.76117386166056995, 0.64854787974731328},
-         {1.0, 0.43378083048302719, 0.76159415595576489, 0.6480542736638854},
-         {1.001, 0.43454263451956291, 0.76201381055100676, 0.64756077130222642},
-         {-3.0, 2.3093285045777851, -0.99505475368673045, 0.099327927419433208},
-         {30.0, 29.306852819440055, 1.0, 1.8715245937680349e-13},
-         {700.0, 699.30685281944005, 1.0, 1.9719353087519542e-304},
-         {800.0, 799.30685281944005, 1.0, 0.0}};
+  // x, sech(x)
+  std::vector<std::array<double, 2>> cases = {{0.0, 1.0},
+                                              {1e-10, 1.0},
+                                              {0.5, 0.88681888397007391},
+                                              {0.999, 0.64854787974731328},
+                                              {1.0, 0.6480542736638854},
+                                              {1.001, 0.64756077130222642},
+                                              {-3.0, 0.099327927419433208},
+                                              {30.0, 1.8715245937680349e-13},
+                                              {700.0, 1.9719353087519542e-304},
+                                              {800.0, 0.0}};
   for (auto&& c : cases) {
-    const double x = c[0];
-    const stan::math::internal::log_cosh_parts parts
-        = stan::math::internal::log_cosh_tanh_sech(x);
-    EXPECT_NEAR(c[1], parts.log_cosh, 4 * eps * std::fabs(c[1])) << "x = " << x;
-    EXPECT_NEAR(c[2], parts.tanh, 4 * eps * std::fabs(c[2])) << "x = " << x;
-    EXPECT_NEAR(c[3], parts.sech, 4 * eps * std::fabs(c[3])) << "x = " << x;
+    EXPECT_NEAR(c[1], stan::math::internal::sech(c[0]), 4 * eps * c[1])
+        << "x = " << c[0];
   }
 }

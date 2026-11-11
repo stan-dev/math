@@ -177,7 +177,7 @@ cholesky_corr_constrain(EigVec&& y, int K, Lp& lp) {
   lp -= dot_product(internal::cholesky_corr_log_jacobian_coefficients(K),
                     log_cosh_y);
   return internal::cholesky_corr_factor<internal::CorrOrder::row>(
-      y_ref, log_cosh_y, K);
+      y_ref, std::move(log_cosh_y), K);
 }
 
 /**

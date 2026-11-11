@@ -66,8 +66,8 @@ inline var_value<Eigen::MatrixXd> cov_matrix_constrain_lkj(
   check_size_match("cov_matrix_constrain_lkj", "x.size()", x.size(),
                    "k_choose_2 + k", k_choose_2 + k);
   auto arena_x = to_arena(std::forward<T>(x));
-  auto&& cpcs = arena_x.head(k_choose_2);
-  auto&& log_sds = arena_x.tail(k);
+  auto cpcs = arena_x.head(k_choose_2);
+  auto log_sds = arena_x.tail(k);
   lp -= dot_product(internal::corr_matrix_log_jacobian_coefficients(k),
                     log_cosh(cpcs));
   lp += (k + 1.0) * sum(log_sds) + k * LOG_TWO;

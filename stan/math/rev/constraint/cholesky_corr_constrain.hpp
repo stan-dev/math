@@ -8,6 +8,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log_cosh.hpp>
+#include <stan/math/prim/fun/tanh.hpp>
 #include <stan/math/prim/constraint/cholesky_corr_constrain.hpp>
 #include <utility>
 
@@ -45,11 +46,12 @@ inline var_value<Eigen::MatrixXd> cholesky_corr_factor(T&& y, Eigen::Index K) {
     double exp_minus_a = 1.0;
     for (Index c = 0; c < r; ++c) {
       const Index k = cholesky_corr_position<Order>(r, c, K);
-      const log_cosh_parts parts = log_cosh_tanh_sech(arena_y.val().coeff(k));
-      tanh_y.coeffRef(k) = parts.tanh;
-      d_own.coeffRef(k) = parts.sech * parts.sech * exp_minus_a;
-      L_val.coeffRef(r, c) = parts.tanh * exp_minus_a;
-      exp_minus_a *= parts.sech;
+      const double y_k = arena_y.val().coeff(k);
+      const double sech_k = sech(y_k);
+      tanh_y.coeffRef(k) = tanh(y_k);
+      d_own.coeffRef(k) = sech_k * sech_k * exp_minus_a;
+      L_val.coeffRef(r, c) = tanh_y.coeff(k) * exp_minus_a;
+      exp_minus_a *= sech_k;
     }
     L_val.coeffRef(r, r) = exp_minus_a;
   }
