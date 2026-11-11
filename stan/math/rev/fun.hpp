@@ -156,6 +156,7 @@
 #include <stan/math/rev/fun/svd_V.hpp>
 #include <stan/math/rev/fun/sinh.hpp>
 #include <stan/math/rev/fun/softmax.hpp>
+#include <stan/math/rev/fun/solve_lyapunov.hpp>
 #include <stan/math/rev/fun/solve_sylvester.hpp>
 #include <stan/math/rev/fun/sqrt.hpp>
 #include <stan/math/rev/fun/square.hpp>
