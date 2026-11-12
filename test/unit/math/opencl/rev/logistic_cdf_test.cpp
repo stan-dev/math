@@ -63,7 +63,6 @@ auto logistic_cdf_functor
 
 TEST(ProbDistributionsLogisticCdf, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << 0.3, 0.8, 1.0;
@@ -81,7 +80,6 @@ TEST(ProbDistributionsLogisticCdf, opencl_matches_cpu_small) {
 
 TEST(ProbDistributionsLogisticCdf, opencl_matches_cpu_small_y_neg_inf) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << 0.3, -INFINITY, 1.0;

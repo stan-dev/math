@@ -47,6 +47,10 @@ TEST(prob_transform, positive_ordered_f_exception) {
   EXPECT_THROW(stan::math::positive_ordered_free(y), std::domain_error);
   y << 0.0, 1, 0.9;
   EXPECT_THROW(stan::math::positive_ordered_free(y), std::domain_error);
+  y << 0.0, 1, 2;
+  EXPECT_THROW(stan::math::positive_ordered_free(y), std::domain_error);
+  y << 0.1, 1, 0.9;
+  EXPECT_THROW(stan::math::positive_ordered_free(y), std::domain_error);
 }
 TEST(prob_transform, positive_ordered_rt) {
   using Eigen::Dynamic;

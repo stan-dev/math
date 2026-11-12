@@ -2,7 +2,7 @@
 #include <stan/math/prim/prob/pareto_lpdf.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -82,13 +82,12 @@ class AgradDistributionsPareto : public AgradDistributionTest {
   stan::return_type_t<T_y, T_scale, T_shape> log_prob_function(
       const T_y& y, const T_scale& y_min, const T_shape& alpha, const T3&,
       const T4&, const T5&) {
+    using stan::math::lmultiply;
     using stan::math::LOG_ZERO;
-    using stan::math::multiply_log;
 
     if (y < y_min)
       return LOG_ZERO;
-    return log(alpha) + multiply_log(alpha, y_min)
-           - multiply_log(alpha + 1.0, y);
+    return log(alpha) + lmultiply(alpha, y_min) - lmultiply(alpha + 1.0, y);
   }
 };
 

@@ -50,7 +50,6 @@ TEST(MathMatrixCL, matrix_cl_value) {
 TEST(MathMatrixCL, assignment) {
   using stan::math::matrix_cl;
   Eigen::Matrix<double, 2, 2> mat_1;
-  Eigen::Matrix<double, 2, 2> mat_2;
   mat_1 << 1, 2, 3, 4;
   matrix_cl<double> mat1_cl(mat_1);
   matrix_cl<double> mat2_cl(2, 2);

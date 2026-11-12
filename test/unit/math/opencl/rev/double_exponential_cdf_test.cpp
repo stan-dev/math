@@ -63,7 +63,6 @@ auto double_exponential_cdf_functor
 
 TEST(ProbDistributionsDoubleExponentialCdf, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << -0.3, 1.8, 1.4;
