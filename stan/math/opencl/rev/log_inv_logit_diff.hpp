@@ -38,13 +38,11 @@ inline var_value<matrix_cl<double>> log_inv_logit_diff(T_x&& x, T_y&& y) {
   return make_callback_var(
       log_inv_logit_diff(value_of(x_arena), value_of(y_arena)),
       [x_arena, y_arena](const vari_value<matrix_cl<double>>& res) mutable {
+        // both partials as sums of positive terms, no cancellation for x >> 0
+        auto c = inv(expm1(value_of(x_arena) - value_of(y_arena)));
         adjoint_results(x_arena, y_arena) += expressions(
-            -elt_multiply(res.adj(),
-                          inv(expm1(value_of(y_arena) - value_of(x_arena)))
-                              + inv_logit(value_of(x_arena))),
-            -elt_multiply(res.adj(),
-                          inv(expm1(value_of(x_arena) - value_of(y_arena)))
-                              + inv_logit(value_of(y_arena))));
+            elt_multiply(res.adj(), c + inv_logit(-value_of(x_arena))),
+            -elt_multiply(res.adj(), c + inv_logit(value_of(y_arena))));
       });
 }
 
