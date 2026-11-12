@@ -49,7 +49,6 @@ inline void mdivide_left_tri_low_Ab_test(int size) {
   stan::math::matrix_cl<double> m0_cl(m1, stan::math::matrix_cl_view::Lower);
   stan::math::matrix_d m1_cl = stan::math::from_matrix_cl(
       stan::math::mdivide_left_tri_low(m0_cl, m0_cl));
-  double max_error = 0;
   for (int i = 0; i < m1_cpu.size(); i++) {
     stan::test::expect_near_rel("mdivide_left_tri_low (OpenCL)", m1_cpu(i),
                                 m1_cl(i));
@@ -77,7 +76,6 @@ inline void mdivide_left_tri_low_A_test(int size) {
 
   stan::math::matrix_cl<double> m1_A_cl(m1, stan::math::matrix_cl_view::Lower);
   m1_cl = stan::math::from_matrix_cl(stan::math::mdivide_left_tri_low(m1_A_cl));
-  double max_error = 0;
   for (int i = 0; i < size; i++) {
     for (int j = 0; j <= i; j++) {
       stan::test::expect_near_rel("mdivide_left_tri_low (OpenCL)", m1_cpu(i, j),

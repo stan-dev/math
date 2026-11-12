@@ -14,12 +14,10 @@
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
-#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
-#include <stan/math/prim/fun/sqrt.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <boost/math/tools/rational.hpp>
@@ -100,7 +98,7 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
              6.27767773636292611e-16, 4.34709704153272287e-18,
              2.63417742690109154e-20, 1.13943037744822825e-22,
              9.07926920085624812e-25};
-      return log1p_exp(multiply_log(2, z) - log(4.0)
+      return log1p_exp(lmultiply(2, z) - log(4.0)
                        + log(evaluate_polynomial(P, 0.25 * square(z))));
     }
     if (z < 500) {
@@ -119,7 +117,7 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
              -4.49034849696138065e+13, 2.24155239966958995e+14,
              -8.13426467865659318e+14, 2.02391097391687777e+15,
              -3.08675715295370878e+15, 2.17587543863819074e+15};
-      return z + log(evaluate_polynomial(P, inv(z))) - multiply_log(0.5, z);
+      return z + log(evaluate_polynomial(P, inv(z))) - lmultiply(0.5, z);
     }
     // Max error in interpolated form : 2.437e-18
     // Max Error found at double precision = Poly : 1.216719e-16
@@ -127,7 +125,7 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
         = {3.98942280401432905e-01, 4.98677850491434560e-02,
            2.80506308916506102e-02, 2.92179096853915176e-02,
            4.53371208762579442e-02};
-    return z + log(evaluate_polynomial(P, inv(z))) - multiply_log(0.5, z);
+    return z + log(evaluate_polynomial(P, inv(z))) - lmultiply(0.5, z);
   }
   if (v == 1) {  // WARNING: will not autodiff for v = 1 correctly
     // modified from Boost's bessel_i1_imp in the double precision case
@@ -165,7 +163,7 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
              4.614040809616582764e+13,  -2.298849639457172489e+14,
              8.325554073334618015e+14,  -2.067285045778906105e+15,
              3.146401654361325073e+15,  -2.213318202179221945e+15};
-      return z + log(evaluate_polynomial(P, inv(z))) - multiply_log(0.5, z);
+      return z + log(evaluate_polynomial(P, inv(z))) - lmultiply(0.5, z);
     }
     // Max error in interpolated form: 1.320e-19
     // Max Error found at double precision = Poly: 7.065357e-17
@@ -173,7 +171,7 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
         = {3.989422804014314820e-01, -1.496033551467584157e-01,
            -4.675105322571775911e-02, -4.090421597376992892e-02,
            -5.843630344778927582e-02};
-    return z + log(evaluate_polynomial(P, inv(z))) - multiply_log(0.5, z);
+    return z + log(evaluate_polynomial(P, inv(z))) - lmultiply(0.5, z);
   }
   if (z > 100) {
     // Boost does something like this in asymptotic_bessel_i_large_x

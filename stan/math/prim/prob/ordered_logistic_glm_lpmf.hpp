@@ -3,8 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/isfinite.hpp>
 #include <stan/math/prim/fun/log1m_exp.hpp>
@@ -120,7 +122,7 @@ inline return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
     }
   }
 
-  T_location location = x_val * beta_val_vec;
+  T_location location = multiply(x_val, beta_val_vec);
   if (!isfinite(sum(location))) {
     check_finite(function, "Weight vector", beta);
     check_finite(function, "Matrix of independent variables", x);
@@ -189,9 +191,12 @@ inline return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
           edge<1>(ops_partials).partials_
               = (location_derivative * x_val.replicate(N_instances, 1))
                     .transpose();
+        } else if constexpr (T_x::ColsAtCompileTime == 1) {
+          edge<1>(ops_partials).partials_[0]
+              = dot_product(location_derivative, x_val);
         } else {
           edge<1>(ops_partials).partials_
-              = (location_derivative * x_val).transpose();
+              = multiply(location_derivative, x_val).transpose();
         }
       }
     }

@@ -46,6 +46,7 @@ inline void setup_job(int N, Eigen::VectorXd& shared_params_d,
 }
 
 struct map_rect_con_threads : public ::testing::Test {
+  scoped_stan_num_threads restore_environment;
   Eigen::VectorXd shared_params_d;
   std::vector<Eigen::VectorXd> job_params_d;
   std::vector<std::vector<double> > x_r;

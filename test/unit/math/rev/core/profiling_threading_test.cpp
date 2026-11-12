@@ -30,7 +30,6 @@ struct grouped_count_lpdf {
 TEST_F(AgradRev, Profiling_profile_threading) {
   using stan::math::var;
   using stan::math::test::get_new_msg;
-  double lambda_d = 10.0;
   const std::size_t groups = 10;
   const std::size_t elems_per_group = 1000;
   const std::size_t elems = groups * elems_per_group;
@@ -47,7 +46,6 @@ TEST_F(AgradRev, Profiling_profile_threading) {
 
   for (std::size_t i = 0; i != groups; ++i)
     vlambda_v[i] = i + 0.2;
-  var lambda_v = vlambda_v[0];
 
   var poisson_lpdf
       = stan::math::reduce_sum<profiling_test::grouped_count_lpdf<var>>(

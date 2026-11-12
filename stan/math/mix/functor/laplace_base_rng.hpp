@@ -57,31 +57,29 @@ inline auto laplace_base_rng(LLFunc&& ll_fun, LLArgs&& ll_args,
   auto md_est = internal::laplace_marginal_density_est(
       ll_fun, std::forward<LLArgs>(ll_args), covariance_train, options, msgs);
   Eigen::VectorXd mean_train = covariance_train * md_est.theta_grad;
-  if (options.solver == 1 || options.solver == 2) {
+  Eigen::MatrixXd Sigma;
+  if (md_est.solver_used == 1) {
     Eigen::MatrixXd V_dec
         = md_est.L.template triangularView<Eigen::Lower>().solve(
             md_est.W_r * covariance_train);
-    Eigen::MatrixXd Sigma = covariance_train - V_dec.transpose() * V_dec;
-    if constexpr (ReturnMeanAndCovCholesky) {
-      Eigen::MatrixXd Sigma_chol = cholesky_decompose(Sigma);
-      return std::make_tuple(std::move(mean_train), std::move(Sigma_chol));
-    } else {
-      return multi_normal_rng(std::move(mean_train), std::move(Sigma), rng);
-    }
+    Sigma = covariance_train - V_dec.transpose() * V_dec;
+  } else if (md_est.solver_used == 2) {
+    Eigen::MatrixXd C = md_est.L.template triangularView<Eigen::Lower>().solve(
+        md_est.K_root.transpose());
+    Sigma = C.transpose() * C;
   } else {
-    Eigen::MatrixXd Sigma
-        = covariance_train
-          - covariance_train
-                * (md_est.W_r
-                   - md_est.W_r
-                         * md_est.LU.solve(covariance_train * md_est.W_r))
-                * covariance_train;
-    if constexpr (ReturnMeanAndCovCholesky) {
-      Eigen::MatrixXd Sigma_chol = cholesky_decompose(Sigma);
-      return std::make_tuple(std::move(mean_train), std::move(Sigma_chol));
-    } else {
-      return multi_normal_rng(std::move(mean_train), std::move(Sigma), rng);
-    }
+    Sigma = covariance_train
+            - covariance_train
+                  * (md_est.W_r
+                     - md_est.W_r
+                           * md_est.LU.solve(covariance_train * md_est.W_r))
+                  * covariance_train;
+  }
+  if constexpr (ReturnMeanAndCovCholesky) {
+    Eigen::MatrixXd Sigma_chol = cholesky_decompose(Sigma);
+    return std::make_tuple(std::move(mean_train), std::move(Sigma_chol));
+  } else {
+    return multi_normal_rng(std::move(mean_train), std::move(Sigma), rng);
   }
 }
 
