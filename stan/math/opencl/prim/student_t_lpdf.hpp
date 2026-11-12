@@ -7,6 +7,8 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
+#include <stan/math/prim/fun/select.hpp>
+#include <stan/math/prim/prob/student_t_lpdf.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 
@@ -99,9 +101,30 @@ inline return_type_t<T_y_cl, T_dof_cl, T_loc_cl, T_scale_cl> student_t_lpdf(
   auto log1p_val = log1p(square_y_scaled_over_nu);
 
   auto logp1 = -elt_multiply((half_nu + 0.5), log1p_val);
+  // The nu terms as on the CPU (internal::student_t_nu_constant_fun and
+  // internal::student_t_nu_digamma_fun): differences of lgamma and digamma
+  // values below nu = 40, asymptotic series in z = 2 / nu from nu = 40 on,
+  // without the cancellation for large nu.
+  auto nu_small = nu_val < internal::student_t_series_min_nu;
+  auto z = elt_divide(2.0, nu_val);
+  auto z2 = elt_multiply(z, z);
+  auto nu_constant_series
+      = -0.5 * LOG_TWO
+        + elt_multiply(
+            z,
+            -0.125
+                + elt_multiply(
+                    z2, 1.0 / 192.0
+                            + elt_multiply(
+                                z2, -1.0 / 640.0
+                                        + elt_multiply(
+                                            z2, 17.0 / 14336.0
+                                                    - (31.0 / 18432.0) * z2))));
+  auto nu_constant = select(
+      nu_small, lgamma(half_nu + 0.5) - lgamma(half_nu) - 0.5 * log(nu_val),
+      nu_constant_series);
   auto logp2 = static_select<include_summand<propto, T_dof_cl>::value>(
-      logp1 + lgamma(half_nu + 0.5) - lgamma(half_nu) - 0.5 * log(nu_val),
-      logp1);
+      logp1 + nu_constant, logp1);
   auto logp_expr
       = colwise_sum(static_select<include_summand<propto, T_scale_cl>::value>(
           logp2 - log(sigma_val), logp2));
@@ -114,9 +137,22 @@ inline return_type_t<T_y_cl, T_dof_cl, T_loc_cl, T_scale_cl> student_t_lpdf(
   auto rep_deriv = elt_divide(elt_multiply(nu_val + 1, square_y_scaled_over_nu),
                               1 + square_y_scaled_over_nu)
                    - 1;
-  auto nu_deriv = 0.5
-                  * (digamma(half_nu + 0.5) - digamma(half_nu) - log1p_val
-                     + elt_divide(rep_deriv, nu_val));
+  auto nu_digamma_series = elt_multiply(
+      z, 0.5
+             + elt_multiply(
+                 z, 0.125
+                        + elt_multiply(
+                            z2, -1.0 / 64.0
+                                    + elt_multiply(
+                                        z2, 1.0 / 128.0
+                                                + elt_multiply(
+                                                    z2, -119.0 / 14336.0
+                                                            + (279.0 / 18432.0)
+                                                                  * z2)))));
+  auto nu_digamma = select(nu_small, digamma(half_nu + 0.5) - digamma(half_nu),
+                           nu_digamma_series);
+  auto nu_deriv
+      = 0.5 * (nu_digamma - log1p_val + elt_divide(rep_deriv, nu_val));
   auto sigma_deriv = elt_divide(rep_deriv, sigma_val);
 
   matrix_cl<double> logp_cl;

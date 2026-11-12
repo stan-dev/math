@@ -4,9 +4,11 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/digamma_diff.hpp>
 #include <stan/math/prim/fun/beta.hpp>
+#include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -66,13 +68,14 @@ inline return_type_t<T_alpha> yule_simon_lccdf(const T_n& n,
   T_partials_return log_ccdf(0.0);
   auto ops_partials = make_partials_propagator(alpha_ref);
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    auto np1 = n_vec.val(i) + 1.0;
-    auto ap1 = alpha_vec.val(i) + 1.0;
-    auto nap1 = n_vec.val(i) + ap1;
-    log_ccdf += lgamma(ap1) + lgamma(np1) - lgamma(nap1);
+    const T_partials_return n_dbl = n_vec.val(i);
+    const T_partials_return ap1 = alpha_vec.val(i) + 1.0;
+    // lgamma(alpha + 1) + lgamma(n + 1) - lgamma(n + alpha + 1) without the
+    // cancellation for large alpha
+    log_ccdf += log(n_dbl) + lbeta(n_dbl, ap1);
 
     if constexpr (is_autodiff_v<T_alpha>) {
-      partials<0>(ops_partials)[i] += digamma(ap1) - digamma(nap1);
+      partials<0>(ops_partials)[i] -= digamma_diff(ap1, n_dbl);
     }
   }
 
