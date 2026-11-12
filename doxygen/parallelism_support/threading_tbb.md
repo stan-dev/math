@@ -18,13 +18,15 @@ By default stan-math builds only the main `tbb` library by defining the `makefil
 TBB_LIBRARIES=tbb
 ```
 
-The Intel TBB provides in addition to the main library memory allocators which are specifically designed to speedup threaded programs. These speedups have so far only been observed on MacOS systems for Stan programs such that on MacOS the default is set to
+The Intel TBB provides in addition to the main library memory allocators which are specifically designed to speedup threaded programs. These can be enabled with
 
 ```
 TBB_LIBRARIES=tbb tbbmalloc tbbmalloc_proxy
 ```
 
-Users may override the default choices by defining `TBB_LIBRARIES` in the `make/local` file manually. Please refer to the [pull request](https://github.com/stan-dev/math/pull/1376) which merged the Intel TBB for further details on the performance evaluations.
+Previously this was the default on MacOS, but on MacOS `tbbmalloc_proxy` registers a process-wide malloc zone which can crash host processes (such as Julia, Python, or R) that load a Stan model as a shared library. See [issue #3425](https://github.com/stan-dev/math/issues/3425) for details.
+
+Users may override the default choice by defining `TBB_LIBRARIES` in the `make/local` file manually. Please refer to the [pull request](https://github.com/stan-dev/math/pull/1376) which merged the Intel TBB for further details on the performance evaluations.
 
 # Requirements
 
