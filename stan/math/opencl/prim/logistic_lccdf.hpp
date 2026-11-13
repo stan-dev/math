@@ -63,21 +63,22 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_lccdf(
       = check_cl(function, "Scale parameter", sigma_val, "positive finite");
   auto sigma_positive_finite_expr = 0 < sigma_val && isfinite(sigma_val);
 
-  auto any_y_neg_inf = colwise_max(cast<char>(y_val == NEGATIVE_INFTY));
   auto any_y_pos_inf = colwise_max(cast<char>(y_val == INFTY));
+  auto y_neg_inf = y_val == NEGATIVE_INFTY;
   auto inv_sigma = elt_divide(1.0, sigma_val);
-  auto mu_minus_y_div_sigma = elt_multiply(mu_val - y_val, inv_sigma);
-  auto exp_scaled_diff = exp(mu_minus_y_div_sigma);
-  auto Pn = 1.0 - elt_divide(1.0, 1.0 + exp_scaled_diff);
-  auto P_expr = colwise_sum(log(Pn));
+  auto scaled_diff = elt_multiply(y_val - mu_val, inv_sigma);
+  // y == NEGATIVE_INFTY contributes log(1) = 0 to P and zero to every partial
+  auto P_expr
+      = colwise_sum(select(y_neg_inf, 0.0, log1m_inv_logit(scaled_diff)));
 
-  auto mu_deriv = elt_divide(
-      exp(mu_minus_y_div_sigma - log(sigma_val) - 2.0 * log1p(exp_scaled_diff)),
-      Pn);
+  auto mu_deriv
+      = select(y_neg_inf, 0.0, logistic_tail_deriv(-scaled_diff, sigma_val));
   auto y_deriv = -mu_deriv;
-  auto sigma_deriv = elt_multiply(-mu_deriv, mu_minus_y_div_sigma);
+  // scaled_diff == NEGATIVE_INFTY (also from an overflow with finite y) has a
+  // zero mu partial, so the product would be 0 * INFTY = NaN
+  auto sigma_deriv = select(scaled_diff == NEGATIVE_INFTY, 0.0,
+                            elt_multiply(mu_deriv, scaled_diff));
 
-  matrix_cl<char> any_y_neg_inf_cl;
   matrix_cl<char> any_y_pos_inf_cl;
   matrix_cl<double> P_cl;
   matrix_cl<double> mu_deriv_cl;
@@ -85,17 +86,13 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_lccdf(
   matrix_cl<double> sigma_deriv_cl;
 
   results(check_y_not_nan, check_mu_finite, check_sigma_positive_finite,
-          any_y_neg_inf_cl, any_y_pos_inf_cl, P_cl, y_deriv_cl, mu_deriv_cl,
-          sigma_deriv_cl)
+          any_y_pos_inf_cl, P_cl, y_deriv_cl, mu_deriv_cl, sigma_deriv_cl)
       = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
-                    any_y_neg_inf, any_y_pos_inf, P_expr,
+                    any_y_pos_inf, P_expr,
                     calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
                     calc_if<is_autodiff_v<T_loc_cl>>(mu_deriv),
                     calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv));
 
-  if (from_matrix_cl(any_y_neg_inf_cl).maxCoeff()) {
-    return 0.0;
-  }
   if (from_matrix_cl(any_y_pos_inf_cl).maxCoeff()) {
     return NEGATIVE_INFTY;
   }
