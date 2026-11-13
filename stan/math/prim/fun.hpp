@@ -29,6 +29,7 @@
 #include <stan/math/prim/fun/autocorrelation.hpp>
 #include <stan/math/prim/fun/autocovariance.hpp>
 #include <stan/math/prim/fun/bessel_first_kind.hpp>
+#include <stan/math/prim/fun/bessel_i0e_derivative_ratio.hpp>
 #include <stan/math/prim/fun/bessel_second_kind.hpp>
 #include <stan/math/prim/fun/beta.hpp>
 #include <stan/math/prim/fun/binary_log_loss.hpp>
@@ -176,6 +177,7 @@
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
 #include <stan/math/prim/fun/log2.hpp>
+#include <stan/math/prim/fun/log_bessel_i0e.hpp>
 #include <stan/math/prim/fun/log_determinant.hpp>
 #include <stan/math/prim/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/fun/log_determinant_spd.hpp>

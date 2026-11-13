@@ -26,6 +26,87 @@
 namespace stan {
 namespace math {
 
+namespace internal {
+
+/**
+ * Coefficients of Boost's double-precision approximation of the modified
+ * Bessel function of the first kind of order zero on \f$[0, 7.75)\f$,
+ * \f$I_0(z) = 1 + q P(q)\f$ with \f$q = z^2 / 4\f$. The approximating forms
+ * are from P. Holoborodko, "Rational Approximations for the Modified Bessel
+ * Function of the First Kind -- I0(x) for Computations with Double
+ * Precision" (2015), with Boost's coefficients. Max error in interpolated
+ * form 3.042e-18, at double precision 5.106609e-16.
+ */
+inline constexpr double bessel_i0_small_p[15] = {
+    1.00000000000000000e+00, 2.49999999999999909e-01, 2.77777777777782257e-02,
+    1.73611111111023792e-03, 6.94444444453352521e-05, 1.92901234513219920e-06,
+    3.93675991102510739e-08, 6.15118672704439289e-10, 7.59407002058973446e-12,
+    7.59389793369836367e-14, 6.27767773636292611e-16, 4.34709704153272287e-18,
+    2.63417742690109154e-20, 1.13943037744822825e-22, 9.07926920085624812e-25};
+
+/**
+ * Coefficients of Boost's approximation on \f$[7.75, 500)\f$,
+ * \f$\sqrt{z} e^{-z} I_0(z) = P(1 / z)\f$. Max error in interpolated form
+ * 1.685e-16, at double precision 2.575063e-16.
+ */
+inline constexpr double bessel_i0_medium_p[22]
+    = {3.98942280401425088e-01,  4.98677850604961985e-02,
+       2.80506233928312623e-02,  2.92211225166047873e-02,
+       4.44207299493659561e-02,  1.30970574605856719e-01,
+       -3.35052280231727022e+00, 2.33025711583514727e+02,
+       -1.13366350697172355e+04, 4.24057674317867331e+05,
+       -1.23157028595698731e+07, 2.80231938155267516e+08,
+       -5.01883999713777929e+09, 7.08029243015109113e+10,
+       -7.84261082124811106e+11, 6.76825737854096565e+12,
+       -4.49034849696138065e+13, 2.24155239966958995e+14,
+       -8.13426467865659318e+14, 2.02391097391687777e+15,
+       -3.08675715295370878e+15, 2.17587543863819074e+15};
+
+/**
+ * Coefficients of Boost's approximation on \f$[500, \infty)\f$,
+ * \f$\sqrt{z} e^{-z} I_0(z) = P(1 / z)\f$. Max error in interpolated form
+ * 2.437e-18, at double precision 1.216719e-16.
+ */
+inline constexpr double bessel_i0_large_p[5] = {
+    3.98942280401432905e-01, 4.98677850491434560e-02, 2.80506308916506102e-02,
+    2.92179096853915176e-02, 4.53371208762579442e-02};
+
+/**
+ * Coefficients of Boost's approximation of the modified Bessel function of
+ * the first kind of order one on \f$[0, 7.75)\f$,
+ * \f$I_1(z) = \frac{z}{2} (1 + \frac{q}{2} + q^2 P(q))\f$ with
+ * \f$q = z^2 / 4\f$. Max error in interpolated form 5.639e-17, at double
+ * precision 1.795559e-16.
+ */
+inline constexpr double bessel_i1_small_p[13]
+    = {8.333333333333333803e-02, 6.944444444444341983e-03,
+       3.472222222225921045e-04, 1.157407407354987232e-05,
+       2.755731926254790268e-07, 4.920949692800671435e-09,
+       6.834657311305621830e-11, 7.593969849687574339e-13,
+       6.904822652741917551e-15, 5.220157095351373194e-17,
+       3.410720494727771276e-19, 1.625212890947171108e-21,
+       1.332898928162290861e-23};
+
+/**
+ * Coefficients of Boost's approximation on \f$[7.75, 500)\f$,
+ * \f$\sqrt{z} e^{-z} I_1(z) = P(1 / z)\f$. Max error in interpolated form
+ * 1.796e-16, at double precision 2.898731e-16.
+ */
+inline constexpr double bessel_i1_medium_p[22]
+    = {3.989422804014406054e-01,  -1.496033551613111533e-01,
+       -4.675104253598537322e-02, -4.090895951581637791e-02,
+       -5.719036414430205390e-02, -1.528189554374492735e-01,
+       3.458284470977172076e+00,  -2.426181371595021021e+02,
+       1.178785865993440669e+04,  -4.404655582443487334e+05,
+       1.277677779341446497e+07,  -2.903390398236656519e+08,
+       5.192386898222206474e+09,  -7.313784438967834057e+10,
+       8.087824484994859552e+11,  -6.967602516005787001e+12,
+       4.614040809616582764e+13,  -2.298849639457172489e+14,
+       8.325554073334618015e+14,  -2.067285045778906105e+15,
+       3.146401654361325073e+15,  -2.213318202179221945e+15};
+
+}  // namespace internal
+
 /* Log of the modified Bessel function of the first kind,
  * which is better known as the Bessel I function. See
  * modified_bessel_first_kind.hpp for the function definition.
@@ -72,98 +153,31 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
     return z;
   }
   if (v == 0) {
-    // WARNING: will not autodiff for v = 0 correctly
-    // modified from Boost's bessel_i0_imp in the double precision case,
-    // which refers to:
-    // Modified Bessel function of the first kind of order zero
-    // we use the approximating forms derived in:
-    // "Rational Approximations for the Modified Bessel Function of the
-    // First Kind -- I0(x) for Computations with Double Precision"
-    // by Pavel Holoborodko, see
-    // http://www.advanpix.com/2015/11/11/rational-approximations-for-the-modified-bessel-function-of-the-first-kind-i0-computations-double-precision
-    // The actual coefficients used are [Boost's] own, and extend
-    // Pavel's work to precisions other than double.
-
+    // WARNING: will not autodiff for v = 0 correctly; the coefficients are
+    // Boost's, see internal::bessel_i0_small_p
     if (z < 7.75) {
-      // Bessel I0 over[10 ^ -16, 7.75]
-      // Max error in interpolated form : 3.042e-18
-      // Max Error found at double precision = Poly : 5.106609e-16
-      //                                       Cheb : 5.239199e-16
-      static constexpr double P[15]
-          = {1.00000000000000000e+00, 2.49999999999999909e-01,
-             2.77777777777782257e-02, 1.73611111111023792e-03,
-             6.94444444453352521e-05, 1.92901234513219920e-06,
-             3.93675991102510739e-08, 6.15118672704439289e-10,
-             7.59407002058973446e-12, 7.59389793369836367e-14,
-             6.27767773636292611e-16, 4.34709704153272287e-18,
-             2.63417742690109154e-20, 1.13943037744822825e-22,
-             9.07926920085624812e-25};
       return log1p_exp(lmultiply(2, z) - log(4.0)
-                       + log(evaluate_polynomial(P, 0.25 * square(z))));
+                       + log(evaluate_polynomial(internal::bessel_i0_small_p,
+                                                 0.25 * square(z))));
     }
     if (z < 500) {
-      // Max error in interpolated form : 1.685e-16
-      // Max Error found at double precision = Poly : 2.575063e-16
-      //                                       Cheb : 2.247615e+00
-      static constexpr double P[22]
-          = {3.98942280401425088e-01,  4.98677850604961985e-02,
-             2.80506233928312623e-02,  2.92211225166047873e-02,
-             4.44207299493659561e-02,  1.30970574605856719e-01,
-             -3.35052280231727022e+00, 2.33025711583514727e+02,
-             -1.13366350697172355e+04, 4.24057674317867331e+05,
-             -1.23157028595698731e+07, 2.80231938155267516e+08,
-             -5.01883999713777929e+09, 7.08029243015109113e+10,
-             -7.84261082124811106e+11, 6.76825737854096565e+12,
-             -4.49034849696138065e+13, 2.24155239966958995e+14,
-             -8.13426467865659318e+14, 2.02391097391687777e+15,
-             -3.08675715295370878e+15, 2.17587543863819074e+15};
-      return z + log(evaluate_polynomial(P, inv(z))) - lmultiply(0.5, z);
+      return z + log(evaluate_polynomial(internal::bessel_i0_medium_p, inv(z)))
+             - lmultiply(0.5, z);
     }
-    // Max error in interpolated form : 2.437e-18
-    // Max Error found at double precision = Poly : 1.216719e-16
-    static constexpr double P[5]
-        = {3.98942280401432905e-01, 4.98677850491434560e-02,
-           2.80506308916506102e-02, 2.92179096853915176e-02,
-           4.53371208762579442e-02};
-    return z + log(evaluate_polynomial(P, inv(z))) - lmultiply(0.5, z);
+    return z + log(evaluate_polynomial(internal::bessel_i0_large_p, inv(z)))
+           - lmultiply(0.5, z);
   }
   if (v == 1) {  // WARNING: will not autodiff for v = 1 correctly
     // modified from Boost's bessel_i1_imp in the double precision case
-    // see credits above in the v == 0 case
+    // see the credits of internal::bessel_i0_small_p
     if (z < 7.75) {
-      // Bessel I0 over[10 ^ -16, 7.75]
-      // Max error in interpolated form: 5.639e-17
-      // Max Error found at double precision = Poly: 1.795559e-16
-
-      static constexpr double P[13]
-          = {8.333333333333333803e-02, 6.944444444444341983e-03,
-             3.472222222225921045e-04, 1.157407407354987232e-05,
-             2.755731926254790268e-07, 4.920949692800671435e-09,
-             6.834657311305621830e-11, 7.593969849687574339e-13,
-             6.904822652741917551e-15, 5.220157095351373194e-17,
-             3.410720494727771276e-19, 1.625212890947171108e-21,
-             1.332898928162290861e-23};
       T a = square(z) * 0.25;
-      T Q[3] = {1, 0.5, evaluate_polynomial(P, a)};
+      T Q[3] = {1, 0.5, evaluate_polynomial(internal::bessel_i1_small_p, a)};
       return log(z) + log(evaluate_polynomial(Q, a)) - LOG_TWO;
     }
     if (z < 500) {
-      // Max error in interpolated form: 1.796e-16
-      // Max Error found at double precision = Poly: 2.898731e-16
-
-      static constexpr double P[22]
-          = {3.989422804014406054e-01,  -1.496033551613111533e-01,
-             -4.675104253598537322e-02, -4.090895951581637791e-02,
-             -5.719036414430205390e-02, -1.528189554374492735e-01,
-             3.458284470977172076e+00,  -2.426181371595021021e+02,
-             1.178785865993440669e+04,  -4.404655582443487334e+05,
-             1.277677779341446497e+07,  -2.903390398236656519e+08,
-             5.192386898222206474e+09,  -7.313784438967834057e+10,
-             8.087824484994859552e+11,  -6.967602516005787001e+12,
-             4.614040809616582764e+13,  -2.298849639457172489e+14,
-             8.325554073334618015e+14,  -2.067285045778906105e+15,
-             3.146401654361325073e+15,  -2.213318202179221945e+15};
-      return z + log(evaluate_polynomial(P, inv(z))) - lmultiply(0.5, z);
+      return z + log(evaluate_polynomial(internal::bessel_i1_medium_p, inv(z)))
+             - lmultiply(0.5, z);
     }
     // Max error in interpolated form: 1.320e-19
     // Max Error found at double precision = Poly: 7.065357e-17
