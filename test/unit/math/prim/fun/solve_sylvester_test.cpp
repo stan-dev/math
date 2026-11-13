@@ -89,32 +89,6 @@ TEST(MathFunctions, solve_sylvester_diagonal) {
   }
 }
 
-TEST(MathFunctions, solve_sylvester_lyapunov) {
-  // continuous Lyapunov equation A X + X A^T = -Q
-  using stan::math::solve_sylvester;
-  const int n = 5;
-  // stable A: by Gershgorin all eigenvalues have Re <= -(n + 1) < 0,
-  // so lambda_i + lambda_j != 0 and the problem is well posed
-  Eigen::MatrixXd A = Eigen::MatrixXd::Random(n, n)
-                      - 2.0 * n * Eigen::MatrixXd::Identity(n, n);
-  Eigen::MatrixXd L = Eigen::MatrixXd::Random(n, n);
-  Eigen::MatrixXd Q = L * L.transpose() + Eigen::MatrixXd::Identity(n, n);
-
-  Eigen::MatrixXcd X = solve_sylvester(A, A.transpose(), -Q);
-  Eigen::MatrixXd Xr = X.real();
-
-  EXPECT_LT(X.imag().norm(), 1e-12);
-  EXPECT_LT((A * Xr + Xr * A.transpose() + Q).norm(), 1e-10);
-
-  // symmetric C gives a symmetric solution
-  EXPECT_LT((Xr - Xr.transpose()).norm(), 1e-12);
-
-  // stable A and positive definite Q give a positive definite solution
-  Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(0.5
-                                                     * (Xr + Xr.transpose()));
-  EXPECT_GT(eig.eigenvalues().minCoeff(), 0.0);
-}
-
 TEST(MathFunctions, solve_sylvester_expression_inputs) {
   // Eigen expressions go through plain_type_t; result must match plain inputs
   using stan::math::solve_sylvester;

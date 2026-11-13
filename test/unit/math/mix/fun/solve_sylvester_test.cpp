@@ -33,14 +33,6 @@ TEST(mathMixMatFun, solve_sylvester) {
   // expect_ad_matvar does not apply: the result has complex<var> scalars,
   // which have no var_value<Matrix> form. See solve_sylvester_varmat.
 
-  // Lyapunov: B = A^T shares A's autodiff variables
-  auto g = [](const auto& a, const auto& c) {
-    return stan::math::solve_sylvester(a, a.transpose(), c);
-  };
-  Eigen::MatrixXd Q(2, 2);
-  Q << 1, 2, 3, 4;
-  stan::test::expect_ad(g, A, Q);
-
   // size mismatch must throw for every autodiff type, as it does for double
   Eigen::MatrixXd C_bad(3, 3);
   C_bad.setOnes();

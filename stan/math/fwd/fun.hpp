@@ -109,6 +109,7 @@
 #include <stan/math/fwd/fun/sin.hpp>
 #include <stan/math/fwd/fun/sinh.hpp>
 #include <stan/math/fwd/fun/softmax.hpp>
+#include <stan/math/fwd/fun/solve_lyapunov.hpp>
 #include <stan/math/fwd/fun/solve_sylvester.hpp>
 #include <stan/math/fwd/fun/sqrt.hpp>
 #include <stan/math/fwd/fun/square.hpp>
