@@ -1,5 +1,6 @@
 #ifdef STAN_OPENCL
 #include <test/unit/math/opencl/util.hpp>
+#include <test/unit/math/opencl/rev/ordered_logistic_tail_refs.hpp>
 #include <stan/math/opencl/prim.hpp>
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
@@ -173,6 +174,31 @@ TEST(ProbDistributionsOrderedLogisitc, opencl_matches_cpu_big) {
                                                 y, lambda, cuts);
   stan::math::test::compare_cpu_opencl_prim_rev(
       ordered_logistic_lpmf_functor_propto, y, lambda, cuts);
+}
+
+TEST(ProbDistributionsOrderedLogisitc, opencl_rev_tails_against_references) {
+  using ordered_logistic_tail_refs::expect_rel;
+  using stan::math::var_value;
+  for (const auto& r : ordered_logistic_tail_refs::refs()) {
+    vector<int> y{r.y};
+    Eigen::VectorXd lambda(1);
+    lambda << r.lambda;
+    Eigen::VectorXd cuts(2);
+    cuts << r.c1, r.c2;
+    matrix_cl<int> y_cl(y);
+    var_value<matrix_cl<double>> lambda_cl = stan::math::to_matrix_cl(lambda);
+    var_value<matrix_cl<double>> cuts_cl = stan::math::to_matrix_cl(cuts);
+    var lp = stan::math::ordered_logistic_lpmf(y_cl, lambda_cl, cuts_cl);
+    lp.grad();
+    Eigen::VectorXd d_lambda = stan::math::from_matrix_cl(lambda_cl.adj());
+    Eigen::VectorXd d_cuts = stan::math::from_matrix_cl(cuts_cl.adj());
+    expect_rel(r.val, lp.val(), "value", r.lambda);
+    expect_rel(r.d_lambda, d_lambda(0), "d/dlambda", r.lambda,
+               r.d_lambda_abs_tol);
+    expect_rel(r.d_c1, d_cuts(0), "d/dc1", r.lambda);
+    expect_rel(r.d_c2, d_cuts(1), "d/dc2", r.lambda);
+    stan::math::recover_memory();
+  }
 }
 
 #endif

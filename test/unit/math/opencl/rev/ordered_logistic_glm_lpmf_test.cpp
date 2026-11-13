@@ -3,6 +3,7 @@
 #include <stan/math/opencl/prim.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
+#include <test/unit/math/opencl/rev/ordered_logistic_tail_refs.hpp>
 #include <vector>
 
 using Eigen::Array;
@@ -220,6 +221,35 @@ TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_big) {
       ordered_logistic_glm_lpmf_functor, y, x, beta, cuts);
   stan::math::test::compare_cpu_opencl_prim_rev(
       ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
+}
+
+TEST(ProbDistributionsOrderedLogisitcGLM, opencl_rev_tails_against_references) {
+  using ordered_logistic_tail_refs::expect_rel;
+  using stan::math::var_value;
+  // location = x * beta with x = 1, so d/dbeta = d/dlambda
+  for (const auto& r : ordered_logistic_tail_refs::refs()) {
+    vector<int> y{r.y};
+    Matrix<double, Dynamic, Dynamic> x(1, 1);
+    x << 1.0;
+    Matrix<double, Dynamic, 1> beta(1);
+    beta << r.lambda;
+    Matrix<double, Dynamic, 1> cuts(2);
+    cuts << r.c1, r.c2;
+    matrix_cl<int> y_cl(y);
+    matrix_cl<double> x_cl(x);
+    var_value<matrix_cl<double>> beta_cl = stan::math::to_matrix_cl(beta);
+    var_value<matrix_cl<double>> cuts_cl = stan::math::to_matrix_cl(cuts);
+    var lp
+        = stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta_cl, cuts_cl);
+    lp.grad();
+    Eigen::VectorXd d_beta = stan::math::from_matrix_cl(beta_cl.adj());
+    Eigen::VectorXd d_cuts = stan::math::from_matrix_cl(cuts_cl.adj());
+    expect_rel(r.val, lp.val(), "value", r.lambda);
+    expect_rel(r.d_lambda, d_beta(0), "d/dbeta", r.lambda, r.d_lambda_abs_tol);
+    expect_rel(r.d_c1, d_cuts(0), "d/dc1", r.lambda);
+    expect_rel(r.d_c2, d_cuts(1), "d/dc2", r.lambda);
+    stan::math::recover_memory();
+  }
 }
 
 #endif
