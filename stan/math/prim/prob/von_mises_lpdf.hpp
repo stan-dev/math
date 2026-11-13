@@ -3,21 +3,19 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
+#include <stan/math/prim/fun/bessel_i0e_derivative_ratio.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/cos.hpp>
-#include <stan/math/prim/fun/floor.hpp>
-#include <stan/math/prim/fun/log_modified_bessel_first_kind.hpp>
+#include <stan/math/prim/fun/log_bessel_i0e.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/fun/modified_bessel_first_kind.hpp>
+#include <stan/math/prim/fun/sin.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -54,17 +52,20 @@ inline return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y,
 
   auto ops_partials = make_partials_propagator(y_ref, mu_ref, kappa_ref);
 
-  const auto& cos_mu_minus_y
-      = to_ref_if<is_autodiff_v<T_scale>>(cos(mu_val - y_val));
+  // 1 - cos(y - mu), without cancellation for y close to mu
+  const auto& one_minus_cos = to_ref(2.0 * square(sin(0.5 * (y_val - mu_val))));
 
   size_t N = max_size(y, mu, kappa);
-  T_partials_return logp = sum(kappa_val * cos_mu_minus_y);
+  T_partials_return logp = 0.0 - sum(kappa_val * one_minus_cos);
   if constexpr (include_summand<propto>::value) {
     logp -= LOG_TWO_PI * N;
   }
   if constexpr (include_summand<propto, T_scale>::value) {
-    logp -= sum(log_modified_bessel_first_kind(0, kappa_val)) * N
-            / math::size(kappa);
+    logp -= sum(log_bessel_i0e(kappa_val)) * N / math::size(kappa);
+  }
+  if constexpr (is_autodiff_v<T_scale>) {
+    partials<2>(ops_partials)
+        = bessel_i0e_derivative_ratio(0, kappa_val) - one_minus_cos;
   }
 
   if constexpr (is_any_autodiff_v<T_y, T_loc>) {
@@ -77,12 +78,6 @@ inline return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y,
     if constexpr (is_autodiff_v<T_loc>) {
       partials<1>(ops_partials) = std::move(kappa_sin);
     }
-  }
-  if constexpr (is_autodiff_v<T_scale>) {
-    edge<2>(ops_partials).partials_
-        = cos_mu_minus_y
-          - exp(log_modified_bessel_first_kind(1, kappa_val)
-                - log_modified_bessel_first_kind(0, kappa_val));
   }
 
   return ops_partials.build(logp);
