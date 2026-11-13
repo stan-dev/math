@@ -106,3 +106,9 @@ lib/tbb/**
 
 # gdb debug history
 .gdb_history
+
+# CMake build trees
+/build/
+/build-*/
+/.build/
+/.build-*/
