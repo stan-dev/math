@@ -4,17 +4,36 @@
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/exp.hpp>
+#include <stan/math/fwd/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/tanh.hpp>
-#include <cmath>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <complex>
 
 namespace stan {
 namespace math {
 
+/**
+ * Return the hyperbolic tangent of the argument. For `|x| >= 0.5` the
+ * derivative `1 - tanh(x)^2` is computed as `4 e / (1 + e)^2` with
+ * `e = exp(-2 |x|)`, which neither cancels nor overflows.
+ *
+ * @tparam T inner type of the forward-mode autodiff variable
+ * @param[in] x argument
+ * @return hyperbolic tangent of the argument
+ */
 template <typename T>
 inline fvar<T> tanh(const fvar<T>& x) {
-  T u = tanh(x.val_);
-  return fvar<T>(u, x.d_ * (1 - u * u));
+  const T u = tanh(x.val_);
+  const double x_val = value_of_rec(x.val_);
+  if (fabs(x_val) < 0.5) {
+    return fvar<T>(u, x.d_ * (1 - u * u));
+  }
+  // -2 |x|, with the sign of x fixed in this branch
+  const T e = exp(x_val > 0 ? -2 * x.val_ : 2 * x.val_);
+  const T one_p_e = 1 + e;
+  return fvar<T>(u, x.d_ * (4 * e / (one_p_e * one_p_e)));
 }
 
 /**

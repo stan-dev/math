@@ -1,4 +1,5 @@
-#include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/constraint/corr_transform_helpers.hpp>
+#include <cmath>
 
 namespace corr_matrix_constrain_test {
 // easier than fiddling the quadratic equation
@@ -116,4 +117,52 @@ TEST(mathMixMatFun, corr_matrix_constrain_lp) {
 
   stan::test::expect_ad_matvar(f2(4), x1);
   stan::test::expect_ad_matvar(f2(3), x2);
+}
+
+// The Jacobian is a closed-form weighted sum of log_cosh(y) in column order;
+// the weights are only right if lp equals log |det J| of the autodiff Jacobian.
+TEST(mathMixMatFun, corr_matrix_constrain_lp_is_log_det_jacobian) {
+  Eigen::VectorXd y4(6);
+  y4 << 0.3, -1.2, 0.8, 2.1, -0.4, 1.5;
+  corr_transform_test::expect_lp_is_log_det_jacobian(
+      [](auto&& y) { return stan::math::corr_matrix_constrain(y, 4); },
+      [](auto&& y, auto& lp) { stan::math::corr_matrix_constrain(y, 4, lp); },
+      y4, true, 1e-12);
+  for (int K : {2, 3, 5, 7}) {
+    Eigen::VectorXd y((K * (K - 1)) / 2);
+    for (int i = 0; i < y.size(); ++i) {
+      y(i) = 1.5 * std::sin(0.9 * i + 0.3);
+    }
+    corr_transform_test::expect_lp_is_log_det_jacobian(
+        [K](auto&& y) { return stan::math::corr_matrix_constrain(y, K); },
+        [K](auto&& y, auto& lp) {
+          stan::math::corr_matrix_constrain(y, K, lp);
+        },
+        y, true, 1e-12);
+  }
+}
+
+// The old read_corr_L Jacobian terms cancel at large |y|; the log_cosh form
+// must stay accurate there in every mode.
+TEST(mathMixMatFun, corr_matrix_constrain_lp_large_argument) {
+  Eigen::VectorXd y(3);
+  y << 15.0, 12.0, -0.5;
+  Eigen::VectorXd grad_ref(3);
+  grad_ref << -2.9999999999994385, -2.9999999997734919, 0.92423431452001952;
+  corr_transform_test::expect_lp_all_modes(
+      [](auto&& y, auto& lp) { stan::math::corr_matrix_constrain(y, 3, lp); },
+      y, -77.081345930670418, grad_ref, 1e-13, 1e-14);
+}
+
+// The old sqrt(1 - sum_sqs) recursion put ~1e-10 errors in the correlations
+// when the partial correlations are near 1; the log_cosh factor must not.
+TEST(mathMixMatFun, corr_matrix_constrain_values_large_argument) {
+  Eigen::VectorXd y(6);
+  y << 15.0, 12.0, -0.5, 9.0, 2.0, -14.0;
+  Eigen::VectorXd ref(6);
+  ref << 0.99999999999981285, 0.99999999992449731, 0.99999999993182827,
+      -0.46211715726000976, -0.46211663421720721, -0.46210665234659286;
+  corr_transform_test::expect_values_all_modes(
+      [](auto&& y) { return stan::math::corr_matrix_constrain(y, 4); }, y, true,
+      ref, 4e-16, 0.0);
 }

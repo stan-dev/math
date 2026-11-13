@@ -2,16 +2,75 @@
 #define STAN_MATH_REV_CONSTRAINT_CHOLESKY_CORR_CONSTRAIN_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/dot_product.hpp>
+#include <stan/math/rev/fun/log_cosh.hpp>
+#include <stan/math/rev/fun/to_arena.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/log1m.hpp>
-#include <stan/math/prim/fun/sqrt.hpp>
-#include <stan/math/prim/fun/square.hpp>
-#include <stan/math/prim/constraint/corr_constrain.hpp>
-#include <cmath>
+#include <stan/math/prim/fun/log_cosh.hpp>
+#include <stan/math/prim/fun/tanh.hpp>
+#include <stan/math/prim/constraint/cholesky_corr_constrain.hpp>
+#include <utility>
 
 namespace stan {
 namespace math {
+
+namespace internal {
+/**
+ * Return the Cholesky factor of a correlation matrix from unconstrained
+ * values `y`, whose partial correlations are `tanh(y)`, as the `prim`
+ * version does. The reverse pass propagates each adjoint to its own `y` and,
+ * through the shared `exp(-a)`, to every earlier `y` of the row.
+ *
+ * @tparam Order order of the partial correlations in `y`
+ * @tparam T type of the `var_value` vector
+ * @param y unconstrained values, `K (K - 1) / 2` of them
+ * @param K number of rows
+ * @return Cholesky factor of a correlation matrix
+ */
+template <CorrOrder Order, typename T, require_var_vector_t<T>* = nullptr>
+inline var_value<Eigen::MatrixXd> cholesky_corr_factor(T&& y, Eigen::Index K) {
+  using Eigen::Index;
+  if (K == 0) {
+    return Eigen::MatrixXd();
+  }
+  auto arena_y = to_arena(std::forward<T>(y));
+  const Index n = arena_y.size();
+  arena_t<Eigen::VectorXd> tanh_y(n);
+  // derivative of each element with respect to its own unconstrained value
+  arena_t<Eigen::VectorXd> d_own(n);
+  arena_t<Eigen::MatrixXd> L_val = Eigen::MatrixXd::Zero(K, K);
+  L_val.coeffRef(0, 0) = 1;
+  for (Index r = 1; r < K; ++r) {
+    // exp(-a), as the product of sech(y) over the earlier elements of the row
+    double exp_minus_a = 1.0;
+    for (Index c = 0; c < r; ++c) {
+      const Index k = cholesky_corr_position<Order>(r, c, K);
+      const double y_k = arena_y.val().coeff(k);
+      const double sech_k = sech(y_k);
+      tanh_y.coeffRef(k) = tanh(y_k);
+      d_own.coeffRef(k) = sech_k * sech_k * exp_minus_a;
+      L_val.coeffRef(r, c) = tanh_y.coeff(k) * exp_minus_a;
+      exp_minus_a *= sech_k;
+    }
+    L_val.coeffRef(r, r) = exp_minus_a;
+  }
+  var_value<Eigen::MatrixXd> L = L_val;
+  reverse_pass_callback([arena_y, L, tanh_y, d_own, K]() mutable {
+    for (Index r = 1; r < K; ++r) {
+      double later = L.adj().coeff(r, r) * L.val().coeff(r, r);
+      for (Index c = r - 1; c >= 0; --c) {
+        const Index k = cholesky_corr_position<Order>(r, c, K);
+        const double adj_rc = L.adj().coeff(r, c);
+        arena_y.adj().coeffRef(k)
+            += adj_rc * d_own.coeff(k) - tanh_y.coeff(k) * later;
+        later += adj_rc * L.val().coeff(r, c);
+      }
+    }
+  });
+  return L;
+}
+}  // namespace internal
 
 /**
  * Return the Cholesky factor of the correlation matrix of the specified
@@ -25,55 +84,12 @@ namespace math {
  * @return Cholesky factor of correlation matrix
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
-inline var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K) {
-  using std::sqrt;
+inline var_value<Eigen::MatrixXd> cholesky_corr_constrain(T&& y, int K) {
   int k_choose_2 = (K * (K - 1)) / 2;
   check_size_match("cholesky_corr_constrain", "y.size()", y.size(),
                    "k_choose_2", k_choose_2);
-
-  if (K == 0) {
-    return Eigen::MatrixXd();
-  }
-
-  var_value<Eigen::VectorXd> z = corr_constrain(y);
-  arena_t<Eigen::MatrixXd> x_val = Eigen::MatrixXd::Zero(K, K);
-
-  x_val.coeffRef(0, 0) = 1;
-  int k = 0;
-  for (int i = 1; i < K; ++i) {
-    x_val.coeffRef(i, 0) = z.val().coeff(k);
-    k++;
-    double sum_sqs = square(x_val.coeff(i, 0));
-    for (int j = 1; j < i; ++j) {
-      x_val.coeffRef(i, j) = z.val().coeff(k) * sqrt(1.0 - sum_sqs);
-      k++;
-      sum_sqs += square(x_val.coeff(i, j));
-    }
-    x_val.coeffRef(i, i) = sqrt(1.0 - sum_sqs);
-  }
-
-  var_value<Eigen::MatrixXd> x = x_val;
-
-  reverse_pass_callback([z, K, x]() mutable {
-    size_t k = z.size();
-    for (int i = K - 1; i > 0; --i) {
-      double sum_sqs_val = 1.0 - square(x.val().coeffRef(i, i));
-      double sum_sqs_adj = -0.5 * x.adj().coeff(i, i) / x.val().coeff(i, i);
-      for (int j = i - 1; j > 0; --j) {
-        x.adj().coeffRef(i, j) += 2 * sum_sqs_adj * x.val().coeff(i, j);
-        sum_sqs_val -= square(x.val().coeff(i, j));
-        k--;
-        sum_sqs_adj += -0.5 * x.adj().coeffRef(i, j) * z.val().coeff(k)
-                       / sqrt(1.0 - sum_sqs_val);
-        z.adj().coeffRef(k) += x.adj().coeffRef(i, j) * sqrt(1.0 - sum_sqs_val);
-      }
-      x.adj().coeffRef(i, 0) += 2 * sum_sqs_adj * x.val().coeff(i, 0);
-      k--;
-      z.adj().coeffRef(k) += x.adj().coeffRef(i, 0);
-    }
-  });
-
-  return x;
+  return internal::cholesky_corr_factor<internal::CorrOrder::row>(
+      std::forward<T>(y), K);
 }
 
 /**
@@ -90,62 +106,14 @@ inline var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K) {
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
 inline var_value<Eigen::MatrixXd> cholesky_corr_constrain(
-    const T& y, int K, scalar_type_t<T>& lp) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-  using std::sqrt;
+    T&& y, int K, scalar_type_t<T>& lp) {
   int k_choose_2 = (K * (K - 1)) / 2;
   check_size_match("cholesky_corr_constrain", "y.size()", y.size(),
                    "k_choose_2", k_choose_2);
-
-  if (K == 0) {
-    return Eigen::MatrixXd();
-  }
-
-  var_value<Eigen::VectorXd> z = corr_constrain(y, lp);
-  arena_t<Eigen::MatrixXd> x_val = Eigen::MatrixXd::Zero(K, K);
-
-  x_val.coeffRef(0, 0) = 1;
-  int k = 0;
-  double lp_val = 0.0;
-  for (int i = 1; i < K; ++i) {
-    x_val.coeffRef(i, 0) = z.val().coeff(k);
-    k++;
-    double sum_sqs = square(x_val.coeff(i, 0));
-    for (int j = 1; j < i; ++j) {
-      lp_val += 0.5 * log1m(sum_sqs);
-      x_val.coeffRef(i, j) = z.val().coeff(k) * sqrt(1.0 - sum_sqs);
-      k++;
-      sum_sqs += square(x_val.coeff(i, j));
-    }
-    x_val.coeffRef(i, i) = sqrt(1.0 - sum_sqs);
-  }
-
-  lp += lp_val;
-  var_value<Eigen::MatrixXd> x = x_val;
-
-  reverse_pass_callback([z, K, x, lp]() mutable {
-    size_t k = z.size();
-    for (int i = K - 1; i > 0; --i) {
-      double sum_sqs_val = 1.0 - square(x.val().coeffRef(i, i));
-      double sum_sqs_adj = -0.5 * x.adj().coeff(i, i) / x.val().coeff(i, i);
-      for (int j = i - 1; j > 0; --j) {
-        x.adj().coeffRef(i, j) += 2 * sum_sqs_adj * x.val().coeff(i, j);
-        sum_sqs_val -= square(x.val().coeff(i, j));
-
-        k--;
-        sum_sqs_adj += -0.5 * x.adj().coeffRef(i, j) * z.val().coeff(k)
-                       / sqrt(1.0 - sum_sqs_val);
-        z.adj().coeffRef(k) += x.adj().coeffRef(i, j) * sqrt(1.0 - sum_sqs_val);
-        sum_sqs_adj -= 0.5 * lp.adj() / (1 - sum_sqs_val);
-      }
-      x.adj().coeffRef(i, 0) += 2 * sum_sqs_adj * x.val().coeff(i, 0);
-      k--;
-      z.adj().coeffRef(k) += x.adj().coeffRef(i, 0);
-    }
-  });
-
-  return x;
+  lp -= dot_product(internal::cholesky_corr_log_jacobian_coefficients(K),
+                    log_cosh(y));
+  return internal::cholesky_corr_factor<internal::CorrOrder::row>(
+      std::forward<T>(y), K);
 }
 
 }  // namespace math

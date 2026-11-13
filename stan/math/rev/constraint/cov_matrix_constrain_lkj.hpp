@@ -1,27 +1,29 @@
 #ifndef STAN_MATH_REV_CONSTRAINT_COV_MATRIX_CONSTRAIN_LKJ_HPP
 #define STAN_MATH_REV_CONSTRAINT_COV_MATRIX_CONSTRAIN_LKJ_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/constraint/corr_constrain.hpp>
+#include <stan/math/rev/constraint/cholesky_corr_constrain.hpp>
+#include <stan/math/rev/fun/diag_pre_multiply.hpp>
+#include <stan/math/rev/fun/dot_product.hpp>
+#include <stan/math/rev/fun/exp.hpp>
+#include <stan/math/rev/fun/log_cosh.hpp>
+#include <stan/math/rev/fun/multiply_lower_tri_self_transpose.hpp>
+#include <stan/math/rev/fun/sum.hpp>
+#include <stan/math/rev/fun/to_arena.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/constraint/positive_constrain.hpp>
-#include <stan/math/prim/fun/read_cov_matrix.hpp>
-#include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <utility>
 
 namespace stan {
 namespace math {
 
 /**
- * Return the covariance matrix of the specified dimensionality
- * derived from constraining the specified vector of unconstrained
- * values.  The input vector must be of length \f$k \choose 2 +
- * k\f$.  The first \f$k \choose 2\f$ values in the input
- * represent unconstrained (partial) correlations and the last
- * \f$k\f$ are unconstrained standard deviations of the dimensions.
- *
- * <p>The transform scales the correlation matrix transform defined
- * in <code>corr_matrix_constrain(Matrix, size_t)</code>
- * with the constrained deviations.
+ * Return the `k x k` covariance matrix `(diag(sds) L) (diag(sds) L)^T`, with
+ * `L` the Cholesky factor of the correlation matrix of the first
+ * `k choose 2` unconstrained values and `sds = exp(x.tail(k))`. See
+ * `corr_matrix_constrain` for the correlation transform.
  *
  * @tparam T type of input vector (must be a `var_value<S>` where `S`
  *  inherits from EigenBase)
@@ -32,28 +34,21 @@ namespace math {
  * correlations and deviations.
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
-inline var_value<Eigen::MatrixXd> cov_matrix_constrain_lkj(const T& x,
-                                                           size_t k) {
+inline var_value<Eigen::MatrixXd> cov_matrix_constrain_lkj(T&& x, size_t k) {
   size_t k_choose_2 = (k * (k - 1)) / 2;
-  return read_cov_matrix(corr_constrain(x.head(k_choose_2)),
-                         positive_constrain(x.tail(k)));
+  check_size_match("cov_matrix_constrain_lkj", "x.size()", x.size(),
+                   "k_choose_2 + k", k_choose_2 + k);
+  auto arena_x = to_arena(std::forward<T>(x));
+  return multiply_lower_tri_self_transpose(diag_pre_multiply(
+      positive_constrain(arena_x.tail(k)),
+      internal::cholesky_corr_factor<internal::CorrOrder::column>(
+          arena_x.head(k_choose_2), k)));
 }
 
 /**
- * Return the covariance matrix of the specified dimensionality
- * derived from constraining the specified vector of unconstrained
- * values and increment the specified log probability reference
- * with the log absolute Jacobian determinant.
- *
- * <p>The transform is defined as for
- * <code>cov_matrix_constrain(Matrix, size_t)</code>.
- *
- * <p>The log absolute Jacobian determinant is derived by
- * composing the log absolute Jacobian determinant for the
- * underlying correlation matrix as defined in
- * <code>cov_matrix_constrain(Matrix, size_t, T&)</code> with
- * the Jacobian of the transform of the correlation matrix
- * into a covariance matrix by scaling by standard deviations.
+ * Return the covariance matrix as `cov_matrix_constrain_lkj(x, k)` and add
+ * the log absolute Jacobian determinant to `lp`. The Jacobian is the one of
+ * `corr_matrix_constrain` plus `k log 2 + (k + 1) sum(x.tail(k))`.
  *
  * @tparam T type of input vector (must be a `var_value<S>` where `S`
  *  inherits from EigenBase)
@@ -66,10 +61,19 @@ inline var_value<Eigen::MatrixXd> cov_matrix_constrain_lkj(const T& x,
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
 inline var_value<Eigen::MatrixXd> cov_matrix_constrain_lkj(
-    const T& x, size_t k, scalar_type_t<T>& lp) {
+    T&& x, size_t k, scalar_type_t<T>& lp) {
   size_t k_choose_2 = (k * (k - 1)) / 2;
-  return read_cov_matrix(corr_constrain(x.head(k_choose_2)),
-                         positive_constrain(x.tail(k)), lp);
+  check_size_match("cov_matrix_constrain_lkj", "x.size()", x.size(),
+                   "k_choose_2 + k", k_choose_2 + k);
+  auto arena_x = to_arena(std::forward<T>(x));
+  auto cpcs = arena_x.head(k_choose_2);
+  auto log_sds = arena_x.tail(k);
+  lp -= dot_product(internal::corr_matrix_log_jacobian_coefficients(k),
+                    log_cosh(cpcs));
+  lp += (k + 1.0) * sum(log_sds) + k * LOG_TWO;
+  return multiply_lower_tri_self_transpose(diag_pre_multiply(
+      positive_constrain(log_sds),
+      internal::cholesky_corr_factor<internal::CorrOrder::column>(cpcs, k)));
 }
 
 }  // namespace math

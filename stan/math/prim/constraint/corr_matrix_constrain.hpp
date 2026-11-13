@@ -4,10 +4,12 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/constraint/corr_constrain.hpp>
-#include <stan/math/prim/fun/read_corr_matrix.hpp>
+#include <stan/math/prim/constraint/cholesky_corr_constrain.hpp>
+#include <stan/math/prim/fun/dot_product.hpp>
+#include <stan/math/prim/fun/log_cosh.hpp>
+#include <stan/math/prim/fun/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <stdexcept>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -44,9 +46,9 @@ corr_matrix_constrain(T&& x, Eigen::Index k) {
   decltype(auto) x_ref = to_ref(std::forward<T>(x));
   check_size_match("cov_matrix_constrain", "x.size()", x_ref.size(),
                    "k_choose_2", k_choose_2);
-  decltype(auto) cpc_ref
-      = to_ref(corr_constrain(std::forward<decltype(x_ref)>(x_ref)));
-  return read_corr_matrix(cpc_ref, k);
+  return multiply_lower_tri_self_transpose(
+      internal::cholesky_corr_factor<internal::CorrOrder::column>(
+          x_ref, log_cosh(x_ref), k));
 }
 
 /**
@@ -79,9 +81,12 @@ corr_matrix_constrain(T&& x, Eigen::Index k, Lp& lp) {
   decltype(auto) x_ref = to_ref(std::forward<T>(x));
   check_size_match("cov_matrix_constrain", "x.size()", x_ref.size(),
                    "k_choose_2", k_choose_2);
-  decltype(auto) cpc_ref
-      = to_ref(corr_constrain(std::forward<decltype(x_ref)>(x_ref), lp));
-  return read_corr_matrix(cpc_ref, k, lp);
+  decltype(auto) log_cosh_x = to_ref(log_cosh(x_ref));
+  lp -= dot_product(internal::corr_matrix_log_jacobian_coefficients(k),
+                    log_cosh_x);
+  return multiply_lower_tri_self_transpose(
+      internal::cholesky_corr_factor<internal::CorrOrder::column>(
+          x_ref, log_cosh_x, k));
 }
 
 /**
