@@ -518,7 +518,7 @@ inline void max_num_steps_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
       std::domain_error);
 }
 
-Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_impl_test(
+inline Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_impl_test(
     const Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> A,
     const stan::math::var& y_1, const stan::math::var& y_2,
     const stan::math::var& y_3, const int i, bool is_newton = false,
