@@ -80,3 +80,7 @@ TEST(ProbDistributionsPareto, chiSquareGoodnessFitTest) {
   // Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }
+
+TEST(ProbDistributionsParetoCDF, Values) {
+  EXPECT_FLOAT_EQ(0.60434447, stan::math::pareto_cdf(3.45, 2.89, 5.235));
+}
