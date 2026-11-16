@@ -25,15 +25,16 @@ namespace math {
  */
 template <typename T>
 inline fvar<T> tanh(const fvar<T>& x) {
-  const T u = tanh(x.val_);
+  const T tanh_x = tanh(x.val_);
   const double x_val = value_of_rec(x.val_);
   if (fabs(x_val) < 0.5) {
-    return fvar<T>(u, x.d_ * (1 - u * u));
+    return fvar<T>(tanh_x, x.d_ * (1 - tanh_x * tanh_x));
   }
-  // -2 |x|, with the sign of x fixed in this branch
-  const T e = exp(x_val > 0 ? -2 * x.val_ : 2 * x.val_);
-  const T one_p_e = 1 + e;
-  return fvar<T>(u, x.d_ * (4 * e / (one_p_e * one_p_e)));
+  // exp(-2 |x|), with the sign of x fixed in this branch
+  const T exp_neg_2abs_x = exp(x_val > 0 ? -2 * x.val_ : 2 * x.val_);
+  const T one_plus_exp = 1 + exp_neg_2abs_x;
+  return fvar<T>(tanh_x,
+                 x.d_ * (4 * exp_neg_2abs_x / (one_plus_exp * one_plus_exp)));
 }
 
 /**

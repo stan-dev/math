@@ -8,6 +8,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log_cosh.hpp>
+#include <stan/math/prim/fun/sech.hpp>
 #include <stan/math/prim/fun/tanh.hpp>
 #include <stan/math/prim/constraint/cholesky_corr_constrain.hpp>
 #include <utility>
@@ -35,38 +36,38 @@ inline var_value<Eigen::MatrixXd> cholesky_corr_factor(T&& y, Eigen::Index K) {
     return Eigen::MatrixXd();
   }
   auto arena_y = to_arena(std::forward<T>(y));
-  const Index n = arena_y.size();
-  arena_t<Eigen::VectorXd> tanh_y(n);
+  arena_t<Eigen::VectorXd> tanh_y(arena_y.size());
   // derivative of each element with respect to its own unconstrained value
-  arena_t<Eigen::VectorXd> d_own(n);
+  arena_t<Eigen::VectorXd> d_own(arena_y.size());
   arena_t<Eigen::MatrixXd> L_val = Eigen::MatrixXd::Zero(K, K);
   L_val.coeffRef(0, 0) = 1;
-  for (Index r = 1; r < K; ++r) {
-    // exp(-a), as the product of sech(y) over the earlier elements of the row
-    double exp_minus_a = 1.0;
-    for (Index c = 0; c < r; ++c) {
-      const Index k = cholesky_corr_position<Order>(r, c, K);
-      const double y_k = arena_y.val().coeff(k);
-      const double sech_k = sech(y_k);
-      tanh_y.coeffRef(k) = tanh(y_k);
-      d_own.coeffRef(k) = sech_k * sech_k * exp_minus_a;
-      L_val.coeffRef(r, c) = tanh_y.coeff(k) * exp_minus_a;
-      exp_minus_a *= sech_k;
+  for (Index row = 1; row < K; ++row) {
+    // exp(-acc), as the product of sech(y) over the earlier elements of the
+    // row
+    double exp_neg_acc = 1.0;
+    for (Index col = 0; col < row; ++col) {
+      const Index pos = cholesky_corr_position<Order>(row, col, K);
+      const double y_val = arena_y.val().coeff(pos);
+      const double sech_val = sech(y_val);
+      tanh_y.coeffRef(pos) = tanh(y_val);
+      d_own.coeffRef(pos) = sech_val * sech_val * exp_neg_acc;
+      L_val.coeffRef(row, col) = tanh_y.coeff(pos) * exp_neg_acc;
+      exp_neg_acc *= sech_val;
     }
-    L_val.coeffRef(r, r) = exp_minus_a;
+    L_val.coeffRef(row, row) = exp_neg_acc;
   }
   var_value<Eigen::MatrixXd> L = L_val;
   reverse_pass_callback([arena_y, L, tanh_y, d_own, K]() mutable {
-    for (Index r = 1; r < K; ++r) {
-      // sum of adj * val over the elements of the row after column c, which
-      // all depend on y_c through the shared exp(-a)
-      double running_sum = L.adj().coeff(r, r) * L.val().coeff(r, r);
-      for (Index c = r - 1; c >= 0; --c) {
-        const Index k = cholesky_corr_position<Order>(r, c, K);
-        const double adj_rc = L.adj().coeff(r, c);
-        arena_y.adj().coeffRef(k)
-            += adj_rc * d_own.coeff(k) - tanh_y.coeff(k) * running_sum;
-        running_sum += adj_rc * L.val().coeff(r, c);
+    for (Index row = 1; row < K; ++row) {
+      // sum of adj * val over the elements of the row after column col, which
+      // all depend on y_col through the shared exp(-acc)
+      double running_sum = L.adj().coeff(row, row) * L.val().coeff(row, row);
+      for (Index col = row - 1; col >= 0; --col) {
+        const Index pos = cholesky_corr_position<Order>(row, col, K);
+        const double adj_rc = L.adj().coeff(row, col);
+        arena_y.adj().coeffRef(pos)
+            += adj_rc * d_own.coeff(pos) - tanh_y.coeff(pos) * running_sum;
+        running_sum += adj_rc * L.val().coeff(row, col);
       }
     }
   });

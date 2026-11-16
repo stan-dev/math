@@ -285,6 +285,7 @@
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/scaled_add.hpp>
 #include <stan/math/prim/fun/sd.hpp>
+#include <stan/math/prim/fun/sech.hpp>
 #include <stan/math/prim/fun/segment.hpp>
 #include <stan/math/prim/fun/serializer.hpp>
 #include <stan/math/prim/fun/select.hpp>

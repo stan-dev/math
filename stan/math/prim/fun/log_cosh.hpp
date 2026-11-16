@@ -12,20 +12,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-/**
- * Return `sech(x) = 1 / cosh(x)` as `2 e / (1 + e^2)` with `e = exp(-|x|)`,
- * which underflows to 0 instead of overflowing for large `|x|`.
- *
- * @param x argument
- * @return `sech(x)`
- */
-inline double sech(double x) {
-  const double e = exp(-fabs(x));
-  return 2.0 * e / (1.0 + e * e);
-}
-}  // namespace internal
-
 /**
  * Return the natural logarithm of the hyperbolic cosine of the argument,
  * from `expm1` for `|x| < 1` and from `exp(-|x|)` above, so that neither
@@ -38,13 +24,13 @@ inline double sech(double x) {
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
 inline double log_cosh(T x) {
-  const double a = fabs(static_cast<double>(x));
-  if (a < 1.0) {
-    const double u = expm1(a);
-    return log1p(u * u / (2.0 * (1.0 + u)));
+  const double abs_x = fabs(static_cast<double>(x));
+  if (abs_x < 1.0) {
+    const double expm1_abs_x = expm1(abs_x);
+    return log1p(expm1_abs_x * expm1_abs_x / (2.0 * (1.0 + expm1_abs_x)));
   }
-  const double e = exp(-a);
-  return a + log1p(0.5 * (e * e - 1.0));
+  const double exp_neg_abs_x = exp(-abs_x);
+  return abs_x + log1p(0.5 * (exp_neg_abs_x * exp_neg_abs_x - 1.0));
 }
 
 /**

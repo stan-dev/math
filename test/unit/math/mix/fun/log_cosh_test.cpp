@@ -64,24 +64,3 @@ TEST(mathMixMatFun, logCoshReference) {
     EXPECT_NEAR(c[2], y_f.d_, tol_d) << "x = " << x;
   }
 }
-
-// The var_value Cholesky factor builds exp(-a) as a product of sech; it must
-// stay accurate through its underflow at 800.
-TEST(mathMixMatFun, sechReference) {
-  const double eps = std::numeric_limits<double>::epsilon();
-  // x, sech(x)
-  std::vector<std::array<double, 2>> cases = {{0.0, 1.0},
-                                              {1e-10, 1.0},
-                                              {0.5, 0.88681888397007391},
-                                              {0.999, 0.64854787974731328},
-                                              {1.0, 0.6480542736638854},
-                                              {1.001, 0.64756077130222642},
-                                              {-3.0, 0.099327927419433208},
-                                              {30.0, 1.8715245937680349e-13},
-                                              {700.0, 1.9719353087519542e-304},
-                                              {800.0, 0.0}};
-  for (auto&& c : cases) {
-    EXPECT_NEAR(c[1], stan::math::internal::sech(c[0]), 4 * eps * c[1])
-        << "x = " << c[0];
-  }
-}

@@ -26,21 +26,21 @@ enum class CorrOrder : uint8_t { row = 0, column = 1 };
 
 /**
  * Return the position in the unconstrained vector of the partial
- * correlation for element `(r, c)`, `c < r`, of the Cholesky factor.
+ * correlation for element `(row, col)`, `col < row`, of the Cholesky factor.
  *
  * @tparam Order order of the partial correlations in the vector
- * @param r row
- * @param c column
+ * @param row row
+ * @param col column
  * @param K number of rows
  * @return position in the unconstrained vector
  */
 template <CorrOrder Order>
-inline Eigen::Index cholesky_corr_position(Eigen::Index r, Eigen::Index c,
+inline Eigen::Index cholesky_corr_position(Eigen::Index row, Eigen::Index col,
                                            Eigen::Index K) {
   if constexpr (Order == CorrOrder::column) {
-    return c * (K - 1) - (c * (c - 1)) / 2 + (r - c - 1);
+    return col * (K - 1) - (col * (col - 1)) / 2 + (row - col - 1);
   } else {
-    return (r * (r - 1)) / 2 + c;
+    return (row * (row - 1)) / 2 + col;
   }
 }
 
@@ -48,54 +48,60 @@ inline Eigen::Index cholesky_corr_position(Eigen::Index r, Eigen::Index c,
  * Return a lazy expression of the coefficients `c` for which the log
  * absolute Jacobian determinant of `cholesky_corr_constrain` is
  * `-sum_n c_n log(cosh(y_n))`, in row order: the coefficient of element
- * `(r, c)` is `r + 1 - c`, with `r` recovered from the position by
+ * `(row, col)` is `row + 1 - col`, with `row` recovered from the position by
  * inverting `cholesky_corr_position<CorrOrder::row>`. The inverse is exact,
- * since at the first position of row `r` the radicand `1 + 8 i` is the
- * perfect square `(2 r - 1)^2`, for which `sqrt` is exact, so `floor` never
- * lands one row too low.
+ * since at the first position of a row the radicand `1 + 8 pos` is the
+ * perfect square `(2 row - 1)^2`, for which `sqrt` is exact, so `floor`
+ * never lands one row too low.
  *
  * @param K number of rows
  * @return coefficients in the order of the unconstrained vector
  */
 inline auto cholesky_corr_log_jacobian_coefficients(Eigen::Index K) {
-  const Eigen::Index n = (K * (K - 1)) / 2;
+  const Eigen::Index k_choose_2 = (K * (K - 1)) / 2;
   return make_holder(
-      [](auto&& i) {
-        const auto r = (0.5 * (1.0 + (1.0 + 8.0 * i).sqrt())).floor();
-        return (r + 1.0 - (i - 0.5 * r * (r - 1.0))).matrix();
+      [](auto&& pos) {
+        const auto row = (0.5 * (1.0 + (1.0 + 8.0 * pos).sqrt())).floor();
+        return (row + 1.0 - (pos - 0.5 * row * (row - 1.0))).matrix();
       },
-      Eigen::ArrayXd::LinSpaced(n, 0.0, n - 1.0));
+      Eigen::ArrayXd::LinSpaced(k_choose_2, 0.0, k_choose_2 - 1.0));
 }
 
 /**
  * Return a lazy expression of the coefficients `c` for which the log
  * absolute Jacobian determinant of `corr_matrix_constrain` is
  * `-sum_n c_n log(cosh(y_n))`, in column order: the coefficient of every
- * element of column `c` is `K - c` (equation 11 of Lewandowski, Kurowicka
- * and Joe, 2009), with `c` recovered from the position by inverting
- * `cholesky_corr_position<CorrOrder::column>`. The inverse is exact, since
- * at the first position of column `c` the radicand `b^2 - 8 i` is the
- * perfect square `(2 (K - c) - 1)^2`, for which `sqrt` is exact, so `floor`
- * never lands one column too low.
+ * element of column `col` is `K - col` (equation 11 of Lewandowski,
+ * Kurowicka and Joe, 2009), with `col` recovered from the position by
+ * inverting `cholesky_corr_position<CorrOrder::column>`. The inverse is
+ * exact, since at the first position of a column the radicand
+ * `(2 K - 1)^2 - 8 pos` is the perfect square `(2 (K - col) - 1)^2`, for
+ * which `sqrt` is exact, so `floor` never lands one column too low.
  *
  * @param K number of rows
  * @return coefficients in the order of the unconstrained vector
  */
 inline auto corr_matrix_log_jacobian_coefficients(Eigen::Index K) {
-  const Eigen::Index n = (K * (K - 1)) / 2;
-  const double b = 2.0 * K - 1.0;
+  const Eigen::Index k_choose_2 = (K * (K - 1)) / 2;
+  const double two_K_minus_one = 2.0 * K - 1.0;
   return make_holder(
-      [K = static_cast<double>(K), b](auto&& i) {
-        return (K - (0.5 * (b - (b * b - 8.0 * i).sqrt())).floor()).matrix();
+      [K = static_cast<double>(K), two_K_minus_one](auto&& pos) {
+        return (K
+                - (0.5
+                   * (two_K_minus_one
+                      - (two_K_minus_one * two_K_minus_one - 8.0 * pos).sqrt()))
+                      .floor())
+            .matrix();
       },
-      Eigen::ArrayXd::LinSpaced(n, 0.0, n - 1.0));
+      Eigen::ArrayXd::LinSpaced(k_choose_2, 0.0, k_choose_2 - 1.0));
 }
 
 /**
  * Return the Cholesky factor of a correlation matrix from unconstrained
  * values `y`, whose partial correlations are `tanh(y)`. Each element is
- * `L(r, c) = tanh(y_c) exp(-a)` with `a` the sum of `log(cosh(y))` over the
- * earlier columns of the row, which has no cancellation.
+ * `L(row, col) = tanh(y_col) exp(-acc)` with `acc` the sum of
+ * `log(cosh(y))` over the earlier columns of the row, which has no
+ * cancellation.
  *
  * @tparam Order order of the partial correlations in `y`
  * @tparam EigVec type of the vector
@@ -118,14 +124,14 @@ cholesky_corr_factor(EigVec&& y, LogCoshVec&& log_cosh_y, Eigen::Index K) {
   decltype(auto) y_ref = to_ref(std::forward<EigVec>(y));
   decltype(auto) log_cosh_y_ref = to_ref(std::forward<LogCoshVec>(log_cosh_y));
   L.coeffRef(0, 0) = 1;
-  for (Eigen::Index r = 1; r < K; ++r) {
-    T_scalar a = 0;
-    for (Eigen::Index c = 0; c < r; ++c) {
-      const Eigen::Index k = cholesky_corr_position<Order>(r, c, K);
-      L.coeffRef(r, c) = tanh(y_ref.coeff(k)) * exp(-a);
-      a += log_cosh_y_ref.coeff(k);
+  for (Eigen::Index row = 1; row < K; ++row) {
+    T_scalar acc = 0;
+    for (Eigen::Index col = 0; col < row; ++col) {
+      const Eigen::Index pos = cholesky_corr_position<Order>(row, col, K);
+      L.coeffRef(row, col) = tanh(y_ref.coeff(pos)) * exp(-acc);
+      acc += log_cosh_y_ref.coeff(pos);
     }
-    L.coeffRef(r, r) = exp(-a);
+    L.coeffRef(row, row) = exp(-acc);
   }
   return L;
 }
