@@ -58,13 +58,15 @@ inline var_value<Eigen::MatrixXd> cholesky_corr_factor(T&& y, Eigen::Index K) {
   var_value<Eigen::MatrixXd> L = L_val;
   reverse_pass_callback([arena_y, L, tanh_y, d_own, K]() mutable {
     for (Index r = 1; r < K; ++r) {
-      double later = L.adj().coeff(r, r) * L.val().coeff(r, r);
+      // sum of adj * val over the elements of the row after column c, which
+      // all depend on y_c through the shared exp(-a)
+      double running_sum = L.adj().coeff(r, r) * L.val().coeff(r, r);
       for (Index c = r - 1; c >= 0; --c) {
         const Index k = cholesky_corr_position<Order>(r, c, K);
         const double adj_rc = L.adj().coeff(r, c);
         arena_y.adj().coeffRef(k)
-            += adj_rc * d_own.coeff(k) - tanh_y.coeff(k) * later;
-        later += adj_rc * L.val().coeff(r, c);
+            += adj_rc * d_own.coeff(k) - tanh_y.coeff(k) * running_sum;
+        running_sum += adj_rc * L.val().coeff(r, c);
       }
     }
   });
