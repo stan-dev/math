@@ -90,7 +90,6 @@ auto multi_normal_cholesky_lpdf_functor_propto
 
 TEST(ProbDistributionsMultiNormalCholesky, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y1(N);
   y1 << 0.5, 0.4, 0.1;

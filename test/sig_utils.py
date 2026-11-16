@@ -162,7 +162,6 @@ ignored = [
 # these are all slight renames compared to stan math
 renames = {
     "lchoose": "binomial_coefficient_log",
-    "lmultiply": "multiply_log",
     "cholesky_factor_corr_constrain": "cholesky_corr_constrain",
     "cholesky_factor_corr_unconstrain": "cholesky_corr_free",
     "cholesky_factor_cov_constrain": "cholesky_factor_constrain",

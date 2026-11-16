@@ -94,7 +94,6 @@ TEST(ProbDistributionsUniform, opencl_matches_cpu_small) {
 
 TEST(ProbDistributionsUniform, opencl_matches_cpu_small_y_out_of_bounds) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << 0.3, 0.8, 14.0;

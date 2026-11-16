@@ -68,6 +68,25 @@ inline int get_num_threads() {
 #endif
 }
 
+#ifdef TBB_INTERFACE_NEW
+/** Own the concurrency control before the arena, so the arena dies first. */
+struct threadpool_tbb_state {
+  tbb::global_control control;
+  tbb::task_arena arena;
+
+  explicit threadpool_tbb_state(int num_threads)
+      : control(tbb::global_control::max_allowed_parallelism, num_threads),
+        arena(num_threads, 1) {
+    arena.initialize();
+  }
+};
+
+/** Construct independently owned thread-pool state for an explicit count. */
+inline threadpool_tbb_state make_threadpool_tbb(int num_threads) {
+  return threadpool_tbb_state(num_threads);
+}
+#endif
+
 }  // namespace internal
 
 #ifdef TBB_INTERFACE_NEW
@@ -83,13 +102,12 @@ inline int get_num_threads() {
  * of get_num_threads. The TBB scheduler will be activated by calling
  * this function.
  *
- * The function returns a reference to the static
- * tbb::global_control instance.
+ * The first call fixes the concurrency configuration for the process.
  *
  * @param n_threads The maximum number of threads available to the tbb. If not
  *  set will search for the environment variable `STAN_NUM_THREADS`. A value of
  *  -1 will assume all detectable threads are available for the process.
- * @return reference to the static tbb::global_control
+ * @return reference to the static tbb::task_arena
  * @throws std::runtime_error if n_threads (defaults to zero) is not provided
  * and the value of STAN_NUM_THREADS environment variable is invalid.
  */
@@ -108,12 +126,10 @@ inline tbb::task_arena& init_threadpool_tbb(int n_threads = 0) {
                      "' but it must be positive or -1");
   }
 #endif
-  static tbb::global_control tbb_gc(
-      tbb::global_control::max_allowed_parallelism, tbb_max_threads);
-  static tbb::task_arena tbb_arena(tbb_max_threads, 1);
-  tbb_arena.initialize();
+  static auto state = internal::make_threadpool_tbb(tbb_max_threads);
+  state.arena.initialize();
 
-  return tbb_arena;
+  return state.arena;
 }
 #else
 /**

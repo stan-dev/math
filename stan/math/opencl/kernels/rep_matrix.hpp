@@ -35,7 +35,8 @@ static constexpr const char* rep_matrix_rev_kernel_code = STRINGIFY(
             = contains_nonzero(view_B, UPPER)
                   ? gid_i
                   : ((j - gid_i + gsize_i - 1) / gsize_i) * gsize_i + gid_i;
-        int i_end = contains_nonzero(view_B, LOWER) ? B_rows : j + 1;
+        int i_end
+            = contains_nonzero(view_B, LOWER) ? B_rows : min(B_rows, j + 1u);
         for (int i = i_start; i < i_end; i += gsize_i) {
           tmp += B_adj[j * B_rows + i];
         }

@@ -1,6 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math.hpp>
-#include <stan/math/opencl/kernels/device_functions/multiply_log.hpp>
+#include <stan/math/opencl/kernels/device_functions/lmultiply.hpp>
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/expect_near_rel.hpp>

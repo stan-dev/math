@@ -74,7 +74,6 @@ auto neg_binomial_2_lpmf_functor_propto
 
 TEST(muProbDistributionsNegBinomial2, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   std::vector<int> n{1, 0, 12};
   Eigen::VectorXd mu(N);
@@ -175,7 +174,6 @@ TEST(muProbDistributionsNegBinomial2, opencl_matches_cpu_big) {
 
 TEST(ProbDistributionsNegBinomial2, opencl_scalar_n_mu) {
   int N = 3;
-  int M = 2;
 
   int n = 1;
   double mu = 0.3;

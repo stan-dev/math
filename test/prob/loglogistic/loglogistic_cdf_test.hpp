@@ -7,7 +7,7 @@ using stan::math::var;
 using std::numeric_limits;
 using std::vector;
 
-class AgradCdfLogistic : public AgradCdfTest {
+class AgradCdfLoglogistic : public AgradCdfTest {
  public:
   void valid_values(vector<vector<double> >& parameters, vector<double>& cdf) {
     vector<double> param(3);

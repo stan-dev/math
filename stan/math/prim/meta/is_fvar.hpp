@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_META_IS_FVAR_HPP
 #define STAN_MATH_PRIM_META_IS_FVAR_HPP
 
+#include <stan/math/prim/meta/base_type.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
@@ -106,6 +107,14 @@ using require_any_st_fvar
 template <typename... Types>
 using require_all_not_st_fvar
     = require_all_not_t<is_fvar<scalar_type_t<std::decay_t<Types>>>...>;
+
+/*! \brief Require any of the base types satisfy @ref is_fvar */
+/*! Unlike @ref require_any_st_fvar this also matches `std::complex<fvar>` */
+/*! @tparam Types The types with a valid overload of @ref base_type available
+ */
+template <typename... Types>
+using require_any_bt_fvar
+    = require_any_t<is_fvar<base_type_t<std::decay_t<Types>>>...>;
 /*! @} */
 
 }  // namespace stan
