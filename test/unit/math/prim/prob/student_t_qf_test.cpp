@@ -39,7 +39,6 @@ TEST(MathFunctions, student_t_qf_vec) {
 
 TEST(MathFunctions, student_t_qf_inf) {
   using stan::math::student_t_qf;
-  long double log_p = std::numeric_limits<long double>::min();
   const double inf = std::numeric_limits<double>::infinity();
   EXPECT_EQ(student_t_qf(0, 2, 0, 1), -inf);
   EXPECT_EQ(student_t_qf(1, 2, 0, 1), inf);

@@ -198,7 +198,7 @@ TEST(MathFunctions, value_of_return_type_short_circuit_expression) {
 
 TEST(MathFunctions, value_of_return_type_short_circuit_static_sized_matrix) {
   Eigen::Matrix<double, 5, 4> a;
-  const Eigen::Matrix<double, 5, 4> b;
+  const Eigen::Matrix<double, 5, 4> b{};
   EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(a)),
                             Eigen::Matrix<double, 5, 4>&>::value));
   EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(b)),

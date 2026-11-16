@@ -5,11 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
-#include <stan/math/prim/fun/scalar_seq_view.hpp>
-#include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/select.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -71,12 +67,12 @@ inline return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   if constexpr (include_precision || include_location) {
     if constexpr (include_precision && include_location) {
       logp += sum(binomial_coefficient_log(n_plus_phi - 1, n_vec)
-                  + multiply_log(n_vec, mu_val) + logp_calc());
+                  + lmultiply(n_vec, mu_val) + logp_calc());
     } else if constexpr (include_precision) {
       logp
           += sum(binomial_coefficient_log(n_plus_phi - 1, n_vec) + logp_calc());
     } else if constexpr (include_location) {
-      logp += sum(multiply_log(n_vec, mu_val) + logp_calc());
+      logp += sum(lmultiply(n_vec, mu_val) + logp_calc());
     }
   }
   if constexpr (is_autodiff_v<T_location>) {

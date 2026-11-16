@@ -79,7 +79,6 @@ auto logistic_lpdf_functor_propto
 
 TEST(ProbDistributionsLogistic, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << 10, -0.5, 1;
@@ -181,7 +180,6 @@ TEST(ProbDistributionsLogistic, opencl_matches_cpu_big) {
 
 TEST(ProbDistributionsLogistic, opencl_sigma_mu_scalar) {
   int N = 3;
-  int M = 2;
 
   double sigma = 0.3;
   double mu = 0.5;

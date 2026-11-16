@@ -222,7 +222,6 @@ class colwise_sum_ : public colwise_reduction<colwise_sum_<T>, T, sum_op> {
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 inline auto colwise_sum(T&& a) {
-  auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
   return colwise_sum_<as_operation_cl_t<T>>(
       as_operation_cl(std::forward<T>(a)));
 }
@@ -266,7 +265,6 @@ class colwise_prod_ : public colwise_reduction<colwise_prod_<T>, T, prod_op> {
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 inline auto colwise_prod(T&& a) {
-  auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
   return colwise_prod_<as_operation_cl_t<T>>(
       as_operation_cl(std::forward<T>(a)));
 }
@@ -315,7 +313,6 @@ class colwise_max_ : public colwise_reduction<
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 inline auto colwise_max(T&& a) {
-  auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
   return colwise_max_<as_operation_cl_t<T>>(
       as_operation_cl(std::forward<T>(a)));
 }

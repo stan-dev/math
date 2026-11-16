@@ -14,6 +14,8 @@
 #include <stan/math/prim/err.hpp>
 
 #include <stan/math/prim/fun.hpp>
+#include <stan/math/prim/fun/is_even.hpp>
+#include <stan/math/prim/fun/is_odd.hpp>
 #include <stan/math/prim/functor.hpp>
 #include <stan/math/prim/prob.hpp>
 
