@@ -133,35 +133,6 @@ inline constexpr void copy_compute_s2(Output&& output, Input&& input) {
       std::forward<Output>(output), std::forward<Input>(input));
 }
 
-/**
- * Returns a `theta_size` x `theta_size` matrix that holds `entry(r, c)` in
- * its diagonal blocks of size `hessian_block_size` and zero elsewhere.
- * `laplace_likelihood::compute_s2()` reads only these entries of its matrix
- * argument, so they are computed in O(n^2 b) instead of forming the full
- * matrix with O(n^3) products.
- * @tparam EntryFun Type of a functor `(Eigen::Index r, Eigen::Index c)`
- * returning `double`
- * @param theta_size Number of rows and columns
- * @param hessian_block_size Size of the diagonal blocks
- * @param entry Functor that returns the entry at row `r` and column `c`
- */
-template <typename EntryFun>
-inline Eigen::MatrixXd block_diagonal_entries(
-    const Eigen::Index theta_size, const Eigen::Index hessian_block_size,
-    EntryFun&& entry) {
-  Eigen::MatrixXd A = Eigen::MatrixXd::Zero(theta_size, theta_size);
-  const Eigen::Index n_blocks = theta_size / hessian_block_size;
-  for (Eigen::Index j = 0; j < n_blocks; ++j) {
-    const Eigen::Index start = j * hessian_block_size;
-    for (Eigen::Index c = start; c < start + hessian_block_size; ++c) {
-      for (Eigen::Index r = start; r < start + hessian_block_size; ++r) {
-        A(r, c) = entry(r, c);
-      }
-    }
-  }
-  return A;
-}
-
 }  // namespace internal
 
 /**
@@ -247,12 +218,9 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
             = md_est.L.template triangularView<Eigen::Lower>().solve(
                 md_est.W_r * covariance_val);
         if constexpr (ll_args_contain_var) {
-          // only the diagonal blocks of A = K - C' C, see compute_s2()
-          arena_t<Eigen::MatrixXd> A = internal::block_diagonal_entries(
-              covariance_val.rows(), options.hessian_block_size,
-              [&](Eigen::Index r, Eigen::Index c) {
-                return covariance_val(r, c) - C.col(r).dot(C.col(c));
-              });
+          // A = K - C' C is left unevaluated: compute_s2() reads only its
+          // diagonal blocks, so each entry it reads costs one dot product
+          auto A = covariance_val - C.transpose().lazyProduct(C);
           auto s2_tmp = laplace_likelihood::compute_s2(
               ll_fun, md_est.theta, A, options.hessian_block_size, ll_args_copy,
               msgs);
@@ -273,12 +241,9 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
         arena_t<Eigen::MatrixXd> C
             = md_est.L.template triangularView<Eigen::Lower>().solve(
                 md_est.W_r * covariance_val);
-        // only the diagonal blocks of A = K - C' C, see compute_s2()
-        arena_t<Eigen::MatrixXd> A = internal::block_diagonal_entries(
-            covariance_val.rows(), options.hessian_block_size,
-            [&](Eigen::Index r, Eigen::Index c) {
-              return covariance_val(r, c) - C.col(r).dot(C.col(c));
-            });
+        // A = K - C' C is left unevaluated: compute_s2() reads only its
+        // diagonal blocks, so each entry it reads costs one dot product
+        auto A = covariance_val - C.transpose().lazyProduct(C);
         auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
                                                      options.hessian_block_size,
                                                      ll_args_copy, msgs);
@@ -297,15 +262,12 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       arena_t<Eigen::MatrixXd> C
           = md_est.L.template triangularView<Eigen::Lower>().solve(
               md_est.K_root.transpose());
-      // only the diagonal blocks of C' C, see compute_s2()
-      auto s2_tmp = laplace_likelihood::compute_s2(
-          ll_fun, md_est.theta,
-          internal::block_diagonal_entries(md_est.theta.size(),
-                                           options.hessian_block_size,
-                                           [&](Eigen::Index r, Eigen::Index c) {
-                                             return C.col(r).dot(C.col(c));
-                                           }),
-          options.hessian_block_size, ll_args_copy, msgs);
+      // A = C' C is left unevaluated: compute_s2() reads only its diagonal
+      // blocks, so each entry it reads costs one dot product
+      auto A = C.transpose().lazyProduct(C);
+      auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
+                                                   options.hessian_block_size,
+                                                   ll_args_copy, msgs);
       s2.deep_copy(s2_tmp);
       internal::copy_compute_s2<ZeroOut>(partial_parm, ll_args_filter);
     } else {  // options.solver with LU decomposition
@@ -314,14 +276,10 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
           = Eigen::MatrixXd::Identity(md_est.W_r.rows(), md_est.W_r.cols())
             - LU_solve_covariance * md_est.W_r;
       R = md_est.W_r * I_minus_BinvKW;  // == W - W B^{-1} K W
-      // only the diagonal blocks of A = K - K W B^-1 K, see compute_s2()
+      // A = K - K W B^-1 K is left unevaluated: compute_s2() reads only its
+      // diagonal blocks, so each entry it reads costs one dot product
       const Eigen::MatrixXd KW = covariance_val * md_est.W_r;
-      arena_t<Eigen::MatrixXd> A = internal::block_diagonal_entries(
-          covariance_val.rows(), options.hessian_block_size,
-          [&](Eigen::Index r, Eigen::Index c) {
-            return covariance_val(r, c)
-                   - KW.row(r).dot(LU_solve_covariance.col(c));
-          });
+      auto A = covariance_val - KW.lazyProduct(LU_solve_covariance);
       auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
                                                    options.hessian_block_size,
                                                    ll_args_copy, msgs);
