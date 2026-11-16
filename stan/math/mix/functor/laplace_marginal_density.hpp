@@ -218,18 +218,20 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
             = md_est.L.template triangularView<Eigen::Lower>().solve(
                 md_est.W_r * covariance_val);
         if constexpr (ll_args_contain_var) {
-          arena_t<Eigen::MatrixXd> A = covariance_val - C.transpose() * C;
+          // A = K - C' C is left unevaluated: compute_s2() reads only its
+          // diagonal blocks, so each entry it reads costs one dot product
+          auto A = covariance_val - C.transpose().lazyProduct(C);
           auto s2_tmp = laplace_likelihood::compute_s2(
               ll_fun, md_est.theta, A, options.hessian_block_size, ll_args_copy,
               msgs);
           s2.deep_copy(s2_tmp);
           internal::copy_compute_s2<ZeroOut>(partial_parm, ll_args_filter);
         } else {
-          s2.deep_copy(
-              (0.5
-               * (covariance_val.diagonal() - (C.transpose() * C).diagonal())
-                     .cwiseProduct(laplace_likelihood::third_diff(
-                         ll_fun, md_est.theta, ll_args_vals, msgs))));
+          s2.deep_copy((0.5
+                        * (covariance_val.diagonal()
+                           - C.colwise().squaredNorm().transpose())
+                              .cwiseProduct(laplace_likelihood::third_diff(
+                                  ll_fun, md_est.theta, ll_args_vals, msgs))));
         }
 
       } else {
@@ -239,7 +241,9 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
         arena_t<Eigen::MatrixXd> C
             = md_est.L.template triangularView<Eigen::Lower>().solve(
                 md_est.W_r * covariance_val);
-        arena_t<Eigen::MatrixXd> A = covariance_val - C.transpose() * C;
+        // A = K - C' C is left unevaluated: compute_s2() reads only its
+        // diagonal blocks, so each entry it reads costs one dot product
+        auto A = covariance_val - C.transpose().lazyProduct(C);
         auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
                                                      options.hessian_block_size,
                                                      ll_args_copy, msgs);
@@ -258,9 +262,12 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       arena_t<Eigen::MatrixXd> C
           = md_est.L.template triangularView<Eigen::Lower>().solve(
               md_est.K_root.transpose());
-      auto s2_tmp = laplace_likelihood::compute_s2(
-          ll_fun, md_est.theta, (C.transpose() * C).eval(),
-          options.hessian_block_size, ll_args_copy, msgs);
+      // A = C' C is left unevaluated: compute_s2() reads only its diagonal
+      // blocks, so each entry it reads costs one dot product
+      auto A = C.transpose().lazyProduct(C);
+      auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
+                                                   options.hessian_block_size,
+                                                   ll_args_copy, msgs);
       s2.deep_copy(s2_tmp);
       internal::copy_compute_s2<ZeroOut>(partial_parm, ll_args_filter);
     } else {  // options.solver with LU decomposition
@@ -269,8 +276,10 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
           = Eigen::MatrixXd::Identity(md_est.W_r.rows(), md_est.W_r.cols())
             - LU_solve_covariance * md_est.W_r;
       R = md_est.W_r * I_minus_BinvKW;  // == W - W B^{-1} K W
-      arena_t<Eigen::MatrixXd> A
-          = covariance_val - covariance_val * md_est.W_r * LU_solve_covariance;
+      // A = K - K W B^-1 K is left unevaluated: compute_s2() reads only its
+      // diagonal blocks, so each entry it reads costs one dot product
+      const Eigen::MatrixXd KW = covariance_val * md_est.W_r;
+      auto A = covariance_val - KW.lazyProduct(LU_solve_covariance);
       auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
                                                    options.hessian_block_size,
                                                    ll_args_copy, msgs);
@@ -296,7 +305,7 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       internal::collect_adjoints<ZeroOut>(partial_parm, ll_args_filter);
       arena_t<Eigen::VectorXd> v;
       if (md_est.solver_used == 1 || md_est.solver_used == 2) {
-        v = covariance_val * s2 - covariance_val * R * covariance_val * s2;
+        v = covariance_val * s2 - covariance_val * (R * (covariance_val * s2));
       } else {
         v = LU_solve_covariance * s2;
       }
