@@ -13,9 +13,10 @@
 #include <iostream>
 #include <vector>
 
-STAN_REGISTER_MAP_RECT(0, hard_work)
-STAN_REGISTER_MAP_RECT(1, faulty_functor)
-STAN_REGISTER_MAP_RECT(2, faulty_functor)
+// Keep call IDs unique across the grouped functor executable.
+STAN_REGISTER_MAP_RECT(20, hard_work)
+STAN_REGISTER_MAP_RECT(21, faulty_functor)
+STAN_REGISTER_MAP_RECT(22, faulty_functor)
 
 struct MpiJob : public ::testing::Test {
   stan::math::vector_d shared_params_d;
@@ -67,11 +68,11 @@ TEST_F(MpiJob, hard_work_vv) {
     job_params_v2_vec.push_back(stan::math::to_array_1d(job_params_v2[i]));
   }
 
-  stan::math::vector_v result_mpi = stan::math::map_rect<0, hard_work>(
+  stan::math::vector_v result_mpi = stan::math::map_rect<20, hard_work>(
       shared_params_v, job_params_v, x_r, x_i, 0);
 
   stan::math::vector_v result_concurrent
-      = stan::math::internal::map_rect_concurrent<0, hard_work>(
+      = stan::math::internal::map_rect_concurrent<20, hard_work>(
           shared_params_v2, job_params_v2, x_r, x_i, 0);
 
   std::vector<double> z_grad1;
@@ -111,7 +112,7 @@ TEST_F(MpiJob, hard_work_vv) {
 TEST_F(MpiJob, always_faulty_functor_vv) {
   stan::math::vector_v result;
 
-  EXPECT_NO_THROW((result = stan::math::map_rect<1, faulty_functor>(
+  EXPECT_NO_THROW((result = stan::math::map_rect<21, faulty_functor>(
                        shared_params_v, job_params_v, x_r, x_i)));
 
   // faulty functor throws on theta(0) being -1.0
@@ -120,12 +121,12 @@ TEST_F(MpiJob, always_faulty_functor_vv) {
   job_params_v[0](0) = -1;
 
   // upon the second evaluation throwing is handled internally different
-  EXPECT_THROW_MSG((result = stan::math::map_rect<1, faulty_functor>(
+  EXPECT_THROW_MSG((result = stan::math::map_rect<21, faulty_functor>(
                         shared_params_v, job_params_v, x_r, x_i)),
                    std::domain_error, "Error during MPI evaluation.");
 
   // throwing on the very first evaluation
-  EXPECT_THROW_MSG((result = stan::math::map_rect<2, faulty_functor>(
+  EXPECT_THROW_MSG((result = stan::math::map_rect<22, faulty_functor>(
                         shared_params_v, job_params_v, x_r, x_i)),
                    std::domain_error, "MPI error on first evaluation.");
 }
@@ -133,7 +134,7 @@ TEST_F(MpiJob, always_faulty_functor_vv) {
 TEST_F(MpiJob, always_faulty_functor_vd) {
   stan::math::vector_v result;
 
-  EXPECT_NO_THROW((result = stan::math::map_rect<1, faulty_functor>(
+  EXPECT_NO_THROW((result = stan::math::map_rect<21, faulty_functor>(
                        shared_params_v, job_params_d, x_r, x_i)));
 
   // faulty functor throws on theta(0) being -1.0
@@ -142,12 +143,12 @@ TEST_F(MpiJob, always_faulty_functor_vd) {
   job_params_d[0](0) = -1;
 
   // upon the second evaluation throwing is handled internally different
-  EXPECT_THROW_MSG((result = stan::math::map_rect<1, faulty_functor>(
+  EXPECT_THROW_MSG((result = stan::math::map_rect<21, faulty_functor>(
                         shared_params_v, job_params_d, x_r, x_i)),
                    std::domain_error, "Error during MPI evaluation.");
 
   // throwing on the very first evaluation
-  EXPECT_THROW_MSG((result = stan::math::map_rect<2, faulty_functor>(
+  EXPECT_THROW_MSG((result = stan::math::map_rect<22, faulty_functor>(
                         shared_params_v, job_params_d, x_r, x_i)),
                    std::domain_error, "MPI error on first evaluation.");
 }
@@ -155,7 +156,7 @@ TEST_F(MpiJob, always_faulty_functor_vd) {
 TEST_F(MpiJob, always_faulty_functor_dv) {
   stan::math::vector_v result;
 
-  EXPECT_NO_THROW((result = stan::math::map_rect<1, faulty_functor>(
+  EXPECT_NO_THROW((result = stan::math::map_rect<21, faulty_functor>(
                        shared_params_d, job_params_v, x_r, x_i)));
 
   // faulty functor throws on theta(0) being -1.0
@@ -164,12 +165,12 @@ TEST_F(MpiJob, always_faulty_functor_dv) {
   job_params_v[0](0) = -1;
 
   // upon the second evaluation throwing is handled internally different
-  EXPECT_THROW_MSG((result = stan::math::map_rect<1, faulty_functor>(
+  EXPECT_THROW_MSG((result = stan::math::map_rect<21, faulty_functor>(
                         shared_params_d, job_params_v, x_r, x_i)),
                    std::domain_error, "Error during MPI evaluation.");
 
   // throwing on the very first evaluation
-  EXPECT_THROW_MSG((result = stan::math::map_rect<2, faulty_functor>(
+  EXPECT_THROW_MSG((result = stan::math::map_rect<22, faulty_functor>(
                         shared_params_d, job_params_v, x_r, x_i)),
                    std::domain_error, "MPI error on first evaluation.");
 }
