@@ -93,3 +93,30 @@ TEST(MathMetaFwd, PartialsPropagatorFvarMat) {
   EXPECT_FLOAT_EQ(2 * 17 + 3 * 13 + 5 * 23 + 7 * 32, y.d_);
   EXPECT_FLOAT_EQ(-1, y.val_);
 }
+
+TEST(MathMetaFwd, PartialsPropagatorAssignPartials) {
+  using stan::math::assign_partials;
+  using stan::math::fvar;
+  using stan::math::make_partials_propagator;
+  Eigen::Matrix<fvar<double>, -1, 1> a(3);
+  Eigen::Matrix<fvar<double>, 1, -1> b(3);
+  for (int i = 0; i < 3; ++i) {
+    a[i] = fvar<double>(1.0, 1.0);
+    b[i] = fvar<double>(1.0, i == 0 ? 1.0 : 0.0);
+  }
+  std::vector<fvar<double>> c{fvar<double>(1.0, 0.0), fvar<double>(1.0, 1.0),
+                              fvar<double>(1.0, 0.0)};
+  fvar<double> s(1.0, 1.0);
+  double e = 1.0;
+  auto ops = make_partials_propagator(a, b, c, s, e);
+  Eigen::ArrayXd g(3);
+  g << 1, -2, 4;
+  assign_partials<0>(ops, g);
+  assign_partials<1>(ops, g);
+  assign_partials<2>(ops, g);
+  assign_partials<3>(ops, g);
+  assign_partials<4>(ops, g);
+  fvar<double> y = ops.build(0.0);
+  // sum(g) from a, g[0] from b, g[1] from c, sum(g) from s
+  EXPECT_FLOAT_EQ(3 + 1 - 2 + 3, y.d_);
+}
