@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/beta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
+#include <stan/math/prim/fun/inc_beta_ddz.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
@@ -89,16 +90,20 @@ inline return_type_t<T_prob> binomial_lccdf(const T_n& n, const T_N& N,
     }
 
     const T_partials_return theta_dbl = theta_vec.val(i);
-    const T_partials_return Pi
-        = 1.0 - inc_beta(N_dbl - n_dbl, n_dbl + 1, 1 - theta_dbl);
+    // The complement by the symmetry relation I_z(a, b) = I_{1-z}(b, a),
+    // which also removes the 1 - theta argument. Forming it as
+    // 1 - I_{1-theta}(N - n, n + 1) loses every digit once that rounds to
+    // 1, which happens for every complement below eps.
+    const T_partials_return Pi = inc_beta(n_dbl + 1, N_dbl - n_dbl, theta_dbl);
 
     P += log(Pi);
 
     if constexpr (is_autodiff_v<T_prob>) {
-      const T_partials_return denom = beta(N_dbl - n_dbl, n_dbl + 1) * Pi;
-      partials<0>(ops_partials)[i] += pow(theta_dbl, n_dbl)
-                                      * pow(1 - theta_dbl, N_dbl - n_dbl - 1)
-                                      / denom;
+      // inc_beta_ddz is the same density, evaluated without the product of
+      // two powers over a beta function, each of which can underflow on
+      // its own.
+      partials<0>(ops_partials)[i]
+          += inc_beta_ddz(n_dbl + 1, N_dbl - n_dbl, theta_dbl) / Pi;
     }
   }
 
