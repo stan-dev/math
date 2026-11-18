@@ -33,8 +33,7 @@ namespace internal {
 template <typename T>
 inline auto std_normal_tail_correction(const T& inv_x_sq) {
   // The arrays ascend in 1/x^2; reversed, they are Horner order.
-  const auto pq = erfcx_tail_polynomials<erfcx_tail_p.size()>(
-      erfcx_tail_p.crbegin(), erfcx_tail_q.crbegin(), inv_x_sq);
+  const auto pq = erfcx_tail_polynomials<true>(inv_x_sq);
   return (pq.first / pq.second) * SQRT_PI;
 }
 
@@ -229,8 +228,8 @@ inline auto std_normal_cdf_value_ratio(T&& z) {
     for (Eigen::Index i = 0; i < N; ++i) {
       const double z_i = values.coeff(i);
       const double u = INV_SQRT_TWO * z_i;
-      const double a = std::fabs(u);
-      if (a < 0.46875) {
+      const double abs_u = std::fabs(u);
+      if (abs_u < 0.46875) {
         values.coeffRef(i) = 0.5 + 0.5 * erf_cody_small(u);
         if constexpr (calc_grad) {
           ratios.coeffRef(i) = SQRT_TWO_OVER_SQRT_PI / erfcx_small(-u);
@@ -238,11 +237,11 @@ inline auto std_normal_cdf_value_ratio(T&& z) {
         continue;
       }
       // |u| > 26.5 is |z| > 37.5.
-      const double g = a > 26.5 ? 0.5 * exp(-(0.5 * z_i) * z_i) : gs.coeff(i);
+      const double g = abs_u > 26.5 ? 0.5 * exp(-(0.5 * z_i) * z_i) : gs.coeff(i);
       // The ratios divide by the numerator p or by q - g p rather than by
       // c = p / q, so their division does not wait on the one forming c.
-      const auto pq = a >= 4 ? erfcx_cody_tail_fraction(a)
-                             : erfcx_cody_middle_fraction(a);
+      const auto pq = abs_u >= 4 ? erfcx_cody_tail_fraction(abs_u)
+                             : erfcx_cody_middle_fraction(abs_u);
       const double c = pq.first / pq.second;
       if (z_i < 0) {
         values.coeffRef(i) = g * c;
