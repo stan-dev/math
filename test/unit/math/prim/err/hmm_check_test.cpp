@@ -53,6 +53,13 @@ TEST(err, hmm_check) {
       "hmm_marginal_lpdf: Columns of Gamma (3)"
       " and Rows of log_omegas (2) must match in size")
 
+  // log_omegas has no columns, so there are no observations.
+  MatrixXd log_omegas_empty(n_states, 0);
+  EXPECT_THROW_MSG(
+      hmm_check(log_omegas_empty, Gamma, rho, "hmm_marginal_lpdf"),
+      std::invalid_argument,
+      "hmm_marginal_lpdf: log_omegas has size 0, but must have a non-zero size")
+
   // rho is not a simplex.
   VectorXd rho_bad = rho;
   rho_bad(0) = rho(0) + 1;
