@@ -237,11 +237,12 @@ inline auto std_normal_cdf_value_ratio(T&& z) {
         continue;
       }
       // |u| > 26.5 is |z| > 37.5.
-      const double g = abs_u > 26.5 ? 0.5 * exp(-(0.5 * z_i) * z_i) : gs.coeff(i);
+      const double g
+          = abs_u > 26.5 ? 0.5 * exp(-(0.5 * z_i) * z_i) : gs.coeff(i);
       // The ratios divide by the numerator p or by q - g p rather than by
       // c = p / q, so their division does not wait on the one forming c.
       const auto pq = abs_u >= 4 ? erfcx_cody_tail_fraction(abs_u)
-                             : erfcx_cody_middle_fraction(abs_u);
+                                 : erfcx_cody_middle_fraction(abs_u);
       const double c = pq.first / pq.second;
       if (z_i < 0) {
         values.coeffRef(i) = g * c;
