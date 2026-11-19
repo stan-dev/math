@@ -48,8 +48,11 @@ struct ref_type_if<
 
 template <bool Condition, typename T>
 struct ref_type_if<Condition, T, require_arena_matrix_t<T>> {
-  using type =
-      typename ref_type_if<Condition, typename std::decay_t<T>::Base>::type;
+  using T_base = typename std::decay_t<T>::Base;
+  // Keep rvalues by value so a temporary is not referenced after it dies.
+  using type = typename ref_type_if<
+      Condition, std::conditional_t<std::is_rvalue_reference<T>::value,
+                                    T_base&&, T_base>>::type;
 };
 
 template <typename T>

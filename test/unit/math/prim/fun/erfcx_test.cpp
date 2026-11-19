@@ -36,6 +36,23 @@ TEST(MathFunctions, erfcxUpperTail) {
   EXPECT_NEAR(stan::math::INV_SQRT_PI * 1e-10, erfcx(1e10), 1e-25);
 }
 
+// Above 2^27 the Cody correction is below eps / 8 of the leading term
+// 1 / (x sqrt(pi)), so the result must be that term to within an ulp. Far
+// out, the tail rational's x^13 denominator leaves the double range, so the
+// collapse is also what keeps the result finite.
+TEST(MathFunctions, erfcxUpperTailLeadingTerm) {
+  using stan::math::erfcx;
+  using stan::math::INV_SQRT_PI;
+  for (double x : {134217728.0, 201326592.0, 268435456.0, 1e9, 1e12, 1e20}) {
+    const double leading = INV_SQRT_PI / x;
+    EXPECT_NEAR(leading, erfcx(x), std::nextafter(leading, 1.0) - leading)
+        << "x = " << x;
+  }
+  for (double x : {1e30, 1e100, 1e200, 1e300, 1e301}) {
+    EXPECT_EQ(INV_SQRT_PI / x, erfcx(x)) << "x = " << x;
+  }
+}
+
 TEST(MathFunctions, erfcxLowerTail) {
   using stan::math::erfcx;
   EXPECT_NEAR(144009798674.66104, erfcx(-5.0), 1.5e-3);

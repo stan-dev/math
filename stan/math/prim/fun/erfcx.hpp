@@ -24,8 +24,14 @@ inline constexpr std::array<double, 6> erfcx_tail_q{
     -0.527905102951428412248,   -1.87295284992346047209,
     -2.56852019228982242072,    -1.0};
 
-// above this the correction is below eps / 8 and x^12 overflows
-inline constexpr double erfcx_tail_leading_only = 0x1p27;
+/**
+ * Above this the tail is the leading term 1 / (x sqrt(pi)) alone. The
+ * correction is 1 / (2 x^2) of that term, which at 2^27 = 134217728 is
+ * exactly eps / 8, so from here on the single division is the more accurate
+ * result. The rational's x^13 denominator would overflow above about 2^79,
+ * so some such cut is also what keeps erfcx finite out to +infinity.
+ */
+inline constexpr double erfcx_tail_leading_only = 134217728.0;
 
 // Cody (1969) second interval, ascending powers of `y`.
 inline constexpr std::array<double, 9> erfcx_middle_p{
@@ -38,69 +44,73 @@ inline constexpr std::array<double, 9> erfcx_middle_q{
     117.693950891312499, 15.7449261107098347, 1.0};
 
 /**
- * The two tail polynomials, taking the coefficients in the order the
- * iterators give them as descending powers of `t`.
+ * Horner evaluation of the two Cody tail polynomials `erfcx_tail_p` and
+ * `erfcx_tail_q` at `t`.
  *
- * @tparam N number of coefficients in each array
+ * The arrays are stored in ascending powers of `u = 1 / x^2`. Read front to
+ * back that is descending powers of `s = x^2`, so the default walk is Horner
+ * in `s`. With `Reverse` the arrays are read back to front, which is Horner
+ * in `u`.
+ *
+ * @tparam Reverse read the coefficients back to front
  * @tparam T scalar type
- * @tparam It coefficient iterator
- * @param p first numerator coefficient
- * @param q first denominator coefficient
- * @param t argument
+ * @param t argument, `x^2` or with `Reverse` `1 / x^2`
  * @return numerator and denominator
  */
-template <std::size_t N, typename T, typename It>
-inline std::pair<T, T> erfcx_tail_polynomials(It p, It q, const T& t) {
-  T numerator = *p;
-  T denominator = *q;
+template <bool Reverse = false, typename T>
+inline constexpr std::pair<T, T> erfcx_tail_polynomials(const T& t) {
+  constexpr std::size_t N = erfcx_tail_p.size();
+  constexpr auto at = [](std::size_t i) { return Reverse ? N - 1 - i : i; };
+  T numerator = erfcx_tail_p[at(0)];
+  T denominator = erfcx_tail_q[at(0)];
   for (std::size_t i = 1; i < N; ++i) {
-    numerator = numerator * t + *++p;
-    denominator = denominator * t + *++q;
+    numerator = numerator * t + erfcx_tail_p[at(i)];
+    denominator = denominator * t + erfcx_tail_q[at(i)];
   }
   return {numerator, denominator};
 }
 
 /**
- * Horner in `y^2` over adjacent coefficient pairs, so the two halves of the
- * chain are independent.
+ * Numerator and denominator of the Cody (1969) third-interval rational,
+ * valid for `x >= 4`.
+ *
+ * `erfcx(x) = (INV_SQRT_PI + u * C(u)) / x` with `u = 1 / x^2` and `C` the
+ * Cody correction. `u * C(u)` is formed from the coefficients in `x^2`, so
+ * `1 / x^2` is never formed, and the sum is put over the common denominator
+ * `x^3 Q(x^2)` so the quotient takes one division. Below
+ * `erfcx_tail_leading_only` that denominator is at most about `2^351`.
  *
  * @tparam T scalar type
- * @tparam N number of coefficients
- * @param c coefficients, ascending
- * @param y argument
- * @param y2 `y * y`
- * @return polynomial value
+ * @param x argument, `x >= 4`
+ * @return numerator and denominator of `erfcx(x)`
  */
-template <typename T, std::size_t N>
-inline T erfcx_paired_horner(const std::array<double, N>& c, const T& y,
-                             const T& y2) {
-  int j = static_cast<int>(N) - (N % 2 ? 3 : 4);
-  T r = N % 2 ? T(c[N - 1]) : T(c[N - 2] + c[N - 1] * y);
-  for (; j >= 0; j -= 2) {
-    r = r * y2 + (c[j] + c[j + 1] * y);
+template <typename T>
+inline constexpr std::pair<T, T> erfcx_cody_tail_fraction(const T& x) {
+  if (x > erfcx_tail_leading_only) {
+    return {T(INV_SQRT_PI), x};
   }
-  return r;
+  const T s = x * x;
+  const auto pq = erfcx_tail_polynomials(s);
+  const T s_q = s * pq.second;
+  return {INV_SQRT_PI * s_q + pq.first, x * s_q};
 }
 
 /**
  * Cody (1969) third-interval rational, valid for `x >= 4`.
  *
- * `erfcx(x) = (INV_SQRT_PI + u * C(u)) / x` with `u = 1 / x^2` and `C` the
- * Cody correction. `u * C(u)` is formed from the coefficients in `x^2`, so
- * `1 / x^2` is never formed.
- *
+ * @tparam T scalar type
  * @param x argument, `x >= 4`
  * @return scaled complementary error function
  */
-inline double erfcx_cody_tail(double x) {
-  if (x > erfcx_tail_leading_only) {
-    return INV_SQRT_PI / x;
-  }
-  const double s = x * x;
-  const auto pq = erfcx_tail_polynomials<erfcx_tail_p.size()>(
-      erfcx_tail_p.cbegin(), erfcx_tail_q.cbegin(), s);
-  return (INV_SQRT_PI + pq.first / (s * pq.second)) / x;
+template <typename T>
+inline constexpr T erfcx_cody_tail(const T& x) {
+  const auto pq = erfcx_cody_tail_fraction(x);
+  return pq.first / pq.second;
 }
+
+static constexpr std::array<double, 8> erfcx_deriv_c{
+    1.0, -1.5, 3.75, -13.125, 59.0625, -324.84375, 2111.484375, -15836.1328125};
+// Horner in u^2 over the pairs (c[6], c[7]), (c[4], c[5]), ..., (c[0], c[1])
 
 /**
  * Derivative of `erfcx`, `2 * x * erfcx(x) - 2 / sqrt(pi)`.
@@ -125,39 +135,80 @@ inline double erfcx_cody_tail(double x) {
  * @return derivative of `erfcx` at `x`
  */
 template <typename T>
-inline T erfcx_derivative(const T& x, const T& value) {
+inline constexpr T erfcx_derivative(const T& x, const T& value) {
   if (x < 4.0) {
     return 2.0 * x * value - TWO_OVER_SQRT_PI;
   }
   const T x2 = x * x;
   if (x < 30.0) {
-    const auto pq = erfcx_tail_polynomials<erfcx_tail_p.size()>(
-        erfcx_tail_p.cbegin(), erfcx_tail_q.cbegin(), x2);
+    const auto pq = erfcx_tail_polynomials(x2);
     return 2.0 * pq.first / (x2 * pq.second);
   }
   const T u = 1.0 / x2;
-  static constexpr std::array<double, 8> series_coefficients{
-      1.0,     -1.5,       3.75,        -13.125,
-      59.0625, -324.84375, 2111.484375, -15836.1328125};
-  const T series = erfcx_paired_horner(series_coefficients, u, u * u);
+  const T u2 = u * u;
+  constexpr auto&& c = erfcx_deriv_c;
+  T series = c[6] + c[7] * u;
+  for (int j = 4; j >= 0; j -= 2) {
+    series = series * u2 + (c[j] + c[j + 1] * u);
+  }
   return -INV_SQRT_PI * u * series;
 }
 
 /**
- * Cody (1969) second-interval rational, valid for `0.46875 <= x <= 4`.
+ * Numerator and denominator of the Cody (1969) second-interval rational,
+ * valid for `0.46875 <= x <= 4`.
  *
  * Cody writes this interval as `erfc(x) = exp(-x*x) * R(x)`, so `erfcx`
  * is `R(x)` with the exponential cancelled analytically: no `exp` and no
  * `erfc` call.
  *
+ * Both degree-8 polynomials are Horner in `y^2` over adjacent coefficient
+ * pairs, seeded by the lone top coefficient, so the `c[j + 1] * y` products
+ * sit off the dependency chain.
+ *
+ * @tparam T scalar type
+ * @param y argument, `0.46875 <= y <= 4`
+ * @return numerator and denominator of `erfcx(y)`
+ */
+template <typename T>
+inline constexpr std::pair<T, T> erfcx_cody_middle_fraction(const T& y) {
+  const T y2 = y * y;
+  T p = erfcx_middle_p[8];
+  T q = erfcx_middle_q[8];
+  for (int j = 6; j >= 0; j -= 2) {
+    p = p * y2 + (erfcx_middle_p[j] + erfcx_middle_p[j + 1] * y);
+    q = q * y2 + (erfcx_middle_q[j] + erfcx_middle_q[j + 1] * y);
+  }
+  return {p, q};
+}
+
+/**
+ * Cody (1969) second-interval rational, valid for `0.46875 <= x <= 4`.
+ *
+ * @tparam T scalar type
  * @param y argument, `0.46875 <= y <= 4`
  * @return scaled complementary error function
  */
-inline double erfcx_cody_middle(double y) {
-  const double y2 = y * y;
-  return erfcx_paired_horner(erfcx_middle_p, y, y2)
-         / erfcx_paired_horner(erfcx_middle_q, y, y2);
+template <typename T>
+inline constexpr T erfcx_cody_middle(const T& y) {
+  const auto pq = erfcx_cody_middle_fraction(y);
+  return pq.first / pq.second;
 }
+
+// R's coefficients by the power of x they multiply
+static constexpr std::array<double, 4> small_r0_3{1.0, -7.52252778063651983e-01,
+                                                  4.99999999999992839e-01,
+                                                  -3.00901111227312890e-01};
+static constexpr std::array<double, 4> small_r4_7{
+    1.66666666667239644e-01, -8.59717459974174147e-02, 4.16666666458337179e-02,
+    -1.91048337772546720e-02};
+static constexpr std::array<double, 4> small_r8_11{
+    8.33333374332981443e-03, -3.47359067853470795e-03, 1.38888415444527033e-03,
+    -5.34506929034156810e-04};
+static constexpr std::array<double, 4> small_r12_15{
+    1.98445679338826757e-04, -7.08163358203131886e-05, 2.46655529768908249e-05,
+    -9.35890030086883823e-06};
+static constexpr double small_r16 = 3.05977060678449757e-06;
 
 /**
  * Degree-18 polynomial for `|x| < 0.46875`.
@@ -167,43 +218,34 @@ inline double erfcx_cody_middle(double y) {
  * reproduce the Maclaurin series of `erfcx` exactly (`1`, `-2/sqrt(pi)`,
  * `1`, ...), which is a useful check that the fit is right.
  *
- * Evaluated by Estrin's method: four independent degree-3 blocks are
- * combined in `x^4` and `x^8`.
+ * Written as `erfcx(x) = 1 - 2 x / sqrt(pi) + x^2 R(x)`: the first two terms
+ * are the exact Maclaurin coefficients and `R` is the degree-16 remainder of
+ * the fit. Adding `x^2 R` to the exact pair last is the accurate order for
+ * small `x`. `R` is evaluated by Estrin's method: four cubic blocks in `x`,
+ * combined in `x^4` and `x^8`, with the degree-16 coefficient on top.
  *
+ * @tparam T scalar type
  * @param x argument, `|x| < 0.46875`
  * @return scaled complementary error function
  */
-inline double erfcx_small(double x) {
-  static constexpr std::array<double, 19> c{1.0,
-                                            -1.12837916709551256,
-                                            1.0,
-                                            -7.52252778063651983e-01,
-                                            4.99999999999992839e-01,
-                                            -3.00901111227312890e-01,
-                                            1.66666666667239644e-01,
-                                            -8.59717459974174147e-02,
-                                            4.16666666458337179e-02,
-                                            -1.91048337772546720e-02,
-                                            8.33333374332981443e-03,
-                                            -3.47359067853470795e-03,
-                                            1.38888415444527033e-03,
-                                            -5.34506929034156810e-04,
-                                            1.98445679338826757e-04,
-                                            -7.08163358203131886e-05,
-                                            2.46655529768908249e-05,
-                                            -9.35890030086883823e-06,
-                                            3.05977060678449757e-06};
-  const double x2 = x * x;
-  const double x4 = x2 * x2;
-  const double x8 = x4 * x4;
-  std::array<double, 4> quad;
-  for (int i = 0; i < 4; ++i) {
-    const int j = 4 * i + 2;
-    quad[i] = (c[j] + c[j + 1] * x) + (c[j + 2] + c[j + 3] * x) * x2;
-  }
-  const double rest
-      = (quad[0] + quad[1] * x4) + (quad[2] + quad[3] * x4 + c[18] * x8) * x8;
-  return (c[0] + c[1] * x) + x2 * rest;
+template <typename T>
+inline constexpr T erfcx_small(const T& x) {
+  constexpr double c0 = 1.0;
+  constexpr double c1 = -1.12837916709551256;
+  constexpr auto&& r0_3 = small_r0_3;
+  constexpr auto&& r4_7 = small_r4_7;
+  constexpr auto&& r8_11 = small_r8_11;
+  constexpr auto&& r12_15 = small_r12_15;
+  constexpr auto&& r16 = small_r16;
+  const T x2 = x * x;
+  const T x4 = x2 * x2;
+  const T x8 = x4 * x4;
+  const T q0 = (r0_3[0] + r0_3[1] * x) + (r0_3[2] + r0_3[3] * x) * x2;
+  const T q1 = (r4_7[0] + r4_7[1] * x) + (r4_7[2] + r4_7[3] * x) * x2;
+  const T q2 = (r8_11[0] + r8_11[1] * x) + (r8_11[2] + r8_11[3] * x) * x2;
+  const T q3 = (r12_15[0] + r12_15[1] * x) + (r12_15[2] + r12_15[3] * x) * x2;
+  const T rest = (q0 + q1 * x4) + (q2 + q3 * x4 + r16 * x8) * x8;
+  return (c0 + c1 * x) + x2 * rest;
 }
 
 }  // namespace internal
@@ -284,11 +326,11 @@ inline double erfcx(T&& xx) {
   constexpr double reflect_min = -6.1;
   if (x < reflect_min) {
     return two_exp_x2;
+  } else if (-x >= cody_min) {
+    return two_exp_x2 - internal::erfcx_cody_tail(-x);
+  } else {
+    return two_exp_x2 - internal::erfcx_cody_middle(-x);
   }
-  const double y = -x;
-  return two_exp_x2
-         - (y >= cody_min ? internal::erfcx_cody_tail(y)
-                          : internal::erfcx_cody_middle(y));
 }
 
 /**
