@@ -354,13 +354,12 @@ inline auto exp_mod_normal_lcdf_kernel(T1&& z, T2&& v) {
         return exp_mod_normal_lcdf_terms{log_b, T_return(-v), v - z,
                                          T_return(v * v)};
       }
-      const auto g = exp(log_g);
       const auto e_mu = erfcx(-u);
-      const auto q = g * e_mu;
       if (t >= 0) {
+        const auto g = exp(log_g);
         const auto e_t = erfcx(t);
-        const auto b = g * e_t;
-        const auto p = q + b;
+        const auto e_sum = e_mu + e_t;
+        const auto p = g * e_sum;
         if (p > exp_mod_normal_large_p) {
           const auto e_u = erfcx(u);
           T_return delta;
@@ -437,30 +436,16 @@ inline auto exp_mod_normal_lcdf_kernel(T1&& z, T2&& v) {
               scale * v * SQRT_TWO * (u * e_t - 0.5 * de_t)};
         }
         const auto de_t = erfcx_derivative(t, e_t);
-        const auto f_z = v * b;
-        const auto f_v = -g * de_t * INV_SQRT_TWO;
-        const auto f_s = v * g * SQRT_TWO * (u * e_t - 0.5 * de_t);
-        if (p > 1e-300) {
-          const auto divisor = -p;
-          return exp_mod_normal_lcdf_terms{log(p), f_z / divisor, f_v / divisor,
-                                           f_s / divisor};
-        }
-        const T_return log_b_t = log_g + log(e_t);
-        const T_return log_phi_mz = log_g + log(e_mu);
-        const auto log_p = log_sum_exp(log_phi_mz, log_b_t);
-        const auto b_p = exp(log_b_t - log_p);
-        const auto g_p = exp(log_g - log_p);
         return exp_mod_normal_lcdf_terms{
-            log_p, -v * b_p, g_p * de_t * INV_SQRT_TWO,
-            -v * g_p * SQRT_TWO * (u * e_t - 0.5 * de_t)};
+            log_g + log(e_sum), -v * e_t / e_sum, de_t * INV_SQRT_TWO / e_sum,
+            -v * SQRT_TWO * (u * e_t - 0.5 * de_t) / e_sum};
       }
       const auto e_mt = erfcx(-t);
-      const auto b = exp(log_b) - g * e_mt;
-      const auto p = q + b;
-      const auto phi = g * SQRT_TWO_OVER_SQRT_PI;
-      const auto f_z = v * b;
-      const auto f_v = phi - (v - z) * b;
-      const auto f_s = v * (phi - v * b);
+      const auto half_exp_mt2 = 0.5 * exp(-t * t);
+      const auto rel_tail = half_exp_mt2 * (e_mt - e_mu);
+      const auto p_over_b = 1 - rel_tail;
+      const auto exp_log_b = exp(log_b);
+      const auto p = exp_log_b * p_over_b;
       if (p > exp_mod_normal_large_p) {
         const auto lo = -t;
         const auto hi = -u;
@@ -529,24 +514,20 @@ inline auto exp_mod_normal_lcdf_kernel(T1&& z, T2&& v) {
               + h2 * (odd[1] / 6 + h2 * (odd[2] / 120 + h2 * odd[3] / 5040)));
           delta = d * neg_s;
         }
+        const auto g = exp_log_b * half_exp_mt2;
+        const auto b = exp_log_b * (1 - half_exp_mt2 * e_mt);
+        const auto phi = g * SQRT_TWO_OVER_SQRT_PI;
         const auto f = -expm1(log_b) + g * delta;
         const auto divisor = -(1 - f);
-        return exp_mod_normal_lcdf_terms{log1p(-f), f_z / divisor,
-                                         f_v / divisor, f_s / divisor};
+        return exp_mod_normal_lcdf_terms{log1p(-f), v * b / divisor,
+                                         (phi - (v - z) * b) / divisor,
+                                         v * (phi - v * b) / divisor};
       }
-      if (p > 1e-300) {
-        const auto divisor = -p;
-        return exp_mod_normal_lcdf_terms{log(p), f_z / divisor, f_v / divisor,
-                                         f_s / divisor};
-      }
-      const T_return log_b_t = log_b + log1p(-0.5 * exp(-t * t) * e_mt);
-      const T_return log_phi_mz = log_g + log(e_mu);
-      const auto log_p = log_sum_exp(log_phi_mz, log_b_t);
-      const auto b_p = exp(log_b_t - log_p);
-      const auto g_p = exp(log_g - log_p);
-      const auto phi_p = g_p * SQRT_TWO_OVER_SQRT_PI;
-      return exp_mod_normal_lcdf_terms{
-          log_p, -v * b_p, -(phi_p - (v - z) * b_p), -v * (phi_p - v * b_p)};
+      const auto b_p = (1 - half_exp_mt2 * e_mt) / p_over_b;
+      const auto phi_p = half_exp_mt2 * SQRT_TWO_OVER_SQRT_PI / p_over_b;
+      return exp_mod_normal_lcdf_terms{log_b + log1p(-rel_tail), -v * b_p,
+                                       -(phi_p - (v - z) * b_p),
+                                       -v * (phi_p - v * b_p)};
     } else {
       using T_return = return_type_t<T1, T2>;
       const auto u = -z * INV_SQRT_TWO;
@@ -628,13 +609,12 @@ inline auto exp_mod_normal_lcdf_kernel(T1&& z, T2&& v) {
       if (t < exp_mod_normal_b_only_t && log_b < exp_mod_normal_log_large_p) {
         return log_b;
       }
-      const auto g = exp(log_g);
       const auto e_mu = erfcx(-u);
-      const auto q = g * e_mu;
       if (t >= 0) {
+        const auto g = exp(log_g);
         const auto e_t = erfcx(t);
-        const auto b = g * e_t;
-        const auto p = q + b;
+        const auto e_sum = e_mu + e_t;
+        const auto p = g * e_sum;
         if (p > exp_mod_normal_large_p) {
           const auto e_u = erfcx(u);
           T_return delta;
@@ -705,16 +685,13 @@ inline auto exp_mod_normal_lcdf_kernel(T1&& z, T2&& v) {
           const auto f = g * delta;
           return T_return(log1p(-f));
         }
-        if (p > 1e-300) {
-          return log(p);
-        }
-        const T_return log_b_t = log_g + log(e_t);
-        const T_return log_phi_mz = log_g + log(e_mu);
-        return log_sum_exp(log_phi_mz, log_b_t);
+        return log_g + log(e_sum);
       }
       const auto e_mt = erfcx(-t);
-      const auto b = exp(log_b) - g * e_mt;
-      const auto p = q + b;
+      const auto half_exp_mt2 = 0.5 * exp(-t * t);
+      const auto rel_tail = half_exp_mt2 * (e_mt - e_mu);
+      const auto exp_log_b = exp(log_b);
+      const auto p = exp_log_b * (1 - rel_tail);
       if (p > exp_mod_normal_large_p) {
         const auto lo = -t;
         const auto hi = -u;
@@ -783,15 +760,11 @@ inline auto exp_mod_normal_lcdf_kernel(T1&& z, T2&& v) {
               + h2 * (odd[1] / 6 + h2 * (odd[2] / 120 + h2 * odd[3] / 5040)));
           delta = d * neg_s;
         }
+        const auto g = exp_log_b * half_exp_mt2;
         const auto f = -expm1(log_b) + g * delta;
         return log1p(-f);
       }
-      if (p > 1e-300) {
-        return log(p);
-      }
-      const T_return log_b_t = log_b + log1p(-0.5 * exp(-t * t) * e_mt);
-      const T_return log_phi_mz = log_g + log(e_mu);
-      return log_sum_exp(log_phi_mz, log_b_t);
+      return log_b + log1p(-rel_tail);
     }
   } else {
     if constexpr (calc_grad) {
@@ -803,12 +776,12 @@ inline auto exp_mod_normal_lcdf_kernel(T1&& z, T2&& v) {
       if (z <= 0) {
         const auto e_t = erfcx(t);
         const auto e_u = erfcx(u);
-        T_return delta;
         T_return log_delta;
-        T_return d_e_t_over_delta = 0;
+        T_return d_e_t_over_delta;
         if (e_t < exp_mod_normal_erfcx_close_ratio * e_u) {
-          delta = e_u - e_t;
+          const auto delta = e_u - e_t;
           log_delta = log(delta);
+          d_e_t_over_delta = d * (e_t / delta);
         } else if (u >= exp_mod_normal_erfcx_tail_start) {
           const auto x_end = d / u;
           T_return log1p_over_x_end = 1;
@@ -848,8 +821,6 @@ inline auto exp_mod_normal_lcdf_kernel(T1&& z, T2&& v) {
             em = expm1(log_r) / log_r;
           }
           const auto one_minus_r_over_d = -l_total * em;
-          const auto one_minus_r = d * one_minus_r_over_d;
-          delta = e_u * one_minus_r;
           log_delta = log(e_u) + log(d) + log(one_minus_r_over_d);
           d_e_t_over_delta = exp(log_r) / one_minus_r_over_d;
         } else {
@@ -871,30 +842,18 @@ inline auto exp_mod_normal_lcdf_kernel(T1&& z, T2&& v) {
           const auto neg_s = -(
               odd[0]
               + h2 * (odd[1] / 6 + h2 * (odd[2] / 120 + h2 * odd[3] / 5040)));
-          delta = d * neg_s;
           log_delta = log(d) + log(neg_s);
           d_e_t_over_delta = e_t / neg_s;
         }
-        const auto value = log_g + log_delta;
-        if (unlikely(!(delta > 1e-300 && t < 1e150))) {
-          T_return ratio = d_e_t_over_delta;
-          if (!(d_e_t_over_delta > 0)) {
-            ratio = v * INV_SQRT_TWO * (e_t / delta);
-          }
-          T_return s;
-          if (t > 1e150) {
-            s = -inv(t);
-          } else {
-            s = erfcx_derivative(t, e_t) / e_t;
-          }
-          return exp_mod_normal_lcdf_terms{
-              value, SQRT_TWO * ratio, -(s * ratio) / v, ratio * (2 * u - s)};
+        T_return s;
+        if (t > 1e150) {
+          s = -inv(t);
+        } else {
+          s = erfcx_derivative(t, e_t) / e_t;
         }
-        const auto scale = inv(delta);
-        const auto de_t = erfcx_derivative(t, e_t);
         return exp_mod_normal_lcdf_terms{
-            value, scale * v * e_t, -scale * de_t * INV_SQRT_TWO,
-            scale * v * SQRT_TWO * (u * e_t - 0.5 * de_t)};
+            log_g + log_delta, SQRT_TWO * d_e_t_over_delta,
+            -(s * d_e_t_over_delta) / v, d_e_t_over_delta * (2 * u - s)};
       }
       const auto log_b = d * (2 * u + d);
       if (t < exp_mod_normal_b_only_t && log_b < exp_mod_normal_log_large_p) {
@@ -912,12 +871,12 @@ inline auto exp_mod_normal_lcdf_kernel(T1&& z, T2&& v) {
         const auto p = q + b;
         if (p > exp_mod_normal_large_p) {
           const auto e_u = erfcx(u);
-          T_return delta;
           T_return log_delta;
-          T_return d_e_t_over_delta = 0;
+          T_return d_e_t_over_delta;
           if (e_t < exp_mod_normal_erfcx_close_ratio * e_u) {
-            delta = e_u - e_t;
+            const auto delta = e_u - e_t;
             log_delta = log(delta);
+            d_e_t_over_delta = d * (e_t / delta);
           } else if (u >= exp_mod_normal_erfcx_tail_start) {
             const auto x_end = d / u;
             T_return log1p_over_x_end = 1;
@@ -957,8 +916,6 @@ inline auto exp_mod_normal_lcdf_kernel(T1&& z, T2&& v) {
               em = expm1(log_r) / log_r;
             }
             const auto one_minus_r_over_d = -l_total * em;
-            const auto one_minus_r = d * one_minus_r_over_d;
-            delta = e_u * one_minus_r;
             log_delta = log(e_u) + log(d) + log(one_minus_r_over_d);
             d_e_t_over_delta = exp(log_r) / one_minus_r_over_d;
           } else {
@@ -980,30 +937,18 @@ inline auto exp_mod_normal_lcdf_kernel(T1&& z, T2&& v) {
             const auto neg_s = -(
                 odd[0]
                 + h2 * (odd[1] / 6 + h2 * (odd[2] / 120 + h2 * odd[3] / 5040)));
-            delta = d * neg_s;
             log_delta = log(d) + log(neg_s);
             d_e_t_over_delta = e_t / neg_s;
           }
-          const auto value = log_g + log_delta;
-          if (unlikely(!(delta > 1e-300 && t < 1e150))) {
-            T_return ratio = d_e_t_over_delta;
-            if (!(d_e_t_over_delta > 0)) {
-              ratio = v * INV_SQRT_TWO * (e_t / delta);
-            }
-            T_return s;
-            if (t > 1e150) {
-              s = -inv(t);
-            } else {
-              s = erfcx_derivative(t, e_t) / e_t;
-            }
-            return exp_mod_normal_lcdf_terms{
-                value, SQRT_TWO * ratio, -(s * ratio) / v, ratio * (2 * u - s)};
+          T_return s;
+          if (t > 1e150) {
+            s = -inv(t);
+          } else {
+            s = erfcx_derivative(t, e_t) / e_t;
           }
-          const auto scale = inv(delta);
-          const auto de_t = erfcx_derivative(t, e_t);
           return exp_mod_normal_lcdf_terms{
-              value, scale * v * e_t, -scale * de_t * INV_SQRT_TWO,
-              scale * v * SQRT_TWO * (u * e_t - 0.5 * de_t)};
+              log_g + log_delta, SQRT_TWO * d_e_t_over_delta,
+              -(s * d_e_t_over_delta) / v, d_e_t_over_delta * (2 * u - s)};
         }
         const auto de_t = erfcx_derivative(t, e_t);
         const auto f_z = v * b;
