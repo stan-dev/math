@@ -76,18 +76,18 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
   scalar_seq_view<std::decay_t<decltype(lambda_val)>> lambda_vec(lambda_val);
   const std::size_t N = max_size(y_ref, mu_ref, sigma_ref, lambda_ref);
   T_partials lp = 0.0;
-  if constexpr (upper) {
-    if constexpr (any_autodiff) {
-      auto ops_partials
-          = make_partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref);
-      for (std::size_t n = 0; n < N; ++n) {
-        const auto sigma_n = sigma_vec[n];
-        const auto z = (y_vec[n] - mu_vec[n]) / sigma_n;
-        const auto v = lambda_vec[n] * sigma_n;
-        const auto u = -z * INV_SQRT_TWO;
-        const auto d = v * INV_SQRT_TWO;
-        const auto t = u + d;
-        const auto log_g = LOG_HALF - (0.5 * z) * z;
+  auto ops_partials
+      = make_partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref);
+  for (std::size_t n = 0; n < N; ++n) {
+    const auto sigma_n = sigma_vec[n];
+    const auto z = (y_vec[n] - mu_vec[n]) / sigma_n;
+    const auto v = lambda_vec[n] * sigma_n;
+    const auto u = -z * INV_SQRT_TWO;
+    const auto d = v * INV_SQRT_TWO;
+    const auto t = u + d;
+    const auto log_g = LOG_HALF - (0.5 * z) * z;
+    if constexpr (upper) {
+      if constexpr (any_autodiff) {
         if (z <= 0) {
           if (const auto e_t = erfcx(t), e_u = erfcx(u);
               e_t < exp_mod_normal_erfcx_close_ratio * e_u) {
@@ -508,16 +508,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
             }
           }
         }
-      }
-      return ops_partials.build(lp);
-    } else {
-      for (std::size_t n = 0; n < N; ++n) {
-        const auto sigma_n = sigma_vec[n];
-        const auto z = (y_vec[n] - mu_vec[n]) / sigma_n;
-        const auto u = -z * INV_SQRT_TWO;
-        const auto d = (lambda_vec[n] * sigma_n) * INV_SQRT_TWO;
-        const auto t = u + d;
-        const auto log_g = LOG_HALF - (0.5 * z) * z;
+      } else {
         if (z <= 0) {
           if (const auto e_t = erfcx(t), e_u = erfcx(u);
               e_t < exp_mod_normal_erfcx_close_ratio * e_u) {
@@ -679,20 +670,8 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
           }
         }
       }
-      return lp;
-    }
-  } else {
-    if constexpr (any_autodiff) {
-      auto ops_partials
-          = make_partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref);
-      for (std::size_t n = 0; n < N; ++n) {
-        const auto sigma_n = sigma_vec[n];
-        const auto z = (y_vec[n] - mu_vec[n]) / sigma_n;
-        const auto v = lambda_vec[n] * sigma_n;
-        const auto u = -z * INV_SQRT_TWO;
-        const auto d = v * INV_SQRT_TWO;
-        const auto t = u + d;
-        const auto log_g = LOG_HALF - (0.5 * z) * z;
+    } else {
+      if constexpr (any_autodiff) {
         if (z <= 0) {
           if (const auto e_t = erfcx(t), e_u = erfcx(u);
               e_t < exp_mod_normal_erfcx_close_ratio * e_u) {
@@ -1107,16 +1086,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
             }
           }
         }
-      }
-      return ops_partials.build(lp);
-    } else {
-      for (std::size_t n = 0; n < N; ++n) {
-        const auto sigma_n = sigma_vec[n];
-        const auto z = (y_vec[n] - mu_vec[n]) / sigma_n;
-        const auto u = -z * INV_SQRT_TWO;
-        const auto d = (lambda_vec[n] * sigma_n) * INV_SQRT_TWO;
-        const auto t = u + d;
-        const auto log_g = LOG_HALF - (0.5 * z) * z;
+      } else {
         if (z <= 0) {
           if (const auto e_t = erfcx(t), e_u = erfcx(u);
               e_t < exp_mod_normal_erfcx_close_ratio * e_u) {
@@ -1276,9 +1246,9 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf_impl(
           }
         }
       }
-      return lp;
     }
   }
+  return ops_partials.build(lp);
 }
 
 }  // namespace internal
