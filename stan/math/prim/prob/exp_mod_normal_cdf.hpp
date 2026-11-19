@@ -25,6 +25,155 @@ namespace stan {
 namespace math {
 namespace internal {
 
+  template <typename T>
+inline auto exp_mod_normal_erfcx_h(T&& x) {
+  const auto w = inv(x * x);
+  const auto pq = erfcx_tail_polynomials<true>(w);
+  return SQRT_PI * w * pq.first / pq.second;
+}
+
+template <typename T1, typename T2, typename T3>
+inline auto exp_mod_normal_erfcx_h_diff(const T1& x, const T2& y,
+                                        const T3& delta) {
+  using T_return = return_type_t<T1, T2>;
+  const auto w0 = inv(x * x);
+  const auto w1 = inv(y * y);
+  const auto dw = -(delta * w0) * ((y + x) * w1);
+  T_return a0 = 0, q0 = 0, q1 = 0, dd_a = 0, dd_q = 0;
+  T_return pw0 = 1, pw1 = 1, sum_k = 0;
+  for (std::size_t k = 0; k < erfcx_tail_p.size(); ++k) {
+    q0 += erfcx_tail_q[k] * pw0;
+    q1 += erfcx_tail_q[k] * pw1;
+    if (k > 0) {
+      dd_q += erfcx_tail_q[k] * sum_k;
+    }
+    sum_k = sum_k * w0 + pw1;
+    a0 += erfcx_tail_p[k] * pw0 * w0;
+    dd_a += erfcx_tail_p[k] * sum_k;
+    pw0 *= w0;
+    pw1 *= w1;
+  }
+  return SQRT_PI * dw * (dd_a * q0 - a0 * dd_q) / (q1 * q0);
+}
+
+template <typename T>
+struct exp_mod_normal_erfcx_diff_result {
+  T delta;
+  T log_delta;
+  T d_e_hi_over_delta;
+};
+
+template <typename T>
+inline T exp_mod_normal_log1p_over_x(const T& x) {
+  return x == 0 ? T(1) : T(log1p(x) / x);
+}
+
+template <bool upper_exact, bool need_log, bool need_ratio, typename T1,
+          typename T2, typename T3, typename T4, typename T5>
+inline auto exp_mod_normal_erfcx_diff_close(const T1& lo, const T2& hi,
+                                            const T3& d, const T4& e_lo,
+                                            const T5& e_hi) {
+  using T_return = return_type_t<T1, T2, T3, T4, T5>;
+  if (lo >= exp_mod_normal_erfcx_tail_start) {
+    const auto x_end = upper_exact ? T_return(-d / hi) : T_return(d / lo);
+    const auto l_ratio_x
+        = upper_exact ? T_return(-exp_mod_normal_log1p_over_x(x_end) / hi)
+                      : T_return(-exp_mod_normal_log1p_over_x(x_end) / lo);
+    const auto h_per_d = exp_mod_normal_erfcx_h_diff(lo, hi, 1.0)
+                         / (1 + exp_mod_normal_erfcx_h(lo));
+    const auto h_term = d * h_per_d;
+    const auto l_total
+        = l_ratio_x + h_per_d * exp_mod_normal_log1p_over_x(h_term);
+    const auto log_r = d * l_total;
+    const auto em = log_r == 0 ? T_return(1) : T_return(expm1(log_r) / log_r);
+    const auto one_minus_r_over_d = -l_total * em;
+    const auto one_minus_r = d * one_minus_r_over_d;
+    return exp_mod_normal_erfcx_diff_result<T_return>{
+        e_lo * one_minus_r,
+        need_log ? T_return(log(e_lo) + log(d) + log(one_minus_r_over_d))
+                 : T_return(0),
+        need_ratio ? T_return(exp(log_r) / one_minus_r_over_d) : T_return(0)};
+  }
+  const auto m = upper_exact ? T_return(hi - 0.5 * d) : T_return(lo + 0.5 * d);
+  T_return e_km1 = erfcx(m);
+  T_return e_k = erfcx_derivative(m, e_km1);
+  std::array<T_return, 4> odd;
+  odd[0] = e_k;
+  for (int k = 1; k < 7; ++k) {
+    const auto e_kp1 = 2 * m * e_k + 2 * k * e_km1;
+    e_km1 = e_k;
+    e_k = e_kp1;
+    if (k % 2 == 0) {
+      odd[k / 2] = e_k;
+    }
+  }
+  const auto h = 0.5 * d;
+  const auto h2 = h * h;
+  const auto neg_s = -(
+      odd[0] + h2 * (odd[1] / 6 + h2 * (odd[2] / 120 + h2 * odd[3] / 5040)));
+  return exp_mod_normal_erfcx_diff_result<T_return>{
+      d * neg_s, need_log ? T_return(log(d) + log(neg_s)) : T_return(0),
+      need_ratio ? T_return(e_hi / neg_s) : T_return(0)};
+}
+
+template <typename T1, typename T2>
+inline bool exp_mod_normal_use_ratio(const T1& delta, const T2& hi) {
+  return !(delta > 1e-300 && hi < 1e150);
+}
+
+template <typename T1, typename T2>
+inline auto exp_mod_normal_erfcx_log_slope(const T1& t, const T2& e_t) {
+  using T_return = return_type_t<T1, T2>;
+  return t > 1e150 ? T_return(-inv(t))
+                   : T_return(erfcx_derivative(t, e_t) / e_t);
+}
+
+template <bool upper_exact, bool need_log, bool need_ratio = false, typename T1,
+          typename T2, typename T3, typename T4, typename T5>
+inline auto exp_mod_normal_erfcx_diff(const T1& lo, const T2& hi, const T3& d,
+                                      const T4& e_lo, const T5& e_hi) {
+  using T_return = return_type_t<T1, T2, T3, T4, T5>;
+  if (e_hi < exp_mod_normal_erfcx_close_ratio * e_lo) {
+    const auto delta = e_lo - e_hi;
+    return exp_mod_normal_erfcx_diff_result<T_return>{
+        delta, need_log ? T_return(log(delta)) : T_return(0), 0};
+  }
+  return exp_mod_normal_erfcx_diff_close<upper_exact, need_log, need_ratio>(
+      lo, hi, d, e_lo, e_hi);
+}
+
+template <typename T>
+inline T exp_mod_normal_log1m(const T& x) {
+  return x < 1e-17 ? T(-x) : T(log1p(-x));
+}
+
+template <typename T1, typename T2, typename T3, typename T4>
+struct exp_mod_normal_lcdf_terms {
+  T1 value;
+  T2 d_z;
+  T3 d_v;
+  T4 d_s;
+};
+
+template <typename T1, typename T2, typename T3, typename T4>
+exp_mod_normal_lcdf_terms(T1, T2, T3, T4)
+    -> exp_mod_normal_lcdf_terms<T1, T2, T3, T4>;
+
+template <typename T1, typename T2, typename T3, typename T4, typename T5,
+          typename T6>
+inline auto exp_mod_normal_lcdf_terms_from_ratio(const T1& value, const T2& u,
+                                                 const T3& t, const T4& v,
+                                                 const T5& e_t, const T6& dl) {
+  using T_return = return_type_t<T2, T3, T4, T5>;
+  const auto p = dl.d_e_hi_over_delta > 0
+                     ? T_return(dl.d_e_hi_over_delta)
+                     : T_return(v * INV_SQRT_TWO * (e_t / dl.delta));
+  const auto s = exp_mod_normal_erfcx_log_slope(t, e_t);
+  return exp_mod_normal_lcdf_terms{value, SQRT_TWO * p, -(s * p) / v,
+                                   p * (2 * u - s)};
+}
+
+
 /**
  * The result from F = g Delta, Delta = E(u) - E(t) with t >= 0, for F <= 1/2:
  * F alone when calc_grad is unset, otherwise F with the partials of log F.
