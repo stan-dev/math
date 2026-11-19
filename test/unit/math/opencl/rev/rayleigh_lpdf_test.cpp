@@ -52,7 +52,6 @@ auto rayleigh_lpdf_functor_propto = [](const auto& y, const auto& sigma) {
 
 TEST(ProbDistributionsRayleigh, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd y(N);
   y << 0.1, 0.5, 12.3;

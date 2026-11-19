@@ -59,7 +59,6 @@ auto log_mix_functor = [](const auto& theta, const auto& lambda) {
 
 TEST(OpenCLLogMix, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   Eigen::VectorXd theta1(N);
   theta1 << 0.5, 0.4, 0.1;
