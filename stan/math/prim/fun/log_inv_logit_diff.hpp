@@ -20,11 +20,11 @@ namespace math {
    \f]
 
    \f[
-    \frac{\partial }{\partial x} = -\frac{e^x}{e^y-e^x}-\frac{e^x}{e^x+1}
+    \frac{\partial}{\partial x} = \mbox{logit}^{-1}(-x) + \frac{1}{e^{x-y}-1}
    \f]
 
    \f[
-    \frac{\partial }{\partial x} = -\frac{e^y}{e^x-e^y}-\frac{e^y}{e^y+1}
+    \frac{\partial}{\partial y} = -\mbox{logit}^{-1}(y) - \frac{1}{e^{x-y}-1}
    \f]
  *
  * @tparam T1 type of x argument
