@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <cmath>
 #include <limits>
 
 TEST(mathMixScalFun, gammaQ) {
@@ -14,8 +15,68 @@ TEST(mathMixScalFun, gammaQ) {
   stan::test::expect_ad(f, nan, 1.0);
   stan::test::expect_ad(f, nan, nan);
 
-  // this still fails forward mode; left regression test in rev/fun
-  // stan::test::expect_value(f, 8.01006, 2.47579e+215);
+  // z far above 700, where a series in powers of z overflows
+  stan::test::expect_value(f, 8.01006, 2.47579e+215);
+}
+
+/**
+ * Forward-mode derivative with respect to the first argument at large z.
+ * References are d/da Q(a, z) from mpmath at 80 digits.
+ */
+TEST(mathMixScalFun, gammaQ_fwd_shape_derivative_large_z) {
+  using stan::math::fvar;
+  struct Case {
+    double a;
+    double z;
+    double dqda;
+  };
+  const Case cases[] = {
+      {1.5, 300.0, 5.71509832058708679e-129},
+      {3.0, 650.0, 6.01811954875449219e-277},
+  };
+  for (const auto& c : cases) {
+    fvar<double> a = c.a;
+    a.d_ = 1.0;
+    fvar<double> z = c.z;
+    const fvar<double> r = stan::math::gamma_q(a, z);
+    ASSERT_TRUE(std::isfinite(r.d_)) << "a=" << c.a << " z=" << c.z;
+    EXPECT_NEAR(c.dqda, r.d_, 1e-10 * std::fabs(c.dqda))
+        << "a=" << c.a << " z=" << c.z;
+  }
+}
+
+/**
+ * Forward-mode derivative with respect to the second argument, at an a
+ * above the range where tgamma(a) is finite. Reference from mpmath, closed
+ * form -z^(a-1) e^(-z) / Gamma(a).
+ */
+TEST(mathMixScalFun, gammaQ_fwd_z_derivative_large_a) {
+  using stan::math::fvar;
+  fvar<double> a = 200.0;
+  fvar<double> z = 150.0;
+  z.d_ = 1.0;
+  const fvar<double> r = stan::math::gamma_q(a, z);
+  const double expected = -2.00507038377120400e-05;
+  ASSERT_TRUE(std::isfinite(r.d_));
+  EXPECT_NEAR(expected, r.d_, 1e-12 * std::fabs(expected));
+}
+
+/**
+ * Forward-mode derivative of log(gamma_q(alpha, beta * y)) at alpha = 3,
+ * beta = 3, y = 12 with all three tangents 1, so z = 36 has tangent 15.
+ * References from mpmath at 80 digits by two routes.
+ */
+TEST(mathMixScalFun, gammaQ_fwd_log_upper_tail_composite) {
+  using stan::math::fvar;
+  fvar<double> y(12.0, 1.0);
+  fvar<double> alpha(3.0, 1.0);
+  fvar<double> beta(3.0, 1.0);
+  const fvar<double> r = stan::math::log(stan::math::gamma_q(alpha, beta * y));
+  const double expected_val = -29.4705811617377747;
+  const double expected_d = -11.5005397823109051;
+  EXPECT_NEAR(expected_val, r.val_, 1e-12 * std::fabs(expected_val));
+  ASSERT_TRUE(std::isfinite(r.d_));
+  EXPECT_NEAR(expected_d, r.d_, 1e-10 * std::fabs(expected_d));
 }
 
 TEST(MathFunctions, gammaQ_vec) {

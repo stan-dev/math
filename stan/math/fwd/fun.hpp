@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
+#include <stan/math/fwd/fun/Eigen_SpecialFunctions.hpp>
 
 #include <stan/math/fwd/fun/abs.hpp>
 #include <stan/math/fwd/fun/accumulator.hpp>

@@ -8,7 +8,10 @@ TEST(ProbInternalMath, gradRegIncGamma_typical) {
   double g = 1.77245;
   double dig = -1.96351;
 
-  EXPECT_FLOAT_EQ(0.38984156, stan::math::grad_reg_inc_gamma(a, b, g, dig));
+  // d/da Q(0.5, 1.0) from mpmath at 80 digits. The g and dig arguments are
+  // accepted for signature compatibility and do not affect the result.
+  EXPECT_FLOAT_EQ(0.38983726432851057,
+                  stan::math::grad_reg_inc_gamma(a, b, g, dig));
 }
 
 TEST(ProbInternalMath, gradRegIncGamma_infLoopInVersion2_0_1) {
@@ -38,7 +41,7 @@ TEST(ProbInternalMath, gradRegIncGamma_fd) {
   fvar<double> g = 1.77245;
   fvar<double> dig = -1.96351;
 
-  EXPECT_FLOAT_EQ(0.38984156,
+  EXPECT_FLOAT_EQ(0.38983726432851057,
                   stan::math::grad_reg_inc_gamma(a, b, g, dig).val());
 }
 TEST(ProbInternalMath, gradRegIncGamma_ffd) {
@@ -49,7 +52,7 @@ TEST(ProbInternalMath, gradRegIncGamma_ffd) {
   fvar<fvar<double> > g = 1.77245;
   fvar<fvar<double> > dig = -1.96351;
 
-  EXPECT_FLOAT_EQ(0.38984156,
+  EXPECT_FLOAT_EQ(0.38983726432851057,
                   stan::math::grad_reg_inc_gamma(a, b, g, dig).val_.val_);
 }
 
@@ -63,7 +66,7 @@ TEST(ProbInternalMath, gradRegIncGamma_fv) {
   fvar<var> g = 1.77245;
   fvar<var> dig = digamma(a);
 
-  EXPECT_FLOAT_EQ(0.38984156,
+  EXPECT_FLOAT_EQ(0.38983726432851057,
                   stan::math::grad_reg_inc_gamma(a, b, g, dig).val_.val());
 }
 
@@ -107,4 +110,50 @@ TEST(ProbInternalMath, gradRegIncGamma_fv_2ndderiv) {
   std::vector<double> grad1;
   z.d_.grad(y1, grad1);
   EXPECT_NEAR(-0.546236927878295422, grad1[0], 1e-6);
+}
+
+namespace {
+struct gamma_cdf_shape_functor {
+  double y_;
+  explicit gamma_cdf_shape_functor(double y) : y_(y) {}
+  template <typename T>
+  T operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
+    return stan::math::gamma_cdf(y_, x(0), 1.0);
+  }
+};
+}  // namespace
+
+/**
+ * The first derivative must not depend on how it is obtained. Reverse mode
+ * reaches the gradient root with `double` partials and `hessian` reaches
+ * it with `fvar<var>`; the two must agree. This needs no external
+ * reference value.
+ */
+TEST(ProbInternalMath, gradRegIncGamma_gradient_matches_hessian) {
+  using stan::math::var;
+
+  for (double alpha : {5.0, 20.0, 100.0, 171.0, 180.0, 300.0}) {
+    const double y = alpha;
+
+    double rev_grad;
+    {
+      stan::math::nested_rev_autodiff nested;
+      var a = alpha;
+      var p = stan::math::gamma_cdf(y, a, 1.0);
+      p.grad();
+      rev_grad = a.adj();
+    }
+
+    Eigen::Matrix<double, Eigen::Dynamic, 1> x(1);
+    x(0) = alpha;
+    double fx;
+    Eigen::Matrix<double, Eigen::Dynamic, 1> grad(1);
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> hess(1, 1);
+    stan::math::hessian(gamma_cdf_shape_functor(y), x, fx, grad, hess);
+
+    ASSERT_TRUE(std::isfinite(rev_grad)) << "reverse mode, alpha = " << alpha;
+    ASSERT_TRUE(std::isfinite(grad(0))) << "hessian(), alpha = " << alpha;
+    EXPECT_NEAR(rev_grad, grad(0), 1e-12 * std::fabs(rev_grad))
+        << "alpha = " << alpha;
+  }
 }
