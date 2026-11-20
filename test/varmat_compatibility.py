@@ -4,6 +4,8 @@ import itertools
 import json
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 import os
+from pathlib import Path
+import shutil
 import queue as Queue
 import subprocess
 import re
@@ -11,7 +13,7 @@ import sys
 import tempfile
 import threading
 
-from sig_utils import make, handle_function_list, get_signatures
+from sig_utils import handle_function_list, get_signatures
 from signature_parser import SignatureParser
 from code_generator import CodeGenerator
 
@@ -19,10 +21,39 @@ HERE = os.path.dirname(os.path.realpath(__file__))
 TEST_FOLDER = os.path.abspath(os.path.join(HERE, "..", "test"))
 sys.path.append(TEST_FOLDER)
 WORKING_FOLDER = "test/varmat-compatibility"
+_compile_worker = threading.local()
 
+
+def compile_signature(cpp_path):
+    if not hasattr(_compile_worker, "directory"):
+        _compile_worker.directory = tempfile.TemporaryDirectory(prefix="cmake_", dir=WORKING_FOLDER)
+        directory = Path(_compile_worker.directory.name).resolve()
+        _compile_worker.source = directory / "check.cpp"
+        _compile_worker.build = directory / "build"
+        _compile_worker.source.write_text("\n")
+        successful, stdout, stderr = run_command([
+            "cmake", "-S", str(Path(HERE).parent), "-B", str(_compile_worker.build),
+            "-DBUILD_TESTING=OFF", "-DSTAN_TEST_OPTIMIZATION=0",
+            "-DSTAN_COMPILE_TEST_SOURCE=" + str(_compile_worker.source)])
+        if successful:
+            successful, stdout, stderr = run_command([
+                "cmake", "--build", str(_compile_worker.build),
+                "--parallel", "1", "--target", "stan_compile_test"])
+        if not successful:
+            _compile_worker.directory.cleanup()
+            del _compile_worker.directory
+            raise RuntimeError("CMake compilation setup failed:\n"
+                               + stdout.decode("utf-8") + stderr.decode("utf-8"))
+    shutil.copyfile(cpp_path, _compile_worker.source)
+    return run_command(["cmake", "--build", str(_compile_worker.build),
+                        "--parallel", "1", "--target", "stan_compile_test"])
+
+# Returning the result and external linkage keep -Wall -Werror builds free of
+# unused variable and unused function warnings.
 TEST_TEMPLATE = """
-static void {test_name}() {{
+auto {test_name}() {{
 {code}
+return {result};
 }}
 """
 
@@ -61,7 +92,7 @@ def build_signature(prefix, cpp_code, debug):
     stdout_path = cpp_path.replace(".cpp", ".stdout")
     stderr_path = cpp_path.replace(".cpp", ".stderr")
 
-    successful, stdout, stderr = run_command([make, object_path])
+    successful, stdout, stderr = compile_signature(cpp_path)
 
     if successful or not debug:
         try:
@@ -156,11 +187,12 @@ def main(functions_or_sigs, results_file, cores, debug):
                 
                 arg_list.append(arg)
 
-            cg.function_call_assign("stan::math::" + sp.function_name, *arg_list)
+            result = cg.function_call_assign("stan::math::" + sp.function_name, *arg_list)
 
             cpp_code += TEST_TEMPLATE.format(
                 test_name = sp.function_name + repr(m),
                 code=cg.cpp(),
+                result=result.name,
             )
 
         if any_overload_uses_varmat:
@@ -175,6 +207,7 @@ def main(functions_or_sigs, results_file, cores, debug):
         os.mkdir(WORKING_FOLDER)
 
     work_queue_original_length = work_queue.qsize()
+    compilation_errors = []
 
     # Test if each cpp file builds and update the output file
     # This part is done in parallel
@@ -189,7 +222,13 @@ def main(functions_or_sigs, results_file, cores, debug):
             prefix = re.sub('[^0-9a-zA-Z]+', '_', signature.strip())
 
             # Test the signature
-            successful = build_signature(prefix, cpp_code, debug)
+            try:
+                successful = build_signature(prefix, cpp_code, debug)
+            except Exception as error:
+                with output_lock:
+                    compilation_errors.append(error)
+                work_queue.task_done()
+                continue
 
             # Acquire a lock to do I/O
             with output_lock:
@@ -208,6 +247,8 @@ def main(functions_or_sigs, results_file, cores, debug):
         threading.Thread(target = worker).start()
 
     work_queue.join()
+    if compilation_errors:
+        raise RuntimeError("CMake compilation setup failed") from compilation_errors[0]
 
     with open(results_file, "w") as f:
         json.dump({ "compatible_signatures" : list(compatible_signatures),

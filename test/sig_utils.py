@@ -1,6 +1,7 @@
 import itertools
 import numbers
 import os
+from pathlib import Path
 import re
 import subprocess
 import sys
@@ -275,25 +276,20 @@ def get_signatures():
     Retrieves function signatures from stanc3
     :return: list of signatures
     """
-    if os.name == "nt":
-        stanc3 = ".\\test\\expressions\\stanc.exe"
-    else:
-        stanc3 = "./test/expressions/stanc"
-    p = subprocess.Popen((make, stanc3.replace("\\", "/")))
+    root = Path(__file__).resolve().parent.parent
+    stanc3 = root / "test/expressions" / ("stanc.exe" if os.name == "nt" else "stanc")
+    p = subprocess.Popen(("cmake", "-DSTAN_STANC_FILE=" + str(stanc3),
+                          "-P", str(root / "cmake/stanc.cmake")))
     if p.wait() != 0:
         sys.stderr.write("Error in making stanc3!")
         sys.exit(-1)
 
-    p = subprocess.Popen(
-        (stanc3 + " --dump-stan-math-signatures"),
-        stdout=subprocess.PIPE,
-        universal_newlines=True,
-        shell=True,
-    )
-    res = parse_signature_file(p.stdout)
-    if p.wait() != 0:
-        sys.stderr.write("Error in getting signatures from stanc3!\n")
-        sys.exit(-1)
+    with subprocess.Popen([str(stanc3), "--dump-stan-math-signatures"],
+                          stdout=subprocess.PIPE, universal_newlines=True) as p:
+        res = parse_signature_file(p.stdout)
+        if p.wait() != 0:
+            sys.stderr.write("Error in getting signatures from stanc3!\n")
+            sys.exit(-1)
 
     return res + internal_signatures
 
