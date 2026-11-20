@@ -2,11 +2,11 @@
 #define STAN_MATH_PRIM_CONSTRAINT_CORR_CONSTRAIN_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/log1m.hpp>
-#include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/log_cosh.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/tanh.hpp>
-#include <cmath>
+#include <stan/math/prim/fun/to_ref.hpp>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -36,7 +36,8 @@ inline plain_type_t<T> corr_constrain(T&& x) {
  * <code>corr_constrain(T)</code>.  The log absolute Jacobian
  * determinant is
  *
- * <p>\f$\log | \frac{d}{dx} \tanh x  | = \log (1 - \tanh^2 x)\f$.
+ * <p>\f$\log | \frac{d}{dx} \tanh x  | = \log (1 - \tanh^2 x)
+ * = -2 \log \cosh x\f$.
  *
  * @tparam T_x Type of scalar or container
  * @param[in] x value or container
@@ -44,9 +45,9 @@ inline plain_type_t<T> corr_constrain(T&& x) {
  */
 template <typename T_x, typename T_lp>
 inline auto corr_constrain(T_x&& x, T_lp& lp) {
-  plain_type_t<T_x> tanh_x = tanh(std::forward<T_x>(x));
-  lp += sum(log1m(square(tanh_x)));
-  return tanh_x;
+  decltype(auto) x_ref = to_ref(std::forward<T_x>(x));
+  lp -= 2.0 * sum(log_cosh(x_ref));
+  return corr_constrain(x_ref);
 }
 
 /**
