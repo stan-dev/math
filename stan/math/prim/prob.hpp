@@ -240,7 +240,10 @@
 #include <stan/math/prim/prob/poisson_cdf_log.hpp>
 #include <stan/math/prim/prob/poisson_lccdf.hpp>
 #include <stan/math/prim/prob/poisson_lcdf.hpp>
+#include <stan/math/prim/prob/poisson_log_cdf.hpp>
 #include <stan/math/prim/prob/poisson_log_glm_lpmf.hpp>
+#include <stan/math/prim/prob/poisson_log_lccdf.hpp>
+#include <stan/math/prim/prob/poisson_log_lcdf.hpp>
 #include <stan/math/prim/prob/poisson_log_lpmf.hpp>
 #include <stan/math/prim/prob/poisson_log_rng.hpp>
 #include <stan/math/prim/prob/poisson_lpmf.hpp>
