@@ -352,7 +352,10 @@ ADD_BINARY_FUNCTION_WITH_INCLUDES(copysign)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
     erfcx_derivative, stan::math::opencl_kernels::erfcx_device_function)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
-    beta, stan::math::opencl_kernels::beta_device_function)
+    beta, stan::math::opencl_kernels::lgamma_stirling_device_function,
+    stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
+    stan::math::opencl_kernels::lbeta_device_function,
+    stan::math::opencl_kernels::beta_device_function)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
     binomial_coefficient_log,
     stan::math::opencl_kernels::lgamma_stirling_device_function,
