@@ -1,4 +1,5 @@
-#include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/constraint/corr_transform_helpers.hpp>
+#include <cmath>
 
 TEST(mathMixMatFun, cov_matrix_constrain_lkj) {
   auto f = [](int K) {
@@ -51,4 +52,29 @@ TEST(mathMixMatFun, cov_matrix_constrain_lkj_lp) {
 
   stan::test::expect_ad_matvar(f2(4), x1);
   stan::test::expect_ad_matvar(f2(3), x2);
+}
+
+// The lp overload used to omit the tanh and exp Jacobian terms of the partial
+// correlations and standard deviations; lp must equal log |det J|.
+TEST(mathMixMatFun, cov_matrix_constrain_lkj_lp_is_log_det_jacobian) {
+  Eigen::VectorXd x4(10);
+  x4 << 0.3, -1.2, 0.8, 2.1, -0.4, 1.5, 0.2, -0.7, 1.1, -0.3;
+  corr_transform_test::expect_lp_is_log_det_jacobian(
+      [](auto&& x) { return stan::math::cov_matrix_constrain_lkj(x, 4); },
+      [](auto&& x, auto& lp) {
+        stan::math::cov_matrix_constrain_lkj(x, 4, lp);
+      },
+      x4, false, 1e-12);
+  for (int K : {2, 3, 5, 7}) {
+    Eigen::VectorXd x((K * (K - 1)) / 2 + K);
+    for (int i = 0; i < x.size(); ++i) {
+      x(i) = 1.5 * std::sin(0.9 * i + 0.3);
+    }
+    corr_transform_test::expect_lp_is_log_det_jacobian(
+        [K](auto&& x) { return stan::math::cov_matrix_constrain_lkj(x, K); },
+        [K](auto&& x, auto& lp) {
+          stan::math::cov_matrix_constrain_lkj(x, K, lp);
+        },
+        x, false, 1e-12);
+  }
 }
