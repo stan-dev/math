@@ -18,13 +18,14 @@ static constexpr const char *atomic_add_double_device_function
           /** \ingroup opencl_kernels
            * Atomically add to a double value.
            *
-           * Code is taken from:
+           * Adapted from:
            * https://stackoverflow.com/questions/31863587/atomic-operations-with-double-opencl
            *
            * @param val pointer to value to add to
            * @param delta value to add
            */
           void atomic_add_double(__global double *val, double delta) {
+            volatile __global ulong *p = (volatile __global ulong *)val;
             union {
               double f;
               ulong i;
@@ -33,23 +34,25 @@ static constexpr const char *atomic_add_double_device_function
               double f;
               ulong i;
             } new_val;
+            // atomic read: a compare-and-swap that never changes the cell
+            ulong current = atom_cmpxchg(p, 0UL, 0UL);
             do {
-              old_val.f = *val;
+              old_val.i = current;
               new_val.f = old_val.f + delta;
-            } while (atom_cmpxchg((volatile __global ulong *)val, old_val.i,
-                                  new_val.i)
-                     != old_val.i);
+              current = atom_cmpxchg(p, old_val.i, new_val.i);
+            } while (current != old_val.i);
           }
           /** \ingroup opencl_kernels
            * Atomically add to a local double value.
            *
-           * Code is taken from:
+           * Adapted from:
            * https://stackoverflow.com/questions/31863587/atomic-operations-with-double-opencl
            *
            * @param val pointer to value to add to
            * @param delta value to add
            */
           void local_atomic_add_double(__local double *val, double delta) {
+            volatile __local ulong *p = (volatile __local ulong *)val;
             union {
               double f;
               ulong i;
@@ -58,12 +61,13 @@ static constexpr const char *atomic_add_double_device_function
               double f;
               ulong i;
             } new_val;
+            // atomic read: a compare-and-swap that never changes the cell
+            ulong current = atom_cmpxchg(p, 0UL, 0UL);
             do {
-              old_val.f = *val;
+              old_val.i = current;
               new_val.f = old_val.f + delta;
-            } while (atom_cmpxchg((volatile __local ulong *)val, old_val.i,
-                                  new_val.i)
-                     != old_val.i);
+              current = atom_cmpxchg(p, old_val.i, new_val.i);
+            } while (current != old_val.i);
           }
           // \cond
           ) "\n#endif\n";  // NOLINT
