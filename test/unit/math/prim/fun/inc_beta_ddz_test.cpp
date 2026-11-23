@@ -42,3 +42,14 @@ TEST(MathFunctions, inc_beta_ddz) {
   EXPECT_FLOAT_EQ(0.0, inc_beta_ddz(large_a, large_b, large_z))
       << "reasonable values for a, b, x";
 }
+
+TEST(MathFunctions, inc_beta_ddz_infinite_density) {
+  using stan::math::inc_beta_ddz;
+  // the density is infinite at z = 1 with b < 1 and at z = 0 with a < 1
+  double at_one = 0;
+  double at_zero = 0;
+  EXPECT_NO_THROW(at_one = inc_beta_ddz(1.05, 0.35, 1.0));
+  EXPECT_NO_THROW(at_zero = inc_beta_ddz(0.5, 2.0, 0.0));
+  EXPECT_TRUE(std::isinf(at_one) && at_one > 0);
+  EXPECT_TRUE(std::isinf(at_zero) && at_zero > 0);
+}
