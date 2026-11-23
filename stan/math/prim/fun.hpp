@@ -176,6 +176,7 @@
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
 #include <stan/math/prim/fun/log2.hpp>
+#include <stan/math/prim/fun/log_cosh.hpp>
 #include <stan/math/prim/fun/log_determinant.hpp>
 #include <stan/math/prim/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/fun/log_determinant_spd.hpp>
@@ -284,6 +285,7 @@
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/scaled_add.hpp>
 #include <stan/math/prim/fun/sd.hpp>
+#include <stan/math/prim/fun/sech.hpp>
 #include <stan/math/prim/fun/segment.hpp>
 #include <stan/math/prim/fun/serializer.hpp>
 #include <stan/math/prim/fun/select.hpp>

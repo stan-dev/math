@@ -74,7 +74,6 @@ auto neg_binomial_lpmf_functor_propto
 
 TEST(muProbDistributionsNegBinomial, opencl_matches_cpu_small) {
   int N = 3;
-  int M = 2;
 
   std::vector<int> n{1, 0, 12};
   Eigen::VectorXd alpha(N);

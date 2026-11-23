@@ -8,7 +8,7 @@ using stan::math::var;
 using std::numeric_limits;
 using std::vector;
 
-class AgradDistributionsPoisson : public AgradDistributionTest {
+class AgradDistributionsPoissonLog : public AgradDistributionTest {
  public:
   void valid_values(vector<vector<double> >& parameters,
                     vector<double>& log_prob) {

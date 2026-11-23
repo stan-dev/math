@@ -57,6 +57,23 @@ TEST(KernelGenerator, prod_2d_test) {
   EXPECT_NEAR(correct, res, 1e-9);
 }
 
+TEST(KernelGenerator, reductions_2d_rvalue_input) {
+  MatrixXd m(3, 2);
+  m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
+
+  matrix_cl<double> res_cl = stan::math::sum_2d(matrix_cl<double>(m));
+  double res = stan::math::from_matrix_cl(res_cl).sum();
+  EXPECT_NEAR(m.sum(), res, 1e-9);
+
+  matrix_cl<double> prod_cl = stan::math::prod_2d(matrix_cl<double>(m));
+  double prod = stan::math::from_matrix_cl(prod_cl).prod();
+  EXPECT_NEAR(m.prod(), prod, 1e-9);
+
+  matrix_cl<double> max_cl = stan::math::max_2d(matrix_cl<double>(m));
+  double max = stan::math::from_matrix_cl(max_cl).maxCoeff();
+  EXPECT_NEAR(m.maxCoeff(), max, 1e-9);
+}
+
 TEST(KernelGenerator, min_2d_test) {
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
