@@ -435,7 +435,8 @@ inline auto inc_beta_continued_fraction_kernel(const T1& a, const T2& b,
  *   the pair (d/da, d/db) for <code>BOTH</code>
  */
 template <GRAD_RIB grads_requested, typename T1, typename T2, typename T3,
-          typename T4, typename T5, typename T6, typename T7>
+          typename T4, typename T5, typename T6, typename T7,
+          require_all_not_var_t<T1, T2, T3, T4, T5, T6, T7>* = nullptr>
 inline auto grad_reg_inc_beta(const T1& a, const T2& b, const T3& z,
                               const T4& digammaA, const T5& digammaB,
                               const T6& digammaSum, const T7& /* betaAB */) {
