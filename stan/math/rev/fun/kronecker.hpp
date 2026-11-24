@@ -48,10 +48,11 @@ inline auto kronecker(T1&& A, T2&& B) {
     const Eigen::Index p = arena_B.rows();
     const Eigen::Index q = arena_B.cols();
     decltype(auto) res_adj = to_ref(res.adj_op());
-    decltype(auto) A_val = to_ref(value_of(arena_A));
-    decltype(auto) B_val = to_ref(value_of(arena_B));
-    Eigen::MatrixXd A_adj = Eigen::MatrixXd::Zero(m, arena_A.cols());
-    Eigen::MatrixXd B_adj = Eigen::MatrixXd::Zero(p, q);
+    decltype(auto) A_val = to_ref_if<is_autodiff_v<T2>>(value_of(arena_A));
+    decltype(auto) B_val = to_ref_if<is_autodiff_v<T1>>(value_of(arena_B));
+    Eigen::MatrixXd A_adj
+        = Eigen::MatrixXd::Zero(is_autodiff_v<T1> ? m : 0, arena_A.cols());
+    Eigen::MatrixXd B_adj = Eigen::MatrixXd::Zero(is_autodiff_v<T2> ? p : 0, q);
     for (Eigen::Index c = 0; c < res_adj.cols(); ++c) {
       const auto res_adj_c = res_adj.col(c).reshaped(p, m);
       if constexpr (is_autodiff_v<T1>) {
