@@ -10,7 +10,7 @@ TEST_F(AgradRev, bernoulli_logit_lpmf_upper_tail_gradient_scalar) {
   stan::math::var logp = stan::math::bernoulli_logit_lpmf(1, theta);
   logp.grad();
 
-  EXPECT_DOUBLE_EQ(std::exp(-25.0), theta.adj());
+  EXPECT_DOUBLE_EQ(stan::math::inv_logit(-25.0), theta.adj());
 }
 
 TEST_F(AgradRev, bernoulli_logit_lpmf_upper_tail_gradient_vector) {
@@ -20,6 +20,6 @@ TEST_F(AgradRev, bernoulli_logit_lpmf_upper_tail_gradient_vector) {
   stan::math::var logp = stan::math::bernoulli_logit_lpmf(n, theta);
   logp.grad();
 
-  EXPECT_DOUBLE_EQ(std::exp(-25.0), theta[0].adj());
-  EXPECT_DOUBLE_EQ(-std::exp(-25.0), theta[1].adj());
+  EXPECT_DOUBLE_EQ(stan::math::inv_logit(-25.0), theta[0].adj());
+  EXPECT_DOUBLE_EQ(-stan::math::inv_logit(-25.0), theta[1].adj());
 }

@@ -8,8 +8,8 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
@@ -70,23 +70,18 @@ inline return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n,
     T_partials_return ntheta_s = signs * theta_val;
     ntheta = T_partials_array::Constant(1, 1, ntheta_s);
   }
-  T_partials_array exp_m_ntheta = exp(-ntheta);
-  static constexpr double cutoff = 20.0;
-  T_partials_return logp = sum(
-      (ntheta > cutoff)
-          .select(-exp_m_ntheta,
-                  (ntheta < -cutoff).select(ntheta, -log1p(exp_m_ntheta))));
+  // exp(-|ntheta|) in (0, 1], so no overflow enters the autodiff tape
+  T_partials_array exp_m_abs_ntheta = exp((ntheta > 0).select(-ntheta, ntheta));
+  // two sums: no per-element node for the difference in nested autodiff
+  T_partials_return logp
+      = sum((ntheta > 0).select(T_partials_return(0), ntheta))
+        - sum(log1p(exp_m_abs_ntheta));
 
   auto ops_partials = make_partials_propagator(theta_ref);
   if constexpr (is_autodiff_v<T_prob>) {
     edge<0>(ops_partials).partials_
-        = (ntheta > cutoff)
-              .select(
-                  promote_scalar<T_partials_return>(signs * exp_m_ntheta),
-                  (ntheta >= -cutoff)
-                      .select(promote_scalar<T_partials_return>(
-                                  signs * exp_m_ntheta / (exp_m_ntheta + 1)),
-                              promote_scalar<T_partials_return>(signs)));
+        = signs * (ntheta > 0).select(exp_m_abs_ntheta, T_partials_return(1))
+          / (1 + exp_m_abs_ntheta);
   }
   return ops_partials.build(logp);
 }

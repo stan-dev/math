@@ -55,18 +55,14 @@ inline return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
 
   auto signs_expr = 2 * n - 1.0;  // subtracting 1.0 converts int to double
   auto ntheta_expr = elt_multiply(signs_expr, theta_val);
-  auto exp_m_ntheta_expr = exp(-ntheta_expr);
-  static constexpr double cutoff = 20.0;
-  auto condition1_expr = ntheta_expr > cutoff;
-  auto condition2_expr = ntheta_expr < -cutoff;
-  auto logp_expr = colwise_sum(
-      select(condition1_expr, -exp_m_ntheta_expr,
-             select(condition2_expr, ntheta_expr, -log1p(exp_m_ntheta_expr))));
-  auto deriv_expr = select(
-      condition1_expr, elt_multiply(signs_expr, exp_m_ntheta_expr),
-      select(condition2_expr, signs_expr,
-             elt_multiply(signs_expr, elt_divide(exp_m_ntheta_expr,
-                                                 (exp_m_ntheta_expr + 1)))));
+  auto positive_expr = ntheta_expr > 0;
+  auto exp_m_abs_ntheta_expr
+      = exp(select(positive_expr, -ntheta_expr, ntheta_expr));
+  auto logp_expr = colwise_sum(select(positive_expr, 0.0, ntheta_expr)
+                               - log1p(exp_m_abs_ntheta_expr));
+  auto deriv_expr = elt_multiply(
+      signs_expr, elt_divide(select(positive_expr, exp_m_abs_ntheta_expr, 1.0),
+                             exp_m_abs_ntheta_expr + 1));
 
   matrix_cl<double> logp_cl;
   matrix_cl<double> deriv_cl;
