@@ -1,6 +1,7 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
+#include <test/unit/math/mix/prob/ordered_logistic_test_helpers.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -721,4 +722,25 @@ TEST_F(AgradRev, ProbDistributionsOrdLog_top_category_value_and_gradient) {
   EXPECT_FLOAT_EQ(lam.adj(), 0.574442516811659);
   EXPECT_FLOAT_EQ(c[0].adj(), 0.0);
   EXPECT_FLOAT_EQ(c[1].adj(), -0.574442516811659);
+}
+
+// Against closed forms at and near the cuts, in the tails and for close cuts.
+TEST_F(AgradRev, ProbDistributionsOrdLog_derivatives) {
+  auto lpmf
+      = [](const auto& y, const auto& x, const auto& beta, const auto& cuts) {
+          return stan::math::ordered_logistic_lpmf(
+              y, stan::math::multiply(x, beta), cuts);
+        };
+  ordered_logistic_test::expect_all(lpmf, false);
+}
+
+// The same with one cut vector per location.
+TEST_F(AgradRev, ProbDistributionsOrdLog_derivatives_cuts_array) {
+  auto lpmf
+      = [](const auto& y, const auto& x, const auto& beta, const auto& cuts) {
+          std::vector<std::decay_t<decltype(cuts)>> cuts_arr(x.rows(), cuts);
+          return stan::math::ordered_logistic_lpmf(
+              y, stan::math::multiply(x, beta), cuts_arr);
+        };
+  ordered_logistic_test::expect_all(lpmf, false);
 }
