@@ -100,6 +100,43 @@ TEST(stack_alloc, alloc_aligned) {
   allocator.recover_all();
 }
 
+TEST(stack_alloc, alloc_over_aligned) {
+  stan::math::stack_alloc allocator;
+  // leave the next free byte 8 but not 64 byte aligned
+  allocator.alloc(8);
+  for (size_t alignment : {16U, 32U, 64U}) {
+    double* x
+        = static_cast<double*>(allocator.alloc(4 * sizeof(double), alignment));
+    EXPECT_TRUE(stan::math::is_aligned(x, alignment)) << alignment;
+    for (int i = 0; i < 4; ++i) {
+      x[i] = i;
+    }
+    EXPECT_FLOAT_EQ(3.0, x[3]);
+    // plain allocations after an aligned one stay 8 byte aligned
+    EXPECT_TRUE(stan::math::is_aligned(allocator.alloc(sizeof(double)), 8U));
+  }
+}
+
+TEST(stack_alloc, alloc_over_aligned_new_blocks) {
+  stan::math::stack_alloc allocator;
+  // larger than the initial block, so every allocation needs a new block
+  const size_t big = 1 << 17;
+  for (int i = 0; i < 4; ++i) {
+    allocator.alloc(8);
+    char* x = static_cast<char*>(allocator.alloc(big, 64));
+    EXPECT_TRUE(stan::math::is_aligned(x, 64U));
+    x[0] = 1;
+    x[big - 1] = 2;
+    EXPECT_TRUE(allocator.in_stack(x));
+  }
+  // reused blocks after recovering memory are aligned too
+  allocator.recover_all();
+  for (int i = 0; i < 4; ++i) {
+    allocator.alloc(8);
+    EXPECT_TRUE(stan::math::is_aligned(allocator.alloc(big, 64), 64U));
+  }
+}
+
 TEST(stack_alloc, in_stack) {
   stan::math::stack_alloc allocator;
 

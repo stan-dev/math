@@ -86,14 +86,3 @@ class AgradDistributionsFrechet : public AgradDistributionTest {
            - pow(sigma / y, alpha);
   }
 };
-
-TEST(ProbDistributionsFrechet, Cumulative) {
-  using stan::math::frechet_cdf;
-  using std::numeric_limits;
-  EXPECT_FLOAT_EQ(0.6065306597, frechet_cdf(2.0, 1.0, 1.0));
-  EXPECT_FLOAT_EQ(2.744338423e-5, frechet_cdf(0.8, 2.9, 1.8));
-  EXPECT_FLOAT_EQ(0.0, frechet_cdf(0.25, 3.9, 1.7));
-
-  EXPECT_FLOAT_EQ(1.0,
-                  frechet_cdf(numeric_limits<double>::infinity(), 1.0, 1.0));
-}

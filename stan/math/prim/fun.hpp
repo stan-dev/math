@@ -176,6 +176,7 @@
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
 #include <stan/math/prim/fun/log2.hpp>
+#include <stan/math/prim/fun/log_cosh.hpp>
 #include <stan/math/prim/fun/log_determinant.hpp>
 #include <stan/math/prim/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/fun/log_determinant_spd.hpp>
@@ -284,6 +285,7 @@
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/scaled_add.hpp>
 #include <stan/math/prim/fun/sd.hpp>
+#include <stan/math/prim/fun/sech.hpp>
 #include <stan/math/prim/fun/segment.hpp>
 #include <stan/math/prim/fun/serializer.hpp>
 #include <stan/math/prim/fun/select.hpp>
@@ -296,6 +298,7 @@
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/softmax.hpp>
+#include <stan/math/prim/fun/solve_sylvester.hpp>
 #include <stan/math/prim/fun/sort_asc.hpp>
 #include <stan/math/prim/fun/sort_desc.hpp>
 #include <stan/math/prim/fun/sort_indices.hpp>
@@ -313,7 +316,6 @@
 #include <stan/math/prim/fun/svd.hpp>
 #include <stan/math/prim/fun/svd_U.hpp>
 #include <stan/math/prim/fun/svd_V.hpp>
-#include <stan/math/prim/fun/sylvester_solver.hpp>
 #include <stan/math/prim/fun/symmetrize_from_lower_tri.hpp>
 #include <stan/math/prim/fun/symmetrize_from_upper_tri.hpp>
 #include <stan/math/prim/fun/tail.hpp>

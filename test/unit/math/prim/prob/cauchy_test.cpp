@@ -80,3 +80,10 @@ TEST(ProbDistributionsCauchy, chiSquareGoodnessFitTest) {
   // Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }
+
+TEST(ProbDistributionsCauchy, Cumulative) {
+  using stan::math::cauchy_cdf;
+  EXPECT_FLOAT_EQ(0.75, cauchy_cdf(1.0, 0.0, 1.0));
+  EXPECT_FLOAT_EQ(0.187167, cauchy_cdf(-1.5, 0.0, 1.0));
+  EXPECT_FLOAT_EQ(0.187167, cauchy_cdf(-2.5, -1.0, 1.0));
+}

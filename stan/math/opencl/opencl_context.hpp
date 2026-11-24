@@ -433,7 +433,8 @@ class opencl_context {
     kernel_caches_.push_back(cache);
   }
 };
-static opencl_context opencl_context;
+// Share the context and its kernel-cache registry across translation units.
+inline opencl_context opencl_context;
 }  // namespace math
 }  // namespace stan
 
