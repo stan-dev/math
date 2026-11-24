@@ -21,11 +21,11 @@ namespace math {
    \f]
 
    \f[
-    \frac{\partial }{\partial x} = -\frac{e^x}{e^y-e^x}-\frac{e^x}{e^x+1}
+    \frac{\partial}{\partial x} = \mbox{logit}^{-1}(-x) + \frac{1}{e^{x-y}-1}
    \f]
 
    \f[
-    \frac{\partial }{\partial x} = -\frac{e^y}{e^x-e^y}-\frac{e^y}{e^y+1}
+    \frac{\partial}{\partial y} = -\mbox{logit}^{-1}(y) - \frac{1}{e^{x-y}-1}
    \f]
  *
  * @tparam T inner type of the fvar
@@ -36,16 +36,17 @@ namespace math {
  */
 template <typename T>
 inline fvar<T> log_inv_logit_diff(const fvar<T>& x, const fvar<T>& y) {
+  // both partials as sums of positive terms, no cancellation for x >> 0
+  const auto c = inv(expm1(x.val_ - y.val_));
   return fvar<T>(
       log_inv_logit_diff(x.val_, y.val_),
-      -x.d_ * (inv(expm1(y.val_ - x.val_)) + inv_logit(x.val_))
-          - y.d_ * (inv(expm1(x.val_ - y.val_)) + inv_logit(y.val_)));
+      x.d_ * (c + inv_logit(-x.val_)) - y.d_ * (c + inv_logit(y.val_)));
 }
 
 template <typename T>
 inline fvar<T> log_inv_logit_diff(const fvar<T>& x, double y) {
   return fvar<T>(log_inv_logit_diff(x.val_, y),
-                 -x.d_ * (inv(expm1(y - x.val_)) + inv_logit(x.val_)));
+                 x.d_ * (inv(expm1(x.val_ - y)) + inv_logit(-x.val_)));
 }
 
 template <typename T>

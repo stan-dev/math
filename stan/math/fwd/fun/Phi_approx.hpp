@@ -6,6 +6,7 @@
 #include <stan/math/fwd/fun/inv_logit.hpp>
 #include <stan/math/fwd/fun/pow.hpp>
 #include <stan/math/prim/fun/Phi_approx.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <cmath>
 
 namespace stan {
@@ -23,7 +24,8 @@ namespace math {
  */
 template <typename T>
 inline fvar<T> Phi_approx(const fvar<T>& x) {
-  return inv_logit(0.07056 * pow(x, 3.0) + 1.5976 * x);
+  return inv_logit(PHI_APPROX_CUBIC_COEF * pow(x, 3.0)
+                   + PHI_APPROX_LINEAR_COEF * x);
 }
 
 }  // namespace math

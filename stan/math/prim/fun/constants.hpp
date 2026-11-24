@@ -193,6 +193,19 @@ static constexpr double NEG_LOG_SQRT_TWO_PI = -HALF_LOG_TWO_PI;
 const double POISSON_MAX_RATE = std::pow(2.0, 30);
 
 /**
+ * Coefficients of the logistic approximation to the standard normal CDF
+ * computed by <code>Phi_approx</code>,
+ * \f$ \Phi(x) \approx \mbox{logit}^{-1}(\gamma x^3 + \beta x) \f$,
+ * the form of Bowling et al. (2009). They are the pair that minimises the
+ * maximum absolute deviation from \f$ \Phi \f$ over the real line, rounded
+ * to double precision: the deviation is 1.40313e-4, attained at
+ * \f$ x = \pm 0.4816, \pm 1.4764, \pm 2.6876 \f$. The paper prints the pair
+ * rounded to 0.07056 and 1.5976 (maximum deviation 1.41448e-4).
+ */
+static constexpr double PHI_APPROX_CUBIC_COEF = 0.07056409656566716;
+static constexpr double PHI_APPROX_LINEAR_COEF = 1.597602874240784;
+
+/**
  * Return positive infinity.
  *
  * @return Positive infinity.
