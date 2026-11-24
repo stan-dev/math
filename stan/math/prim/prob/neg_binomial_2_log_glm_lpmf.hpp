@@ -6,21 +6,18 @@
 #include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
-#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
-#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
-#include <vector>
 #include <cmath>
 
 namespace stan {
@@ -169,10 +166,10 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
     if constexpr (is_vector<T_precision>::value) {
       scalar_seq_view<decltype(phi_val_vec)> phi_vec(phi_val_vec);
       for (size_t n = 0; n < N_instances; ++n) {
-        logp += multiply_log(phi_vec[n], phi_vec[n]) - lgamma(phi_vec[n]);
+        logp += lmultiply(phi_vec[n], phi_vec[n]) - lgamma(phi_vec[n]);
       }
     } else {
-      logp += N_instances * (multiply_log(phi_val, phi_val) - lgamma(phi_val));
+      logp += N_instances * (lmultiply(phi_val, phi_val) - lgamma(phi_val));
     }
   }
   logp -= sum(y_plus_phi * logsumexp_theta_logphi);

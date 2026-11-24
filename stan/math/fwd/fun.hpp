@@ -72,6 +72,7 @@
 #include <stan/math/fwd/fun/log1p.hpp>
 #include <stan/math/fwd/fun/log1p_exp.hpp>
 #include <stan/math/fwd/fun/log2.hpp>
+#include <stan/math/fwd/fun/log_cosh.hpp>
 #include <stan/math/fwd/fun/log_determinant.hpp>
 #include <stan/math/fwd/fun/log_diff_exp.hpp>
 #include <stan/math/fwd/fun/log_falling_factorial.hpp>
@@ -90,7 +91,6 @@
 #include <stan/math/fwd/fun/modified_bessel_first_kind.hpp>
 #include <stan/math/fwd/fun/modified_bessel_second_kind.hpp>
 #include <stan/math/fwd/fun/multiply.hpp>
-#include <stan/math/fwd/fun/multiply_log.hpp>
 #include <stan/math/fwd/fun/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/fwd/fun/norm.hpp>
 #include <stan/math/fwd/fun/norm1.hpp>
@@ -110,6 +110,7 @@
 #include <stan/math/fwd/fun/sin.hpp>
 #include <stan/math/fwd/fun/sinh.hpp>
 #include <stan/math/fwd/fun/softmax.hpp>
+#include <stan/math/fwd/fun/solve_sylvester.hpp>
 #include <stan/math/fwd/fun/sqrt.hpp>
 #include <stan/math/fwd/fun/square.hpp>
 #include <stan/math/fwd/fun/sum.hpp>

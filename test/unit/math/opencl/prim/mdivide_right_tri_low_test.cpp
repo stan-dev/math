@@ -48,7 +48,6 @@ inline void mdivide_right_tri_low_Ab_test(int size) {
   stan::math::matrix_cl<double> m1_A_cl(m1, stan::math::matrix_cl_view::Lower);
   stan::math::matrix_d m1_cl = stan::math::from_matrix_cl(
       stan::math::mdivide_right_tri_low(m1_A_cl, m1_A_cl));
-  double max_error = 0;
   for (int i = 0; i < m1_cpu.size(); i++) {
     stan::test::expect_near_rel("mdivide_right_tri_low (OpenCL)", m1_cpu(i),
                                 m1_cl(i));

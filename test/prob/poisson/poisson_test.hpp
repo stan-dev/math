@@ -2,7 +2,7 @@
 #include <stan/math/prim/prob/poisson_lpmf.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -66,14 +66,14 @@ class AgradDistributionsPoisson : public AgradDistributionTest {
                                                      const T2&, const T3&,
                                                      const T4&, const T5&) {
     using stan::math::lgamma;
+    using stan::math::lmultiply;
     using stan::math::LOG_ZERO;
-    using stan::math::multiply_log;
     if (lambda == 0)
       return n == 0 ? 0 : LOG_ZERO;
 
     if (stan::math::is_inf(lambda))
       return LOG_ZERO;
 
-    return -lgamma(n + 1.0) + multiply_log(n, lambda) - lambda;
+    return -lgamma(n + 1.0) + lmultiply(n, lambda) - lambda;
   }
 };
