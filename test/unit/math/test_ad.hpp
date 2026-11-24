@@ -59,7 +59,7 @@ auto eval(const std::complex<T>& x) {
  * @param[in] x value
  * @return value
  */
-auto eval(const stan::math::var& x) { return x; }
+inline auto eval(const stan::math::var& x) { return x; }
 
 /**
  * Evaluates all matrix expression templates, which is a no-op for
@@ -974,7 +974,7 @@ inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
  *
  * @return non-zero arguments
  */
-const std::vector<double>& common_nonzero_args() {
+inline const std::vector<double>& common_nonzero_args() {
   static const std::vector<double> common_nz_args{
       -1.3,
       0.49,

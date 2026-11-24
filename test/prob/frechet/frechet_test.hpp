@@ -1,7 +1,7 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/math/prim/prob/frechet_lpdf.hpp>
 #include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 #include <stan/math/prim/fun/pow.hpp>
 
 using stan::math::var;
@@ -77,23 +77,12 @@ class AgradDistributionsFrechet : public AgradDistributionTest {
       const T_y& y, const T_shape& alpha, const T_scale& sigma, const T3&,
       const T4&, const T5&) {
     using stan::math::include_summand;
+    using stan::math::lmultiply;
     using stan::math::log;
-    using stan::math::multiply_log;
     using stan::math::pow;
     using stan::math::value_of;
 
-    return log(alpha) + multiply_log(alpha, sigma) - multiply_log(alpha + 1, y)
+    return log(alpha) + lmultiply(alpha, sigma) - lmultiply(alpha + 1, y)
            - pow(sigma / y, alpha);
   }
 };
-
-TEST(ProbDistributionsFrechet, Cumulative) {
-  using stan::math::frechet_cdf;
-  using std::numeric_limits;
-  EXPECT_FLOAT_EQ(0.6065306597, frechet_cdf(2.0, 1.0, 1.0));
-  EXPECT_FLOAT_EQ(2.744338423e-5, frechet_cdf(0.8, 2.9, 1.8));
-  EXPECT_FLOAT_EQ(0.0, frechet_cdf(0.25, 3.9, 1.7));
-
-  EXPECT_FLOAT_EQ(1.0,
-                  frechet_cdf(numeric_limits<double>::infinity(), 1.0, 1.0));
-}

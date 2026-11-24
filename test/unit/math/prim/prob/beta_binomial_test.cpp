@@ -56,3 +56,8 @@ TEST(ProbDistributionBetaBinomial, error_check) {
                    4, 0.6, stan::math::positive_infinity(), rng),
                std::domain_error);
 }
+
+TEST(ProbDistributionsBetaBinomialCDF, Values) {
+  EXPECT_FLOAT_EQ(0.8868204314,
+                  stan::math::beta_binomial_cdf(49, 100, 1.349, 3.938));
+}

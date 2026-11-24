@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -53,7 +54,7 @@ inline auto log_softmax(Container&& x) {
             std::forward<decltype(a)>(a),
             [](auto&& v) -> plain_type_t<decltype(v)> {
               if (v.size() == 0) {
-                return v;
+                return std::forward<decltype(v)>(v);
               }
               return (v.array() - log_sum_exp(v)).matrix();
             });

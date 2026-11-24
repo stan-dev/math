@@ -2,7 +2,7 @@
 #include <stan/math/prim/prob/weibull_lpdf.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/pow.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -76,26 +76,11 @@ class AgradDistributionsWeibull : public AgradDistributionTest {
   stan::return_type_t<T_y, T_shape, T_scale> log_prob_function(
       const T_y& y, const T_shape& alpha, const T_scale& sigma, const T3&,
       const T4&, const T5&) {
+    using stan::math::lmultiply;
     using stan::math::log;
-    using stan::math::multiply_log;
     using stan::math::pow;
 
-    return log(alpha) + multiply_log(alpha - 1.0, y)
-           - multiply_log(alpha, sigma) - pow(y / sigma, alpha);
+    return log(alpha) + lmultiply(alpha - 1.0, y) - lmultiply(alpha, sigma)
+           - pow(y / sigma, alpha);
   }
 };
-
-TEST(ProbDistributionsWeibull, Cumulative) {
-  using stan::math::weibull_cdf;
-  using std::numeric_limits;
-  EXPECT_FLOAT_EQ(0.86466472, weibull_cdf(2.0, 1.0, 1.0));
-  EXPECT_FLOAT_EQ(0.0032585711, weibull_cdf(0.25, 2.9, 1.8));
-  EXPECT_FLOAT_EQ(1.0, weibull_cdf(3.9, 1.7, 0.25));
-
-  // EXPECT_FLOAT_EQ(0.0,
-  //                 weibull_cdf(-numeric_limits<double>::infinity(),
-  //                             1.0, 1.0));
-  EXPECT_FLOAT_EQ(0.0, weibull_cdf(0.0, 1.0, 1.0));
-  EXPECT_FLOAT_EQ(1.0,
-                  weibull_cdf(numeric_limits<double>::infinity(), 1.0, 1.0));
-}

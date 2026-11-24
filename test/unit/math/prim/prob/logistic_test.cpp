@@ -80,3 +80,7 @@ TEST(ProbDistributionsLogistic, chiSquareGoodnessFitTest) {
   // Assert that they match
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }
+
+TEST(ProbDistributionsLogisticCDF, Values) {
+  EXPECT_FLOAT_EQ(0.047191944, stan::math::logistic_cdf(-3.45, 5.235, 2.89));
+}

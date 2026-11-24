@@ -8,7 +8,7 @@ using stan::math::var;
 using std::numeric_limits;
 using std::vector;
 
-class AgradDistributionsPoisson : public AgradDistributionTest {
+class AgradDistributionsPoissonLog : public AgradDistributionTest {
  public:
   void valid_values(vector<vector<double> >& parameters,
                     vector<double>& log_prob) {
@@ -65,7 +65,6 @@ class AgradDistributionsPoisson : public AgradDistributionTest {
                                                      const T4&, const T5&) {
     using stan::math::lgamma;
     using stan::math::LOG_ZERO;
-    using stan::math::multiply_log;
     using std::exp;
 
     if (alpha == -std::numeric_limits<double>::infinity())

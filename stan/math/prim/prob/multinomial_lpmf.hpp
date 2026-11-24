@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <vector>
@@ -35,7 +35,7 @@ inline return_type_t<T_prob> multinomial_lpmf(const std::vector<int>& ns,
   }
   if constexpr (include_summand<propto, T_prob>::value) {
     for (unsigned int i = 0; i < ns.size(); ++i) {
-      lp += multiply_log(ns[i], theta_ref.coeff(i));
+      lp += lmultiply(ns[i], theta_ref.coeff(i));
     }
   }
   return lp;

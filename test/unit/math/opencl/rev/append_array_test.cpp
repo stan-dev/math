@@ -15,8 +15,6 @@ TEST(OpenCLAppendArray, prim_rev_values_small) {
 }
 
 TEST(OpenCLAppendArray, prim_rev_size_0) {
-  int N = 0;
-
   std::vector<double> a{};
   std::vector<double> b{};
   stan::math::test::compare_cpu_opencl_prim_rev(append_array_functor, a, b);
