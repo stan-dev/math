@@ -98,8 +98,15 @@ inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
 
   eig_matrix_partial alphas(n_states, n_transitions + 1);
   eig_vector_partial alpha_log_norms(n_transitions + 1);
+  // Subtract the maximum of each column before exponentiating, so that
+  // omegas neither underflows nor overflows. The shifts are added back to
+  // the log density. The gradients are invariant to the shifts.
+  const auto& log_omegas_val = to_ref(value_of(log_omegas_ref));
+  Eigen::Matrix<T_partial_type, 1, Eigen::Dynamic> log_omegas_max
+      = log_omegas_val.colwise().maxCoeff();
+  eig_matrix_partial omegas
+      = (log_omegas_val.rowwise() - log_omegas_max).array().exp();
   // compute the density using the forward algorithm.
-  eig_matrix_partial omegas = value_of(log_omegas_ref).array().exp();
   T_partial_type norm_norm;
   auto log_marginal_density = hmm_marginal_val(
       omegas, Gamma_val, rho_val, alphas, alpha_log_norms, norm_norm);
@@ -148,7 +155,7 @@ inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
         edge<2>(ops_partials).partials_
             = omegas.col(0) / exp(log_marginal_density);
       }
-      return ops_partials.build(log_marginal_density);
+      return ops_partials.build(log_marginal_density + log_omegas_max.sum());
     } else {
       auto grad_corr_boundary = exp(kappa_log_norms(0) - norm_norm);
       eig_vector_partial C = Gamma_val * omegas.col(1).cwiseProduct(kappa[0]);
@@ -176,7 +183,7 @@ inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
     }
   }
 
-  return ops_partials.build(log_marginal_density);
+  return ops_partials.build(log_marginal_density + log_omegas_max.sum());
 }
 
 }  // namespace math

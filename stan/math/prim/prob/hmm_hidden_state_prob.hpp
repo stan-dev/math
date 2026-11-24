@@ -20,8 +20,8 @@ namespace math {
  * Hence for each hidden variable x, we compute a simplex with K elements.
  * The final result is stored in a K by N matrix, where N is the length of x.
  * log_omegas is a matrix of observational densities, where
- * the (i, j)th entry corresponds to the density of the ith observation, y_i,
- * given x_i = j.
+ * the (i, j)th entry corresponds to the density of the jth observation, y_j,
+ * given x_j = i.
  * The transition matrix Gamma is such that the (i, j)th entry is the
  * probability that x_n = j given x_{n - 1} = i. The rows of Gamma are
  * simplexes.
@@ -29,6 +29,12 @@ namespace math {
  * of a state sequence given parameters and an observation sequence,
  * p(x | y, theta),
  * because it only computes marginals on a state-by-state basis.
+ * Each column of log_omegas is shifted by its maximum before it is
+ * exponentiated, and the forward and backward passes are normalized at
+ * every step, so long sequences and log densities of large magnitude do not
+ * underflow or overflow. The result is still NaN if the largest density in
+ * a column belongs to a state that the chain cannot reach, and the log
+ * densities of the reachable states are more than about 745 below it.
  *
  * @tparam T_omega type of the log likelihood matrix
  * @tparam T_Gamma type of the transition matrix
@@ -51,18 +57,30 @@ inline Eigen::MatrixXd hmm_hidden_state_prob(const T_omega& log_omegas,
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
 
-  Eigen::MatrixXd omegas = value_of(log_omegas).array().exp();
   ref_type_t<decltype(value_of(rho))> rho_dbl = value_of(rho);
   ref_type_t<decltype(value_of(Gamma))> Gamma_dbl = value_of(Gamma);
   hmm_check(log_omegas, Gamma_dbl, rho_dbl, "hmm_hidden_state_prob");
+
+  // Subtract the maximum of each column before exponentiating, so that
+  // omegas neither underflows nor overflows. The hidden state probabilities
+  // are invariant to a positive factor on each column of omegas.
+  ref_type_t<decltype(value_of(log_omegas))> log_omegas_dbl
+      = value_of(log_omegas);
+  Eigen::MatrixXd omegas
+      = (log_omegas_dbl.rowwise() - log_omegas_dbl.colwise().maxCoeff())
+            .array()
+            .exp();
 
   Eigen::MatrixXd alphas(n_states, n_transitions + 1);
   alphas.col(0) = omegas.col(0).cwiseProduct(rho_dbl);
   alphas.col(0) /= alphas.col(0).maxCoeff();
 
-  for (int n = 0; n < n_transitions; ++n)
+  // Forward pass with running normalization
+  for (int n = 0; n < n_transitions; ++n) {
     alphas.col(n + 1)
         = omegas.col(n + 1).cwiseProduct(Gamma_dbl.transpose() * alphas.col(n));
+    alphas.col(n + 1) /= alphas.col(n + 1).maxCoeff();
+  }
 
   // Backward pass with running normalization
   Eigen::VectorXd beta = Eigen::VectorXd::Ones(n_states);
