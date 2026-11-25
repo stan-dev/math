@@ -44,9 +44,11 @@ inline return_type_t<T_y_cl, T_loc_cl, T_covar_cl> multi_normal_cholesky_lpdf(
   static constexpr const char* function = "multi_normal_cholesky_lpdf(OpenCL)";
 
   check_consistent_sizes(function, "y", y, "mu", mu);
-  check_square(function, "covariance parameter", L);
   check_size_match(function, "Size of random variable", y.rows(),
                    "rows of covariance parameter", L.rows());
+  check_square(function, "Cholesky decomposition of a variance matrix", L);
+  check_cholesky_factor(function, "Cholesky decomposition of a variance matrix",
+                        L);
 
   if (max_size(y, mu, L) == 0) {
     return 0.0;
