@@ -57,7 +57,11 @@ struct laplace_options_base {
    */
   double tolerance{internal::laplace_default_tolerance};  // 2
   /* Maximum number of steps*/
-  int max_num_steps{internal::laplace_default_max_num_steps};          // 3
+  int max_num_steps{internal::laplace_default_max_num_steps};  // 3
+  /**
+   * If true, a failure of the requested solver falls through to the next
+   * one (1 to 2 to 3). The requested solver always runs first.
+   */
   int allow_fallthrough{internal::laplace_default_allow_fallthrough};  // 4
   laplace_line_search_options line_search{
       internal::laplace_default_max_steps_line_search};  // 5
@@ -888,6 +892,12 @@ struct LUSolver {
     // 2. Factorize B = I + Sigma * W
     lu.compute(Eigen::MatrixXd::Identity(theta_size, theta_size)
                + covariance * W_full);
+    if ((lu.matrixLU().diagonal().array() == 0.0).any()) {
+      throw std::domain_error(
+          "laplace_marginal_density: det(I + Sigma * W) is zero at the "
+          "current iterate, so the Laplace approximation is not defined "
+          "there");
+    }
 
     // 3. Solve for the raw Newton proposal in a-space.
     state.b.noalias()
@@ -932,6 +942,70 @@ struct LUSolver {
 };
 
 /**
+ * @brief Search for a step along `state.wolfe_info.p_` from `state.prev()`
+ * and accept it into `state.curr()`.
+ *
+ * Evaluates the full step first. If it is finite, runs the Wolfe line
+ * search from the Barzilai-Borwein step size, or accepts the full step
+ * without a search when `options.line_search.max_iterations == 0`. When the
+ * search fails but the full step satisfies the Armijo condition, the full
+ * step is accepted. `state.wolfe_status` records the outcome.
+ *
+ * @tparam UpdateFun Callable to update proposal state in line search
+ * @tparam NewtonStateT Type holding state with solver
+ * @tparam OptionsT struct of options for laplace
+ * @tparam CovarMatT Type of the covariance matrix
+ * @param[in] update_fun Callable to update proposal state in line search
+ * @param[in,out] state Shared Newton optimization state
+ * @param[in] options Solver options
+ * @param[in] covariance Prior covariance matrix Sigma
+ * @param[in,out] msgs Output stream for diagnostic messages (may be nullptr)
+ * @return true if no step was accepted
+ */
+template <typename UpdateFun, typename NewtonStateT, typename OptionsT,
+          typename CovarMatT>
+inline bool run_line_search(UpdateFun&& update_fun, NewtonStateT& state,
+                            const OptionsT& options,
+                            const CovarMatT& covariance, std::ostream* msgs) {
+  auto&& proposal = state.proposal_step();
+  proposal.eval_.alpha() = 1.0;
+  const bool proposal_valid = update_fun(proposal, state.curr(), state.prev(),
+                                         proposal.eval_, state.wolfe_info.p_);
+  if (!proposal_valid) {
+    // No finite objective at any step size down to min_alpha
+    state.wolfe_status = WolfeStatus{WolfeReturn::NumericalIssue, 1, 0, false};
+    return true;
+  } else if (proposal.alpha() <= options.line_search.min_alpha) {
+    state.wolfe_status = WolfeStatus{WolfeReturn::StepTooSmall, 1, 0, false};
+    return true;
+  } else if (options.line_search.max_iterations == 0) {
+    state.curr().update(proposal);
+    state.wolfe_status = WolfeStatus{WolfeReturn::Continue, 1, 0, true};
+    return false;
+  }
+  Eigen::VectorXd s = proposal.a() - state.prev().a();
+  auto full_step_grad
+      = (-covariance * proposal.a() + covariance * proposal.theta_grad())
+            .eval();
+  state.curr().alpha() = barzilai_borwein_step_size(
+      s, full_step_grad, state.prev_g, state.prev().alpha(),
+      state.wolfe_status.num_backtracks_, options.line_search.min_alpha,
+      options.line_search.max_alpha);
+  state.wolfe_status = internal::wolfe_line_search(state.wolfe_info, update_fun,
+                                                   options.line_search, msgs);
+  if (!state.wolfe_status.accept_
+      && internal::check_armijo(proposal.obj(), state.prev().obj(),
+                                proposal.alpha(), state.wolfe_info.init_dir_,
+                                options.line_search)) {
+    state.curr().update(proposal);
+    state.wolfe_status
+        = WolfeStatus{WolfeReturn::Armijo, state.wolfe_status.num_evals_,
+                      state.wolfe_status.num_backtracks_, true};
+  }
+  return !state.wolfe_status.accept_;
+}
+
+/**
  * @brief Run a Newton loop with a solver policy, updating the shared state.
  *
  * This helper centralizes the iteration/line-search logic shared across
@@ -952,6 +1026,8 @@ struct LUSolver {
  * @param[in] update_fun Callable to update proposal state in line search
  * @param[in,out] msgs Output stream for diagnostic messages (may be nullptr)
  * @return laplace_density_estimates built from solver policy
+ * @throw std::domain_error if the log marginal density at the final
+ * iterate is not finite
  */
 template <typename SolverPolicy, typename NewtonStateT, typename OptionsT,
           typename LLFunT, typename LLTupleArgsT, typename CovarMatT,
@@ -973,45 +1049,21 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
       state.wolfe_info.init_dir_ = state.prev_g.dot(state.wolfe_info.p_);
       // Flip direction if not ascending
       state.wolfe_info.flip_direction();
-      auto&& scratch = state.wolfe_info.scratch_;
-      proposal.eval_.alpha() = 1.0;
-      const bool proposal_valid
-          = update_fun(proposal, state.curr(), state.prev(), proposal.eval_,
-                       state.wolfe_info.p_);
-      const bool cached_proposal_ok
-          = proposal_valid && std::isfinite(proposal.obj())
-            && std::isfinite(proposal.dir())
-            && proposal.alpha() > options.line_search.min_alpha;
-      if (!cached_proposal_ok) {
-        state.wolfe_status
-            = WolfeStatus{WolfeReturn::StepTooSmall, 1, 0, false};
-      } else if (options.line_search.max_iterations == 0) {
-        state.curr().update(proposal);
-        state.wolfe_status = WolfeStatus{WolfeReturn::Continue, 1, 0, true};
-      } else {
-        Eigen::VectorXd s = proposal.a() - state.prev().a();
-        auto full_step_grad
-            = (-covariance * proposal.a() + covariance * proposal.theta_grad())
-                  .eval();
-        state.curr().alpha() = barzilai_borwein_step_size(
-            s, full_step_grad, state.prev_g, state.prev().alpha(),
-            state.wolfe_status.num_backtracks_, options.line_search.min_alpha,
-            options.line_search.max_alpha);
-        state.wolfe_status = internal::wolfe_line_search(
-            state.wolfe_info, update_fun, options.line_search, msgs);
-      }
-      bool search_failed = !state.wolfe_status.accept_;
-      const bool proposal_armijo_ok
-          = cached_proposal_ok
-            && internal::check_armijo(
-                proposal.obj(), state.prev().obj(), proposal.alpha(),
-                state.wolfe_info.init_dir_, options.line_search);
-      if (search_failed && proposal_armijo_ok) {
-        state.curr().update(proposal);
-        state.wolfe_status
-            = WolfeStatus{WolfeReturn::Armijo, state.wolfe_status.num_evals_,
-                          state.wolfe_status.num_backtracks_, true};
-        search_failed = false;
+      bool search_failed
+          = run_line_search(update_fun, state, options, covariance, msgs);
+      while (search_failed && options.line_search.min_alpha < 1) {
+        const double predicted_increase
+            = options.line_search.min_alpha * state.wolfe_info.init_dir_;
+        if (!std::isfinite(predicted_increase)
+            || predicted_increase <= std::max(
+                   options.tolerance, std::numeric_limits<double>::epsilon()
+                                          * std::abs(state.prev().obj()))) {
+          break;
+        }
+        state.wolfe_info.p_ *= options.line_search.min_alpha;
+        state.wolfe_info.init_dir_ = predicted_increase;
+        search_failed
+            = run_line_search(update_fun, state, options, covariance, msgs);
       }
       bool objective_converged
           = state.wolfe_status.accept_
@@ -1026,18 +1078,25 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
         state.update_next_step(options);
         continue;
       }
-      return solver.build_result(state, solver.compute_log_determinant());
+      break;
     } else {
       state.update_next_step(options);
     }
   }
-  if (msgs) {
+  if (step_iter > options.max_num_steps && msgs) {
     (*msgs)
         << std::string(
                "WARNING(laplace_marginal_density): max number of iterations: ")
                + std::to_string(options.max_num_steps) + " exceeded.";
   }
-  return solver.build_result(state, solver.compute_log_determinant());
+  auto est = solver.build_result(state, solver.compute_log_determinant());
+  if (!std::isfinite(est.lmd)) {
+    throw std::domain_error(
+        "laplace_marginal_density: the log marginal density is not finite at "
+        "the final iterate: log(det(I + Sigma * W)) or the log likelihood is "
+        "not finite there");
+  }
+  return est;
 }
 
 /**
@@ -1150,6 +1209,7 @@ inline auto create_update_fun(ObjFun&& obj_fun, ThetaGradFun&& theta_grad_f,
 
 static STAN_THREADS_DEF std::once_flag fallback_warning_1_2;
 static STAN_THREADS_DEF std::once_flag fallback_warning_2_3;
+
 /**
  * For a latent Gaussian model with hyperparameters phi and
  * latent variables theta, and observations y, this function computes
@@ -1200,6 +1260,9 @@ static STAN_THREADS_DEF std::once_flag fallback_warning_2_3;
  * 8. `K_root`: Cholesky factor of the covariance (solver 2 only)
  * 9. `solver_used`: the solver policy that produced the result
  *
+ * @throw std::domain_error if the log marginal density at the final
+ * iterate is not finite, for example when the factorization of
+ * `I + Sigma * W` is singular in floating point
  */
 template <typename LLFun, typename LLTupleArgs, typename CovarMat,
           bool InitTheta,
@@ -1221,11 +1284,6 @@ inline auto laplace_marginal_density_est(
     return laplace_likelihood::theta_grad(ll_fun, theta_val, ll_args, msgs);
   };
   decltype(auto) theta_init = theta_init_impl<InitTheta>(theta_size, options);
-  // When the user supplies a non-zero theta_init, we must initialise a
-  // consistently so that the invariant theta = Sigma * a holds.  Otherwise
-  // the prior term -0.5 * a'*theta vanishes (a=0 while theta!=0), inflating
-  // the initial objective and causing the Wolfe line search to reject the
-  // first Newton step.
   auto state
       = NewtonState(theta_size, obj_fun, theta_grad_f, covariance, theta_init);
   // Start with safe step size
@@ -1260,7 +1318,8 @@ inline auto laplace_marginal_density_est(
         "solver 2 (Covariance-root Cholesky)", e);
   }
   try {
-    if (options.solver == 2 || options.allow_fallthrough) {
+    if (options.solver == 2
+        || (options.allow_fallthrough && options.solver == 1)) {
       CholeskyKSolver solver(state, covariance);
       return run_newton_loop(solver, state, options, step_iter, ll_fun, ll_args,
                              covariance, update_fun, msgs);

@@ -305,4 +305,43 @@ TEST(laplace_marginal_poisson_log_lpmf_grouped, multiple_obs_per_group) {
   stan::test::expect_ad<true>(tols, f, mean);
 }
 
+struct constant_covariance {
+  template <typename T>
+  Eigen::Matrix<T, -1, -1> operator()(const T& alpha, int n,
+                                      std::ostream* /*msgs*/) const {
+    return stan::math::add_diag(
+        Eigen::Matrix<T, -1, -1>::Constant(n, n, alpha * alpha), 1e-8);
+  }
+};
+
+// The Newton step from theta = 0 (1e10 to 1e11) overshoots even at min_alpha.
+TEST(laplace_marginal_poisson_log_lpmf_newton, step_overshoots_mode) {
+  const std::vector<int> y{3, 1, 4, 1, 5};
+  const std::vector<int> y_index{1, 2, 3, 4, 5};
+  const Eigen::VectorXd mean = Eigen::VectorXd::Constant(5, -30.0);
+  auto marginal = [&](double alpha) {
+    return stan::math::laplace_marginal_poisson_log_lpmf(
+        y, y_index, mean, 1, constant_covariance{},
+        std::forward_as_tuple(alpha, 5), nullptr);
+  };
+  // References from mpmath. theta = K * a cancels terms of size alpha^2 * a,
+  // so theta is only resolved to ~alpha^2 * eps and the result to ~1e-3.
+  EXPECT_NEAR(-20.971115053, marginal(3e4), 1e-4);
+  EXPECT_NEAR(-22.1750873716, marginal(1e5), 1e-2);
+}
+
+// alpha = 1e9: K = 1e18 J exactly in double, so all rows of I + K W are equal.
+TEST(laplace_marginal_poisson_log_lpmf_newton, singular_log_determinant) {
+  const std::vector<int> y{3, 1, 4, 1, 5};
+  const std::vector<int> y_index{1, 2, 3, 4, 5};
+  const Eigen::VectorXd mean = Eigen::VectorXd::Constant(5, 1.0);
+  const Eigen::VectorXd theta_0 = Eigen::VectorXd::Zero(5);
+  EXPECT_THROW_MSG(
+      stan::math::laplace_marginal_tol_poisson_log_lpmf(
+          y, y_index, mean, 1, constant_covariance{},
+          std::forward_as_tuple(1e9, 5),
+          std::make_tuple(theta_0, 1e-8, 100, 3, 1000, false), nullptr),
+      std::domain_error, "det(I + Sigma * W)");
+}
+
 }  // namespace

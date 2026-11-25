@@ -46,9 +46,13 @@ struct StubNewtonSolver {
 
   double compute_log_determinant() const { return 0.0; }
 
+  struct Result {
+    double lmd;
+  };
+
   template <typename NewtonStateT>
-  double build_result(NewtonStateT& state, double /*log_det*/) const {
-    return state.prev().a()(0);
+  Result build_result(NewtonStateT& state, double /*log_det*/) const {
+    return {state.prev().a()(0)};
   }
 };
 
@@ -116,10 +120,44 @@ TEST(LaplaceMarginalDensityEstimator,
       = [](const auto& /*theta*/, std::ostream* /*msgs*/) { return 0.0; };
 
   const double result = internal::run_newton_loop(
-      solver, state, options, step_iter, unused_ll, std::tuple<>{}, covariance,
-      failing_update, nullptr);
+                            solver, state, options, step_iter, unused_ll,
+                            std::tuple<>{}, covariance, failing_update, nullptr)
+                            .lmd;
 
   EXPECT_DOUBLE_EQ(result, 0.0);
+  EXPECT_FALSE(state.wolfe_status.accept_);
+  EXPECT_EQ(state.wolfe_status.stop_, internal::WolfeReturn::NumericalIssue);
+}
+
+TEST(LaplaceMarginalDensityEstimator,
+     CachedProposalBelowMinAlphaReportsStepTooSmall) {
+  Eigen::MatrixXd covariance = Eigen::MatrixXd::Identity(1, 1);
+  Eigen::VectorXd theta0 = Eigen::VectorXd::Zero(1);
+  auto obj_fun = [](const auto& /*a*/, const auto& /*theta*/) { return -1.0; };
+  auto theta_grad_f
+      = [](const auto& theta) { return Eigen::VectorXd::Zero(theta.size()); };
+  internal::NewtonState state(1, obj_fun, theta_grad_f, covariance, theta0);
+  laplace_options_base options;
+  options.hessian_block_size = 1;
+  options.max_num_steps = 1;
+  options.tolerance = 1e-12;
+  options.line_search.max_iterations = 5;
+  options.line_search.min_alpha = 1.0;
+
+  StubNewtonSolver solver{5.0};
+  Eigen::Index step_iter = 1;
+  auto finite_update = [](auto& /*proposal*/, auto&& /*curr*/, auto&& /*prev*/,
+                          auto& eval_in, auto&& /*p*/) {
+    eval_in.obj() = 0.0;
+    eval_in.dir() = 0.0;
+    return true;
+  };
+  auto unused_ll
+      = [](const auto& /*theta*/, std::ostream* /*msgs*/) { return 0.0; };
+
+  internal::run_newton_loop(solver, state, options, step_iter, unused_ll,
+                            std::tuple<>{}, covariance, finite_update, nullptr);
+
   EXPECT_FALSE(state.wolfe_status.accept_);
   EXPECT_EQ(state.wolfe_status.stop_, internal::WolfeReturn::StepTooSmall);
 }
