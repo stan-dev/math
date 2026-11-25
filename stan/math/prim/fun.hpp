@@ -19,6 +19,7 @@
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/as_value_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar_ref.hpp>
 #include <stan/math/prim/fun/as_value_array_or_scalar.hpp>
 #include <stan/math/prim/fun/asin.hpp>
 #include <stan/math/prim/fun/asinh.hpp>
