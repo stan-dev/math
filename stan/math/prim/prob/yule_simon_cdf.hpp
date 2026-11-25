@@ -52,20 +52,22 @@ inline return_type_t<T_alpha> yule_simon_cdf(const T_n& n,
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
   const size_t max_size_seq_view = max_size(n_ref, alpha_ref);
 
-  // Explicit return for invalid or extreme values
-  // The gradients are technically ill-defined, but treated as zero
+  // An element with probability 0 (n < 1) makes the result 0; the gradients
+  // are treated as zero
   for (int i = 0; i < stan::math::size(n); i++) {
     if (n_vec.val(i) < 1.0) {
       return 0.0;
-    }
-    if (n_vec.val(i) == std::numeric_limits<int>::max()) {
-      return 1.0;
     }
   }
 
   T_partials_return cdf(1.0);
   auto ops_partials = make_partials_propagator(alpha_ref);
   for (size_t i = 0; i < max_size_seq_view; i++) {
+    // An element with probability 1 (n = INT_MAX, which stands for an
+    // infinite count) contributes nothing
+    if (n_vec.val(i) == std::numeric_limits<int>::max()) {
+      continue;
+    }
     auto np1 = n_vec.val(i) + 1.0;
     auto ap1 = alpha_vec.val(i) + 1.0;
     auto nap1 = n_vec.val(i) + ap1;

@@ -101,6 +101,27 @@ TEST(ProbDistributionsBernoulliLccdf, opencl_broadcast_theta) {
       bernoulli_lccdf_functor, n, theta_scal);
 }
 
+TEST(ProbDistributionsBernoulliLccdf, opencl_broadcast_n_negative) {
+  int N = 3;
+
+  int n_scal = -1;
+  Eigen::VectorXd theta(N);
+  theta << 0.3, 0.8, 1.0;
+
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      bernoulli_lccdf_functor, n_scal, theta);
+}
+
+TEST(ProbDistributionsBernoulliLccdf, opencl_broadcast_theta_n_negative) {
+  int N = 3;
+
+  std::vector<int> n{0, -1, 0};
+  double theta_scal = 0.4;
+
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      bernoulli_lccdf_functor, n, theta_scal);
+}
+
 TEST(ProbDistributionsBernoulliLccdf, opencl_matches_cpu_big) {
   int N = 153;
 

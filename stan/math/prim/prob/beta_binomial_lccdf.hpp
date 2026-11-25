@@ -76,19 +76,18 @@ inline return_type_t<T_size1, T_size2> beta_binomial_lccdf(
   scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
   size_t max_size_seq_view = max_size(n, N, alpha, beta);
 
-  // Explicit return for extreme values
-  // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::math::size(n); i++) {
-    if (n_vec.val(i) < 0) {
-      return ops_partials.build(0.0);
+  // An element with probability 0 (n >= N) makes the result -inf; the
+  // gradients are treated as zero
+  for (size_t i = 0; i < max_size_seq_view; i++) {
+    if (n_vec.val(i) >= N_vec.val(i)) {
+      return ops_partials.build(negative_infinity());
     }
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as neg infinity
-    if (n_vec.val(i) >= N_vec.val(i)) {
-      return ops_partials.build(negative_infinity());
+    // An element with probability 1 (n < 0) contributes nothing
+    if (n_vec.val(i) < 0) {
+      continue;
     }
 
     const T_partials_return n_dbl = n_vec.val(i);

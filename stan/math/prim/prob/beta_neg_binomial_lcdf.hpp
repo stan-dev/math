@@ -80,10 +80,10 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_lcdf(
   T_partials_return log_cdf(0.0);
   auto ops_partials = make_partials_propagator(r_ref, alpha_ref, beta_ref);
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    // Explicit return for extreme values
-    // The gradients are technically ill-defined, but treated as zero
+    // An element with probability 1 (n = INT_MAX, which stands for an
+    // infinite count) contributes nothing
     if (n_vec.val(i) == std::numeric_limits<int>::max()) {
-      return 0.0;
+      continue;
     }
     auto n_dbl = n_vec.val(i);
     auto r_dbl = r_vec.val(i);

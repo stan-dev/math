@@ -38,7 +38,7 @@ TEST(ProbDistributionsPoissonBinomial, lccdf_works_on_scalar_arguments) {
   EXPECT_NEAR(-0.127833, poisson_binomial_lccdf(0, p), 1e-6);
   EXPECT_NEAR(-0.798508, poisson_binomial_lccdf(1, p), 1e-6);
   EXPECT_NEAR(-2.65926, poisson_binomial_lccdf(2, p), 1e-5);
-  EXPECT_NEAR(-36.7368, poisson_binomial_lccdf(3, p), 1e-4);
+  EXPECT_EQ(-stan::math::INFTY, poisson_binomial_lccdf(3, p));
 }
 
 TEST(ProbDistributionsPoissonBinomial, lccdf_works_on_vectorial_y) {

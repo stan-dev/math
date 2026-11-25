@@ -49,6 +49,11 @@ inline return_type_t<T_theta> poisson_binomial_cdf(const T_y& y,
 
   return_type_t<T_theta> lcdf = 0.0;
   for (size_t i = 0; i < max_sz; ++i) {
+    // An element with probability 1 (y equal to the number of trials)
+    // contributes nothing
+    if (y_vec[i] == static_cast<int>(stan::math::size(theta_vec[i]))) {
+      continue;
+    }
     auto x = log_sum_exp(poisson_binomial_log_probs(y_vec[i], theta_vec[i]));
     lcdf += x;
   }
