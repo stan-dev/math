@@ -22,7 +22,8 @@ static constexpr const char* phi_approx_device_function
            * @return Phi_approx(x)
            */
           inline double Phi_approx(double x) {
-            return inv_logit(0.07056 * pow(x, 3.0) + 1.5976 * x);
+            const double x_squared = x * x;
+            return inv_logit(0.07056 * x * x_squared + 1.5976 * x);
           }
           // \cond
           ) "\n#endif\n";  // NOLINT

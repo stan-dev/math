@@ -6,6 +6,20 @@ TEST(mathMixMatFun, PhiApprox) {
   stan::test::expect_unary_vectorized(f, -3.0, 1, 1.3, 3);
 }
 
+TEST(mathMixMatFun, PhiApprox_all_modes_give_the_same_value) {
+  using stan::math::fvar;
+  using stan::math::Phi_approx;
+  using stan::math::var;
+  for (int i = -2500; i <= 1000; ++i) {
+    const double x = 0.01 * i;
+    const double expected = Phi_approx(x);
+    EXPECT_EQ(expected, Phi_approx(var(x)).val()) << "x = " << x;
+    EXPECT_EQ(expected, Phi_approx(fvar<double>(x, 1)).val()) << "x = " << x;
+    EXPECT_EQ(expected, Phi_approx(fvar<var>(x, 1)).val().val()) << "x = " << x;
+  }
+  stan::math::recover_memory();
+}
+
 TEST(mathMixMatFun, PhiApprox_varmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
